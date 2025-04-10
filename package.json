@@ -12,6 +12,7 @@
   "dependencies": {
     "@react-three/drei": "^10.0.5",
     "@react-three/fiber": "^9.1.0",
+    "framer-motion": "^12.6.3",
     "gsap": "^3.12.7",
     "lamina": "^1.1.23",
     "react": "^19.0.0",

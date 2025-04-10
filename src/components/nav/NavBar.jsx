@@ -89,26 +89,26 @@ export default function NavBar() {
                 </li>
                 <li className="select-none p-2 md:p-[10px] md:inline-block group relative">
                   <a
-                    aria-label="contact us"
+                    aria-label="Blogs"
                     href="#"
                     className="border-none cursor-pointer pointer-events-auto bg-none rounded-[1em] p-0 whitespace-nowrap text-black hover:text-[#48beaa] outline-offset-[4px] relative shadow-none"
                   >
-                    contact us
+                    Blogs
                   </a>
                 </li>
                 <li className="select-none p-2 md:p-[10px] md:inline-block group relative">
                   <a
-                    aria-label="about us"
+                    aria-label="career"
                     href="#"
                     className="hover:bg-[#eee] no-underline font-[Nunito_Sans,sans-serif] border border-[rgba(224,224,224,1)] rounded-full  px-4 py-[0.4rem] whitespace-nowrap shadow-[rgba(0,0,0,0.03)_0px_7px_0.5rem,_rgba(0,0,0,0.05)_0px_0px_1.3rem_inset] mr-4 bg-white text-[rgb(20,20,20)] cursor-pointer list-none text-left"
                   >
-                    about us
+                    career
                   </a>
                   <a
                     aria-label="Log in"
                     href="#"
                     target="_blank"
-                    className="no-underline font-[Nunito_Sans,sans-serif] bg-gradient-to-r from-[#3fbdA8] to-[#3fb127] hover:from-[#3eb1277e] hover:to-[#3fbda885] border-[1px] border-[rgba(255,255,255,0.1)] rounded-2xl p-[0.4rem_1rem] whitespace-nowrap shadow-[rgba(0,0,0,0.03)_0px_7px_0.5rem,_rgba(0,0,0,0.05)_0px_0px_1.3rem_inset] text-white mr-[-20px]"
+                    className="no-underline font-[Nunito_Sans,sans-serif] bg-gradient-to-r from-[#3fbdA8] to-[#3fb127] hover:from-[#3eb1277e] hover:to-[#3fbda885] border-[1px] border-[rgba(255,255,255,0.1)] rounded-2xl p-[0.4rem_1rem] whitespace-nowrap shadow-[rgba(0,0,0,0.03)_0px_7px_0.5rem,_rgba(0,0,0,0.05)_0px_0px_1.3rem_inset] text-white mr-[-12px]"
                   >
                     Book a Call
                   </a>
@@ -128,57 +128,111 @@ export default function NavBar() {
               onClick={toggleMenu}
               id="mobile-menu"
               title="Show menu"
-              className="bg-[rgb(255,255,255)] border-none rounded-[0.3em] p-[0.4em] text-[rgba(0,0,0,0.9)] cursor-pointer pointer-events-auto font-[Nunito_Sans,sans-serif] md:hidden"
+              className="bg-[rgb(255,255,255)] mobile-menu show-on-mobile -mr-[20px] mt-[1.5px] bg-transparent border-0 appearance-none border-none rounded-[0.3em] p-[0.4em] text-[rgba(0,0,0,0.9)] cursor-pointer pointer-events-auto font-[Nunito_Sans,sans-serif] md:hidden"
             >
-              <svg
-                className="ham hamRotate ham1"
-                width="80"
-                viewBox="0 0 100 100"
-                style={{
-                  height: "36px",
-                  width: "36px",
-                  transition: "transform 0.4s",
-                  cursor: "pointer",
-                  WebkitTapHighlightColor: "transparent",
-                  userSelect: "none",
-                }}
-              >
-                <path
-                  className="line top"
-                  d="m 30,33 h 40 c 0,0 9.044436,-0.654587 9.044436,-8.508902 0,-7.854315 -8.024349,-11.958003 -14.89975,-10.85914 -6.875401,1.098863 -13.637059,4.171617 -13.637059,16.368042 v 40"
+              {isMenuOpen ? (
+                <svg
+                  className="ham hamRotate ham1 bg-transparent"
+                  width="80"
+                  viewBox="0 0 100 100"
                   style={{
-                    transition: "stroke-dasharray 0.4s, stroke-dashoffset 0.4s",
-                    fill: "none",
-                    stroke: "rgb(0, 0, 0)",
-                    strokeWidth: 5.5,
-                    strokeLinecap: "round",
-                    strokeDasharray: "40, 139",
+                    height: "36px",
+                    width: "36px",
+                    transition: "transform 0.4s",
+                    cursor: "pointer",
+                    WebkitTapHighlightColor: "transparent",
+                    userSelect: "none",
+                    transform: "rotate(45deg)",
                   }}
-                />
-                <path
-                  className="line middle"
-                  d="m 30,50 h 40"
+                >
+                  <path
+                    className="line top"
+                    d="m 30,33 h 40 c 0,0 9.044436,-0.654587 9.044436,-8.508902 0,-7.854315 -8.024349,-11.958003 -14.89975,-10.85914 -6.875401,1.098863 -13.637059,4.171617 -13.637059,16.368042 v 40"
+                    style={{
+                      transition: "stroke-dasharray 0.4s, stroke-dashoffset 0.4s",
+                      fill: "none",
+                      stroke: "rgb(0, 0, 0)",
+                      strokeWidth: 5.5,
+                      strokeLinecap: "round",
+                      strokeDasharray: "40, 139",
+                      strokeDashoffset: "-98px",
+                    }}
+                  />
+                  <path
+                    className="line middle"
+                    d="m 30,50 h 40"
+                    style={{
+                      transition: "stroke-dasharray 0.4s, stroke-dashoffset 0.4s",
+                      fill: "none",
+                      stroke: "rgb(0, 0, 0)",
+                      strokeWidth: 5.5,
+                      strokeLinecap: "round",
+                    }}
+                  />
+                  <path
+                    className="line bottom"
+                    d="m 30,67 h 40 c 12.796276,0 15.357889,-11.717785 15.357889,-26.851538 0,-15.133752 -4.786586,-27.274118 -16.667516,-27.274118 -11.88093,0 -18.499247,6.994427 -18.435284,17.125656 l 0.252538,40"
+                    style={{
+                      transition: "stroke-dasharray 0.4s, stroke-dashoffset 0.4s",
+                      fill: "none",
+                      stroke: "rgb(0, 0, 0)",
+                      strokeWidth: 5.5,
+                      strokeLinecap: "round",
+                      strokeDasharray: "40, 180",
+                      strokeDashoffset: "-138px",
+                    }}
+                  />
+                </svg>
+              ) : (
+                <svg
+                  className="ham ham1"
+                  width="80"
+                  viewBox="0 0 100 100"
                   style={{
-                    transition: "stroke-dasharray 0.4s, stroke-dashoffset 0.4s",
-                    fill: "none",
-                    stroke: "rgb(0, 0, 0)",
-                    strokeWidth: 5.5,
-                    strokeLinecap: "round",
+                    height: "36px",
+                    width: "36px",
+                    transition: "transform 0.4s",
+                    cursor: "pointer",
+                    WebkitTapHighlightColor: "transparent",
+                    userSelect: "none",
                   }}
-                />
-                <path
-                  className="line bottom"
-                  d="m 30,67 h 40 c 12.796276,0 15.357889,-11.717785 15.357889,-26.851538 0,-15.133752 -4.786586,-27.274118 -16.667516,-27.274118 -11.88093,0 -18.499247,6.994427 -18.435284,17.125656 l 0.252538,40"
-                  style={{
-                    transition: "stroke-dasharray 0.4s, stroke-dashoffset 0.4s",
-                    fill: "none",
-                    stroke: "rgb(0, 0, 0)",
-                    strokeWidth: 5.5,
-                    strokeLinecap: "round",
-                    strokeDasharray: "40, 180",
-                  }}
-                />
-              </svg>
+                >
+                  <path
+                    className="line top"
+                    d="m 30,33 h 40"
+                    style={{
+                      transition: "stroke-dasharray 0.4s, stroke-dashoffset 0.4s",
+                      fill: "none",
+                      stroke: "rgb(0, 0, 0)",
+                      strokeWidth: 5.5,
+                      strokeLinecap: "round",
+                      strokeDasharray: "40, 139",
+                    }}
+                  />
+                  <path
+                    className="line middle"
+                    d="m 30,50 h 40"
+                    style={{
+                      transition: "stroke-dasharray 0.4s, stroke-dashoffset 0.4s",
+                      fill: "none",
+                      stroke: "rgb(0, 0, 0)",
+                      strokeWidth: 5.5,
+                      strokeLinecap: "round",
+                    }}
+                  />
+                  <path
+                    className="line bottom"
+                    d="m 30,67 h 40"
+                    style={{
+                      transition: "stroke-dasharray 0.4s, stroke-dashoffset 0.4s",
+                      fill: "none",
+                      stroke: "rgb(0, 0, 0)",
+                      strokeWidth: 5.5,
+                      strokeLinecap: "round",
+                    }}
+                  />
+                </svg>
+              )}
             </button>
           </div>
         </div>

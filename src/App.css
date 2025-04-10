@@ -39,7 +39,6 @@ a,a:visited {
 }
 
 button {
-  background: #fff;
   border: none;
   border-radius: .3em;
   color: #000000e6;
@@ -68,6 +67,7 @@ video {
 a,body,button {
   font-family: Nunito Sans,sans-serif
 }
+
 
 
 needle-engine {
@@ -144,20 +144,4 @@ needle-engine.presentation-mode .hide-in-presentation {
 
 needle-engine canvas {
   touch-action: pan-y!important
-}
-
-.cards{
-  --offset: 30px;
-  -webkit-backdrop-filter: blur(40px) saturate(1.4);
-  backdrop-filter: blur(40px) saturate(1.4);
-  background-color: #66666624;
-  border-radius: 40px;
-  box-shadow: 0 0 20px #5e5e5e38;
-  content: "";
-  height: calc(100% + var(--offset) * 2);
-  left: calc(var(--offset) * -1);
-  outline: 1px solid #ffffff2b;
-  position: absolute;
-  top: calc(var(--offset) * -1);
-  width: calc(100% + var(--offset) * 2);
 }

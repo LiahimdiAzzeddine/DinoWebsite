@@ -12,7 +12,7 @@ export default function NavBar() {
     <>
       <nav className=" w-auto h-[54px] rounded-2xl fixed top-5 z-[1000]  bg-[linear-gradient(90deg,#fff,hsla(0,0%,100%,.95))] shadow-[0px_2px_15px_rgba(2,2,43,0.2)] ease-in-out">
         <div id="header-hover-zone" />
-        <div className="relative mx-auto flex h-full max-w-[1200px] flex-row items-center px-[1.3em] text-[#020220]">
+        <div className="relative mx-auto flex h-full max-w-[1200px] flex-row items-center px-[1em] text-[#020220]">
           <div className="flex items-center text-[1.35em]">
             <a
               aria-current="page"
@@ -100,7 +100,7 @@ export default function NavBar() {
                   <a
                     aria-label="career"
                     href="#"
-                    className="hover:bg-[#eee] no-underline font-[Nunito_Sans,sans-serif] border border-[rgba(224,224,224,1)] rounded-full  px-4 py-[0.4rem] whitespace-nowrap shadow-[rgba(0,0,0,0.03)_0px_7px_0.5rem,_rgba(0,0,0,0.05)_0px_0px_1.3rem_inset] mr-4 bg-white text-[rgb(20,20,20)] cursor-pointer list-none text-left"
+                    className="hover:bg-[#eee] no-underline font-[Nunito_Sans,sans-serif] border border-[rgba(224,224,224,1)] rounded-xl  px-4 py-[0.4rem] whitespace-nowrap shadow-[rgba(0,0,0,0.03)_0px_7px_0.5rem,_rgba(0,0,0,0.05)_0px_0px_1.3rem_inset] mr-4 bg-white text-[rgb(20,20,20)] cursor-pointer list-none text-left"
                   >
                     career
                   </a>
@@ -108,7 +108,7 @@ export default function NavBar() {
                     aria-label="Log in"
                     href="#"
                     target="_blank"
-                    className="no-underline font-[Nunito_Sans,sans-serif] bg-gradient-to-r from-[#3fbdA8] to-[#3fb127] hover:from-[#3eb1277e] hover:to-[#3fbda885] border-[1px] border-[rgba(255,255,255,0.1)] rounded-2xl p-[0.4rem_1rem] whitespace-nowrap shadow-[rgba(0,0,0,0.03)_0px_7px_0.5rem,_rgba(0,0,0,0.05)_0px_0px_1.3rem_inset] text-white mr-[-12px]"
+                    className="no-underline font-[Nunito_Sans,sans-serif] bg-gradient-to-r from-[#3fbdA8] to-[#3fb127] hover:from-[#3eb1277e] hover:to-[#3fbda885] border-[1px] border-[rgba(255,255,255,0.1)] rounded-xl p-[0.4rem_1rem] whitespace-nowrap shadow-[rgba(0,0,0,0.03)_0px_7px_0.5rem,_rgba(0,0,0,0.05)_0px_0px_1.3rem_inset] text-white mr-[-12px]"
                   >
                     Book a Call
                   </a>

@@ -7,6 +7,7 @@ import { KTX2Loader } from "three/examples/jsm/loaders/KTX2Loader";
 import * as THREE from "three";
 import { Overlay } from "./Overlay";
 import gsap from "gsap";
+import EnvironmentScene from "./experience/Environment";
 
 export function Character({ url }) {
   const { gl,scene } = useThree(); // Get WebGLRenderer
@@ -46,11 +47,10 @@ export const Scene = () => {
 
   return (
     <>
-      <ambientLight intensity={2} />
-      <OrbitControls enableZoom={true} />
+      <OrbitControls />
       <ScrollControls pages={3} damping={0.25}>
-        <Character url="./models/SetWebScene.glb" />
-        
+        <Character url="./models/Party.glb" />
+        <EnvironmentScene/>
       </ScrollControls>
     </>
   );

@@ -13,14 +13,14 @@ export const EnvironmentScene = () => {
   });
 
   const environmentConfigs = {
-    model1: {
+    model4: {
       preset: "sunset",
       intensity: 1.2,
       ambientIntensity: 0.8,
       hemiSkyColor: "#b090ff",
       hemiGroundColor: "#382b5c"
     },
-    TrongCom: {
+    Model1: {
       preset: "city",
       intensity: 2.0,
       ambientIntensity: 1,
@@ -34,7 +34,7 @@ export const EnvironmentScene = () => {
       hemiSkyColor: "#a0ffc0",
       hemiGroundColor: "#2d6e41"
     },
-    OldMacDonald: {
+    Model2: {
       preset: "warehouse",
       intensity: 0.9,
       ambientIntensity: 0.7,

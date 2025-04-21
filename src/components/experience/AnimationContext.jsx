@@ -9,7 +9,7 @@ export const AnimationContext = createContext();
  * Tracks current model and animation status
  */
 export function AnimationProvider({ children }) {
-  const [currentModel, setCurrentModel] = useState("TrongCom");
+  const [currentModel, setCurrentModel] = useState("Model1");
   
   const value = {
     currentModel,

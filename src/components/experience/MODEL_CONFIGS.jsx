@@ -1,56 +1,42 @@
 
-import { Office } from "./Office";
 import { Animals } from "./Animals";
 import { OfficeDino } from "./OfficeDino";
-import { Customshaders } from "./Customshaders";
+import { Wasp } from "./Wasp";
 
 /**
  * Configuration for each 3D model
  * Contains model path, camera position, trigger sections, scale and animations
  */
 const MODEL_CONFIGS = {
-  TrongCom: {
-    url: "./models/animals.glb",
+  Model1: {
+    url: "./models/officeDino.glb",
     triggerSection: ".second-section",
     scale: [1, 1, 1],
     position: { x: -5, y: 0, z: 0 },
-    sectioncolor: 0x9a70e7,
-    Component: Animals,
-    // Paramètres d'animation
-    animation: {
-      camera: { x: -2.1202796686, y: 1.9744925851, z: 1.2070712632 },
-      target: [-0.2254370442, -0.0999060476, -0.0898092319], // Point vers lequel la caméra regarde
-      // Paramètres du ScrollTrigger
-      scrollTrigger: {
-        start: "top bottom",
-        end: "bottom top",
-        scrub: true,
-        immediateRender: false,
-      }
-    }
+    colorA: '#75b9a4', 
+    colorB: '#b6e6de',
+    Component: OfficeDino,
   },
-  OldMacDonald: {
-    url: "./models/Office.glb",
+  Model2: {
+    url: "./models/animals.glb",
     triggerSection: ".second-section2",
     sectioncolor: 0x4abeab,
+    colorA: '#90a1b6', 
+    colorB: '#e3e9bc',
     scale: [1.8, 1.8, 1.8],
     position: { x: 1, y: 0, z: 0 },
-    Component: Office,
-    // Paramètres d'animation standard
-    animation: {
-      camera: { x: 5, y: 3.8, z: 2.8 },
-      position: { x: 2.31, y: 0.01, z: -0.7 },
-      rotation: { x: 0.67, y: -12.9, z: 0.79 },
-      target: [0, 0,0], 
-      // Paramètres du ScrollTrigger
-      scrollTrigger: {
-        start: "top bottom",
-        end: "top top",
-        scrub: true,
-        immediateRender: false
-      }
-    }
-  }
+    Component: Animals,
+  },
+  Model3: {
+    url: "./models/Wasp.glb",
+    triggerSection: "#section5",
+    scale: [1, 1, 1],
+    position: { x: -5, y: 0, z: 0 },
+    sectioncolor: 0x9a70e7,
+    colorA: '#d7e0eb', 
+    colorB: '#cc64ca',
+    Component: Wasp,
+  },
 };
 
   // Default camera settings

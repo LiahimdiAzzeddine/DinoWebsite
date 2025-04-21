@@ -1,108 +1,129 @@
-import { useContext, useRef, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useRef } from "react";
 import { AnimationContext } from "./AnimationContext";
 import MODEL_CONFIGS from "./MODEL_CONFIGS";
-import { useThree, useFrame } from "@react-three/fiber";
-import * as THREE from "three";
+import { useFrame, useThree } from "@react-three/fiber";
+import * as THREE from 'three';
 
-export const SceneColor = () => {
-  const { currentModel } = useContext(AnimationContext);
+const GradientSkybox = () => {
   const { scene } = useThree();
-  const [gradientColors, setGradientColors] = useState({});
-  const mixFactorRef = useRef(0);
-  const targetColorRef = useRef(new THREE.Color(MODEL_CONFIGS[currentModel]?.sectioncolor || 0x9a70e7));
-  const currentColorRef = useRef(new THREE.Color(MODEL_CONFIGS[currentModel]?.sectioncolor || 0x9a70e7));
+  const { currentModel } = useContext(AnimationContext);
   
+  // Color references
+  const colorA = useRef(new THREE.Color(MODEL_CONFIGS.Model1.colorA));
+  const colorB = useRef(new THREE.Color(MODEL_CONFIGS.Model1.colorB));
+  const targetA = useRef(new THREE.Color(MODEL_CONFIGS.Model1.colorA));
+  const targetB = useRef(new THREE.Color(MODEL_CONFIGS.Model1.colorB));
+  
+  // Skybox creation
+  const skybox = useMemo(() => {
+    const geometry = new THREE.SphereGeometry(20, 32, 32);
+    const material = new THREE.ShaderMaterial({
+      uniforms: {
+        colorA: { value: colorA.current },
+        colorB: { value: colorB.current },
+        brightness: { value: 1 },  // Beaucoup plus lumineux
+        contrast: { value: 1 }     // Pour garder le contraste
+      },
+      vertexShader: `
+        varying vec3 vPosition;
+        void main() {
+          vPosition = position;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `,
+      fragmentShader: `
+        uniform vec3 colorA;
+        uniform vec3 colorB;
+        uniform float brightness;
+        uniform float contrast;
+        varying vec3 vPosition;
+        
+        // Function to adjust color brightness and ensure vivid colors
+        vec3 adjustColor(vec3 color, float bright) {
+          // First amplify the color
+          vec3 brightColor = color * bright;
+          
+          // Calculate perceived luminance (human eye sensitivity)
+          float luminance = 0.299 * brightColor.r + 0.587 * brightColor.g + 0.114 * brightColor.b;
+          
+          // Boost saturation by mixing with luminance
+          vec3 saturated = mix(vec3(luminance), brightColor, 1.3);
+          
+          // Ensure we don't exceed limits
+          return clamp(saturated, 0.0, 1.0);
+        }
+        
+        void main() {
+          // Normalize position and use y-coordinate for gradient
+          vec3 normal = normalize(vPosition);
+          
+          // Create gradient with improved transition
+          float factor = pow(normal.y * 0.5 + 0.5, contrast);
+          
+          // Mix colors with original dominance
+          vec3 baseColor = mix(colorA, colorB, factor);
+          
+          // Make colors much brighter and more vivid
+          vec3 finalColor = adjustColor(baseColor, brightness);
+          
+          gl_FragColor = vec4(finalColor, 1.0);
+        }
+      `,
+      side: THREE.BackSide,
+      depthWrite: false
+    });
+    
+    return new THREE.Mesh(geometry, material);
+  }, []);
+  
+  // Setup and cleanup
   useEffect(() => {
-    const colorGradients = {
-      model1: {
-        primary: new THREE.Color(0x70b0e7), 
-        secondary: new THREE.Color(0x3864c9),  
-        accent: new THREE.Color(0xb0d3ff)      
-      },
-      TrongCom: {
-        primary: new THREE.Color(0x9a70e7),  
-        secondary: new THREE.Color(0x6a38c9),   
-        accent: new THREE.Color(0xd3b0ff) 
+    // Ajouter une lumière directionnelle plus puissante pour éclairer la scène
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1.0);
+    directionalLight.position.set(1, 1, 1);
     
-      },
-      model4: {
-        primary: new THREE.Color(0x70e7b0),  
-        secondary: new THREE.Color(0x38c964),  
-        accent: new THREE.Color(0xb0ffd3) 
-      },
-      OldMacDonald: {
-        primary: new THREE.Color(0xe7b070),  
-        secondary: new THREE.Color(0xc96438),  
-        accent: new THREE.Color(0xffd3b0)  
-      }
+    // Ajouter une lumière ambiante plus forte
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+    
+    scene.add(skybox);
+    scene.add(directionalLight);
+    scene.add(ambientLight);
+    
+    return () => {
+      scene.remove(skybox);
+      scene.remove(directionalLight);
+      scene.remove(ambientLight);
     };
-    
-    setGradientColors(colorGradients);
-    
-    if (currentModel && colorGradients[currentModel]) {
-      targetColorRef.current = colorGradients[currentModel].primary;
-    } else {
-      targetColorRef.current = new THREE.Color(MODEL_CONFIGS[currentModel]?.sectioncolor || 0x9a70e7);
+  }, [scene, skybox]);
+  
+  // Update colors when model changes
+  useEffect(() => {
+    if (MODEL_CONFIGS[currentModel]) {
+      // Éclaircir légèrement les couleurs cibles
+      const modelColorA = new THREE.Color(MODEL_CONFIGS[currentModel].colorA);
+      const modelColorB = new THREE.Color(MODEL_CONFIGS[currentModel].colorB);
+      
+      // Rendre les couleurs légèrement plus vives dès le départ
+      modelColorA.multiplyScalar(1.2);
+      modelColorB.multiplyScalar(1.2);
+      
+      targetA.current.copy(modelColorA);
+      targetB.current.copy(modelColorB);
     }
-    
-    mixFactorRef.current = 0;
-    
   }, [currentModel]);
-
-  useFrame((state, delta) => {
-    if (mixFactorRef.current < 1) {
-      mixFactorRef.current += delta * 0.5;
-      
-      if (mixFactorRef.current > 1) mixFactorRef.current = 1;
-      
-      currentColorRef.current.lerp(targetColorRef.current, mixFactorRef.current);
-      
-      scene.background = currentColorRef.current.clone();
-      
-      if (scene.fog) {
-        scene.fog.color = currentColorRef.current.clone();
-      } else {
-        scene.fog = new THREE.Fog(
-          currentColorRef.current.clone(),
-          10,
-          60
-        );
-      }
-    }
+  
+  // Smooth color transitions
+  useFrame(() => {
+    colorA.current.lerp(targetA.current, 0.01);
+    colorB.current.lerp(targetB.current, 0.01);
     
-    // Effet de pulsation légère pour la couleur d'ambiance
-    if (currentModel && gradientColors[currentModel]) {
-      const pulseFactor = Math.sin(state.clock.elapsedTime * 0.5) * 0.15 + 0.85;
-      const pulseColor = currentColorRef.current.clone().lerp(
-        gradientColors[currentModel].accent,
-        pulseFactor * 0.2
-      );
-      
-      scene.background = pulseColor;
-      if (scene.fog) scene.fog.color = pulseColor;
+    if (skybox.material && skybox.material.uniforms) {
+      skybox.material.uniforms.colorA.value = colorA.current;
+      skybox.material.uniforms.colorB.value = colorB.current;
     }
   });
 
-  useEffect(() => {
-    if (!currentModel || !gradientColors[currentModel]) return;
-    
-    scene.children = scene.children.filter(child => 
-      !(child instanceof THREE.AmbientLight || child instanceof THREE.HemisphereLight)
-    );
-    
-    const hemisphereLight = new THREE.HemisphereLight(
-      gradientColors[currentModel].accent.getHex(),
-      gradientColors[currentModel].secondary.getHex(),
-      0.8
-    );
-    scene.add(hemisphereLight);
-    
-  }, [currentModel, gradientColors, scene]);
-
-  return (
-    <>
-    </>
-  );
+  return null;
 };
 
-export default SceneColor;
+export default GradientSkybox;

@@ -32,7 +32,7 @@ useEffect(() => {
         start: "top bottom", // debut de l'animation quand le haut du conteneur atteint le haut de la fenêtre
         end: "bottom top", // fin de l'animation quand le bas du conteneur atteint le bas de la fenêtre
         scrub: 2, // animation synchronisée avec le défilement
-        markers: true, // utile pour le débogage, à enlever en production
+        markers: false, // utile pour le débogage, à enlever en production
         ease: "power3.out", // fonction d'easing global
       
       }

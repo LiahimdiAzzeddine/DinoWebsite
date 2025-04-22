@@ -11,7 +11,7 @@ import Loader from "./components/Loader";
 function App() {
   const [activeSection, setActiveSection] = useState(0);
   const section = useRef();
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   return (
     <main className="overflow-x-hidden">

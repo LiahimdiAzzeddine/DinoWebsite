@@ -9,87 +9,318 @@ import { useGLTF, PerspectiveCamera, useAnimations } from '@react-three/drei'
 import { SkeletonUtils } from 'three-stdlib'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import * as THREE from 'three';
 
 gsap.registerPlugin(ScrollTrigger)
 export function Wasp(props) {
   const group = React.useRef()
-  const { scene, animations } = useGLTF('./models/Wasp.glb')
+  const { scene, animations } = useGLTF('./models/Build02.glb')
   const clone = React.useMemo(() => SkeletonUtils.clone(scene), [scene])
   const { nodes, materials } = useGraph(clone)
   const { actions, mixer } = useAnimations(animations, group)
   console.log("🚀 ~ Wasp ~ actions:", actions)
-
+  
   useEffect(() => {
-    if (actions?.CameraAction) {
-      const action = actions.CameraAction
-      action.play()
-
-      const action2 = actions.MetalDoorOpen
-      action2.play()
-      action.paused = true // We manually control the animation time
-
-      const duration = action.getClip().duration // Total animation duration (in seconds)
-
-      // Create a ScrollTrigger that syncs animation time with scroll progress
+    if (!actions || !mixer) return;
+  
+    const excludedAnimations = [
+      "camera action",
+      "metaldoorclose",
+      "metaldooropen",
+      "metaldoordringaction"
+    ];
+  
+    // Jouer toutes les animations une seule fois, sauf exclusions
+    Object.entries(actions).forEach(([name, action]) => {
+      const lowerName = name.toLowerCase();
+      const isExcluded = excludedAnimations.some(excluded => lowerName.includes(excluded));
+  
+      if (!isExcluded) {
+        action.setLoop(THREE.LoopOnce);
+        action.clampWhenFinished = true;
+        action.reset();
+        action.play();
+      }
+    });
+  
+    // Gestion spéciale pour l’animation "camera action"
+    const cameraAction = actions['camera action'];
+    if (cameraAction) {
+      cameraAction.play();
+      cameraAction.paused = true;
+  
+      const duration = cameraAction.getClip().duration;
+  
       ScrollTrigger.create({
         trigger: '#section5',
         start: 'top bottom',
-        end: 'top top',
-        scrub: true, // 💡 Binds scroll position to animation time
+        end: 'bottom top',
+        scrub: true,
         onUpdate: (self) => {
-          const progress = self.progress
-          action.time = progress * duration // Move to the correct time in the animation
-          mixer.update(0) // Force update of the animation frame
+          const progress = self.progress;
+          cameraAction.time = progress *2* duration;
+          mixer.update(0); // force l’update de la frame courante
         },
-      })
+      });
     }
-  }, [actions, mixer])
+  
+  }, [actions, mixer]);
+  
 
 
   return (
     <group ref={group} {...props} dispose={null}>
       <group name="Scene">
-        <group name="AnimationRoot" position={[0, 5.23, 0]}>
-          <group name="ShaderObjects" position={[0, -2.971, 0]} scale={0}>
-            <group name="DissolveSphere" position={[0, 16, 0]} scale={0}>
-              <mesh name="Sphere_2" geometry={nodes.Sphere_2.geometry} material={materials['DissolveLayer 2']} position={[0, 16, 0]} scale={0} />
-              <mesh name="Sphere_3" geometry={nodes.Sphere_3.geometry} material={materials['DissolveLayer 3']} position={[0, 16, 0]} scale={0} />
-            </group>
-            <group name="Hologram" position={[0, 16, 0]} scale={0}>
-              <group name="Cactus" position={[0, 16, 0]} scale={0}>
-                <mesh name="CactusFlat" geometry={nodes.CactusFlat.geometry} material={materials['HologramShader 1']} position={[0, 16, 0]} scale={0} />
-              </group>
-            </group>
-            <group name="ShaderWobble" position={[0, 16, 0]} scale={0}>
-              <mesh name="Sphere_(4)" geometry={nodes['Sphere_(4)'].geometry} material={materials['Wobble 1']} position={[0, 16, 0]} scale={0} />
-            </group>
-            <group name="TesselatedCapsule" position={[0, 16, 0]} scale={0}>
-              <mesh name="TesselatedCapsule001" geometry={nodes.TesselatedCapsule001.geometry} material={materials.UnlitTwist} position={[0, 16, 0]} scale={0} />
-            </group>
+        <group name="Sketchfab_model" position={[0, -0.313, 0]} scale={0}>
+          <group name="RootNode" position={[0, -2, 0]} scale={0}>
+            <group name="Object_4" position={[0, -2, 0]} scale={0} />
+            <group name="Object_16" position={[0, -2, 0]} scale={0} />
+            <group name="Object_22" position={[0, -2, 0]} scale={0} />
+            <group name="Object_7" position={[0, -2, 0]} scale={0} />
+            <group name="Object_10" position={[0, -2, 0]} scale={0} />
+            <group name="Object_19" position={[0, -2, 0]} scale={0} />
+            <group name="Object_13" position={[0, -2, 0]} scale={0} />
           </group>
         </group>
-        <group name="WaspArmature" position={[0, 1.768, 0]} scale={0.044}>
-          <primitive object={nodes.Root} />
-          <primitive object={nodes.neutral_bone} />
-          <group name="Wasp">
-            <skinnedMesh name="Cylinder002" geometry={nodes.Cylinder002.geometry} material={materials.Yellow} skeleton={nodes.Cylinder002.skeleton} />
-            <skinnedMesh name="Cylinder002_1" geometry={nodes.Cylinder002_1.geometry} material={materials.Black} skeleton={nodes.Cylinder002_1.skeleton} />
-            <skinnedMesh name="Cylinder002_2" geometry={nodes.Cylinder002_2.geometry} material={materials.LightBlue} skeleton={nodes.Cylinder002_2.skeleton} />
-            <skinnedMesh name="Cylinder002_3" geometry={nodes.Cylinder002_3.geometry} material={materials.Orange} skeleton={nodes.Cylinder002_3.skeleton} />
-          </group>
-        </group>
-        <PerspectiveCamera name="Scene02" makeDefault={true} far={1000} near={0.1} fov={22.895} position={[-2.889, 7.053, 17.398]} rotation={[-0.051, -0.293, -0.015]} />
-        <mesh name="Quad" geometry={nodes.Quad.geometry} material={materials.UnlitTwist} position={[2.977, 7.26, 0.62]} rotation={[-Math.PI, 0.862, -Math.PI]} scale={[6.275, 3.523, 3.523]} />
-        <mesh name="MoviePanel" geometry={nodes.MoviePanel.geometry} material={materials.Metal} position={[3.003, 7.264, 0.597]} rotation={[0, -0.862, 0]} scale={[1.594, 1.574, 1.055]} />
-        <mesh name="MetalDoorDring" geometry={nodes.MetalDoorDring.geometry} material={materials.Metal} position={[0, 3.54, 0]}>
-          <mesh name="MetalDoor1" geometry={nodes.MetalDoor1.geometry} material={materials.Metal} position={[1.511, 0.155, 0]} />
-          <mesh name="MetalDoor2" geometry={nodes.MetalDoor2.geometry} material={materials.Metal} position={[-1.511, 0.155, 0]} rotation={[Math.PI, 0, Math.PI]} />
+        <group
+          name="Sketchfab_model001"
+          position={[0, 0.184, 0]}
+          rotation={[-Math.PI / 2, 0, 0]}
+          scale={0.378}
+        />
+        <group name="cute_characterfbx" position={[0, 0.184, 0]} scale={0.004} />
+        <group name="RootNode001" position={[0, 0.184, 0]} scale={0.004} />
+        <group name="Cube" position={[0, 0.184, 0]} rotation={[-Math.PI / 2, 0, 0]} scale={0.756} />
+        <group name="Cylinder" position={[0, -0.313, 0]} scale={0} />
+        <group
+          name="Cube001"
+          position={[0, 0.184, 0]}
+          rotation={[-Math.PI / 2, 0, 0]}
+          scale={0.756}
+        />
+        <group
+          name="Sphere"
+          position={[0, 0.184, 0]}
+          rotation={[-Math.PI / 2, 0, 0]}
+          scale={0.378}
+        />
+        <group
+          name="Sphere001"
+          position={[0, 0.184, 0]}
+          rotation={[-Math.PI / 2, 0, 0]}
+          scale={0.378}
+        />
+        <group
+          name="Cube002"
+          position={[0, 0.184, 0]}
+          rotation={[-Math.PI / 2, 0, 0]}
+          scale={0.355}
+        />
+        <group
+          name="Cube012"
+          position={[0, 0.184, 0]}
+          rotation={[-Math.PI / 2, 0, 0]}
+          scale={0.378}
+        />
+        <group
+          name="NurbsPath009"
+          position={[-0.291, -0.129, -0.72]}
+          rotation={[0.036, 0.59, 1.428]}
+          scale={0.039}
+        />
+        <group name="ShaderObjects" position={[0, -3.367, 0]} scale={0} />
+        <mesh
+          name="Quad"
+          castShadow
+          receiveShadow
+          geometry={nodes.Quad.geometry}
+          material={materials['Material.009']}
+          position={[2.977, 2.862, 0.62]}
+          rotation={[-Math.PI, 0.862, -Math.PI]}
+          scale={[6.275, 3.523, 3.523]}
+        />
+        <mesh
+          name="MoviePanel"
+          castShadow
+          receiveShadow
+          geometry={nodes.MoviePanel.geometry}
+          material={materials.Metal}
+          position={[3.003, 2.866, 0.597]}
+          rotation={[0, -0.862, 0]}
+          scale={[1.594, 1.574, 1.055]}
+        />
+        <mesh
+          name="MetalDoorDring"
+          castShadow
+          receiveShadow
+          geometry={nodes.MetalDoorDring.geometry}
+          material={materials.Metal}
+          position={[0, -0.858, 0]}>
+          <mesh
+            name="MetalDoor1"
+            castShadow
+            receiveShadow
+            geometry={nodes.MetalDoor1.geometry}
+            material={materials.Metal}
+            position={[1.511, 0.155, 0]}
+          />
+          <mesh
+            name="MetalDoor2"
+            castShadow
+            receiveShadow
+            geometry={nodes.MetalDoor2.geometry}
+            material={materials.Metal}
+            position={[-1.511, 0.155, 0]}
+            rotation={[Math.PI, 0, Math.PI]}
+          />
         </mesh>
-        <mesh name="GroundCylinderTransparent_1001" geometry={nodes.GroundCylinderTransparent_1001.geometry} material={materials.OpaqueGround_CustomShaders_Mat} position={[0, 1.377, 0]} scale={[0.915, 1, 0.915]} />
-        <mesh name="Cylinder" geometry={nodes.Cylinder.geometry} material={materials['Material.001']} position={[0, 1.435, 0]} scale={2.231} />
+        <mesh
+          name="GroundCylinderTransparent_1001"
+          castShadow
+          receiveShadow
+          geometry={nodes.GroundCylinderTransparent_1001.geometry}
+          material={materials.OpaqueGround_CustomShaders_Mat}
+          position={[0, -3.021, 0]}
+          scale={[0.915, 1, 0.915]}
+        />
+        <group name="Wasp" position={[0, 1.372, 0]} scale={0.044}>
+          <mesh
+            name="Cylinder002"
+            castShadow
+            receiveShadow
+            geometry={nodes.Cylinder002.geometry}
+            material={materials.Yellow}
+          />
+          <mesh
+            name="Cylinder002_1"
+            castShadow
+            receiveShadow
+            geometry={nodes.Cylinder002_1.geometry}
+            material={materials.Black}
+          />
+          <mesh
+            name="Cylinder002_2"
+            castShadow
+            receiveShadow
+            geometry={nodes.Cylinder002_2.geometry}
+            material={materials.LightBlue}
+          />
+          <mesh
+            name="Cylinder002_3"
+            castShadow
+            receiveShadow
+            geometry={nodes.Cylinder002_3.geometry}
+            material={materials.Orange}
+          />
+        </group>
+        <group name="All" position={[0, -2.256, 0]} scale={1.326}>
+          <mesh
+            name="Circle_Material_0"
+            castShadow
+            receiveShadow
+            geometry={nodes.Circle_Material_0.geometry}
+            material={materials['Material.002']}
+            position={[0, -0.396, 0]}
+            scale={0}
+          />
+          <mesh
+            name="Cube001_Material_0"
+            castShadow
+            receiveShadow
+            geometry={nodes.Cube001_Material_0.geometry}
+            material={materials['Material.002']}
+            position={[0, -0.396, 0]}
+            scale={0}
+          />
+          <mesh
+            name="Cube002_Material_0"
+            castShadow
+            receiveShadow
+            geometry={nodes.Cube002_Material_0.geometry}
+            material={materials['Material.002']}
+            position={[0, -0.018, 0]}
+            rotation={[-Math.PI / 2, 0, 0]}
+            scale={-0.002}
+          />
+          <mesh
+            name="Cube012_Material_0"
+            castShadow
+            receiveShadow
+            geometry={nodes.Cube012_Material_0.geometry}
+            material={materials['Material.002']}
+            position={[0, -0.379, 0]}
+            rotation={[-Math.PI / 2, 0, 0]}
+            scale={[0.024, 0.024, 0.015]}
+          />
+          <mesh
+            name="Cube012_Material_0001"
+            castShadow
+            receiveShadow
+            geometry={nodes.Cube012_Material_0001.geometry}
+            material={materials['Material.002']}
+            position={[0, -0.396, 0]}
+            rotation={[-Math.PI / 2, 0, 0]}
+            scale={[0.003, 0.003, 0]}
+          />
+          <mesh
+            name="Cube_Material001_0"
+            castShadow
+            receiveShadow
+            geometry={nodes.Cube_Material001_0.geometry}
+            material={materials['Material.001']}
+            position={[0, -0.396, 0]}
+            rotation={[-Math.PI / 2, 0, -Math.PI]}
+            scale={[-0.007, -0.007, 0]}
+          />
+          <mesh
+            name="Cylinder_Material004_0"
+            castShadow
+            receiveShadow
+            geometry={nodes.Cylinder_Material004_0.geometry}
+            material={materials['Material.004']}
+            position={[0, -0.396, 0]}
+            scale={0}
+          />
+          <mesh
+            name="Sphere001_Material003_0"
+            castShadow
+            receiveShadow
+            geometry={nodes.Sphere001_Material003_0.geometry}
+            material={materials['Material.005']}
+            position={[0, -0.396, 0]}
+            scale={0}
+          />
+          <mesh
+            name="Sphere_Material002_0"
+            castShadow
+            receiveShadow
+            geometry={nodes.Sphere_Material002_0.geometry}
+            material={materials['Material.003']}
+            position={[0, -0.396, 0]}
+            scale={0}
+          />
+        </group>
+        <mesh
+          name="Cylinder001"
+          castShadow
+          receiveShadow
+          geometry={nodes.Cylinder001.geometry}
+          material={materials['Material.007']}
+          position={[0, -2.919, 0]}
+          scale={2.164}
+        />
+        <PerspectiveCamera
+          name="Camera"
+          makeDefault={true}
+          far={1000}
+          near={0.1}
+          fov={31.006}
+          position={[10.987, 5.839, 18.583]}
+          rotation={[-0.272, 0.31, 0.085]}
+        />
       </group>
     </group>
   )
 }
 
-useGLTF.preload('./models/Wasp.glb')
+useGLTF.preload('./models/Build02.glb')

@@ -18,23 +18,27 @@ import {
 import MODEL_CONFIGS from "./experience/MODEL_CONFIGS";
 import Rig from "./experience/Rig";
 import AnimatedGradientBackground from "./experience/SceneColor";
-import { Environment, Html, OrbitControls, PerspectiveCamera } from "@react-three/drei";
+import { CameraControls, Environment, Html, OrbitControls, PerspectiveCamera, Sky } from "@react-three/drei";
 import * as THREE from "three";
 import CameraPositionHelper from "./CameraPositionHelper";
 
 gsap.registerPlugin(ScrollTrigger);
 
+// ModelContainer.jsx
 export function ModelContainer() {
   const { currentModel } = useContext(AnimationContext);
   const config = MODEL_CONFIGS[currentModel];
   const ModelComponent = config.Component;
+  const { size } = useThree();
 
   return (
     <Rig key={currentModel}>
-      <ModelComponent scale={0.2} />
+      <fog attach="fog" args={['#ff5020', 5, 18]} />
+      <ModelComponent scale={size.width >= 1024 ? 0.2 : 0.1} />
     </Rig>
   );
 }
+
 
 // ---- Perspective Camera Manager ---- //
 const CameraManager = () => {
@@ -111,11 +115,94 @@ const SceneManager = () => {
 
   return (
     <>
-      <CameraManager key={currentModel} />
+    <CameraManager/>
       <ModelContainer />
     </>
   );
 };
+
+
+const CameraAnimation = () => {
+  const { camera } = useThree();
+  const camRef = useRef(camera);
+
+  useLayoutEffect(() => {
+    camera.position.set(0.4333,1.169, 1.4868);
+    camera.lookAt(0.6659, 0.4029, -0.7906); // met le bon target ici
+  }, []);
+  
+
+  useLayoutEffect(() => {
+    const timeline2 = gsap.timeline({
+      scrollTrigger: {
+        trigger: ".second-section2",
+         start: 'top bottom',
+          end: 'bottom top',
+        scrub: true,
+        markers: true, // mets à true pour débug
+      },
+    });
+    timeline2.to(camera.position, {
+      x: 0.699,
+      y: 0.2853,
+      z: 0.0609,
+      duration: 1,
+      onUpdate: () => camera.lookAt(0.1452, -0.304, -1.4713),
+    });
+    const timeline = gsap.timeline({
+      scrollTrigger: {
+        trigger: ".second-section",
+         start: 'top bottom',
+          end: 'bottom top',
+          ease: "power2.inOut",
+        scrub: true,
+      },
+    });
+    timeline.to(camera.position, {
+      x: 0.4333,
+      y: 1.169,
+      z:  1.4868,
+      duration: 0,
+      ease: "power2.inOut",
+
+      onUpdate: () => camera.lookAt(0.6659, 0.4029, -0.7906),
+    });
+    timeline.to(camera.position, {
+      x: -0.8382,
+      y: 1.1769,
+      z: 0.8896,
+      duration: 1,
+      ease: "power2.inOut",
+      onUpdate: () => camera.lookAt(0.6224, 0.3342, -0.4441),
+    });
+
+    timeline.to(camera.position, {
+      x: 0.3661,
+      y: 1.1856,
+      z: 0.596,
+      duration: 2,
+      ease: "power2.inOut",
+      onUpdate: () => camera.lookAt(0.7731, 0.341, -2.6481),
+    });
+    timeline.to(camera.position, {
+      x: -0.2303,
+      y: 1.0714,
+      z: 0.7302,
+      duration: 2,
+      ease: "power2.inOut",
+      onUpdate: () => camera.lookAt(-0.016, 0.7217, -1.9896),
+    });
+    
+
+    return () => {
+      timeline.scrollTrigger?.kill();
+    };
+  }, []);
+
+  return null;
+};
+
+
 
 
 // Updated CanvasContainer component with gradient background
@@ -124,15 +211,15 @@ export const CanvasContainer = () => (
     <Canvas>
       <AnimatedGradientBackground />
       
-      <ambientLight intensity={Math.PI} />
       {
         /**
          * 
          * <Environment files="https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/potsdamer_platz_1k.hdr" />
          */
       }
-      
-      <Environment preset="city" />
+      <ambientLight intensity={0.03} />
+      <spotLight angle={0.14} color="#ffd0d0" penumbra={1} position={[25, 50, -20]} shadow-mapSize={[2048, 2048]} shadow-bias={-0.0001} castShadow />
+      <Environment files="https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/potsdamer_platz_1k.hdr" />
       <Suspense
         fallback={
           <Html center>
@@ -141,7 +228,7 @@ export const CanvasContainer = () => (
         }
       >
         <SceneManager />
-      </Suspense>
+      </Suspense> 
     </Canvas>
   </AnimationProvider>
 );
@@ -152,8 +239,8 @@ export const CanvasContainer = () => (
 }
 {
   /**
-   *   
-   *<CameraPositionHelper/>
+   *  
+   *
    */
 }
 {

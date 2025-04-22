@@ -108,7 +108,7 @@ export const Overlay = () => {
           </span>
         </h2>
 
-        <p className="font-normal text-white text-[1.1em] leading-[1.35em] mt-[1.5em] mb-[1em] react-element-1">
+        <p className="font-normal text-white text-[1.1em] leading-[1.35em] mt-[1.5em] mb-[1em] react-element-1 section-1">
           Dinomite Studio is the strategic development partner of choice For
           ambitious game publishers looking to expand their hybrid casual
           portfolio. Our approach combines accelerated prototyping with
@@ -133,7 +133,7 @@ export const Overlay = () => {
             className="inverted item inline-block text-black bg-white bg-opacity-80 border border-white border-opacity-30 rounded-[30px] py-[0.3em] px-[0.8em] text-[1em] font-bold shadow-[rgba(0,0,0,0.5)_0px_0px_2px] transition-all duration-[100ms] ease-out my-[0.5em] mr-[0.5em] no-underline"
             aria-label=""
           >
-            <div className="flex gap-[0.5em] items-center">
+            <div className="flex gap-[0.5em] items-center section-2">
               <img
                 alt="Logo of Ios"
                 src="https://needle.tools/_nuxt/logo-three.CiaNm32y.png"
@@ -302,6 +302,7 @@ export const Overlay = () => {
           </a>
         </div>
       </Section>
+
     </>
   );
 };

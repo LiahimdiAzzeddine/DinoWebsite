@@ -37,14 +37,7 @@ const MODEL_CONFIGS = {
     colorB: '#cc64ca',
     Component: Wasp,
   },
+  
 };
 
-  // Default camera settings
-  export const cameraSettings = {
-    fov: 45,
-    far: 1000.134,
-    near: 0.3,
-    position: [2.303, 2.091, 5.028],
-    rotation: [0, 0.112, 0.019],
-  };
 export default MODEL_CONFIGS;

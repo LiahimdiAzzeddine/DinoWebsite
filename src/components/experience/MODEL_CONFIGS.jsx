@@ -1,7 +1,7 @@
+import { DinoOffice } from "./Web1";
 
-import { Animals } from "./Animals";
-import { OfficeDino } from "./OfficeDino";
-import { Wasp } from "./Wasp";
+
+
 
 /**
  * Configuration for each 3D model
@@ -15,17 +15,17 @@ const MODEL_CONFIGS = {
     position: { x: -5, y: 0, z: 0 },
     colorA: '#75b9a4', 
     colorB: '#b6e6de',
-    Component: OfficeDino,
+    Component: DinoOffice,
   },
   Model2: {
-    url: "./models/animals.glb",
+    url: "./models/Web4.glb",
     triggerSection: ".second-section2",
     sectioncolor: 0x4abeab,
     colorA: '#90a1b6', 
     colorB: '#e3e9bc',
     scale: [1.8, 1.8, 1.8],
     position: { x: 1, y: 0, z: 0 },
-    Component: Animals,
+    Component: DinoOffice,
   },
   Model3: {
     url: "./models/Wasp.glb",
@@ -35,7 +35,7 @@ const MODEL_CONFIGS = {
     sectioncolor: 0x9a70e7,
     colorA: '#d7e0eb', 
     colorB: '#cc64ca',
-    Component: Wasp,
+    Component: DinoOffice,
   },
   
 };

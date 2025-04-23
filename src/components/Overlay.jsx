@@ -1,24 +1,36 @@
-import NavBar from "./nav/NavBar";
-import { Typewriter } from "react-simple-typewriter";
-
-import { motion } from "framer-motion";
+import { Scroll, useScroll } from "@react-three/drei";
+import { useFrame } from "@react-three/fiber";
 import { useState } from "react";
-import VerticalProgressBar from "./nav/VerticalProgressBar";
-
-
+import { useRef, useEffect } from "react";
+import gsap from "gsap";
+import { Typewriter } from "react-simple-typewriter";
+import NavBar from "./nav/NavBar";
+import VerticalProgressBar from "./nav/VerticalProgressBar"
 const Section = (props) => {
+  const sectionRef = useRef(null);
+  useEffect(() => {
+    gsap.fromTo(
+      sectionRef.current,
+      { opacity: 0, y: 20 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        ease: "power3.out",
+      }
+    );
+  }, []);
+
   return (
-    <motion.section
-    id={props.id}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, ease: "easeOut" }}
+    <section
+      ref={sectionRef}
+      id={props.id}
       className={`min-h-screen relative flex flex-col justify-center p-4 md:p-6 lg:p-10 ${
         props.right ? "items-end" : "items-start"
       } ${props.class}`}
       style={{ opacity: props.opacity }}
     >
-      <div className="w-full md:w-3/4 lg:w-1/2 flex items-center justify-center  ">
+      <div className="w-full md:w-3/4 lg:w-1/2 flex items-center justify-center">
         <div className="w-full max-w-sm relative z-10">
           {/* Glass effect background */}
           <div className="absolute top-[-15px] md:top-[-20px] lg:top-[-30px] left-[-15px] md:left-[-20px] lg:left-[-30px] h-[calc(100%+30px)] md:h-[calc(100%+40px)] lg:h-[calc(100%+60px)] w-[calc(100%+30px)] md:w-[calc(100%+40px)] lg:w-[calc(100%+60px)] rounded-[20px] md:rounded-[30px] lg:rounded-[40px] shadow-[0_0_10px_#5e5e5e38] md:shadow-[0_0_15px_#5e5e5e38] lg:shadow-[0_0_20px_#5e5e5e38] outline outline-[1px] outline-[#ffffff2b] backdrop-blur-[20px] md:backdrop-blur-[30px] lg:backdrop-blur-[40px] backdrop-saturate-[1.4] bg-[#66666624]" />
@@ -28,12 +40,18 @@ const Section = (props) => {
           </div>
         </div>
       </div>
-    </motion.section>
+    </section>
   );
 };
 
+
+
 export const Overlay = () => {
-  {/** */}
+  const scroll = useScroll();
+  const [opacityFirstSection, setOpacityFirstSection] = useState(1);
+  const [opacitySecondSection, setOpacitySecondSection] = useState(1);
+  const [opacityLastSection, setOpacityLastSection] = useState(1);
+
   const [activeSection, setActiveSection] = useState("section1");
   
   // Définir les sections
@@ -43,23 +61,21 @@ export const Overlay = () => {
     { id: 'section3', label: 'Designer' },
     { id: 'section4', label: 'Services' },
   ];
+
+  useFrame(() => {
+    setOpacityFirstSection(1 - scroll.range(0, 1 / 3));
+    setOpacitySecondSection(scroll.curve(1 / 3, 1 / 3));
+    setOpacityLastSection(scroll.range(2 / 3, 1 / 3));
+  });
+
   return (
-    
-    <>
-      <div className="w-full relative m-auto flex justify-center">
-        <NavBar />
-      </div>
-     {/** */} 
-     <VerticalProgressBar
-        sections={sections}
-        setActiveSection={setActiveSection}
-      />
-
-
-
-      <Section right  id="section1">
+    <Scroll html> 
+    <div className="w-screen">
+        
+      
+        <Section right opacity={opacityFirstSection}>
         <div></div>
-        <span className="notranslate text-white tracking-[1px] uppercase text-center md:text-left">
+        <span className="notranslate text-white tracking-[1px] uppercase text-center md:text-left testo">
           Dinomite Studio
         </span>
 
@@ -95,9 +111,8 @@ export const Overlay = () => {
             Let’s launch your next hit, together
           </div>
         </a>
-      </Section>
-
-      <Section right  class="second-section" id="section2">
+        </Section>
+        <Section right opacity={opacitySecondSection}>
         <span className="notranslate text-white tracking-[1px] uppercase text-center md:text-left" >
           Next Hit
         </span>
@@ -142,8 +157,8 @@ export const Overlay = () => {
             </div>
           </a>
         </div>
-      </Section>
-      <Section right   id="section3">
+        </Section>
+        <Section right opacity={opacityLastSection}>
         <h2 className="font-bold text-white text-[1em] md:text-[2em] leading-[1.1em] mt-[0.4em] mb-[0.4em] section_2">
           Meet (First name), a Game designer
         </h2>
@@ -154,155 +169,9 @@ export const Overlay = () => {
           cost-effective, quality-first production that minimizes risks and
           ensures a fast, market-ready game that exceeds industry standards.
         </p>
-      </Section>
-      <Section right id="section4">
-        <h2 className="font-bold text-white text-[1em] md:text-[2em] leading-[1.1em] mt-[0.4em] mb-[0.4em] second-section2">
-          what can Dinomite studio help you with
-        </h2>
-        <p className="font-normal text-white text-[1.1em] leading-[1.35em] mt-[1.5em] mb-[1em] react-element-1">
-          we specialize in fast, high-quality game development tailored for
-          publishers and studios. Whether you need rapid prototyping to test new
-          game concepts, full game development from ideation to launch, or
-          co-development to enhance your existing projects, our expert team
-          ensures efficient, risk-minimized production that meets industry
-          standards. Partner with us to bring your games to life—faster,
-          smarter, and better.{" "}
-        </p>
-        <p className="font-normal text-white text-[1.1em] leading-[1.35em] mt-[1.5em] mb-[1em] react-element-1">
-          we specialize in fast, high-quality game development tailored for
-          publishers and studios. Whether you need rapid prototyping to test new
-          game concepts, full game development from ideation to launch, or
-          co-development to enhance your existing projects, our expert team
-          ensures efficient, risk-minimized production that meets industry
-          standards. Partner with us to bring your games to life—faster,
-          smarter, and better.{" "}
-        </p>
-        <div className="text-white">
-          <a
-            className="inverted item inline-block text-black bg-white bg-opacity-80 border border-white border-opacity-30 rounded-[30px] py-[0.3em] px-[0.8em] text-[1em] font-bold shadow-[rgba(0,0,0,0.5)_0px_0px_2px] transition-all duration-[100ms] ease-out my-[0.5em] mr-[0.5em] no-underline"
-            aria-label=""
-          >
-            <div className="flex gap-[0.5em] items-center">
-              <img
-                src="https://needle.tools/_nuxt/logo-three.CiaNm32y.png"
-                alt="Logo of Android"
-                className="h-[1.4em]"
-              />
-            </div>
-          </a>
-          <a
-            className="inverted item inline-block text-black bg-white bg-opacity-80 border border-white border-opacity-30 rounded-[30px] py-[0.3em] px-[0.8em] text-[1em] font-bold shadow-[rgba(0,0,0,0.5)_0px_0px_2px] transition-all duration-[100ms] ease-out my-[0.5em] mr-[0.5em] no-underline"
-            aria-label=""
-          >
-            <div className="flex gap-[0.5em] items-center">
-              <img
-                alt="Logo of Ios"
-                src="https://needle.tools/_nuxt/logo-three.CiaNm32y.png"
-                className="h-[1.4em]"
-              />
-            </div>
-          </a>
-        </div>
-      </Section>
-      <Section right >
-        <h2 className="font-bold text-white text-[1em] md:text-[2em] leading-[1.1em] mt-[0.4em] mb-[0.4em] second-section2">
-          what can Dinomite studio help you with
-        </h2>
-        <p className="font-normal text-white text-[1.1em] leading-[1.35em] mt-[1.5em] mb-[1em] react-element-1">
-          we specialize in fast, high-quality game development tailored for
-          publishers and studios. Whether you need rapid prototyping to test new
-          game concepts, full game development from ideation to launch, or
-          co-development to enhance your existing projects, our expert team
-          ensures efficient, risk-minimized production that meets industry
-          standards. Partner with us to bring your games to life—faster,
-          smarter, and better.{" "}
-        </p>
-        <p className="font-normal text-white text-[1.1em] leading-[1.35em] mt-[1.5em] mb-[1em] react-element-1">
-          we specialize in fast, high-quality game development tailored for
-          publishers and studios. Whether you need rapid prototyping to test new
-          game concepts, full game development from ideation to launch, or
-          co-development to enhance your existing projects, our expert team
-          ensures efficient, risk-minimized production that meets industry
-          standards. Partner with us to bring your games to life—faster,
-          smarter, and better.{" "}
-        </p>
-        <div className="text-white">
-          <a
-            className="inverted item inline-block text-black bg-white bg-opacity-80 border border-white border-opacity-30 rounded-[30px] py-[0.3em] px-[0.8em] text-[1em] font-bold shadow-[rgba(0,0,0,0.5)_0px_0px_2px] transition-all duration-[100ms] ease-out my-[0.5em] mr-[0.5em] no-underline"
-            aria-label=""
-          >
-            <div className="flex gap-[0.5em] items-center">
-              <img
-                src="https://needle.tools/_nuxt/logo-three.CiaNm32y.png"
-                alt="Logo of Android"
-                className="h-[1.4em]"
-              />
-            </div>
-          </a>
-          <a
-            className="inverted item inline-block text-black bg-white bg-opacity-80 border border-white border-opacity-30 rounded-[30px] py-[0.3em] px-[0.8em] text-[1em] font-bold shadow-[rgba(0,0,0,0.5)_0px_0px_2px] transition-all duration-[100ms] ease-out my-[0.5em] mr-[0.5em] no-underline"
-            aria-label=""
-          >
-            <div className="flex gap-[0.5em] items-center">
-              <img
-                alt="Logo of Ios"
-                src="https://needle.tools/_nuxt/logo-three.CiaNm32y.png"
-                className="h-[1.4em]"
-              />
-            </div>
-          </a>
-        </div>
-      </Section>
-      <Section right id="section5">
-        <h2 className="font-bold text-white text-[1em] md:text-[2em] leading-[1.1em] mt-[0.4em] mb-[0.4em] second-section2">
-          what can Dinomite studio help you with
-        </h2>
-        <p className="font-normal text-white text-[1.1em] leading-[1.35em] mt-[1.5em] mb-[1em] react-element-1">
-          we specialize in fast, high-quality game development tailored for
-          publishers and studios. Whether you need rapid prototyping to test new
-          game concepts, full game development from ideation to launch, or
-          co-development to enhance your existing projects, our expert team
-          ensures efficient, risk-minimized production that meets industry
-          standards. Partner with us to bring your games to life—faster,
-          smarter, and better.{" "}
-        </p>
-        <p className="font-normal text-white text-[1.1em] leading-[1.35em] mt-[1.5em] mb-[1em] react-element-1">
-          we specialize in fast, high-quality game development tailored for
-          publishers and studios. Whether you need rapid prototyping to test new
-          game concepts, full game development from ideation to launch, or
-          co-development to enhance your existing projects, our expert team
-          ensures efficient, risk-minimized production that meets industry
-          standards. Partner with us to bring your games to life—faster,
-          smarter, and better.{" "}
-        </p>
-        <div className="text-white">
-          <a
-            className="inverted item inline-block text-black bg-white bg-opacity-80 border border-white border-opacity-30 rounded-[30px] py-[0.3em] px-[0.8em] text-[1em] font-bold shadow-[rgba(0,0,0,0.5)_0px_0px_2px] transition-all duration-[100ms] ease-out my-[0.5em] mr-[0.5em] no-underline"
-            aria-label=""
-          >
-            <div className="flex gap-[0.5em] items-center">
-              <img
-                src="https://needle.tools/_nuxt/logo-three.CiaNm32y.png"
-                alt="Logo of Android"
-                className="h-[1.4em]"
-              />
-            </div>
-          </a>
-          <a
-            className="inverted item inline-block text-black bg-white bg-opacity-80 border border-white border-opacity-30 rounded-[30px] py-[0.3em] px-[0.8em] text-[1em] font-bold shadow-[rgba(0,0,0,0.5)_0px_0px_2px] transition-all duration-[100ms] ease-out my-[0.5em] mr-[0.5em] no-underline"
-            aria-label=""
-          >
-            <div className="flex gap-[0.5em] items-center">
-              <img
-                alt="Logo of Ios"
-                src="https://needle.tools/_nuxt/logo-three.CiaNm32y.png"
-                className="h-[1.4em]"
-              />
-            </div>
-          </a>
-        </div>
-      </Section>
+        </Section>
+      </div>
+    </Scroll>
 
-    </>
   );
 };

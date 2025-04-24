@@ -18,9 +18,9 @@ function App() {
         <div className="w-full relative m-auto flex justify-center">
           <NavBar />
         </div>
-        <Canvas>
+        <Canvas shadows>
+          
           <AnimatedGradientBackground />
-
           <Experience />
         </Canvas>
       </div>

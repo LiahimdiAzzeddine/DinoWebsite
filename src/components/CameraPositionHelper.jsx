@@ -85,7 +85,7 @@ timeline.to(camera.rotation, {
 
   return (
     <>
-      <OrbitControls ref={controls} />
+      <OrbitControls ref={controls} enableZoom={false}/>
 
       <Html fullscreen transform={false} style={{ pointerEvents: "none" }}>
         <div

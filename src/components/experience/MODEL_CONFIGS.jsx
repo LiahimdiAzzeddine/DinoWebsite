@@ -1,4 +1,5 @@
 import { DinoOffice } from "./Web1";
+import { Man } from "./Web2";
 
 
 
@@ -21,11 +22,11 @@ const MODEL_CONFIGS = {
     url: "./models/Web4.glb",
     triggerSection: ".second-section2",
     sectioncolor: 0x4abeab,
-    colorA: '#90a1b6', 
-    colorB: '#e3e9bc',
+    colorA: '#75b9a4', 
+    colorB: '#b6e6de',
     scale: [1.8, 1.8, 1.8],
     position: { x: 1, y: 0, z: 0 },
-    Component: DinoOffice,
+    Component: Man,
   },
   Model3: {
     url: "./models/Wasp.glb",

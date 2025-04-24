@@ -61,13 +61,14 @@ export const Overlay = () => {
     { id: 'section3', label: 'Designer' },
     { id: 'section4', label: 'Services' },
   ];
+  /*
 
   useFrame(() => {
     setOpacityFirstSection(1 - scroll.range(0, 1 / 3));
     setOpacitySecondSection(scroll.curve(1 / 3, 1 / 3));
     setOpacityLastSection(scroll.range(2 / 3, 1 / 3));
   });
-
+*/
   return (
     <Scroll html> 
     <div className="w-screen">
@@ -169,6 +170,144 @@ export const Overlay = () => {
           cost-effective, quality-first production that minimizes risks and
           ensures a fast, market-ready game that exceeds industry standards.
         </p>
+        </Section>
+        <Section right >
+        <span className="notranslate text-white tracking-[1px] uppercase text-center md:text-left" >
+          Next Hit
+        </span>
+        <h2 className="font-bold text-white text-[1em] md:text-[2em] leading-[1.1em] mt-[0.4em] mb-[0.4em] element_1">
+          Where Speed Meets Quality
+          <span className="inline-block opacity-100 text-white transition-all duration-[200ms]">
+            Let’s Build the Next Hit Together!
+          </span>
+        </h2>
+
+        <p className="font-normal text-white text-[1.1em] leading-[1.35em] mt-[1.5em] mb-[1em] react-element-1 section-1">
+          Dinomite Studio is the strategic development partner of choice For
+          ambitious game publishers looking to expand their hybrid casual
+          portfolio. Our approach combines accelerated prototyping with
+          cost-effective, quality-first production that minimizes risks and
+          ensures a fast, market-ready game that exceeds industry standards.
+        </p>
+
+        <div className="text-white">
+          <a
+            className="inverted item inline-block text-black bg-white bg-opacity-80 border border-white border-opacity-30 rounded-[30px] py-[0.3em] px-[0.8em] text-[1em] font-bold shadow-[rgba(0,0,0,0.5)_0px_0px_2px] transition-all duration-[100ms] ease-out my-[0.5em] mr-[0.5em] no-underline"
+            aria-label=""
+          >
+            <div className="flex gap-[0.5em] items-center">
+              <img
+                src="https://needle.tools/_nuxt/logo-three.CiaNm32y.png"
+                alt="Logo of Android"
+                className="h-[1.4em]"
+              />
+            </div>
+          </a>
+          <a
+            className="inverted item inline-block text-black bg-white bg-opacity-80 border border-white border-opacity-30 rounded-[30px] py-[0.3em] px-[0.8em] text-[1em] font-bold shadow-[rgba(0,0,0,0.5)_0px_0px_2px] transition-all duration-[100ms] ease-out my-[0.5em] mr-[0.5em] no-underline"
+            aria-label=""
+          >
+            <div className="flex gap-[0.5em] items-center section-2">
+              <img
+                alt="Logo of Ios"
+                src="https://needle.tools/_nuxt/logo-three.CiaNm32y.png"
+                className="h-[1.4em]"
+              />
+            </div>
+          </a>
+        </div>
+        </Section>
+        <Section right >
+        <span className="notranslate text-white tracking-[1px] uppercase text-center md:text-left" >
+          Next Hit
+        </span>
+        <h2 className="font-bold text-white text-[1em] md:text-[2em] leading-[1.1em] mt-[0.4em] mb-[0.4em] element_1">
+          Where Speed Meets Quality
+          <span className="inline-block opacity-100 text-white transition-all duration-[200ms]">
+            Let’s Build the Next Hit Together!
+          </span>
+        </h2>
+
+        <p className="font-normal text-white text-[1.1em] leading-[1.35em] mt-[1.5em] mb-[1em] react-element-1 section-1">
+          Dinomite Studio is the strategic development partner of choice For
+          ambitious game publishers looking to expand their hybrid casual
+          portfolio. Our approach combines accelerated prototyping with
+          cost-effective, quality-first production that minimizes risks and
+          ensures a fast, market-ready game that exceeds industry standards.
+        </p>
+
+        <div className="text-white">
+          <a
+            className="inverted item inline-block text-black bg-white bg-opacity-80 border border-white border-opacity-30 rounded-[30px] py-[0.3em] px-[0.8em] text-[1em] font-bold shadow-[rgba(0,0,0,0.5)_0px_0px_2px] transition-all duration-[100ms] ease-out my-[0.5em] mr-[0.5em] no-underline"
+            aria-label=""
+          >
+            <div className="flex gap-[0.5em] items-center">
+              <img
+                src="https://needle.tools/_nuxt/logo-three.CiaNm32y.png"
+                alt="Logo of Android"
+                className="h-[1.4em]"
+              />
+            </div>
+          </a>
+          <a
+            className="inverted item inline-block text-black bg-white bg-opacity-80 border border-white border-opacity-30 rounded-[30px] py-[0.3em] px-[0.8em] text-[1em] font-bold shadow-[rgba(0,0,0,0.5)_0px_0px_2px] transition-all duration-[100ms] ease-out my-[0.5em] mr-[0.5em] no-underline"
+            aria-label=""
+          >
+            <div className="flex gap-[0.5em] items-center section-2">
+              <img
+                alt="Logo of Ios"
+                src="https://needle.tools/_nuxt/logo-three.CiaNm32y.png"
+                className="h-[1.4em]"
+              />
+            </div>
+          </a>
+        </div>
+        </Section>
+        <Section right >
+        <span className="notranslate text-white tracking-[1px] uppercase text-center md:text-left" >
+          Next Hit
+        </span>
+        <h2 className="font-bold text-white text-[1em] md:text-[2em] leading-[1.1em] mt-[0.4em] mb-[0.4em] element_1">
+          Where Speed Meets Quality
+          <span className="inline-block opacity-100 text-white transition-all duration-[200ms]">
+            Let’s Build the Next Hit Together!
+          </span>
+        </h2>
+
+        <p className="font-normal text-white text-[1.1em] leading-[1.35em] mt-[1.5em] mb-[1em] react-element-1 section-1">
+          Dinomite Studio is the strategic development partner of choice For
+          ambitious game publishers looking to expand their hybrid casual
+          portfolio. Our approach combines accelerated prototyping with
+          cost-effective, quality-first production that minimizes risks and
+          ensures a fast, market-ready game that exceeds industry standards.
+        </p>
+
+        <div className="text-white">
+          <a
+            className="inverted item inline-block text-black bg-white bg-opacity-80 border border-white border-opacity-30 rounded-[30px] py-[0.3em] px-[0.8em] text-[1em] font-bold shadow-[rgba(0,0,0,0.5)_0px_0px_2px] transition-all duration-[100ms] ease-out my-[0.5em] mr-[0.5em] no-underline"
+            aria-label=""
+          >
+            <div className="flex gap-[0.5em] items-center">
+              <img
+                src="https://needle.tools/_nuxt/logo-three.CiaNm32y.png"
+                alt="Logo of Android"
+                className="h-[1.4em]"
+              />
+            </div>
+          </a>
+          <a
+            className="inverted item inline-block text-black bg-white bg-opacity-80 border border-white border-opacity-30 rounded-[30px] py-[0.3em] px-[0.8em] text-[1em] font-bold shadow-[rgba(0,0,0,0.5)_0px_0px_2px] transition-all duration-[100ms] ease-out my-[0.5em] mr-[0.5em] no-underline"
+            aria-label=""
+          >
+            <div className="flex gap-[0.5em] items-center section-2">
+              <img
+                alt="Logo of Ios"
+                src="https://needle.tools/_nuxt/logo-three.CiaNm32y.png"
+                className="h-[1.4em]"
+              />
+            </div>
+          </a>
+        </div>
         </Section>
       </div>
     </Scroll>

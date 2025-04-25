@@ -8,6 +8,7 @@ import { DinoOffice } from "./experience/Web1";
 import { Suspense, useState } from "react";
 import ScrollHandler from "./experience/ScrollHandler";
 import { Man } from "./experience/Web2";
+import { Machine } from "./experience/Web3";
 
 export const Experience = () => {
   const totalPages = 6;
@@ -21,7 +22,7 @@ export const Experience = () => {
   return (
     <>
       <ambientLight intensity={0.03}/>
-      {/**<spotLight
+   <spotLight
         castShadow
         position={[25, 50, -20]}
         angle={0.05}
@@ -44,7 +45,7 @@ export const Experience = () => {
         shadow-camera-right={10}
         shadow-camera-top={10}
         shadow-camera-bottom={-10}
-      />*/}
+      />
 
       <Environment files="https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/potsdamer_platz_1k.hdr" />
 
@@ -61,7 +62,7 @@ export const Experience = () => {
             </Html>
           }
         >
-          {currentPage >= 3 ? <Man currentPage={currentPage}/>: <DinoOffice currentPage={currentPage} /> }
+          {currentPage >= 3 ? (currentPage >= 4?<Machine currentPage={currentPage}/>: <Man currentPage={currentPage}/>): <DinoOffice currentPage={currentPage} /> }
         </Suspense>
       </ScrollControls>
     </>

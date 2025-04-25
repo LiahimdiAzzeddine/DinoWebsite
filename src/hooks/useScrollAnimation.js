@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import {  useLayoutEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { useScroll } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
@@ -8,13 +8,14 @@ export function useScrollAnimation({
   animationName, 
   currentPage, 
   pageRange, 
-  excludedAnimations = [] 
+  excludedAnimations = [],
+  excludedAll=false,
 }) {
   const tl = useRef();
   const scroll = useScroll();
 
-  // Configuration de l'animation contrôlée par le scroll
-  useEffect(() => {
+  // Scroll Controlled Animation Configuration
+  useLayoutEffect(() => {
     const targetAction = actions[animationName];
     if (targetAction) {
       targetAction.reset().play().paused = true;
@@ -31,18 +32,20 @@ export function useScrollAnimation({
       tl.current.to({}, { duration: duration });
     }
 
-    // Jouer les autres animations automatiquement
-    if (actions) {
+    // Play other animations automatically
+    if(!excludedAll){
+       if (actions) {
       Object.entries(actions).forEach(([name, action]) => {
-        console.log("🚀 ~ Object.entries ~ name:", name)
         if (!excludedAnimations.includes(name)) {
           action.play();
         }
       });
     }
+    }
+   
   }, [actions]);
 
-  // Mise a jour de l'animation en fonction du scroll
+  // Update animation based on scroll
   useFrame(() => {
     if (!tl.current || !scroll) return;
 

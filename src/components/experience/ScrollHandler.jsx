@@ -9,7 +9,6 @@ const ScrollHandler = ({ totalPages, onPageChange }) => {
     const handleScroll = () => {
       const page = Math.floor(scroll.offset * totalPages);
       if (page !== currentPage) {
-        console.log("🚀 ~ handleScroll ~ page:", page)
         setCurrentPage(page);
         if (onPageChange) onPageChange(page);
       }

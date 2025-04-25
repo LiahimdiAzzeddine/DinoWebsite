@@ -23,21 +23,24 @@ export function Machine({ currentPage, ...props }) {
     });
 
    
-useLayoutEffect(() => {
-  const AnimationsToPlay = [
-    'BODY', 'Hands', 'Eyes', 'Mouth', 'ball',
-    'Paint', 'HandsClothe', 'BodyClothe', 'Buttons', 'BODY.001','MetalDoor1Action','MetalDoor2Action'
-  ]
-
-  AnimationsToPlay.forEach((name) => {
-    const action = actions[name]
-    if (action) {
-      action.reset().play().clampWhenFinished = true
-      action.loop = THREE.LoopOnce
-    }
-  })
-}, [])
-
+    useLayoutEffect(() => {
+      const AnimationsToPlay = [
+        'BODY', 'Hands', 'Eyes', 'Mouth', 'ball',
+        'Paint', 'HandsClothe', 'BodyClothe', 'Buttons', 'BODY.001',
+        'MetalDoor1Action', 'MetalDoor2Action'
+      ]
+    
+      AnimationsToPlay.forEach((name) => {
+        const action = actions[name]
+        if (action) {
+          action.setLoop(THREE.LoopOnce, 1) 
+          action.clampWhenFinished = true
+          action.timeScale = 0.5 
+          action.reset().play()
+        }
+      })
+    }, [])
+    
     const isActive = currentPage >=4;
 
   return (

@@ -21,7 +21,6 @@
 }
 
 html, body {
- /* @apply bg-black text-white;*/
   overflow-x: hidden;
   scrollbar-width: thin;
   scrollbar-color: #48beaa rgba(0, 0, 0, 0.1);

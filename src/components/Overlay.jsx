@@ -47,13 +47,13 @@ export const Overlay = () => {
     
     <>
       <div className="w-full relative m-auto flex justify-center">
-        <NavBar />
+        <NavBar/>
       </div>
-     {/** */} 
+     {/**  
      <VerticalProgressBar
         sections={sections}
         setActiveSection={setActiveSection}
-      />
+      />*/}
 
 
 
@@ -255,6 +255,119 @@ export const Overlay = () => {
       </Section>
       <Section right id="section5">
         <h2 className="font-bold text-white text-[1em] md:text-[2em] leading-[1.1em] mt-[0.4em] mb-[0.4em] second-section2">
+          what can Dinomite studio help you with section5
+        </h2>
+        <p className="font-normal text-white text-[1.1em] leading-[1.35em] mt-[1.5em] mb-[1em] react-element-1">
+          we specialize in fast, high-quality game development tailored for
+          publishers and studios. Whether you need rapid prototyping to test new
+          game concepts, full game development from ideation to launch, or
+          co-development to enhance your existing projects, our expert team
+          ensures efficient, risk-minimized production that meets industry
+          standards. Partner with us to bring your games to life—faster,
+          smarter, and better.{" "}
+        </p>
+        <p className="font-normal text-white text-[1.1em] leading-[1.35em] mt-[1.5em] mb-[1em] react-element-1">
+          we specialize in fast, high-quality game development tailored for
+          publishers and studios. Whether you need rapid prototyping to test new
+          game concepts, full game development from ideation to launch, or
+          co-development to enhance your existing projects, our expert team
+          ensures efficient, risk-minimized production that meets industry
+          standards. Partner with us to bring your games to life—faster,
+          smarter, and better.{" "}
+        </p> <p className="font-normal text-white text-[1.1em] leading-[1.35em] mt-[1.5em] mb-[1em] react-element-1">
+          we specialize in fast, high-quality game development tailored for
+          publishers and studios. Whether you need rapid prototyping to test new
+          game concepts, full game development from ideation to launch, or
+          co-development to enhance your existing projects, our expert team
+          ensures efficient, risk-minimized production that meets industry
+          standards. Partner with us to bring your games to life—faster,
+          smarter, and better.{" "}
+        </p> <p className="font-normal text-white text-[1.1em] leading-[1.35em] mt-[1.5em] mb-[1em] react-element-1">
+          we specialize in fast, high-quality game development tailored for
+          publishers and studios. Whether you need rapid prototyping to test new
+          game concepts, full game development from ideation to launch, or
+          co-development to enhance your existing projects, our expert team
+          ensures efficient, risk-minimized production that meets industry
+          standards. Partner with us to bring your games to life—faster,
+          smarter, and better.{" "}
+        </p> <p className="font-normal text-white text-[1.1em] leading-[1.35em] mt-[1.5em] mb-[1em] react-element-1">
+          we specialize in fast, high-quality game development tailored for
+          publishers and studios. Whether you need rapid prototyping to test new
+          game concepts, full game development from ideation to launch, or
+          co-development to enhance your existing projects, our expert team
+          ensures efficient, risk-minimized production that meets industry
+          standards. Partner with us to bring your games to life—faster,
+          smarter, and better.{" "}
+        </p> <p className="font-normal text-white text-[1.1em] leading-[1.35em] mt-[1.5em] mb-[1em] react-element-1">
+          we specialize in fast, high-quality game development tailored for
+          publishers and studios. Whether you need rapid prototyping to test new
+          game concepts, full game development from ideation to launch, or
+          co-development to enhance your existing projects, our expert team
+          ensures efficient, risk-minimized production that meets industry
+          standards. Partner with us to bring your games to life—faster,
+          smarter, and better.{" "}
+        </p> <p className="font-normal text-white text-[1.1em] leading-[1.35em] mt-[1.5em] mb-[1em] react-element-1">
+          we specialize in fast, high-quality game development tailored for
+          publishers and studios. Whether you need rapid prototyping to test new
+          game concepts, full game development from ideation to launch, or
+          co-development to enhance your existing projects, our expert team
+          ensures efficient, risk-minimized production that meets industry
+          standards. Partner with us to bring your games to life—faster,
+          smarter, and better.{" "}
+        </p> <p className="font-normal text-white text-[1.1em] leading-[1.35em] mt-[1.5em] mb-[1em] react-element-1">
+          we specialize in fast, high-quality game development tailored for
+          publishers and studios. Whether you need rapid prototyping to test new
+          game concepts, full game development from ideation to launch, or
+          co-development to enhance your existing projects, our expert team
+          ensures efficient, risk-minimized production that meets industry
+          standards. Partner with us to bring your games to life—faster,
+          smarter, and better.{" "}
+        </p> <p className="font-normal text-white text-[1.1em] leading-[1.35em] mt-[1.5em] mb-[1em] react-element-1">
+          we specialize in fast, high-quality game development tailored for
+          publishers and studios. Whether you need rapid prototyping to test new
+          game concepts, full game development from ideation to launch, or
+          co-development to enhance your existing projects, our expert team
+          ensures efficient, risk-minimized production that meets industry
+          standards. Partner with us to bring your games to life—faster,
+          smarter, and better.{" "}
+        </p> <p className="font-normal text-white text-[1.1em] leading-[1.35em] mt-[1.5em] mb-[1em] react-element-1">
+          we specialize in fast, high-quality game development tailored for
+          publishers and studios. Whether you need rapid prototyping to test new
+          game concepts, full game development from ideation to launch, or
+          co-development to enhance your existing projects, our expert team
+          ensures efficient, risk-minimized production that meets industry
+          standards. Partner with us to bring your games to life—faster,
+          smarter, and better.{" "}
+        </p>
+        <div className="text-white">
+          <a
+            className="inverted item inline-block text-black bg-white bg-opacity-80 border border-white border-opacity-30 rounded-[30px] py-[0.3em] px-[0.8em] text-[1em] font-bold shadow-[rgba(0,0,0,0.5)_0px_0px_2px] transition-all duration-[100ms] ease-out my-[0.5em] mr-[0.5em] no-underline"
+            aria-label=""
+          >
+            <div className="flex gap-[0.5em] items-center">
+              <img
+                src="https://needle.tools/_nuxt/logo-three.CiaNm32y.png"
+                alt="Logo of Android"
+                className="h-[1.4em]"
+              />
+            </div>
+          </a>
+          <a
+            className="inverted item inline-block text-black bg-white bg-opacity-80 border border-white border-opacity-30 rounded-[30px] py-[0.3em] px-[0.8em] text-[1em] font-bold shadow-[rgba(0,0,0,0.5)_0px_0px_2px] transition-all duration-[100ms] ease-out my-[0.5em] mr-[0.5em] no-underline"
+            aria-label=""
+          >
+            <div className="flex gap-[0.5em] items-center">
+              <img
+                alt="Logo of Ios"
+                src="https://needle.tools/_nuxt/logo-three.CiaNm32y.png"
+                className="h-[1.4em]"
+              />
+            </div>
+          </a>
+        </div>
+      </Section>
+      <Section right >
+        <h2 className="font-bold text-white text-[1em] md:text-[2em] leading-[1.1em] mt-[0.4em] mb-[0.4em]  ">
           what can Dinomite studio help you with
         </h2>
         <p className="font-normal text-white text-[1.1em] leading-[1.35em] mt-[1.5em] mb-[1em] react-element-1">
@@ -302,7 +415,6 @@ export const Overlay = () => {
           </a>
         </div>
       </Section>
-
     </>
   );
 };

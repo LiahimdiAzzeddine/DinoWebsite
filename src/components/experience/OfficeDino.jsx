@@ -22,6 +22,7 @@ export function OfficeDino(props) {
     { position: [-1, 0.5, 1], rotation: [0, -Math.PI / 2, 0], name: "Point 2" },
     { position: [0, 2, 0], rotation: [-Math.PI / 6, 0, 0], name: "Point 3" }
   ]
+  /*
 useEffect(() => {
     if (actions) {
       Object.values(actions).forEach((action) => action.play());
@@ -69,7 +70,7 @@ useEffect(() => {
     };
   }, [actions]);
 
-
+*/
   // Add a subtle floating animation
   useFrame(({ clock }) => {
     if (group.current) {

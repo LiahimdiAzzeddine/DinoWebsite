@@ -42,6 +42,7 @@ const SceneManager = () => {
         start: "top bottom",
         end: "bottom top",
         scrub: true,
+        markers:true,
         onEnter: () => {
           setScrollDirection("down");
           setAnimationTrigger({ model: key, type: "enter" });

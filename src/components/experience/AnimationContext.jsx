@@ -9,7 +9,7 @@ export const AnimationContext = createContext();
  * Tracks current model and animation status
  */
 export function AnimationProvider({ children }) {
-  const [currentModel, setCurrentModel] = useState("Model3");
+  const [currentModel, setCurrentModel] = useState("Model1");
   const [scrollDirection, setScrollDirection] = useState(null);
   const [animationTrigger, setAnimationTrigger] = useState(null);
 

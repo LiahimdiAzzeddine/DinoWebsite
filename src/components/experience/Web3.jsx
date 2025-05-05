@@ -11,10 +11,9 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import * as THREE from "three";
 import { AnimationContext } from "./AnimationContext";
-import { ScrollSmoother } from 'gsap/ScrollSmoother'
 
 
-gsap.registerPlugin(ScrollTrigger, ScrollSmoother)
+gsap.registerPlugin(ScrollTrigger)
 export function Web3(props) {
   const group = React.useRef()
   const { scene, animations } = useGLTF('./models/Web3.glb')

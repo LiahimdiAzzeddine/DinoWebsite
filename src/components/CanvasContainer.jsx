@@ -1,6 +1,7 @@
 import React, {
   Suspense,
   useContext,
+  useEffect,
   useLayoutEffect,
 } from "react";
 import { Canvas, useThree } from "@react-three/fiber";
@@ -35,7 +36,7 @@ export function ModelContainer() {
 const SceneManager = () => {
   const { setCurrentModel, setScrollDirection,setAnimationTrigger } = useContext(AnimationContext);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     Object.entries(MODEL_CONFIGS).forEach(([key, { triggerSection }]) => {
       ScrollTrigger.create({
         trigger: triggerSection,

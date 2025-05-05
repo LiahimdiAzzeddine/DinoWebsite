@@ -17,7 +17,7 @@ export function Web1(props) {
   const group = useRef();
   const { nodes, materials, animations } = useGLTF("./models/Web1.glb");
   const { actions, mixer } = useAnimations(animations, group);
-  const { currentModel, scrollDirection, animationTrigger } = useContext(AnimationContext);
+  const { currentModel } = useContext(AnimationContext);
   
   const scrollProgressRef = useRef(0);
   const targetScrollProgressRef = useRef(0);
@@ -31,34 +31,23 @@ export function Web1(props) {
     exitAnimationPlaying: false,
     currentAction: null,
     cameraScrollAction: null,
-    cameraExitAction: null,
-    availableActions: []
+    cameraExitAction: null
   });
   
-  useLayoutEffect(() => {
-    if (!actions || !mixer) {
-      console.log("Actions and mixer ", { actions, mixer });
-      return;
-    }
-
-    animState.current.availableActions = Object.keys(actions);
+  // Initialize animations
+  useEffect(() => {
+    if (!actions || !mixer) return;
     
     const cameraAction = actions["Camera.001Action"];
+    const cameraExitAnimation = actions["Camera.001End"];
     
     if (!cameraAction) {
-      console.error("Animation calmera not found");
+      console.error("Camera animation not found");
       return;
     }
     
     animState.current.cameraScrollAction = cameraAction;
-
-    const cameraExitAnimation =actions["Camera.001End"] ;
-    
-    if (cameraExitAnimation) {
-      animState.current.cameraExitAction = cameraExitAnimation;
-    } else {
-      console.warn("Aucune animation de sortie spécifique trouvée. L'animation de défilement sera inversée pour la sortie.");
-    }
+    animState.current.cameraExitAction = cameraExitAnimation;
     
     cameraAction.play();
     cameraAction.paused = true;
@@ -70,14 +59,14 @@ export function Web1(props) {
     
   }, [actions, mixer]);
 
-  // Configuration of ScrollTrigger
-  useLayoutEffect(() => {
+  // Setup ScrollTrigger
+  useEffect(() => {
     if (!animState.current.cameraScrollAction) return;
     
     const setupScrollTrigger = () => {
       const triggerElement = document.querySelector(".second-section");
       if (!triggerElement) {
-        console.error("element .second-section not found!");
+        console.error("Element .second-section not found!");
         setTimeout(setupScrollTrigger, 500);
         return;
       }
@@ -91,8 +80,9 @@ export function Web1(props) {
           trigger: ".second-section",
           start: "top bottom", 
           end: "bottom top",
-          scrub: 1,           
-          markers: true,      
+          scrub: 1,
+          markers: true,           
+          
           onUpdate: (self) => {
             targetScrollProgressRef.current = self.progress;
           },
@@ -102,78 +92,81 @@ export function Web1(props) {
             animState.current.direction = "down";
             animState.current.exitAnimationPlaying = false;
             
-            // Assurer que l'animation de défilement est active
-            if (animState.current.currentAction !== animState.current.cameraScrollAction) {
-              mixer.stopAllAction();
-              animState.current.cameraScrollAction.reset();
-              animState.current.cameraScrollAction.play();
-              animState.current.cameraScrollAction.paused = true;
-              animState.current.currentAction = animState.current.cameraScrollAction;
-            }
+            // Ensure scroll animation is active
+            resetScrollAnimation();
           },
           onLeave: () => {
             console.log("▶️ Leaving section (scrolling down)");
+            
+            if (!animState.current.cameraExitAction) return;
+            
+            // Implement the exact exit animation you requested
+            mixer.stopAllAction();
+            const cameraEnd = animState.current.cameraExitAction;
+            cameraEnd.reset();
+            cameraEnd.setLoop(THREE.LoopOnce, 1);
+            cameraEnd.clampWhenFinished = true;
+            cameraEnd.timeScale = 1;
+            cameraEnd.paused = false;
+            cameraEnd.play();
+            
             animState.current.isLeaving = true;
             animState.current.direction = "down";
-            
-            // Jouer l'animation de sortie si elle existe
-            if (animState.current.cameraExitAction && !animState.current.exitAnimationPlaying) {
-              mixer.stopAllAction();
-              const cameraExit = animState.current.cameraExitAction;
-              cameraExit.reset();
-              cameraExit.setLoop(THREE.LoopOnce, 1);
-              cameraExit.clampWhenFinished = true;
-              cameraExit.timeScale = 1;
-              cameraExit.paused = false;
-              cameraExit.play();
-              animState.current.currentAction = cameraExit;
-              animState.current.exitAnimationPlaying = true;
-            }
+            animState.current.currentAction = cameraEnd;
+            animState.current.exitAnimationPlaying = true;
           },
           onEnterBack: () => {
-            console.log("▶️ Entering section (scrolling up)");
+            console.log("⏪ Entering back (scrolling up)");
             animState.current.isLeaving = false;
             animState.current.direction = "up";
             animState.current.exitAnimationPlaying = false;
             
-            // Revenir à l'animation de défilement
-            if (animState.current.currentAction !== animState.current.cameraScrollAction) {
-              mixer.stopAllAction();
-              animState.current.cameraScrollAction.reset();
-              animState.current.cameraScrollAction.play();
-              animState.current.cameraScrollAction.paused = true;
-              animState.current.currentAction = animState.current.cameraScrollAction;
-            }
+            // Return to scroll animation
+            resetScrollAnimation();
           },
           onLeaveBack: () => {
-            console.log("▶️ Leaving section (scrolling up)");
+            console.log("⏪ Leaving back (scrolling up)");
+            
+            if (!animState.current.cameraExitAction) return;
+            
+            // Don't stop all actions as specified in your code
+            // mixer.stopAllAction();
+            
+            const cameraEnd = animState.current.cameraExitAction;
+            cameraEnd.reset();
+            cameraEnd.setLoop(THREE.LoopOnce, 1);
+            cameraEnd.clampWhenFinished = true;
+            cameraEnd.timeScale = -2; // Double speed reverse as requested
+            
+            // Force to end of animation BEFORE playing in reverse
+            const clipDuration = cameraEnd.getClip().duration;
+            cameraEnd.time = clipDuration;
+            cameraEnd.paused = false;
+            cameraEnd.play();
+            
             animState.current.isLeaving = true;
             animState.current.direction = "up";
-            
-            // Jouer l'animation de sortie en sens inverse si disponible
-            if (animState.current.cameraExitAction && !animState.current.exitAnimationPlaying) {
-              mixer.stopAllAction();
-              const cameraExit = animState.current.cameraExitAction;
-              cameraExit.reset();
-              cameraExit.setLoop(THREE.LoopOnce, 1);
-              cameraExit.clampWhenFinished = true;
-              cameraExit.timeScale = -1; // Jouer en sens inverse pour la sortie vers le haut
-              cameraExit.time = cameraExit.getClip().duration;
-              cameraExit.paused = false;
-              cameraExit.play();
-              animState.current.currentAction = cameraExit;
-              animState.current.exitAnimationPlaying = true;
-            }
+            animState.current.currentAction = cameraEnd;
+            animState.current.exitAnimationPlaying = true;
           }
         });
-        
-        console.log("ScrollTrigger créé avec succès");
       } catch (error) {
-        console.error("Erreur lors de la création du ScrollTrigger:", error);
+        console.error("Error creating ScrollTrigger:", error);
+      }
+    };
+    
+    // Helper function to reset scroll animation
+    const resetScrollAnimation = () => {
+      if (animState.current.currentAction !== animState.current.cameraScrollAction) {
+        mixer.stopAllAction();
+        animState.current.cameraScrollAction.reset();
+        animState.current.cameraScrollAction.play();
+        animState.current.cameraScrollAction.paused = true;
+        animState.current.currentAction = animState.current.cameraScrollAction;
       }
     };
 
-    // Attendre que le DOM soit complètement chargé
+    // Wait for DOM to be fully loaded
     if (document.readyState === "complete") {
       setupScrollTrigger();
     } else {
@@ -186,16 +179,16 @@ export function Web1(props) {
         scrollTriggerRef.current.kill();
       }
     };
-  }, [mixer, animState.current.cameraScrollAction]);
+  }, [mixer]);
 
-  // Configuration du ScrollSmoother
+  // Setup ScrollSmoother
   useEffect(() => {
     const setupSmoother = () => {
       const wrapper = document.querySelector(".scroll-wrapper");
       const content = document.querySelector(".scroll-content");
       
       if (!wrapper || !content) {
-        console.error("Éléments de scroll non trouvés");
+        console.error("Scroll elements not found");
         setTimeout(setupSmoother, 500);
         return;
       }
@@ -205,18 +198,15 @@ export function Web1(props) {
           wrapper: ".scroll-wrapper",
           content: ".scroll-content",
           smooth: 1.5,
+  
           effects: true,
           normalizeScroll: true,
           ignoreMobileResize: true,
         });
         
-        console.log("ScrollSmoother initialisé avec succès");
-        
-        return () => {
-          if (smoother) smoother.kill();
-        };
+        return () => smoother?.kill();
       } catch (error) {
-        console.error("Erreur lors de l'initialisation de ScrollSmoother:", error);
+        console.error("Error initializing ScrollSmoother:", error);
       }
     };
     
@@ -231,24 +221,21 @@ export function Web1(props) {
     };
   }, []);
 
-  // Boucle d'animation avec lissage
+  // Animation loop with smoothing
   useFrame(() => {
     if (!mixer || !animState.current.cameraScrollAction) return;
-    
-    // Si nous sommes dans la section et utilisons l'animation de défilement
+    // If we're in the section and using the scroll animation
     if (!animState.current.isLeaving && animState.current.currentAction === animState.current.cameraScrollAction) {
-      // Appliquer le lissage avec friction en utilisant lerp
+      // Apply smoothing with friction using lerp
       scrollProgressRef.current += (targetScrollProgressRef.current - scrollProgressRef.current) * smoothness;
       
-      // Mettre à jour le temps d'animation basé sur la progression lissée
+      // Update animation time based on smoothed progress
       const duration = animState.current.cameraScrollAction.getClip().duration;
       animState.current.cameraScrollAction.time = scrollProgressRef.current * duration;
     }
-    
-    // Mettre à jour le mixer pour toutes les animations
+    // Update the mixer for all animations
     mixer.update(0);
   });
-  
   
 
   return (

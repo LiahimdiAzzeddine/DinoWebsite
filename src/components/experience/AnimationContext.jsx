@@ -1,30 +1,25 @@
-import { createContext, useState } from "react";
+import React, { createContext, useState, useCallback } from "react";
 
-
-// Animation Context to manage animation state and current model
+// Création du contexte
 export const AnimationContext = createContext();
 
-/**
- * Animation Provider component to manage animation state
- * Tracks current model and animation status
- */
-export function AnimationProvider({ children }) {
+// Provider qui va entourer l'application
+export const AnimationProvider = ({ children }) => {
   const [currentModel, setCurrentModel] = useState("Model1");
-  const [scrollDirection, setScrollDirection] = useState(null);
-  const [animationTrigger, setAnimationTrigger] = useState(null);
-
-  const value = {
-    currentModel,
-    setCurrentModel,
-    scrollDirection,
-    setScrollDirection,
-    animationTrigger,
-    setAnimationTrigger
-  };
   
+  // Mémoiser les setters pour éviter des re-rendus inutiles
+  const handleModelChange = useCallback((modelName) => {
+    setCurrentModel(modelName);
+  }, []);
+
   return (
-    <AnimationContext.Provider value={value}>
+    <AnimationContext.Provider
+      value={{
+        currentModel,
+        setCurrentModel: handleModelChange
+      }}
+    >
       {children}
     </AnimationContext.Provider>
   );
-}
+};

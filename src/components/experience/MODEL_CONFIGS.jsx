@@ -1,7 +1,6 @@
 
 import { Web1 } from "./Web1";
 import { Web2 } from "./Web2";
-import { Web3 } from "./Web3";
 
 /**
  * Configuration for each 3D model
@@ -21,7 +20,7 @@ const MODEL_CONFIGS = {
   
   Model2: {
     url: "./models/Web2.glb",
-     triggerSection: "#section5",
+     triggerSection: "#section4",
     sectioncolor: 0x4abeab,
     colorA: '#90a1b6', 
     colorB: '#e3e9bc',
@@ -29,16 +28,7 @@ const MODEL_CONFIGS = {
     position: { x: 1, y: 0, z: 0 },
     Component: Web2,
   },
-  Model3: {
-    url: "./models/Web3.glb",
-    triggerSection: ".second-section2",
-    sectioncolor: 0x4abeab,
-    colorA: '#90a1b6', 
-    colorB: '#e3e9bc',
-    scale: [1.8, 1.8, 1.8],
-    position: { x: 1, y: 0, z: 0 },
-    Component: Web3,
-  },
+
 };
 
 export default MODEL_CONFIGS;

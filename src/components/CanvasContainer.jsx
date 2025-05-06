@@ -2,7 +2,6 @@ import React, {
   Suspense,
   useContext,
   useEffect,
-  useLayoutEffect,
 } from "react";
 import { Canvas, useThree } from "@react-three/fiber";
 import { gsap } from "gsap";
@@ -34,7 +33,7 @@ export function ModelContainer() {
 
 // Handles model switching and scene positioning based on scroll
 const SceneManager = () => {
-  const { setCurrentModel, setScrollDirection,setAnimationTrigger } = useContext(AnimationContext);
+  const { setCurrentModel, setScrollDirection, } = useContext(AnimationContext);
 
   useEffect(() => {
     Object.entries(MODEL_CONFIGS).forEach(([key, { triggerSection }]) => {
@@ -45,25 +44,16 @@ const SceneManager = () => {
         scrub: true,
         markers:true,
         onEnter: () => {
-          setScrollDirection("down");
-          setAnimationTrigger({ model: key, type: "enter" });
           setCurrentModel(key);
         },
         onEnterBack: () => {
-          setScrollDirection("up");
-          setAnimationTrigger({ model: key, type: "enterBack" });
           setCurrentModel(key);
         },
-        onLeave: () => {
-          setAnimationTrigger({ model: key, type: "leave" });
-        },
-        onLeaveBack: () => {
-          setAnimationTrigger({ model: key, type: "leaveBack" });
-        },
+       
       });
       
     });
-  }, [setCurrentModel, setScrollDirection]);
+  }, [setCurrentModel]);
 
   return <ModelContainer />;
 };

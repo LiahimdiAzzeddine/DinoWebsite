@@ -20,7 +20,7 @@ const MODEL_CONFIGS = {
   
   Model2: {
     url: "./models/Web2.glb",
-     triggerSection: "#section3",
+     triggerSection: "#section4",
     sectioncolor: 0x4abeab,
     colorA: '#90a1b6', 
     colorB: '#e3e9bc',

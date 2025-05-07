@@ -19,15 +19,14 @@ export function Web1(props) {
     if (!actions || !mixer || !group.current) return;
     console.log("🚀 ~ useLayoutEffect ~ actions:", actions)
 
-    if(actions["Action.001"]){
-      actions["Action.001"].play()
-      actions["Action.002"].play()
-      actions["Action.003"].play()
-      actions["Action.004"].play()
-      actions["Sphere.010Action"].play()
-      actions["Sphere.011Action"].play()
-    }
-  
+    const excludedActions = ["Camera.001Action", "Camera.001End", "Camera.001Start"]; 
+
+for (const actionName in actions) {
+  if (!excludedActions.includes(actionName)) {
+    actions[actionName].play();
+  }
+}
+
     const cameraAction = actions["Camera.001Action"];
     if (!cameraAction) return;
   
@@ -118,6 +117,15 @@ export function Web1(props) {
         position={[-0.285, 2.709, -0.663]}
         rotation={[-0.007, 0.965, 0.005]}
         scale={[5.175, 9.55, 9.015]}
+      />
+      <mesh
+        name="GroundCubeQuad003"
+        castShadow
+        receiveShadow
+        geometry={nodes.GroundCubeQuad003.geometry}
+        material={materials.Ground_FileSize_Mat}
+        position={[0.058, -0.86, -0.191]}
+        scale={[1.055, 0.949, 0.896]}
       />
       <group
         name="Cube027"
@@ -286,32 +294,22 @@ export function Web1(props) {
           />
         </group>
       </group>
-      <mesh
-        name="Cube"
-        castShadow
-        receiveShadow
-        geometry={nodes.Cube.geometry}
-        material={materials['Material.022']}
-        position={[0.04, -0.156, 0.056]}
-        scale={[1.933, 1.115, 1.933]}
-      />
-      <mesh
-        name="Cube002"
-        castShadow
-        receiveShadow
-        geometry={nodes.Cube002.geometry}
-        material={materials['Material.002']}
-        position={[-0.924, 1.517, -1.033]}
-        rotation={[0, 0.271, 0]}
-      />
-      <mesh
-        name="Cube001"
-        castShadow
-        receiveShadow
-        geometry={nodes.Cube001.geometry}
-        material={materials['Material.002']}
-        position={[-0.693, 1.533, -0.799]}
-      />
+      <group name="Cube001" position={[-0.693, 1.533, -0.799]}>
+        <mesh
+          name="Cube018"
+          castShadow
+          receiveShadow
+          geometry={nodes.Cube018.geometry}
+          material={materials['Material.004']}
+        />
+        <mesh
+          name="Cube018_1"
+          castShadow
+          receiveShadow
+          geometry={nodes.Cube018_1.geometry}
+          material={materials['Material.001']}
+        />
+      </group>
       <mesh
         name="Cube005"
         castShadow
@@ -388,6 +386,7 @@ export function Web1(props) {
           scale={[0.385, 0.379, 0.379]}
         />
       </group>
+      <group name="BézierCurve002" position={[-1.017, 10.239, 1.56]} />
       <group name="Empty007" position={[1.019, 1.058, -0.266]} scale={0.256}>
         <mesh
           name="Sphere004"
@@ -678,6 +677,36 @@ export function Web1(props) {
           />
         </group>
       </mesh>
+      <mesh
+        name="LAPTOP001"
+        castShadow
+        receiveShadow
+        geometry={nodes.LAPTOP001.geometry}
+        material={materials['BASE_LAPTOP_MAT.002']}
+        position={[1.472, 1.557, 0.398]}
+        rotation={[-Math.PI, 1.334, -Math.PI]}
+        scale={[-0.164, -0.014, -0.105]}
+      />
+      <group
+        name="SCREEN_LAPTOP001"
+        position={[1.634, 1.668, 0.36]}
+        rotation={[-1.694, 0.471, 1.837]}
+        scale={[-0.164, -0.014, -0.105]}>
+        <mesh
+          name="Cube002"
+          castShadow
+          receiveShadow
+          geometry={nodes.Cube002.geometry}
+          material={materials['KEYBOARD.002']}
+        />
+        <mesh
+          name="Cube002_1"
+          castShadow
+          receiveShadow
+          geometry={nodes.Cube002_1.geometry}
+          material={materials['CODE_SCREEN_MAT.002']}
+        />
+      </group>
     </group>
   </group>
   );

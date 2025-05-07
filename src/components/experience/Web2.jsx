@@ -20,10 +20,21 @@ export function Web2(props) {
   const { nodes, materials } = useGraph(clone)
   const { actions,mixer } = useAnimations(animations, group)
   console.log("🚀 ~ Model ~ actions:", actions)
+  const excludedActions = ["CameraAction", "ActionEnter", "Camera.001End","EnterAction.001"]; 
+
+
+
     const { currentModel } = useContext(AnimationContext);
     console.log("🚀 ~ Web2 ~ currentModel:", currentModel)
     useLayoutEffect(() => {
       if (!actions || !mixer) return;
+      if(actions){
+        for (const actionName in actions) {
+      if (!excludedActions.includes(actionName)) {
+        actions[actionName].play();
+      }
+    }
+      }
     
       const cameraAction = actions["CameraAction"];
       const cameraStart = actions["ActionEnter"];

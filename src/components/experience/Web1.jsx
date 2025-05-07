@@ -101,7 +101,7 @@ for (const actionName in actions) {
     {currentModel=="Model1" &&(
       <PerspectiveCamera
         name="Camera001"
-        makeDefault={true}
+        makeDefault={currentModel=="Model1"}
         far={1000}
         near={0.1}
         fov={18.848}

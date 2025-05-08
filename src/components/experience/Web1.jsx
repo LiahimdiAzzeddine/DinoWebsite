@@ -61,7 +61,8 @@ export function Web1(props) {
       if (camera) {
         gsap.to(camera.position, {
           y: group.current.getObjectByName("Camera001").position.y - 10,
-
+          ease: "power2.out",
+          duration:1,
           onComplete: () => {
             //setCurrentModel('Model2');
           }

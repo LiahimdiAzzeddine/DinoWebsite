@@ -7,12 +7,37 @@ import { CanvasContainer } from "./components/CanvasContainer";
 import { Overlay } from "./components/Overlay";
 import { AnimationProvider } from "./components/experience/AnimationContext";
 import Loader from "./components/Loader";
+import Lenis from '@studio-freight/lenis';
 
 function App() {
   const [activeSection, setActiveSection] = useState(0);
   const section = useRef();
   const [isLoading, setIsLoading] = useState(true);
+  /*
+  useEffect(() => {
+    const lenis = new Lenis({
+      smooth: true,
+      lerp: 0.05,        // 0 à 1 — plus c’est petit, plus c’est fluide/lent (genre friction)
+     // wheelMultiplier: 0.7, // Multiplie la vitesse de scroll de la molette (par défaut = 1)
+      //touchMultiplier: 1.5, // Pour les écrans tactiles
+      //duration: 1.2      // Optionnel — durée du scroll animé (en secondes)
+    });
+    
 
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+
+    requestAnimationFrame(raf);
+
+    // Optionnel : nettoyage à la destruction du composant
+    return () => {
+      // lenis n’a pas de méthode destroy, mais s’il y en a dans le futur :
+      // lenis.destroy()
+    };
+  }, []);
+*/
   return (
     <main className="overflow-x-hidden">
       {isLoading && <Loader onLoadingComplete={() => setIsLoading(false)} />}

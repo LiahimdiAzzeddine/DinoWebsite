@@ -1,4 +1,5 @@
-import React, { createContext, useState, useCallback } from "react";
+import React, { createContext, useState, useCallback, useEffect } from "react";
+import { gsap } from "gsap";
 
 // Création du contexte
 export const AnimationContext = createContext();
@@ -6,6 +7,12 @@ export const AnimationContext = createContext();
 // Provider qui va entourer l'application
 export const AnimationProvider = ({ children }) => {
   const [currentModel, setCurrentModel] = useState("Model1");
+  const [timeline] = useState(() => gsap.timeline({ paused: true }));
+
+  useEffect(() => {
+    timeline.play();
+  }, [timeline]);
+
   
   // Mémoiser les setters pour éviter des re-rendus inutiles
   const handleModelChange = useCallback((modelName) => {
@@ -16,7 +23,8 @@ export const AnimationProvider = ({ children }) => {
     <AnimationContext.Provider
       value={{
         currentModel,
-        setCurrentModel: handleModelChange
+        setCurrentModel: handleModelChange,
+        timeline 
       }}
     >
       {children}

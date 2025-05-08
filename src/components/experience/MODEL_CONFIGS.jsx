@@ -2,14 +2,10 @@
 import { Web1 } from "./Web1";
 import { Web2 } from "./Web2";
 
-/**
- * Configuration for each 3D model
- * Contains model path, camera position, trigger sections, scale and animations
- */
 const MODEL_CONFIGS = {
   Model1: {
     url: "./models/web1.glb",
-    triggerSection: ".second-section",
+    triggerSection: "#section2",
     sectioncolor: 0x9a70e7,
     colorA: '#d7e0eb', 
     colorB: '#cc64ca',

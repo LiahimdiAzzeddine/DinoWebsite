@@ -10,8 +10,6 @@ const MODEL_CONFIGS = {
   Model1: {
     url: "./models/web1.glb",
     triggerSection: ".second-section",
-    scale: [1, 1, 1],
-    position: { x: -5, y: 0, z: 0 },
     sectioncolor: 0x9a70e7,
     colorA: '#d7e0eb', 
     colorB: '#cc64ca',
@@ -20,12 +18,10 @@ const MODEL_CONFIGS = {
   
   Model2: {
     url: "./models/Web2.glb",
-     triggerSection: "#section4",
+     triggerSection: "#section3",
     sectioncolor: 0x4abeab,
     colorA: '#90a1b6', 
     colorB: '#e3e9bc',
-    scale: [1.8, 1.8, 1.8],
-    position: { x: 1, y: 0, z: 0 },
     Component: Web2,
   },
 

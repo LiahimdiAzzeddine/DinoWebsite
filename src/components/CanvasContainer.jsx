@@ -40,7 +40,7 @@ const SceneManager = () => {
       ScrollTrigger.create({
         trigger: triggerSection,
         start: "top bottom",
-        end: "bottom top",
+        end: "top top",
         scrub: true,
         markers:true,
         onEnter: () => {

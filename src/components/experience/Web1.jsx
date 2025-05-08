@@ -51,7 +51,7 @@ export function Web1(props) {
     const trigger = ScrollTrigger.create({
       trigger: ".second-section",
       start: "top bottom",
-      end: "bottom top",
+      end: "top top",
       scrub: true,
       onUpdate: (self) => {
         targetTime = self.progress * duration;
@@ -61,8 +61,7 @@ export function Web1(props) {
       if (camera) {
         gsap.to(camera.position, {
           y: group.current.getObjectByName("Camera001").position.y - 10,
-          ease: "power2.out",
-          duration:1,
+
           onComplete: () => {
             //setCurrentModel('Model2');
           }
@@ -102,7 +101,7 @@ export function Web1(props) {
     {currentModel=="Model1" &&(
       <PerspectiveCamera
         name="Camera001"
-        makeDefault={true}
+        makeDefault={currentModel=="Model1"}
         far={1000}
         near={0.1}
         fov={18.848}
@@ -118,6 +117,15 @@ export function Web1(props) {
         position={[-0.285, 2.709, -0.663]}
         rotation={[-0.007, 0.965, 0.005]}
         scale={[5.175, 9.55, 9.015]}
+      />
+      <mesh
+        name="GroundCubeQuad003"
+        castShadow
+        receiveShadow
+        geometry={nodes.GroundCubeQuad003.geometry}
+        material={materials.Ground_FileSize_Mat}
+        position={[0.055, -0.966, -0.191]}
+        scale={[1.108, 0.997, 0.941]}
       />
       <group
         name="Cube027"
@@ -286,32 +294,22 @@ export function Web1(props) {
           />
         </group>
       </group>
-      <mesh
-        name="Cube"
-        castShadow
-        receiveShadow
-        geometry={nodes.Cube.geometry}
-        material={materials['Material.022']}
-        position={[0.04, -0.156, 0.056]}
-        scale={[1.933, 1.115, 1.933]}
-      />
-      <mesh
-        name="Cube002"
-        castShadow
-        receiveShadow
-        geometry={nodes.Cube002.geometry}
-        material={materials['Material.002']}
-        position={[-0.924, 1.517, -1.033]}
-        rotation={[0, 0.271, 0]}
-      />
-      <mesh
-        name="Cube001"
-        castShadow
-        receiveShadow
-        geometry={nodes.Cube001.geometry}
-        material={materials['Material.002']}
-        position={[-0.693, 1.533, -0.799]}
-      />
+      <group name="Cube001" position={[-0.693, 1.533, -0.799]}>
+        <mesh
+          name="Cube018"
+          castShadow
+          receiveShadow
+          geometry={nodes.Cube018.geometry}
+          material={materials['Material.004']}
+        />
+        <mesh
+          name="Cube018_1"
+          castShadow
+          receiveShadow
+          geometry={nodes.Cube018_1.geometry}
+          material={materials['Material.001']}
+        />
+      </group>
       <mesh
         name="Cube005"
         castShadow
@@ -325,37 +323,17 @@ export function Web1(props) {
         castShadow
         receiveShadow
         geometry={nodes.Cylinder018.geometry}
-        material={nodes.Cylinder018.material}
+        material={materials['Material.022']}
         position={[-1.662, 2.145, 0.735]}
         rotation={[Math.PI, -0.93, Math.PI]}
         scale={0.05}
-      />
-      <mesh
-        name="Cylinder034"
-        castShadow
-        receiveShadow
-        geometry={nodes.Cylinder034.geometry}
-        material={materials['Desk.001']}
-        position={[0.548, 0.312, 0.668]}
-        rotation={[-0.164, -0.042, 0.158]}
-        scale={[0.031, 0.819, 0.031]}
-      />
-      <mesh
-        name="Cylinder038"
-        castShadow
-        receiveShadow
-        geometry={nodes.Cylinder038.geometry}
-        material={nodes.Cylinder038.material}
-        position={[0.344, 0.722, 0.804]}
-        rotation={[0, Math.PI / 4, -Math.PI / 2]}
-        scale={[0.021, 0.267, 0.034]}
       />
       <mesh
         name="Cylinder035"
         castShadow
         receiveShadow
         geometry={nodes.Cylinder035.geometry}
-        material={nodes.Cylinder035.material}
+        material={materials['Material.022']}
         position={[0.123, 2.391, -0.698]}
         rotation={[1.14, -0.243, -1.139]}
         scale={[0.127, 0.099, 0.127]}
@@ -388,6 +366,7 @@ export function Web1(props) {
           scale={[0.385, 0.379, 0.379]}
         />
       </group>
+      <group name="BézierCurve002" position={[-1.017, 10.239, 1.56]} />
       <group name="Empty007" position={[1.019, 1.058, -0.266]} scale={0.256}>
         <mesh
           name="Sphere004"
@@ -678,6 +657,36 @@ export function Web1(props) {
           />
         </group>
       </mesh>
+      <mesh
+        name="LAPTOP001"
+        castShadow
+        receiveShadow
+        geometry={nodes.LAPTOP001.geometry}
+        material={materials['BASE_LAPTOP_MAT.002']}
+        position={[1.472, 1.557, 0.398]}
+        rotation={[-Math.PI, 1.334, -Math.PI]}
+        scale={[-0.164, -0.014, -0.105]}
+      />
+      <group
+        name="SCREEN_LAPTOP001"
+        position={[1.634, 1.668, 0.36]}
+        rotation={[-1.694, 0.471, 1.837]}
+        scale={[-0.164, -0.014, -0.105]}>
+        <mesh
+          name="Cube002"
+          castShadow
+          receiveShadow
+          geometry={nodes.Cube002.geometry}
+          material={materials['KEYBOARD.002']}
+        />
+        <mesh
+          name="Cube002_1"
+          castShadow
+          receiveShadow
+          geometry={nodes.Cube002_1.geometry}
+          material={materials['CODE_SCREEN_MAT.002']}
+        />
+      </group>
     </group>
   </group>
   );

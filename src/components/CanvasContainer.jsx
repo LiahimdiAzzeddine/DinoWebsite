@@ -1,8 +1,4 @@
-import React, {
-  Suspense,
-  useContext,
-  useEffect,
-} from "react";
+import React, { Suspense, useContext, useEffect } from "react";
 import { Canvas, useThree } from "@react-three/fiber";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
@@ -13,7 +9,10 @@ import {
 
 import MODEL_CONFIGS from "./experience/MODEL_CONFIGS";
 import AnimatedGradientBackground from "./experience/SceneColor";
-import {Environment, Html} from "@react-three/drei";
+import { Environment, Html } from "@react-three/drei";
+import ConfettiSystem from "./experience/ConfettiSystem";
+import { Web1 } from "./experience/Web1";
+import { Web2 } from "./experience/Web2";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -21,51 +20,75 @@ gsap.registerPlugin(ScrollTrigger);
 export function ModelContainer() {
   const { currentModel } = useContext(AnimationContext);
   const config = MODEL_CONFIGS[currentModel];
-  const ModelComponent = config.Component;
   const { size } = useThree();
 
   return (
     <>
-      <ModelComponent scale={size.width >= 1024 ? 0.2 : 0.1} />
+      <Web1
+        scale={size.width >= 1024 ? 0.2 : 0.1}
+        isActive={currentModel === "Model1"}
+      />
+      <Web2
+        scale={size.width >= 1024 ? 0.2 : 0.1}
+        isActive={currentModel === "Model2"}
+      />
     </>
   );
 }
 
 // Handles model switching and scene positioning based on scroll
 const SceneManager = () => {
-  const { setCurrentModel, setScrollDirection, } = useContext(AnimationContext);
+  const {
+    setCurrentModel,
+    isTransitioning,
+    setIsTransitioning,
+    setTransitionState,
+  } = useContext(AnimationContext);
 
   useEffect(() => {
     Object.entries(MODEL_CONFIGS).forEach(([key, { triggerSection }]) => {
       ScrollTrigger.create({
         trigger: triggerSection,
-        start: "top bottom",
-        end: "top top",
-        scrub: true,
-        markers:true,
+        start: "clamp(top bottom)",
+        end: "clamp(top top)",
+        scrub: 1.5,
+        markers: true,
+
         onEnter: () => {
-          setCurrentModel(key);
+          setTransitionState("down");
+          if (!isTransitioning) {
+            setCurrentModel(key);
+          } else {
+            console.log("Blocked change to", key, "due to transition");
+          }
         },
         onEnterBack: () => {
+          setTransitionState("up");
           setCurrentModel(key);
         },
-       
+
       });
-      
     });
-  }, [setCurrentModel]);
+  }, [setCurrentModel, isTransitioning]);
 
   return <ModelContainer />;
 };
 
-
 // Updated CanvasContainer component with gradient background
-export const CanvasContainer = () => (
-  <AnimationProvider>
+export const CanvasContainer = () => {
+  return (
     <Canvas>
       <AnimatedGradientBackground />
       <ambientLight intensity={0.03} />
-      <spotLight angle={0.14} color="#ffd0d0" penumbra={1} position={[25, 50, -20]} shadow-mapSize={[2048, 2048]} shadow-bias={-0.0001} castShadow />
+      <spotLight
+        angle={0.14}
+        color="#ffd0d0"
+        penumbra={1}
+        position={[25, 50, -20]}
+        shadow-mapSize={[2048, 2048]}
+        shadow-bias={-0.0001}
+        castShadow
+      />
       <Environment files="https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/potsdamer_platz_1k.hdr" />
       <Suspense
         fallback={
@@ -75,7 +98,7 @@ export const CanvasContainer = () => (
         }
       >
         <SceneManager />
-      </Suspense> 
+      </Suspense>
     </Canvas>
-  </AnimationProvider>
-);
+  );
+};

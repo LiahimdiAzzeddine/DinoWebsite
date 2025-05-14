@@ -213,7 +213,7 @@ export const Overlay = () => {
           </a>
         </div>
       </Section>
-      <Section right>
+      <Section right id="section5">
         <h2 className="font-bold text-white text-[1em] md:text-[2em] leading-[1.1em] mt-[0.4em] mb-[0.4em] ">
           what can Dinomite studio help you with
         </h2>

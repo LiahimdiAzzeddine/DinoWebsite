@@ -1,6 +1,7 @@
 
 import { Web1 } from "./Web1";
 import { Web2 } from "./Web2";
+import { Web3 } from "./Web3";
 
 const MODEL_CONFIGS = {
   Model1: {
@@ -11,14 +12,21 @@ const MODEL_CONFIGS = {
     colorB: '#cc64ca',
     Component: Web1,
   },
-  
-  Model2: {
+    Model2: {
     url: "./models/Web2.glb",
      triggerSection: "#section3",
     sectioncolor: 0x4abeab,
     colorA: '#90a1b6', 
     colorB: '#e3e9bc',
     Component: Web2,
+  },
+ Model3: {
+    url: "./models/Web3.glb",
+     triggerSection: "#section4",
+    sectioncolor: 0x4abeab,
+    colorA: '#90a1b6', 
+    colorB: '#e3e9bc',
+    Component: Web3,
   },
 
 };

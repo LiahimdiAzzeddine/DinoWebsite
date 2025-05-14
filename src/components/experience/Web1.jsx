@@ -1,98 +1,107 @@
-import React, { useContext, useLayoutEffect, useRef } from "react";
+import { useContext, useLayoutEffect, useRef } from "react";
 import { useGLTF, PerspectiveCamera, useAnimations } from "@react-three/drei";
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { AnimationContext } from "./AnimationContext";
+import * as THREE from "three";
+import { ScrollTrigger } from "gsap/all";
 
 gsap.registerPlugin(ScrollTrigger);
-export function Web1(props) {
+
+export function Web1({ isActive, ...props }) {
   const group = useRef();
   const { nodes, materials, animations } = useGLTF("./models/Web1.glb");
   const { actions, mixer } = useAnimations(animations, group);
-  const { currentModel, setCurrentModel } = useContext(AnimationContext);
+  const { currentModel, setIsTransitioning, isTransitioning } = useContext(AnimationContext);
 
-  useLayoutEffect(() => {
-    if (!actions || !mixer || !group.current) return;
+  const cameraRef = useRef();
+  const animationFrameRef = useRef();
+  const scrollProgressRef = useRef(0);
+  const smoothProgressRef = useRef(0);
+  const timelineRef = useRef(null);
+  const originalCameraY = useRef(null);
 
-    const cameraAction = actions["Camera.001Action"];
-    if (!cameraAction) return;
+useLayoutEffect(() => {
+  if (!isActive || !actions || !mixer || !group.current) return;
 
-    cameraAction.play();
-    cameraAction.paused = true;
-    const duration = cameraAction.getClip().duration;
-    const camera = group.current.getObjectByName("Camera001");
-    let targetTime = 0;
-    let currentTime = 0;
-    let frameId;
+  const cameraAction = actions["CameraIn"];
+  const camera = group.current.getObjectByName("Camera001");
+  if (!cameraAction || !camera) return;
 
-    const update = () => {
-      currentTime += (targetTime - currentTime) * 0.1; // friction
-      cameraAction.time = currentTime;
-      mixer.update(0);
-      frameId = requestAnimationFrame(update);
-    };
+  cameraRef.current = camera;
+  cameraAction.play();
+  cameraAction.paused = true;
 
-    frameId = requestAnimationFrame(update);
+  if (originalCameraY.current === null) {
+    originalCameraY.current = camera.position.y;
+  }
 
-    const trigger = ScrollTrigger.create({
+  const duration = cameraAction.getClip().duration;
+  const clock = new THREE.Clock();
+
+  const updateAnimation = () => {
+    const delta = clock.getDelta();
+    const smoothingFactor = 0.075;
+    smoothProgressRef.current += (scrollProgressRef.current - smoothProgressRef.current) * smoothingFactor;
+
+    cameraAction.time = smoothProgressRef.current * duration;
+    mixer.update(delta);
+
+    animationFrameRef.current = requestAnimationFrame(updateAnimation);
+  };
+
+  animationFrameRef.current = requestAnimationFrame(updateAnimation);
+
+  timelineRef.current = gsap.timeline({
+    scrollTrigger: {
       trigger: "#section2",
       start: "top bottom",
       end: "top top",
-      scrub: true,
-      markers:false,
-      onUpdate: (self) => {
-        targetTime = self.progress * duration;
-      },
-
+      scrub: 1.5,
+      markers: false,
       onLeave: () => {
-        if (camera) {
-          gsap.to(camera.position, {
-            y: group.current.getObjectByName("Camera001").position.y - 10,
-            ease: "power2.out",
-          });
-        }
+        console.log("Leaving section - animating out");
+        setIsTransitioning(true);
+        gsap.to(camera.position, {
+          y: originalCameraY.current - 10,
+          duration: 0.5,
+          ease: "power2.inOut",
+          onComplete: () => setIsTransitioning(false),
+        });
       },
-
       onEnterBack: () => {
-        if (camera) {
-          gsap.from(
-            camera.position,
-            { y: 20 },
-          );
-        }
+        console.log("Entering section from below - animating in");
+        setIsTransitioning(true);
+        gsap.to(camera.position, {
+          y: originalCameraY.current,
+          duration: 0.2,
+          ease: "power2.inOut",
+          onComplete: () => setIsTransitioning(false),
+        });
       },
-    });
+    },
+  });
 
-    return () => {
-      trigger.kill();
-      cancelAnimationFrame(frameId);
-    };
-  }, [currentModel]);
+  return () => {
+    cancelAnimationFrame(animationFrameRef.current);
+    timelineRef.current?.kill();
+  };
+}, []);
+
 
   return (
-    <group ref={group} {...props} dispose={null}>
+    <group ref={group} {...props} dispose={null} visible={isActive}>
       <group name="Scene">
-        {currentModel == "Model1" && (
+       
           <PerspectiveCamera
             name="Camera001"
-            makeDefault={true}
+            makeDefault={isActive}
             far={1000}
             near={0.1}
             fov={18.848}
             position={[6.948, 10.064, 14.767]}
             rotation={[-0.456, 0.244, 0.078]}
           />
-        )}
-        <mesh
-          name="Cylinder011"
-          castShadow
-          receiveShadow
-          geometry={nodes.Cylinder011.geometry}
-          material={materials["Material.022"]}
-          position={[-0.285, 2.709, -0.663]}
-          rotation={[-0.007, 0.965, 0.005]}
-          scale={[5.175, 9.55, 9.015]}
-        />
+        
         <mesh
           name="GroundCubeQuad003"
           castShadow
@@ -237,7 +246,7 @@ export function Web1(props) {
               castShadow
               receiveShadow
               geometry={nodes.mesh003_1.geometry}
-              material={materials["Material.022"]}
+              material={materials["Material.005"]}
             />
             <mesh
               name="mesh003_2"
@@ -296,26 +305,6 @@ export function Web1(props) {
           geometry={nodes.Cube005.geometry}
           material={materials["Material.002"]}
           position={[0.04, 1.473, 0.056]}
-        />
-        <mesh
-          name="Cylinder018"
-          castShadow
-          receiveShadow
-          geometry={nodes.Cylinder018.geometry}
-          material={materials["Material.022"]}
-          position={[-1.662, 2.145, 0.735]}
-          rotation={[Math.PI, -0.93, Math.PI]}
-          scale={0.05}
-        />
-        <mesh
-          name="Cylinder035"
-          castShadow
-          receiveShadow
-          geometry={nodes.Cylinder035.geometry}
-          material={materials["Material.022"]}
-          position={[0.123, 2.391, -0.698]}
-          rotation={[1.14, -0.243, -1.139]}
-          scale={[0.127, 0.099, 0.127]}
         />
         <mesh
           name="Circle012"
@@ -406,6 +395,16 @@ export function Web1(props) {
             scale={[0.503, 0.494, 0.494]}
           />
         </group>
+        <mesh
+          name="Cylinder002"
+          castShadow
+          receiveShadow
+          geometry={nodes.Cylinder002.geometry}
+          material={materials["Material.022"]}
+          position={[-0.221, 2.628, -0.663]}
+          rotation={[Math.PI, -0.93, Math.PI]}
+          scale={0.05}
+        />
         <group
           name="Armature001"
           position={[-0.724, 2.797, 0.172]}

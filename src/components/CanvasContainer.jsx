@@ -10,9 +10,6 @@ import {
 import MODEL_CONFIGS from "./experience/MODEL_CONFIGS";
 import AnimatedGradientBackground from "./experience/SceneColor";
 import { Environment, Html } from "@react-three/drei";
-import ConfettiSystem from "./experience/ConfettiSystem";
-import { Web1 } from "./experience/Web1";
-import { Web2 } from "./experience/Web2";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -20,30 +17,19 @@ gsap.registerPlugin(ScrollTrigger);
 export function ModelContainer() {
   const { currentModel } = useContext(AnimationContext);
   const config = MODEL_CONFIGS[currentModel];
+  const ModelComponent = config.Component;
   const { size } = useThree();
 
   return (
     <>
-      <Web1
-        scale={size.width >= 1024 ? 0.2 : 0.1}
-        isActive={currentModel === "Model1"}
-      />
-      <Web2
-        scale={size.width >= 1024 ? 0.2 : 0.1}
-        isActive={currentModel === "Model2"}
-      />
+      <ModelComponent scale={size.width >= 1024 ? 0.2 : 0.1} />
     </>
   );
 }
 
 // Handles model switching and scene positioning based on scroll
 const SceneManager = () => {
-  const {
-    setCurrentModel,
-    isTransitioning,
-    setIsTransitioning,
-    setTransitionState,
-  } = useContext(AnimationContext);
+  const { setCurrentModel, isTransitioning,setTransitionDirection } = useContext(AnimationContext);
 
   useEffect(() => {
     Object.entries(MODEL_CONFIGS).forEach(([key, { triggerSection }]) => {
@@ -51,22 +37,25 @@ const SceneManager = () => {
         trigger: triggerSection,
         start: "clamp(top bottom)",
         end: "clamp(top top)",
-        scrub: 1.5,
-        markers: true,
-
+        scrub: true,
+        markers:true,
+      
         onEnter: () => {
-          setTransitionState("down");
           if (!isTransitioning) {
-            setCurrentModel(key);
+            gsap.delayedCall(0.2, () => setCurrentModel(key));
+            setTransitionDirection('down')
           } else {
             console.log("Blocked change to", key, "due to transition");
           }
         },
         onEnterBack: () => {
-          setTransitionState("up");
-          setCurrentModel(key);
+          if (!isTransitioning) {
+            gsap.delayedCall(0.2, () => setCurrentModel(key));
+            setTransitionDirection('up')
+          } else {
+            console.log("Blocked back change to", key, "due to transition");
+          }
         },
-
       });
     });
   }, [setCurrentModel, isTransitioning]);
@@ -76,8 +65,8 @@ const SceneManager = () => {
 
 // Updated CanvasContainer component with gradient background
 export const CanvasContainer = () => {
-  return (
-    <Canvas>
+ 
+  return( <Canvas>
       <AnimatedGradientBackground />
       <ambientLight intensity={0.03} />
       <spotLight
@@ -98,7 +87,7 @@ export const CanvasContainer = () => {
         }
       >
         <SceneManager />
+        
       </Suspense>
     </Canvas>
-  );
-};
+)};

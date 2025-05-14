@@ -3,11 +3,8 @@ import { useGLTF, PerspectiveCamera, useAnimations } from "@react-three/drei";
 import gsap from "gsap";
 import { AnimationContext } from "./AnimationContext";
 import * as THREE from "three";
-import { ScrollTrigger } from "gsap/all";
 
-gsap.registerPlugin(ScrollTrigger);
-
-export function Web1({ isActive, ...props }) {
+export function Web1(props) {
   const group = useRef();
   const { nodes, materials, animations } = useGLTF("./models/Web1.glb");
   const { actions, mixer } = useAnimations(animations, group);
@@ -18,90 +15,101 @@ export function Web1({ isActive, ...props }) {
   const scrollProgressRef = useRef(0);
   const smoothProgressRef = useRef(0);
   const timelineRef = useRef(null);
-  const originalCameraY = useRef(null);
 
-useLayoutEffect(() => {
-  if (!isActive || !actions || !mixer || !group.current) return;
+  useLayoutEffect(() => {
+    if (currentModel !== "Model1") return;
+    if (!actions || !mixer || !group.current) return;
+        document.body.style.overflow = 'hidden';
 
-  const cameraAction = actions["CameraIn"];
-  const camera = group.current.getObjectByName("Camera001");
-  if (!cameraAction || !camera) return;
+    console.log("Web1 initialized with model:", currentModel);
+    
+    const cameraAction = actions["CameraIn"];
+    const camera = group.current.getObjectByName("Camera001");
 
-  cameraRef.current = camera;
-  cameraAction.play();
-  cameraAction.paused = true;
+    if (!cameraAction || !camera) return;
 
-  if (originalCameraY.current === null) {
-    originalCameraY.current = camera.position.y;
-  }
+    cameraRef.current = camera;
+    cameraAction.play();
+    cameraAction.paused = true;
 
-  const duration = cameraAction.getClip().duration;
-  const clock = new THREE.Clock();
-
-  const updateAnimation = () => {
-    const delta = clock.getDelta();
-    const smoothingFactor = 0.075;
-    smoothProgressRef.current += (scrollProgressRef.current - smoothProgressRef.current) * smoothingFactor;
-
-    cameraAction.time = smoothProgressRef.current * duration;
-    mixer.update(delta);
+    const duration = cameraAction.getClip().duration;
+    const clock = new THREE.Clock();
+    
+    const updateAnimation = () => {
+      const delta = clock.getDelta();
+      const smoothingFactor = 0.075;
+      smoothProgressRef.current += (scrollProgressRef.current - smoothProgressRef.current) * smoothingFactor;
+      
+      cameraAction.time = smoothProgressRef.current * duration;
+      mixer.update(delta);
+      
+      animationFrameRef.current = requestAnimationFrame(updateAnimation);
+    };
 
     animationFrameRef.current = requestAnimationFrame(updateAnimation);
-  };
 
-  animationFrameRef.current = requestAnimationFrame(updateAnimation);
-
-  timelineRef.current = gsap.timeline({
-    scrollTrigger: {
-      trigger: "#section2",
-      start: "top bottom",
-      end: "top top",
-      scrub: 1.5,
-      markers: false,
-      onLeave: () => {
-        console.log("Leaving section - animating out");
-        setIsTransitioning(true);
-        gsap.to(camera.position, {
-          y: originalCameraY.current - 10,
-          duration: 0.5,
-          ease: "power2.inOut",
-          onComplete: () => setIsTransitioning(false),
-        });
+    timelineRef.current = gsap.timeline({
+      scrollTrigger: {
+        trigger: "#section2",
+        start: "top bottom",
+        end: "top top",
+        scrub: 1.5,
+        markers: false,
+        onUpdate: (self) => {
+        //  scrollProgressRef.current = self.progress;
+        },
+        onLeave: () => {
+          console.log("Leaving section - animating out");
+          setIsTransitioning(true);
+          
+          gsap.to(camera.position, {
+            y: camera.position.y - 10,
+            duration: 1,
+            ease: "power2.inOut",
+            onComplete: () => {
+              setIsTransitioning(false);
+            }
+          });
+        },
+        onEnterBack: () => {
+          console.log("Entering section from below - animating in");
+          setIsTransitioning(true);
+          gsap.from(camera.position, {
+            y: camera.position.y + 10,
+            duration: 0.2,
+            ease: "power2.inOut",
+            onComplete: () => {
+              setIsTransitioning(false);
+            }
+          });
+        },
       },
-      onEnterBack: () => {
-        console.log("Entering section from below - animating in");
-        setIsTransitioning(true);
-        gsap.to(camera.position, {
-          y: originalCameraY.current,
-          duration: 0.2,
-          ease: "power2.inOut",
-          onComplete: () => setIsTransitioning(false),
-        });
-      },
-    },
-  });
+    });
 
-  return () => {
-    cancelAnimationFrame(animationFrameRef.current);
-    timelineRef.current?.kill();
-  };
-}, []);
-
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+      if (timelineRef.current) {
+        timelineRef.current.kill();
+      }
+    };
+  }, [currentModel, setIsTransitioning]);
 
   return (
-    <group ref={group} {...props} dispose={null} visible={isActive}>
+    <group ref={group} {...props} dispose={null}>
       <group name="Scene">
-       
+        {currentModel === "Model1" && (
           <PerspectiveCamera
             name="Camera001"
-            makeDefault={isActive}
+            makeDefault={currentModel === "Model1"}
             far={1000}
             near={0.1}
             fov={18.848}
             position={[6.948, 10.064, 14.767]}
             rotation={[-0.456, 0.244, 0.078]}
           />
-        
+        )}
         <mesh
           name="GroundCubeQuad003"
           castShadow

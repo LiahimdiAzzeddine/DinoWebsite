@@ -142,7 +142,7 @@ export const Overlay = () => {
         </div>
       </Section>
 
-      <Section right id="section3" class="section3">
+      <Section  id="section3" class="section3">
         <h2 className="font-bold text-white text-[1em] md:text-[2em] leading-[1.1em] mt-[0.4em] mb-[0.4em] section_2">
           Meet (First name), a Game designer
         </h2>

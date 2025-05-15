@@ -29,7 +29,8 @@ export function ModelContainer() {
 
 // Handles model switching and scene positioning based on scroll
 const SceneManager = () => {
-  const { setCurrentModel, isTransitioning,setTransitionDirection } = useContext(AnimationContext);
+  const { setCurrentModel, isTransitioning, setTransitionDirection } =
+    useContext(AnimationContext);
 
   useEffect(() => {
     Object.entries(MODEL_CONFIGS).forEach(([key, { triggerSection }]) => {
@@ -38,12 +39,12 @@ const SceneManager = () => {
         start: "clamp(top bottom)",
         end: "clamp(top top)",
         scrub: true,
-        markers:true,
-      
+        markers: true,
+
         onEnter: () => {
           if (!isTransitioning) {
             gsap.delayedCall(0.2, () => setCurrentModel(key));
-            setTransitionDirection('down')
+            setTransitionDirection("down");
           } else {
             console.log("Blocked change to", key, "due to transition");
           }
@@ -51,7 +52,7 @@ const SceneManager = () => {
         onEnterBack: () => {
           if (!isTransitioning) {
             gsap.delayedCall(0.2, () => setCurrentModel(key));
-            setTransitionDirection('up')
+            setTransitionDirection("up");
           } else {
             console.log("Blocked back change to", key, "due to transition");
           }
@@ -65,8 +66,8 @@ const SceneManager = () => {
 
 // Updated CanvasContainer component with gradient background
 export const CanvasContainer = () => {
- 
-  return( <Canvas>
+  return (
+    <Canvas>
       <AnimatedGradientBackground />
       <ambientLight intensity={0.03} />
       <spotLight
@@ -87,7 +88,7 @@ export const CanvasContainer = () => {
         }
       >
         <SceneManager />
-        
       </Suspense>
     </Canvas>
-)};
+  );
+};

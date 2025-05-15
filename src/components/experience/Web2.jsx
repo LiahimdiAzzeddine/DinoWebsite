@@ -23,22 +23,20 @@ export function Web2(props) {
   const { currentModel, isTransitioning, transitionDirection } =
     useContext(AnimationContext);
  const Animations = [
-      "Armature.001Action.001",
-      "ArmatureAction",
-      
-      "Circle.001Action",
-      "Cube.011Action.002",
-      "Empty.006Action",
-      "EmptyAction",
-      "HandMover",
-      "Sphere.005Action",
-      "Sphere.006Action",
-      "SphereAction.002"
+      "40M",
+      "40MRope",
+      "ArmatureMan",
+      "BallonHotAirAction",
+      "Balloon",
+      "Balloon.001",
+      "Balloon.002",
+     
+      "LeftHand",
+      "RightHand"
     ];
   const smoothAnimations=[
-          "Sphere.001Action.001",
-     "Sphere.014Action.002",
-     "CameraAction",
+          "Clouds1",
+      "Clouds2",
   ]
 
 useLayoutEffect(() => {
@@ -46,7 +44,7 @@ useLayoutEffect(() => {
   if (!actions || !mixer) return;
 
   const enterAnim = actions["ActionEnter"];
-  const leaveAnim = actions["ActionEnter"];
+  const leaveAnim = actions["ActionOut"];
 
   // Reset and play other animations
   Animations.forEach((name) => {
@@ -56,9 +54,14 @@ useLayoutEffect(() => {
   smoothAnimations.forEach((name) => {
     actions[name]?.reset().setEffectiveTimeScale(0.2).play();
   });
+  if (enterAnim) {
+    enterAnim.reset().setLoop(THREE.LoopOnce, 1);
+    enterAnim.clampWhenFinished = true;
+    enterAnim.play();
+    mixer.update(0.01);
+  }
 
-  // Déclencher l'animation en fonction de la direction
-  if (transitionDirection === "down" && enterAnim) {
+/*  if (transitionDirection === "down" && enterAnim) {
     enterAnim.reset().setLoop(THREE.LoopOnce, 1);
     enterAnim.clampWhenFinished = true;
     enterAnim.play();
@@ -67,20 +70,15 @@ useLayoutEffect(() => {
     leaveAnim.reset().setLoop(THREE.LoopOnce, 1);
     leaveAnim.clampWhenFinished = true;
     leaveAnim.play();
-    mixer.update(0.01);
-  }
+    mixer.update(0);
+  }*/
 
 }, [actions, mixer, currentModel, isTransitioning, transitionDirection]);
 
 
   return (
-      <group ref={group} {...props} dispose={null}>
+       <group ref={group} {...props} dispose={null}>
       <group name="Scene">
-        <group
-          name="Empty"
-          position={[0.285, 5.921, -8.176]}
-          rotation={[Math.PI / 2, 0, Math.PI / 2]}
-        />
         <mesh
           name="Sphere014"
           castShadow
@@ -100,9 +98,9 @@ useLayoutEffect(() => {
           rotation={[Math.PI, 0, Math.PI]}
           scale={[0.45, 0.767, 0.767]}
         />
-        <group name="Empty001" position={[23.142, 20.042, -2.994]} scale={0.15}>
-             {currentModel=="Model2"&&(
-                <PerspectiveCamera
+        <group name="Empty001" position={[23.142, 20.042, 1.408]} scale={0.15}>
+           {currentModel=="Model2"&&(
+            <PerspectiveCamera
             name="Camera"
             makeDefault={true}
             far={1000}
@@ -113,49 +111,20 @@ useLayoutEffect(() => {
             scale={6.678}
           />
              )}
-        
         </group>
-        <mesh
-          name="Object0012"
-          castShadow
-          receiveShadow
-          geometry={nodes.Object0012.geometry}
-          material={materials.lol_emoji}
-          position={[0.387, 1.934, -3.188]}
-          rotation={[1.534, -0.134, -1.228]}
-          scale={0.153}>
-          <mesh
-            name="Object002"
-            castShadow
-            receiveShadow
-            geometry={nodes.Object002.geometry}
-            material={materials['Material.004']}
-            position={[-13.026, 2.521, 4.18]}
-          />
-        </mesh>
         <mesh
           name="Sphere002"
           castShadow
           receiveShadow
           geometry={nodes.Sphere002.geometry}
           material={materials['Material.001']}
-          position={[0.243, 4.012, 2.094]}
-          rotation={[-2.071, 1.165, 2.27]}
+          position={[-0.212, -0.265, -3.618]}
+          rotation={[-0.413, 0.743, 0.652]}
           scale={0.68}>
-          <mesh
-            name="Eyes_Cube002"
-            castShadow
-            receiveShadow
-            geometry={nodes.Eyes_Cube002.geometry}
-            material={materials.Eye_Lid}
-            position={[-0.001, 0.012, 0.002]}
-            rotation={[Math.PI / 2, 0, 0]}
-            scale={0.43}
-          />
           <group
             name="glasss2"
-            position={[-0.011, -0.031, 1.071]}
-            rotation={[1.6, -0.004, -0.043]}
+            position={[0.003, 0.084, 1.035]}
+            rotation={[1.706, -0.077, -0.068]}
             scale={0.241}>
             <mesh
               name="Mesh006"
@@ -173,16 +142,6 @@ useLayoutEffect(() => {
             />
           </group>
           <mesh
-            name="Lash_Cube002"
-            castShadow
-            receiveShadow
-            geometry={nodes.Lash_Cube002.geometry}
-            material={materials.Eye_Lid}
-            position={[-0.001, 0.012, 0.03]}
-            rotation={[Math.PI / 2, 0, 0]}
-            scale={0.43}
-          />
-          <mesh
             name="Mouth_Cube002"
             castShadow
             receiveShadow
@@ -193,77 +152,117 @@ useLayoutEffect(() => {
             scale={0.43}
           />
         </mesh>
-        <group name="Empty003" position={[1.353, 0.015, 1.562]} rotation={[-0.004, 0.24, 0.031]}>
+        <group
+          name="BallonHotAir"
+          position={[-14.582, 4.564, 2.476]}
+          rotation={[0.007, -0.012, -0.001]}
+          scale={0.694}>
           <mesh
-            name="Sphere"
+            name="Sphere010"
             castShadow
             receiveShadow
-            geometry={nodes.Sphere.geometry}
-            material={materials['Material.001']}
-            position={[-0.73, -0.184, 0.228]}
-            rotation={[-2.222, 1.191, 2.225]}
-            scale={0.799}>
-            <mesh
-              name="Eyes_Cube001"
-              castShadow
-              receiveShadow
-              geometry={nodes.Eyes_Cube001.geometry}
-              material={materials.Eye_Lid}
-              position={[-0.001, 0.012, 0.002]}
-              rotation={[Math.PI / 2, 0, 0]}
-              scale={0.43}
-            />
-            <mesh
-              name="heart-02_Cube001"
-              castShadow
-              receiveShadow
-              geometry={nodes['heart-02_Cube001'].geometry}
-              material={materials['Material.003']}
-              position={[0.793, 0.831, 0.79]}
-              rotation={[Math.PI / 2, 0, 0]}
-              scale={0.356}
-            />
-            <mesh
-              name="Heart-03_Cube001"
-              castShadow
-              receiveShadow
-              geometry={nodes['Heart-03_Cube001'].geometry}
-              material={materials['Material.003']}
-              position={[0.802, -0.69, 0.947]}
-              rotation={[Math.PI / 2, 0, 0]}
-              scale={0.575}
-            />
-            <mesh
-              name="Heart_01_Cube001"
-              castShadow
-              receiveShadow
-              geometry={nodes.Heart_01_Cube001.geometry}
-              material={materials['Material.003']}
-              position={[-0.794, -0.603, 0.921]}
-              rotation={[Math.PI / 2, 0, 0]}
-              scale={0.468}
-            />
-            <mesh
-              name="Lash_Cube001"
-              castShadow
-              receiveShadow
-              geometry={nodes.Lash_Cube001.geometry}
-              material={materials.Eye_Lid}
-              position={[-0.001, 0.012, 0.03]}
-              rotation={[Math.PI / 2, 0, 0]}
-              scale={0.43}
-            />
-            <mesh
-              name="Mouth_Cube001"
-              castShadow
-              receiveShadow
-              geometry={nodes.Mouth_Cube001.geometry}
-              material={materials.Eye_Lid}
-              position={[-0.001, -0.532, 0.853]}
-              rotation={[Math.PI / 2, 0, 0]}
-              scale={0.43}
-            />
-          </mesh>
+            geometry={nodes.Sphere010.geometry}
+            material={materials['Material.007']}
+          />
+          <mesh
+            name="Sphere010_1"
+            castShadow
+            receiveShadow
+            geometry={nodes.Sphere010_1.geometry}
+            material={materials['Material.005']}
+          />
+          <mesh
+            name="Sphere010_2"
+            castShadow
+            receiveShadow
+            geometry={nodes.Sphere010_2.geometry}
+            material={materials['Material.010']}
+          />
+          <mesh
+            name="Sphere010_3"
+            castShadow
+            receiveShadow
+            geometry={nodes.Sphere010_3.geometry}
+            material={materials['Material.009']}
+          />
+          <mesh
+            name="Sphere010_4"
+            castShadow
+            receiveShadow
+            geometry={nodes.Sphere010_4.geometry}
+            material={materials['Material.011']}
+          />
+          <mesh
+            name="Sphere010_5"
+            castShadow
+            receiveShadow
+            geometry={nodes.Sphere010_5.geometry}
+            material={materials['Material.013']}
+          />
+          <mesh
+            name="Sphere010_6"
+            castShadow
+            receiveShadow
+            geometry={nodes.Sphere010_6.geometry}
+            material={materials['Material.012']}
+          />
+        </group>
+        <group
+          name="Cube043_Cube053"
+          position={[2.297, -5.768, -1.96]}
+          rotation={[Math.PI / 2, 0, 0]}>
+          <mesh
+            name="Cube043_Cube053_1"
+            castShadow
+            receiveShadow
+            geometry={nodes.Cube043_Cube053_1.geometry}
+            material={materials.Orange}
+          />
+          <mesh
+            name="Cube043_Cube053_2"
+            castShadow
+            receiveShadow
+            geometry={nodes.Cube043_Cube053_2.geometry}
+            material={materials['Material.006']}
+          />
+        </group>
+        <group
+          name="Cube044_Cube054"
+          position={[-6.655, -4.081, 0.819]}
+          rotation={[Math.PI / 2, 0, -1.594]}>
+          <mesh
+            name="Cube044_Cube054_1"
+            castShadow
+            receiveShadow
+            geometry={nodes.Cube044_Cube054_1.geometry}
+            material={materials.blue}
+          />
+          <mesh
+            name="Cube044_Cube054_2"
+            castShadow
+            receiveShadow
+            geometry={nodes.Cube044_Cube054_2.geometry}
+            material={materials['Material.006']}
+          />
+        </group>
+        <group
+          name="Cube043_Cube001"
+          position={[2.099, -7.888, 3.968]}
+          rotation={[Math.PI / 2, 0, 0]}>
+          <mesh
+            name="Cube043_Cube001_1"
+            castShadow
+            receiveShadow
+            geometry={nodes.Cube043_Cube001_1.geometry}
+            material={materials['Orange.001']}
+          />
+          <mesh
+            name="Cube043_Cube001_2"
+            castShadow
+            receiveShadow
+            geometry={nodes.Cube043_Cube001_2.geometry}
+            material={materials['Material.006']}
+          />
         </group>
         <group
           name="Armature001"

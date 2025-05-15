@@ -28,8 +28,12 @@ export function Web3(props) {
 
   const playedScroll = useRef(false);
   const playedSecondScroll = useRef(false);
+
+ 
+
   useLayoutEffect(() => {
     if (!actions) return;
+    
 
     const firstAnimations = [
       "1.Tour",
@@ -55,6 +59,12 @@ export function Web3(props) {
     Object.keys(actions).forEach((name) => {
       actions[name].reset().paused = true;
     });
+  if (actions["ActionEnter"]) {
+    actions["ActionEnter"].setLoop(THREE.LoopOnce, 1);
+    actions["ActionEnter"].clampWhenFinished = true;
+    actions["ActionEnter"].reset().play();
+  }
+    
 
     firstAnimations.forEach((name) => {
       actions[name]?.reset().play();
@@ -155,7 +165,7 @@ export function Web3(props) {
           castShadow
           receiveShadow
           geometry={nodes.Cylinder011.geometry}
-          material={materials["Material.022"]}
+          material={materials['Material.022']}
           position={[-0.208, 0.174, 0.184]}
           rotation={[Math.PI, -0.93, Math.PI]}
           scale={0.01}
@@ -165,7 +175,7 @@ export function Web3(props) {
           castShadow
           receiveShadow
           geometry={nodes.Cylinder010.geometry}
-          material={materials["Material.022"]}
+          material={materials['Material.022']}
           position={[0.027, 0.166, -0.217]}
           rotation={[-0.236, -1.235, -0.241]}
           scale={0.01}
@@ -175,7 +185,7 @@ export function Web3(props) {
           castShadow
           receiveShadow
           geometry={nodes.Cylinder012.geometry}
-          material={materials["Material.022"]}
+          material={materials['Material.022']}
           position={[0.243, 0.164, -0.112]}
           rotation={[-3.046, -0.631, -3.103]}
           scale={0.008}
@@ -190,17 +200,16 @@ export function Web3(props) {
           castShadow
           receiveShadow
           geometry={nodes.Cylinder101.geometry}
-          material={materials["Material.002"]}
+          material={materials['Material.002']}
           position={[0.072, 0.323, -0.067]}
           rotation={[0.259, -0.477, 0.113]}
-          scale={[0.006, 0.111, 0.004]}
-        >
+          scale={[0.006, 0.111, 0.004]}>
           <mesh
             name="Cube031"
             castShadow
             receiveShadow
             geometry={nodes.Cube031.geometry}
-            material={materials["Material.002"]}
+            material={materials['Material.002']}
             position={[-5.591, -0.78, -0.016]}
             rotation={[-Math.PI, 0, -1.571]}
             scale={[0.012, 5.527, 0.828]}
@@ -223,8 +232,7 @@ export function Web3(props) {
           material={materials.Material}
           position={[-0.365, 0.269, 0.296]}
           rotation={[0, -0.432, 0]}
-          scale={[0.01, 0.036, 0.01]}
-        >
+          scale={[0.01, 0.036, 0.01]}>
           <mesh
             name="Cube060"
             castShadow
@@ -233,27 +241,25 @@ export function Web3(props) {
             material={materials.Material}
             position={[4.865, 18.97, -5.005]}
             rotation={[0, -1.546, 0]}
-            scale={[23.068, 8.486, 35.574]}
-          >
+            scale={[23.068, 8.486, 35.574]}>
             <group
               name="Cube059"
               position={[-1.286, -0.311, 0]}
               rotation={[0, 1.571, 0]}
-              scale={[0.214, 0.068, 0.204]}
-            >
+              scale={[0.214, 0.068, 0.204]}>
               <mesh
                 name="Cube053"
                 castShadow
                 receiveShadow
                 geometry={nodes.Cube053.geometry}
-                material={materials["Material.015"]}
+                material={materials['Material.015']}
               />
               <mesh
                 name="Cube053_1"
                 castShadow
                 receiveShadow
                 geometry={nodes.Cube053_1.geometry}
-                material={materials["Material.015"]}
+                material={materials['Material.015']}
               />
             </group>
             <mesh
@@ -261,7 +267,7 @@ export function Web3(props) {
               castShadow
               receiveShadow
               geometry={nodes.Cube061.geometry}
-              material={materials["Material.009"]}
+              material={materials['Material.009']}
               position={[1.151, -0.346, 0]}
               rotation={[0, 1.571, 0]}
               scale={[0.1, 0.235, 0.329]}
@@ -280,14 +286,13 @@ export function Web3(props) {
               name="Cylinder129"
               position={[-1.265, -0.435, -0.003]}
               rotation={[0, 1.571, 0]}
-              scale={[0.015, 0.231, 0.023]}
-            >
+              scale={[0.015, 0.231, 0.023]}>
               <mesh
                 name="Cylinder129_1"
                 castShadow
                 receiveShadow
                 geometry={nodes.Cylinder129_1.geometry}
-                material={materials["Material.009"]}
+                material={materials['Material.009']}
               />
               <mesh
                 name="Cylinder129_2"
@@ -300,8 +305,7 @@ export function Web3(props) {
                 name="Torus001"
                 position={[-0.201, -1.689, 0.626]}
                 rotation={[Math.PI / 2, 0, -0.83]}
-                scale={[1.979, 1.979, 0.146]}
-              >
+                scale={[1.979, 1.979, 0.146]}>
                 <mesh
                   name="Torus001_1"
                   castShadow
@@ -314,21 +318,21 @@ export function Web3(props) {
                   castShadow
                   receiveShadow
                   geometry={nodes.Torus001_2.geometry}
-                  material={materials["Material.007"]}
+                  material={materials['Material.007']}
                 />
                 <mesh
                   name="Torus001_3"
                   castShadow
                   receiveShadow
                   geometry={nodes.Torus001_3.geometry}
-                  material={materials["Material.008"]}
+                  material={materials['Material.008']}
                 />
                 <mesh
                   name="Torus001_4"
                   castShadow
                   receiveShadow
                   geometry={nodes.Torus001_4.geometry}
-                  material={materials["Material.009"]}
+                  material={materials['Material.009']}
                 />
               </group>
             </group>
@@ -348,7 +352,7 @@ export function Web3(props) {
           castShadow
           receiveShadow
           geometry={nodes.Sphere001.geometry}
-          material={materials["Material.001"]}
+          material={materials['Material.001']}
           position={[-0.203, 0.408, -0.21]}
           scale={0}
         />
@@ -357,23 +361,10 @@ export function Web3(props) {
           castShadow
           receiveShadow
           geometry={nodes.Cube.geometry}
-          material={materials["Material.001"]}
+          material={materials['Material.001']}
           position={[0.006, 0.859, 0.222]}
           scale={0}
         />
-        {currentModel == "Model3" && (
-          <PerspectiveCamera
-            name="Camera"
-            makeDefault={true}
-            far={1000}
-            near={0.1}
-            fov={19.157}
-            position={[4.089, 0.717, -0.346]}
-            rotation={[-Math.PI / 2, 1.519, Math.PI / 2]}
-            scale={0.217}
-          />
-        )}
-
         <mesh
           name="Cylinder090"
           castShadow
@@ -399,39 +390,52 @@ export function Web3(props) {
           position={[-0.843, 1.275, -5.535]}
           scale={0.079}
         />
+        <group name="Empty" position={[4.089, 3.576, -0.346]}>
+          {currentModel == "Model3" && (
+          <PerspectiveCamera
+            name="Camera"
+            makeDefault={true}
+            far={1000}
+            near={0.1}
+            fov={19.157}
+            position={[4.089, 0.717, -0.346]}
+            rotation={[-Math.PI / 2, 1.519, Math.PI / 2]}
+            scale={0.217}
+          />
+        )}
+        </group>
         <group
           name="Cylinder095"
           position={[0.004, 0.391, 0.002]}
           rotation={[-0.004, 0.02, -0.002]}
-          scale={0.052}
-        >
+          scale={0.052}>
           <mesh
             name="Cylinder101_1"
             castShadow
             receiveShadow
             geometry={nodes.Cylinder101_1.geometry}
-            material={materials["Material.007"]}
+            material={materials['Material.007']}
           />
           <mesh
             name="Cylinder101_2"
             castShadow
             receiveShadow
             geometry={nodes.Cylinder101_2.geometry}
-            material={materials["Material.008"]}
+            material={materials['Material.008']}
           />
           <mesh
             name="Cylinder101_3"
             castShadow
             receiveShadow
             geometry={nodes.Cylinder101_3.geometry}
-            material={materials["Material.017"]}
+            material={materials['Material.017']}
           />
           <mesh
             name="Cylinder101_4"
             castShadow
             receiveShadow
             geometry={nodes.Cylinder101_4.geometry}
-            material={materials["Material.015"]}
+            material={materials['Material.015']}
           />
           <group name="Cylinder001" position={[0.006, 3.553, 0.007]} scale={0}>
             <mesh
@@ -439,90 +443,84 @@ export function Web3(props) {
               castShadow
               receiveShadow
               geometry={nodes.Cylinder001_1.geometry}
-              material={materials["Material.007"]}
+              material={materials['Material.007']}
             />
             <mesh
               name="Cylinder001_2"
               castShadow
               receiveShadow
               geometry={nodes.Cylinder001_2.geometry}
-              material={materials["Material.008"]}
+              material={materials['Material.008']}
             />
           </group>
           <group
             name="Cylinder096"
             position={[-0.008, -1.548, -1.192]}
             rotation={[0, 1.571, 0]}
-            scale={0.489}
-          >
+            scale={0.489}>
             <mesh
               name="Cylinder102_1"
               castShadow
               receiveShadow
               geometry={nodes.Cylinder102_1.geometry}
-              material={materials["Material.007"]}
+              material={materials['Material.007']}
             />
             <mesh
               name="Cylinder102_2"
               castShadow
               receiveShadow
               geometry={nodes.Cylinder102_2.geometry}
-              material={materials["Material.008"]}
+              material={materials['Material.008']}
             />
             <mesh
               name="Cylinder102_3"
               castShadow
               receiveShadow
               geometry={nodes.Cylinder102_3.geometry}
-              material={materials["Material.009"]}
+              material={materials['Material.009']}
             />
           </group>
-          <group
-            name="Cylinder097"
-            position={[1.256, -1.548, 0.055]}
-            scale={0.489}
-          >
+          <group name="Cylinder097" position={[1.256, -1.548, 0.055]} scale={0.489}>
             <mesh
               name="Cylinder103_1"
               castShadow
               receiveShadow
               geometry={nodes.Cylinder103_1.geometry}
-              material={materials["Material.007"]}
+              material={materials['Material.007']}
             />
             <mesh
               name="Cylinder103_2"
               castShadow
               receiveShadow
               geometry={nodes.Cylinder103_2.geometry}
-              material={materials["Material.008"]}
+              material={materials['Material.008']}
             />
             <mesh
               name="Cylinder103_3"
               castShadow
               receiveShadow
               geometry={nodes.Cylinder103_3.geometry}
-              material={materials["Material.009"]}
+              material={materials['Material.009']}
             />
           </group>
           <group
             name="Cylinder098"
             position={[1.103, 0.633, 0.065]}
             rotation={[0, 0, -1.445]}
-            scale={[0.491, 0.093, 0.491]}
-          >
+            scale={[0.491, 0.093, 0.491]}>
             <mesh
               name="Cylinder104_1"
               castShadow
               receiveShadow
               geometry={nodes.Cylinder104_1.geometry}
-              material={materials["Material.009"]}
+              material={materials['Material.009']}
             />
             <mesh
               name="Cylinder104_2"
               castShadow
               receiveShadow
               geometry={nodes.Cylinder104_2.geometry}
-              material={materials["Material.013"]}
+              material={materials['Material.013']}
             />
           </group>
           <mesh
@@ -530,7 +528,7 @@ export function Web3(props) {
             castShadow
             receiveShadow
             geometry={nodes.Cylinder099.geometry}
-            material={materials["Material.009"]}
+            material={materials['Material.009']}
             position={[0, -3.265, -0.769]}
             rotation={[0.137, 0, 0]}
             scale={0.146}
@@ -540,7 +538,7 @@ export function Web3(props) {
             castShadow
             receiveShadow
             geometry={nodes.Cylinder100.geometry}
-            material={materials["Material.009"]}
+            material={materials['Material.009']}
             position={[-0.779, -3.265, 0]}
             rotation={[Math.PI / 2, 1.434, -Math.PI / 2]}
             scale={0.146}
@@ -550,7 +548,7 @@ export function Web3(props) {
             castShadow
             receiveShadow
             geometry={nodes.Cylinder102.geometry}
-            material={materials["Material.017"]}
+            material={materials['Material.017']}
             position={[0.424, 2.008, -0.803]}
             rotation={[2.137, 0.803, 0.456]}
           />
@@ -559,7 +557,7 @@ export function Web3(props) {
             castShadow
             receiveShadow
             geometry={nodes.Cylinder103.geometry}
-            material={materials["Material.009"]}
+            material={materials['Material.009']}
             position={[0.015, 1.658, -0.346]}
             scale={[0.125, 1.435, 0.125]}
           />
@@ -568,7 +566,7 @@ export function Web3(props) {
             castShadow
             receiveShadow
             geometry={nodes.Cylinder104.geometry}
-            material={materials["Material.009"]}
+            material={materials['Material.009']}
             position={[-0.214, 1.29, -0.777]}
             rotation={[0.147, 0.055, -0.018]}
             scale={[0.096, 0.761, 0.096]}
@@ -578,7 +576,7 @@ export function Web3(props) {
             castShadow
             receiveShadow
             geometry={nodes.Cylinder106.geometry}
-            material={materials["Material.009"]}
+            material={materials['Material.009']}
             position={[-0.111, 0.999, 0.235]}
             scale={[0.125, 1.435, 0.125]}
           />
@@ -589,55 +587,54 @@ export function Web3(props) {
             castShadow
             receiveShadow
             geometry={nodes.Cylinder007.geometry}
-            material={materials["Material.003"]}
+            material={materials['Material.003']}
           />
           <mesh
             name="Cylinder007_1"
             castShadow
             receiveShadow
             geometry={nodes.Cylinder007_1.geometry}
-            material={materials["Material.005"]}
+            material={materials['Material.005']}
           />
           <mesh
             name="Cylinder007_2"
             castShadow
             receiveShadow
             geometry={nodes.Cylinder007_2.geometry}
-            material={materials["Material.006"]}
+            material={materials['Material.006']}
           />
           <mesh
             name="Cylinder007_3"
             castShadow
             receiveShadow
             geometry={nodes.Cylinder007_3.geometry}
-            material={materials["Material.010"]}
+            material={materials['Material.010']}
           />
           <mesh
             name="Cylinder007_4"
             castShadow
             receiveShadow
             geometry={nodes.Cylinder007_4.geometry}
-            material={materials["Material.011"]}
+            material={materials['Material.011']}
           />
           <mesh
             name="Cylinder007_5"
             castShadow
             receiveShadow
             geometry={nodes.Cylinder007_5.geometry}
-            material={materials["Material.012"]}
+            material={materials['Material.012']}
           />
         </group>
         <group
           name="Armature001"
           position={[0.052, 0.421, -0.086]}
           rotation={[0, -0.516, 0]}
-          scale={0.029}
-        >
+          scale={0.029}>
           <group name="Retopo_Sphere001">
             <skinnedMesh
               name="mesh001"
               geometry={nodes.mesh001.geometry}
-              material={materials["Material.016"]}
+              material={materials['Material.016']}
               skeleton={nodes.mesh001.skeleton}
             />
             <skinnedMesh
@@ -652,16 +649,8 @@ export function Web3(props) {
               material={materials.skin}
               skeleton={nodes.mesh001_2.skeleton}
             />
-            <group
-              name="Empty005"
-              position={[0.392, 1.453, 1.578]}
-              scale={1.043}
-            />
-            <group
-              name="Empty006"
-              position={[-0.616, 0.807, 1.625]}
-              scale={0.834}
-            />
+            <group name="Empty005" position={[0.392, 1.453, 1.578]} scale={1.043} />
+            <group name="Empty006" position={[-0.616, 0.807, 1.625]} scale={0.834} />
           </group>
           <primitive object={nodes.Bone} />
           <primitive object={nodes.Bone007} />

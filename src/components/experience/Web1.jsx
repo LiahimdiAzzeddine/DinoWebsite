@@ -56,7 +56,7 @@ export function Web1(props) {
         scrub: 1.5,
         markers: false,
         onUpdate: (self) => {
-        //  scrollProgressRef.current = self.progress;
+          scrollProgressRef.current = self.progress;
         },
         onLeave: () => {
           console.log("Leaving section - animating out");
@@ -94,7 +94,7 @@ export function Web1(props) {
         timelineRef.current.kill();
       }
     };
-  }, [currentModel, setIsTransitioning]);
+  }, []);
 
   return (
     <group ref={group} {...props} dispose={null}>

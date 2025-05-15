@@ -30,7 +30,7 @@ export function Web2(props) {
       "Balloon",
       "Balloon.001",
       "Balloon.002",
-     
+     "Emoji",
       "LeftHand",
       "RightHand"
     ];
@@ -73,11 +73,11 @@ useLayoutEffect(() => {
     mixer.update(0);
   }*/
 
-}, [actions, mixer, currentModel, isTransitioning, transitionDirection]);
+}, [currentModel, isTransitioning]);
 
 
   return (
-       <group ref={group} {...props} dispose={null}>
+      <group ref={group} {...props} dispose={null}>
       <group name="Scene">
         <mesh
           name="Sphere014"
@@ -99,18 +99,17 @@ useLayoutEffect(() => {
           scale={[0.45, 0.767, 0.767]}
         />
         <group name="Empty001" position={[23.142, 20.042, 1.408]} scale={0.15}>
-           {currentModel=="Model2"&&(
-            <PerspectiveCamera
+          {currentModel == "Model2" && (
+          <PerspectiveCamera
             name="Camera"
             makeDefault={true}
             far={1000}
             near={0.1}
             fov={16.696}
-            position={[0, -0.094, 0.533]}
-            rotation={[0, Math.PI / 2, 0]}
+            position={[0, 0.151, 0.577]}
+            rotation={[0, 1.571, 0]}
             scale={6.678}
-          />
-             )}
+          />)}
         </group>
         <mesh
           name="Sphere002"
@@ -296,7 +295,7 @@ useLayoutEffect(() => {
         <group
           name="Empty005"
           position={[0.004, 1.693, -0.583]}
-          rotation={[1.087, 1.527, -0.387]}
+          rotation={[1.528, 1.519, -0.667]}
           scale={1.047}>
           <group
             name="Trophy"
@@ -329,7 +328,7 @@ useLayoutEffect(() => {
         <group
           name="Empty006"
           position={[-0.072, 1.82, 0.182]}
-          rotation={[0.776, 1.515, 0.002]}
+          rotation={[0.831, 1.513, -0.007]}
           scale={0.268}>
           <group
             name="Armature"

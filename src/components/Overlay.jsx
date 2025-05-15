@@ -262,7 +262,7 @@ export const Overlay = () => {
           </a>
         </div>
       </Section>
-      <Section right id="section5">
+      <Section  id="section5">
         <h2 className="font-bold text-white text-[1em] md:text-[2em] leading-[1.1em] mt-[0.4em] mb-[0.4em]">
           what can Dinomite studio help you with section5
         </h2>
@@ -284,6 +284,7 @@ export const Overlay = () => {
           standards. Partner with us to bring your games to life—faster,
           smarter, and better.{" "}
         </p>{" "}
+        
         <p className="font-normal text-white text-[1.1em] leading-[1.35em] mt-[1.5em] mb-[1em] react-element-1">
           we specialize in fast, high-quality game development tailored for
           publishers and studios. Whether you need rapid prototyping to test new
@@ -311,51 +312,7 @@ export const Overlay = () => {
           standards. Partner with us to bring your games to life—faster,
           smarter, and better.{" "}
         </p>{" "}
-        <p className="font-normal text-white text-[1.1em] leading-[1.35em] mt-[1.5em] mb-[1em] react-element-1">
-          we specialize in fast, high-quality game development tailored for
-          publishers and studios. Whether you need rapid prototyping to test new
-          game concepts, full game development from ideation to launch, or
-          co-development to enhance your existing projects, our expert team
-          ensures efficient, risk-minimized production that meets industry
-          standards. Partner with us to bring your games to life—faster,
-          smarter, and better.{" "}
-        </p>{" "}
-        <p className="font-normal text-white text-[1.1em] leading-[1.35em] mt-[1.5em] mb-[1em] react-element-1">
-          we specialize in fast, high-quality game development tailored for
-          publishers and studios. Whether you need rapid prototyping to test new
-          game concepts, full game development from ideation to launch, or
-          co-development to enhance your existing projects, our expert team
-          ensures efficient, risk-minimized production that meets industry
-          standards. Partner with us to bring your games to life—faster,
-          smarter, and better.{" "}
-        </p>{" "}
-        <p className="font-normal text-white text-[1.1em] leading-[1.35em] mt-[1.5em] mb-[1em] react-element-1">
-          we specialize in fast, high-quality game development tailored for
-          publishers and studios. Whether you need rapid prototyping to test new
-          game concepts, full game development from ideation to launch, or
-          co-development to enhance your existing projects, our expert team
-          ensures efficient, risk-minimized production that meets industry
-          standards. Partner with us to bring your games to life—faster,
-          smarter, and better.{" "}
-        </p>{" "}
-        <p className="font-normal text-white text-[1.1em] leading-[1.35em] mt-[1.5em] mb-[1em] react-element-1">
-          we specialize in fast, high-quality game development tailored for
-          publishers and studios. Whether you need rapid prototyping to test new
-          game concepts, full game development from ideation to launch, or
-          co-development to enhance your existing projects, our expert team
-          ensures efficient, risk-minimized production that meets industry
-          standards. Partner with us to bring your games to life—faster,
-          smarter, and better.{" "}
-        </p>{" "}
-        <p className="font-normal text-white text-[1.1em] leading-[1.35em] mt-[1.5em] mb-[1em] react-element-1">
-          we specialize in fast, high-quality game development tailored for
-          publishers and studios. Whether you need rapid prototyping to test new
-          game concepts, full game development from ideation to launch, or
-          co-development to enhance your existing projects, our expert team
-          ensures efficient, risk-minimized production that meets industry
-          standards. Partner with us to bring your games to life—faster,
-          smarter, and better.{" "}
-        </p>
+ 
         <div className="text-white">
           <a
             className="inverted item inline-block text-black bg-white bg-opacity-80 border border-white border-opacity-30 rounded-[30px] py-[0.3em] px-[0.8em] text-[1em] font-bold shadow-[rgba(0,0,0,0.5)_0px_0px_2px] transition-all duration-[100ms] ease-out my-[0.5em] mr-[0.5em] no-underline"

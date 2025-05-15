@@ -40,3 +40,6 @@ body {
   width: 100%;
   height: 100vh;
 }
+canvas {
+  will-change: transform;
+}

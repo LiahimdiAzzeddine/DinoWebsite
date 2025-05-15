@@ -10,7 +10,7 @@ import {
 import MODEL_CONFIGS from "./experience/MODEL_CONFIGS";
 import AnimatedGradientBackground from "./experience/SceneColor";
 import { Environment, Html } from "@react-three/drei";
-
+import Lenis from '@studio-freight/lenis';
 gsap.registerPlugin(ScrollTrigger);
 
 // ModelContainer.jsx
@@ -29,7 +29,7 @@ export function ModelContainer() {
 
 // Handles model switching and scene positioning based on scroll
 const SceneManager = () => {
-  const { setCurrentModel, isTransitioning, setTransitionDirection } =
+  const { setCurrentModel, isTransitioning, setTransitionDirection,currentModel,setIsTransitioning } =
     useContext(AnimationContext);
 
   useEffect(() => {
@@ -42,8 +42,9 @@ const SceneManager = () => {
         markers: true,
 
         onEnter: () => {
-          if (!isTransitioning) {
-            gsap.delayedCall(0.2, () => setCurrentModel(key));
+            if (!isTransitioning ) {
+
+            gsap.delayedCall(0.3, () => setCurrentModel(key),setIsTransitioning(false));
             setTransitionDirection("down");
           } else {
             console.log("Blocked change to", key, "due to transition");
@@ -51,7 +52,7 @@ const SceneManager = () => {
         },
         onEnterBack: () => {
           if (!isTransitioning) {
-            gsap.delayedCall(0.2, () => setCurrentModel(key));
+            gsap.delayedCall(0.3, () => setCurrentModel(key),setIsTransitioning(false));
             setTransitionDirection("up");
           } else {
             console.log("Blocked back change to", key, "due to transition");
@@ -66,6 +67,28 @@ const SceneManager = () => {
 
 // Updated CanvasContainer component with gradient background
 export const CanvasContainer = () => {
+/**/
+    useEffect(() => {
+      const lenis = new Lenis({
+        duration:1.5,
+        smooth: true,
+        smoothWheel: true,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        direction: "vertical",
+      });
+  
+      function raf(time) {
+        lenis.raf(time);
+        ScrollTrigger.update(); // 👈 Synchronisation clé ici
+        requestAnimationFrame(raf);
+      }
+  
+      requestAnimationFrame(raf);
+  
+      return () => {
+        lenis.destroy();
+      };
+    }, []);
   return (
     <Canvas>
       <AnimatedGradientBackground />

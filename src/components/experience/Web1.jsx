@@ -7,92 +7,71 @@ import * as THREE from "three";
 export function Web1(props) {
   const group = useRef();
   const { nodes, materials, animations } = useGLTF("./models/Web1.glb");
+
   const { actions, mixer } = useAnimations(animations, group);
-  const { currentModel, setIsTransitioning, isTransitioning } = useContext(AnimationContext);
+  console.log("🚀 ~ useLayoutEffect ~ actions:", actions);
 
-  const cameraRef = useRef();
-  const animationFrameRef = useRef();
-  const scrollProgressRef = useRef(0);
-  const smoothProgressRef = useRef(0);
+  const {
+    currentModel,
+    setIsTransitioning,
+    isTransitioning,
+    transitionDirection,
+  } = useContext(AnimationContext);
+
   const timelineRef = useRef(null);
-
   useLayoutEffect(() => {
-    if (currentModel !== "Model1") return;
     if (!actions || !mixer || !group.current) return;
-        document.body.style.overflow = 'hidden';
 
-    console.log("Web1 initialized with model:", currentModel);
-    
     const cameraAction = actions["CameraIn"];
-    const camera = group.current.getObjectByName("Camera001");
 
+    const camera = group.current.getObjectByName("Camera001");
     if (!cameraAction || !camera) return;
 
-    cameraRef.current = camera;
-    cameraAction.play();
-    cameraAction.paused = true;
-
+    cameraAction.reset().play().paused = true;
     const duration = cameraAction.getClip().duration;
-    const clock = new THREE.Clock();
-    
-    const updateAnimation = () => {
-      const delta = clock.getDelta();
-      const smoothingFactor = 0.075;
-      smoothProgressRef.current += (scrollProgressRef.current - smoothProgressRef.current) * smoothingFactor;
-      
-      cameraAction.time = smoothProgressRef.current * duration;
-      mixer.update(delta);
-      
-      animationFrameRef.current = requestAnimationFrame(updateAnimation);
-    };
 
-    animationFrameRef.current = requestAnimationFrame(updateAnimation);
+   
 
     timelineRef.current = gsap.timeline({
       scrollTrigger: {
         trigger: "#section2",
         start: "top bottom",
         end: "top top",
-        scrub: 1.5,
-        markers: false,
+        scrub:true,
         onUpdate: (self) => {
-          scrollProgressRef.current = self.progress;
+          if (currentModel === "Model1") {
+            cameraAction.time = self.progress * duration;
+            mixer.update(0);
+          }
         },
         onLeave: () => {
-          console.log("Leaving section - animating out");
-          setIsTransitioning(true);
-          
-          gsap.to(camera.position, {
-            y: camera.position.y - 10,
-            duration: 1,
-            ease: "power2.inOut",
-            onComplete: () => {
-              setIsTransitioning(false);
-            }
-          });
+          if (currentModel === "Model1") {
+            setIsTransitioning(true);
+            gsap.to(camera.position, {
+              y: camera.position.y - 10,
+              duration: 0.3,
+              ease: "power2.inOut",
+              onComplete: () => setIsTransitioning(false),
+            });
+          }
         },
-        onEnterBack: () => {
-          console.log("Entering section from below - animating in");
-          setIsTransitioning(true);
-          gsap.from(camera.position, {
-            y: camera.position.y + 10,
-            duration: 0.2,
-            ease: "power2.inOut",
-            onComplete: () => {
-              setIsTransitioning(false);
+        onEnter: () => {
+          console.log("🚀 ~ onEnter triggered", transitionDirection);
+          if (transitionDirection == "up") {
+            if (currentModel === "Model1") {
+              setIsTransitioning(true);
+             //ajouter une animation d entré on enterBack
             }
-          });
+          }
         },
+ 
       },
     });
+    
 
     return () => {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
-      if (timelineRef.current) {
-        timelineRef.current.kill();
-      }
+      if (timelineRef.current) timelineRef.current.kill();
+      cameraAction.stop();
     };
   }, []);
 
@@ -102,12 +81,12 @@ export function Web1(props) {
         {currentModel === "Model1" && (
           <PerspectiveCamera
             name="Camera001"
-            makeDefault={currentModel === "Model1"}
+            makeDefault={true}
             far={1000}
             near={0.1}
             fov={18.848}
-            position={[6.948, 10.064, 14.767]}
-            rotation={[-0.456, 0.244, 0.078]}
+            position={[3.446, 20.931, 15.945]}
+            rotation={[-0.417, 0.041, -0.022]}
           />
         )}
         <mesh
@@ -116,8 +95,8 @@ export function Web1(props) {
           receiveShadow
           geometry={nodes.GroundCubeQuad003.geometry}
           material={materials.Ground_FileSize_Mat}
-          position={[0.055, -0.966, -0.191]}
-          scale={[1.108, 0.997, 0.941]}
+          position={[0.033, -0.966, -0.183]}
+          scale={[1.223, 0.997, 1.039]}
         />
         <group
           name="Cube027"
@@ -290,7 +269,7 @@ export function Web1(props) {
             />
           </group>
         </group>
-        <group name="Cube001" position={[-0.693, 1.533, -0.799]}>
+        <group name="Cube001" position={[-0.793, 1.533, -0.855]}>
           <mesh
             name="Cube018"
             castShadow
@@ -312,7 +291,7 @@ export function Web1(props) {
           receiveShadow
           geometry={nodes.Cube005.geometry}
           material={materials["Material.002"]}
-          position={[0.04, 1.473, 0.056]}
+          position={[0.016, 1.473, 0.089]}
         />
         <mesh
           name="Circle012"
@@ -320,9 +299,14 @@ export function Web1(props) {
           receiveShadow
           geometry={nodes.Circle012.geometry}
           material={nodes.Circle012.material}
-          position={[-1.059, 1.669, 1.575]}
+          position={[-1.198, 1.669, 1.767]}
+          scale={[1.104, 1, 1.104]}
         />
-        <group name="BézierCurve001" position={[-1.017, 1.699, 1.56]} />
+        <group
+          name="BézierCurve001"
+          position={[-1.151, 1.699, 1.75]}
+          scale={[1.104, 1, 1.104]}
+        />
         <mesh
           name="Circle005"
           castShadow
@@ -331,7 +315,7 @@ export function Web1(props) {
           material={nodes.Circle005.material}
           position={[-1.043, 1.767, -1.047]}
         />
-        <group name="Empty" position={[1.012, 1.058, 0.017]} scale={0.256}>
+        <group name="Empty" position={[1.106, 1.058, -0.662]} scale={0.256}>
           <mesh
             name="Sphere"
             castShadow
@@ -343,7 +327,7 @@ export function Web1(props) {
           />
         </group>
         <group name="BézierCurve002" position={[-1.017, 10.239, 1.56]} />
-        <group name="Empty007" position={[1.019, 1.058, -0.266]} scale={0.256}>
+        <group name="Empty007" position={[1.114, 1.058, -0.982]} scale={0.256}>
           <mesh
             name="Sphere004"
             castShadow
@@ -354,7 +338,7 @@ export function Web1(props) {
             scale={[0.385, 0.379, 0.379]}
           />
         </group>
-        <group name="Empty008" position={[1.025, 1.058, -0.518]} scale={0.256}>
+        <group name="Empty008" position={[1.098, 1.058, -0.333]} scale={0.256}>
           <mesh
             name="Sphere008"
             castShadow
@@ -365,7 +349,7 @@ export function Web1(props) {
             scale={[0.385, 0.379, 0.379]}
           />
         </group>
-        <group name="Empty009" position={[1.031, 1.058, -0.77]} scale={0.256}>
+        <group name="Empty009" position={[1.089, 1.058, 0.046]} scale={0.256}>
           <mesh
             name="Sphere009"
             castShadow
@@ -378,8 +362,8 @@ export function Web1(props) {
         </group>
         <group
           name="Empty010"
-          position={[1.04, 1.058, -1.129]}
-          rotation={[0, -0.025, 0]}
+          position={[1.123, 1.058, -1.336]}
+          rotation={[-0.052, 0.055, -0.004]}
           scale={0.256}
         >
           <mesh
@@ -423,9 +407,10 @@ export function Web1(props) {
             <skinnedMesh
               name="mesh001"
               geometry={nodes.mesh001.geometry}
-              material={materials["Material.016"]}
+              material={materials["Material.032"]}
               skeleton={nodes.mesh001.skeleton}
             />
+
             <skinnedMesh
               name="mesh001_1"
               geometry={nodes.mesh001_1.geometry}

@@ -29,11 +29,8 @@ export function Web3(props) {
   const playedScroll = useRef(false);
   const playedSecondScroll = useRef(false);
 
- 
-
   useLayoutEffect(() => {
     if (!actions) return;
-    
 
     const firstAnimations = [
       "1.Tour",
@@ -54,18 +51,20 @@ export function Web3(props) {
       "9.Rocket2ndScroll",
     ];
 
-    const secondScrollAnimations = ["CameraAction", "8.Rocket3rdScroll"];
+    const secondScrollAnimations = ["Action", "8.Rocket3rdScroll"];
 
     Object.keys(actions).forEach((name) => {
       actions[name].reset().paused = true;
     });
-  if (actions["ActionEnter"]) {
-    actions["ActionEnter"].setLoop(THREE.LoopOnce, 1);
-    actions["ActionEnter"].clampWhenFinished = true;
-    actions["ActionEnter"].reset().play();
-  }
-    
+    if (actions["ActionEnter"]) {
+      actions["ActionEnter"].setLoop(THREE.LoopOnce, 1);
+      actions["ActionEnter"].clampWhenFinished = true;
+      actions["ActionEnter"].reset().play();
+    }
+    if(actions["Armature.001Action"]){
+      actions["Armature.001Action"]?.reset().play();
 
+    }
     firstAnimations.forEach((name) => {
       actions[name]?.reset().play();
     });
@@ -78,14 +77,14 @@ export function Web3(props) {
       onEnter: () => {
         if (!playedScroll.current) {
           firstAnimations.forEach((name) => actions[name]?.stop());
-         
+
           playedScroll.current = true;
         }
       },
-        onEnterBack:()=>{
- firstAnimations.forEach((name) => {
-      actions[name]?.reset().play();
-    })
+      onEnterBack: () => {
+        firstAnimations.forEach((name) => {
+          actions[name]?.reset().play();
+        });
       },
       markers: true,
     });
@@ -123,7 +122,7 @@ export function Web3(props) {
               }
             });
 
-            const mainAction = actions[scrollAnimations[4]];
+            const mainAction = actions[scrollAnimations[6]];
             if (mainAction) {
               mainAction.getMixer().addEventListener("finished", () => {
                 playedSecondScroll.current = true;
@@ -134,12 +133,13 @@ export function Web3(props) {
           onUpdate: (self) => {
             if (!playedSecondScroll.current) return;
 
-            const progress = Math.max(0.1, Math.min(0.9, self.progress));
+            const progress = self.progress;
 
             secondScrollAnimations.forEach((name) => {
               const action = actions[name];
               if (action) {
                 const duration = action.getClip().duration;
+              
                 action.paused = true;
                 action.play();
                 action.time = duration * progress;
@@ -158,7 +158,7 @@ export function Web3(props) {
   }, [actions]);
 
   return (
-    <group ref={group} {...props} dispose={null}>
+     <group ref={group} {...props} dispose={null}>
       <group name="Scene">
         <mesh
           name="Cylinder011"
@@ -192,7 +192,7 @@ export function Web3(props) {
         />
         <group
           name="BézierCurve"
-          position={[0.003, 0.188, -0.002]}
+          position={[0.003, -0.116, -0.002]}
           rotation={[Math.PI / 2, -Math.PI / 2, 0]}
         />
         <mesh
@@ -303,7 +303,7 @@ export function Web3(props) {
               />
               <group
                 name="Torus001"
-                position={[-0.201, -1.689, 0.626]}
+                position={[-0.201, -1.717, 0.626]}
                 rotation={[Math.PI / 2, 0, -0.83]}
                 scale={[1.979, 1.979, 0.146]}>
                 <mesh
@@ -390,19 +390,19 @@ export function Web3(props) {
           position={[-0.843, 1.275, -5.535]}
           scale={0.079}
         />
-        <group name="Empty" position={[4.089, 3.576, -0.346]}>
-          {currentModel == "Model3" && (
-          <PerspectiveCamera
+        <group name="Empty" position={[4.089, 2.103, -0.346]}>
+          {currentModel=="Model3"&&(
+           <PerspectiveCamera
             name="Camera"
             makeDefault={true}
             far={1000}
             near={0.1}
             fov={19.157}
-            position={[4.089, 0.717, -0.346]}
             rotation={[-Math.PI / 2, 1.519, Math.PI / 2]}
             scale={0.217}
-          />
-        )}
+          /> 
+          )}
+          
         </group>
         <group
           name="Cylinder095"
@@ -581,7 +581,7 @@ export function Web3(props) {
             scale={[0.125, 1.435, 0.125]}
           />
         </group>
-        <group name="Cylinder019" position={[0.001, 0.39, 0.001]} scale={0}>
+        <group name="Cylinder019" position={[0.005, 0.3, 0.387]} scale={0}>
           <mesh
             name="Cylinder007"
             castShadow
@@ -626,6 +626,37 @@ export function Web3(props) {
           />
         </group>
         <group
+          name="Armature002"
+          position={[2.919, -1.205, -0.53]}
+          rotation={[0, 1.107, 0]}
+          scale={0.064}>
+          <group name="Retopo_Sphere002">
+            <skinnedMesh
+              name="mesh003"
+              geometry={nodes.mesh003.geometry}
+              material={materials['Material.004']}
+              skeleton={nodes.mesh003.skeleton}
+            />
+            <skinnedMesh
+              name="mesh003_1"
+              geometry={nodes.mesh003_1.geometry}
+              material={materials['pants.001']}
+              skeleton={nodes.mesh003_1.skeleton}
+            />
+            <skinnedMesh
+              name="mesh003_2"
+              geometry={nodes.mesh003_2.geometry}
+              material={materials['skin.001']}
+              skeleton={nodes.mesh003_2.skeleton}
+            />
+            <group name="Empty001" position={[0.606, -0.576, 0.21]} scale={1.043} />
+            <group name="Empty002" position={[-0.555, -0.686, 0.037]} scale={0.834} />
+          </group>
+          <primitive object={nodes.Bone} />
+          <primitive object={nodes.Bone007} />
+          <primitive object={nodes.Bone008} />
+        </group>
+        <group
           name="Armature001"
           position={[0.052, 0.421, -0.086]}
           rotation={[0, -0.516, 0]}
@@ -652,9 +683,9 @@ export function Web3(props) {
             <group name="Empty005" position={[0.392, 1.453, 1.578]} scale={1.043} />
             <group name="Empty006" position={[-0.616, 0.807, 1.625]} scale={0.834} />
           </group>
-          <primitive object={nodes.Bone} />
-          <primitive object={nodes.Bone007} />
-          <primitive object={nodes.Bone008} />
+          <primitive object={nodes.Bone_1} />
+          <primitive object={nodes.Bone007_1} />
+          <primitive object={nodes.Bone008_1} />
         </group>
       </group>
     </group>

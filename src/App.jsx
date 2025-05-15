@@ -14,11 +14,13 @@ function App() {
   /*
   useEffect(() => {
     const lenis = new Lenis({
-      duration:1.5,
+      duration:1,             // durée du smoothing
       smooth: true,
-      lerp: 0.1, 
-      //smoothTouch: false, // désactive le scroll fluide sur mobile si besoin
+      smoothWheel: true,
+      syncTouchLerp: 0.05,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // easing plus doux
       direction: 'vertical',
+      lerp: 0.02                 // interpolation (fractions)
     });
 
     function raf(time) {
@@ -29,10 +31,10 @@ function App() {
     requestAnimationFrame(raf);
 
     return () => {
-      lenis.destroy(); // proprement à la destruction
+      lenis.destroy();
     };
-  }, []);
-*/
+  }, []);*/
+
   return (
      <AnimationProvider>
     <main className="overflow-x-hidden">

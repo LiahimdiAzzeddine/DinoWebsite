@@ -72,13 +72,14 @@ export function Web2({ isActive, ...props }) {
           }
         },
         onLeave: () => {
-          setIsTransitioning(true);
+          
 
           console.log("🚀 onLeave", isTransitioning);
 
           mixer.stopAllAction();
 
           if (leaveAnim) {
+            //setIsTransitioning(true);
             leaveAnim.reset().setLoop(THREE.LoopOnce, 1);
             leaveAnim.clampWhenFinished = true;
             leaveAnim.play();
@@ -86,7 +87,7 @@ export function Web2({ isActive, ...props }) {
           }
           leaveAnim.getMixer().addEventListener("finished", () => {
   
-              setIsTransitioning(false);
+            setIsTransitioning(false);
             
           });
         },

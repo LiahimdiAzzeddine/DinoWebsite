@@ -4,7 +4,7 @@ export const AnimationContext = createContext();
 
 export const AnimationProvider = ({ children }) => {
   const [currentModel, setCurrentModel] = useState("Model1");
-  const [isTransitioning, setIsTransitioning] = useState(true);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 const [transitionDirection, setTransitionDirection] = useState(null); 
 
 

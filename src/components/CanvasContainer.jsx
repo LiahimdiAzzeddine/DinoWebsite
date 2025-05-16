@@ -42,7 +42,7 @@ export function ModelContainer() {
 
 // Handles model switching and scene positioning based on scroll
 const SceneManager = () => {
-  const { setCurrentModel, isTransitioning, setTransitionDirection,currentModel,setIsTransitioning } =
+  const { setCurrentModel, isTransitioning,currentModel,setIsTransitioning } =
     useContext(AnimationContext);
 
   useEffect(() => {
@@ -56,8 +56,7 @@ const SceneManager = () => {
 
         onEnter: () => {
             if (!isTransitioning ) {
-              setTransitionDirection("down");
-            gsap.delayedCall(0.5, () => setCurrentModel(key),setIsTransitioning(false));
+            gsap.delayedCall(0.5, () => setCurrentModel(key));
             
           } else {
             console.log("Blocked change to", key, "due to transition");
@@ -65,8 +64,7 @@ const SceneManager = () => {
         },
         onEnterBack: () => {
           if (!isTransitioning) {
-            setTransitionDirection("up");
-            gsap.delayedCall(0.5, () => setCurrentModel(key),setIsTransitioning(false));
+            gsap.delayedCall(0.5, () => setCurrentModel(key));
             
           } else {
             console.log("Blocked back change to", key, "due to transition");
@@ -82,14 +80,16 @@ const SceneManager = () => {
 // Updated CanvasContainer component with gradient background
 export const CanvasContainer = () => {
 /**/ useEffect(() => {
-      const lenis = new Lenis({
-        duration:1.5,
-        smooth: true,
-        smoothWheel: true,
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-        direction: "vertical",
-      });
-  
+     const lenis = new Lenis({
+      duration: 1.5, // Increased for smoother, slower scrolling
+      smoothWheel: true,
+      wheelMultiplier: 0.7, // Reduce wheel speed
+      touchMultiplier: 0.7, // Reduce touch speed
+      infinite: false,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      direction: "vertical",
+      gestureOrientation: "vertical",
+    });
       function raf(time) {
         lenis.raf(time);
         ScrollTrigger.update(); // 👈 Synchronisation clé ici

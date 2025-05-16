@@ -4,12 +4,11 @@ import gsap from "gsap";
 import { AnimationContext } from "./AnimationContext";
 import * as THREE from "three";
 
-export function Web1(props) {
+export function Web1({ isActive, ...props }) {
   const group = useRef();
   const { nodes, materials, animations } = useGLTF("./models/Web1.glb");
 
   const { actions, mixer } = useAnimations(animations, group);
-  console.log("🚀 ~ useLayoutEffect ~ actions:", actions);
 
   const {
     currentModel,
@@ -20,7 +19,7 @@ export function Web1(props) {
 
   const timelineRef = useRef(null);
   useLayoutEffect(() => {
-    if (!actions || !mixer || !group.current) return;
+    if (!isActive || !actions || !mixer || !group.current) return;
 
     const cameraAction = actions["CameraIn"];
 
@@ -30,16 +29,14 @@ export function Web1(props) {
     cameraAction.reset().play().paused = true;
     const duration = cameraAction.getClip().duration;
 
-   
-
     timelineRef.current = gsap.timeline({
       scrollTrigger: {
         trigger: "#section2",
         start: "top bottom",
         end: "top top",
-        scrub:true,
+        scrub: 2,
         onUpdate: (self) => {
-          if (currentModel === "Model1") {
+          if (currentModel === "Model1"  ) {
             cameraAction.time = self.progress * duration;
             mixer.update(0);
           }
@@ -49,25 +46,29 @@ export function Web1(props) {
             setIsTransitioning(true);
             gsap.to(camera.position, {
               y: camera.position.y - 10,
-              duration: 0.3,
+              duration: 0.2,
               ease: "power2.inOut",
               onComplete: () => setIsTransitioning(false),
             });
           }
         },
-        onEnter: () => {
-          console.log("🚀 ~ onEnter triggered", transitionDirection);
-          if (transitionDirection == "up") {
-            if (currentModel === "Model1") {
-              setIsTransitioning(true);
-             //ajouter une animation d entré on enterBack
-            }
+        onEnterBack: () => {
+          if (currentModel === "Model1") {
+            setIsTransitioning(true);
+
+            gsap.delayedCall(0.4, () => {
+              gsap.from(camera.position, {
+                y: camera.position.y + 10,
+                duration: 0.2,
+                ease: "power2.out",
+                onUpdate: () => mixer.update(0),
+                onComplete: () => setIsTransitioning(false),
+              });
+            });
           }
         },
- 
       },
     });
-    
 
     return () => {
       if (timelineRef.current) timelineRef.current.kill();
@@ -76,19 +77,18 @@ export function Web1(props) {
   }, []);
 
   return (
-    <group ref={group} {...props} dispose={null}>
+    <group ref={group} {...props} dispose={null} visible={isActive}>
       <group name="Scene">
-        {currentModel === "Model1" && (
           <PerspectiveCamera
             name="Camera001"
-            makeDefault={true}
+            makeDefault={isActive}
             far={1000}
             near={0.1}
             fov={18.848}
             position={[3.446, 20.931, 15.945]}
             rotation={[-0.417, 0.041, -0.022]}
           />
-        )}
+        
         <mesh
           name="GroundCubeQuad003"
           castShadow

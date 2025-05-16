@@ -11,18 +11,31 @@ import MODEL_CONFIGS from "./experience/MODEL_CONFIGS";
 import AnimatedGradientBackground from "./experience/SceneColor";
 import { Environment, Html } from "@react-three/drei";
 import Lenis from '@studio-freight/lenis';
+import { Web1 } from "./experience/Web1";
+import { Web2 } from "./experience/Web2";
+import { Web3 } from "./experience/Web3";
 gsap.registerPlugin(ScrollTrigger);
 
 // ModelContainer.jsx
 export function ModelContainer() {
   const { currentModel } = useContext(AnimationContext);
   const config = MODEL_CONFIGS[currentModel];
-  const ModelComponent = config.Component;
   const { size } = useThree();
 
   return (
     <>
-      <ModelComponent scale={size.width >= 1024 ? 0.2 : 0.1} />
+      <Web1
+        scale={size.width >= 1024 ? 0.2 : 0.1}
+        isActive={currentModel === "Model1"}
+      />
+      <Web2
+        scale={size.width >= 1024 ? 0.2 : 0.1}
+        isActive={currentModel === "Model2"}
+      />
+        <Web3
+        scale={size.width >= 1024 ? 0.2 : 0.1}
+        isActive={currentModel === "Model3"}
+      />
     </>
   );
 }
@@ -43,32 +56,32 @@ const SceneManager = () => {
 
         onEnter: () => {
             if (!isTransitioning ) {
-
-            gsap.delayedCall(0.3, () => setCurrentModel(key),setIsTransitioning(false));
-            setTransitionDirection("down");
+              setTransitionDirection("down");
+            gsap.delayedCall(0.5, () => setCurrentModel(key),setIsTransitioning(false));
+            
           } else {
             console.log("Blocked change to", key, "due to transition");
           }
         },
         onEnterBack: () => {
           if (!isTransitioning) {
-            gsap.delayedCall(0.3, () => setCurrentModel(key),setIsTransitioning(false));
             setTransitionDirection("up");
+            gsap.delayedCall(0.5, () => setCurrentModel(key),setIsTransitioning(false));
+            
           } else {
             console.log("Blocked back change to", key, "due to transition");
           }
         },
       });
     });
-  }, [setCurrentModel, isTransitioning]);
+  }, [setCurrentModel, isTransitioning,currentModel]);
 
   return <ModelContainer />;
 };
 
 // Updated CanvasContainer component with gradient background
 export const CanvasContainer = () => {
-/**/
-    useEffect(() => {
+/**/ useEffect(() => {
       const lenis = new Lenis({
         duration:1.5,
         smooth: true,
@@ -89,6 +102,7 @@ export const CanvasContainer = () => {
         lenis.destroy();
       };
     }, []);
+   
   return (
     <Canvas>
       <AnimatedGradientBackground />

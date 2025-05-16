@@ -14,7 +14,7 @@ import { AnimationContext } from "./AnimationContext";
 
 gsap.registerPlugin(ScrollTrigger);
 
-export function Web3(props) {
+export function Web3({ isActive, ...props }) {
   const group = useRef();
   const { scene, animations } = useGLTF("./models/Web3.glb");
 
@@ -22,15 +22,14 @@ export function Web3(props) {
   const { nodes, materials } = useGraph(clone);
 
   const { actions } = useAnimations(animations, group);
-  console.log("🚀 ~ Web3 ~ actions:", actions);
 
-  const { currentModel } = useContext(AnimationContext);
-
+  const { currentModel, isTransitioning, transitionDirection } =
+    useContext(AnimationContext);
   const playedScroll = useRef(false);
   const playedSecondScroll = useRef(false);
 
   useLayoutEffect(() => {
-    if (!actions) return;
+    if (!isActive||!actions) return;
 
     const firstAnimations = [
       "1.Tour",
@@ -63,7 +62,6 @@ export function Web3(props) {
     }
     if(actions["Armature.001Action"]){
       actions["Armature.001Action"]?.reset().play();
-
     }
     firstAnimations.forEach((name) => {
       actions[name]?.reset().play();
@@ -86,7 +84,7 @@ export function Web3(props) {
           actions[name]?.reset().play();
         });
       },
-      markers: true,
+      markers: false,
     });
 
     gsap.to(
@@ -147,7 +145,7 @@ export function Web3(props) {
               }
             });
           },
-          markers: true,
+          markers: false,
         },
       }
     );
@@ -155,10 +153,10 @@ export function Web3(props) {
     return () => {
       ScrollTrigger.getAll().forEach((t) => t.kill());
     };
-  }, [actions]);
+ }, [currentModel, isTransitioning]);
 
   return (
-     <group ref={group} {...props} dispose={null}>
+     <group ref={group} {...props} dispose={null} visible={isActive}>
       <group name="Scene">
         <mesh
           name="Cylinder011"

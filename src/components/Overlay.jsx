@@ -153,10 +153,7 @@ export const Overlay = () => {
           cost-effective, quality-first production that minimizes risks and
           ensures a fast, market-ready game that exceeds industry standards.
         </p>
-      </Section>
-      <Section right>
-
-        <p className="font-normal text-white text-[1.1em] leading-[1.35em] mt-[1.5em] mb-[1em] react-element-1">
+         <p className="font-normal text-white text-[1.1em] leading-[1.35em] mt-[1.5em] mb-[1em] react-element-1">
           Dinomite Studio is the strategic development partner of choice For
           ambitious game publishers looking to expand their hybrid casual
           portfolio. Our approach combines accelerated prototyping with
@@ -164,6 +161,7 @@ export const Overlay = () => {
           ensures a fast, market-ready game that exceeds industry standards.
         </p>
       </Section>
+
       <Section right id="section4" class="second-section2">
         <h2 className="font-bold text-white text-[1em] md:text-[2em] leading-[1.1em] mt-[0.4em] mb-[0.4em] ">
           what can Dinomite studio help you with

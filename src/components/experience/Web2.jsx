@@ -59,7 +59,7 @@ export function Web2({ isActive, ...props }) {
           console.log("🚀 onEnter");
 
           // Stop all mixer actions
-          mixer.stopAllAction();
+          //mixer.stopAllAction();
 
           // Optionally: reset position if leaveAnim changes something
           // e.g., reset camera or object position here
@@ -72,24 +72,21 @@ export function Web2({ isActive, ...props }) {
           }
         },
         onLeave: () => {
-          
+          setIsTransitioning(true);
 
-          console.log("🚀 onLeave", isTransitioning);
+          console.log("🚀 onLeave",isTransitioning);
 
-          mixer.stopAllAction();
+          //mixer.stopAllAction();
 
           if (leaveAnim) {
-            //setIsTransitioning(true);
             leaveAnim.reset().setLoop(THREE.LoopOnce, 1);
             leaveAnim.clampWhenFinished = true;
             leaveAnim.play();
             mixer.update(0.01); // force update
           }
-          leaveAnim.getMixer().addEventListener("finished", () => {
-  
-            setIsTransitioning(false);
-            
-          });
+             leaveAnim.getMixer().addEventListener("finished", () => {
+                playedSecondScroll.current = true;
+              });
         },
       },
     });

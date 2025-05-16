@@ -56,7 +56,7 @@ const SceneManager = () => {
 
         onEnter: () => {
             if (!isTransitioning ) {
-            gsap.delayedCall(0.5, () => setCurrentModel(key));
+            gsap.delayedCall(0.5, () => setCurrentModel(key),setIsTransitioning(false));
             
           } else {
             console.log("Blocked change to", key, "due to transition");
@@ -64,7 +64,7 @@ const SceneManager = () => {
         },
         onEnterBack: () => {
           if (!isTransitioning) {
-            gsap.delayedCall(0.5, () => setCurrentModel(key));
+            gsap.delayedCall(0.5, () => setCurrentModel(key),setIsTransitioning(false));
             
           } else {
             console.log("Blocked back change to", key, "due to transition");

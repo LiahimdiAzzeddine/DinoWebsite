@@ -12,22 +12,6 @@ const MODEL_CONFIGS = {
     colorB: '#cc64ca',
     Component: Web1,
   }, 
-  Model2: {
-    url: "./models/web2.glb",
-    triggerSection: "#section3",
-    sectioncolor: 0x9a70e7,
-    colorA: '#d7e0eb', 
-    colorB: '#cc64ca',
-    Component: Web2,
-  }, 
-  Model3: {
-    url: "./models/web3.glb",
-    triggerSection: "#section4",
-    sectioncolor: 0x9a70e7,
-    colorA: '#d7e0eb', 
-    colorB: '#cc64ca',
-    Component: Web3,
-  }
 
 };
 

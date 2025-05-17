@@ -85,7 +85,7 @@ useLayoutEffect(() => {
 
         const tl = gsap.timeline({
           defaults: {
-            duration: 0.5,
+            duration: 1,
             ease: "power2.out",
             onUpdate: () => mixer.update(0),
           },
@@ -104,9 +104,7 @@ useLayoutEffect(() => {
   });
 
   return () => {
-    timelineMain.current?.kill();
-    
-    camAct.stop();
+    timelineMain.current?.kill();    
     mixer.stopAllAction();
   };
 }, []);

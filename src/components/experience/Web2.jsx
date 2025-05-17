@@ -53,16 +53,13 @@ export function Web2({ isActive, ...props }) {
       scrollTrigger: {
         trigger: "#section3",
         start: "top bottom",
-        end: "top top", // ← 5 pixels avant que le haut de #section3 atteigne le haut de la fenêtre top+=5
+        end: "top top", //  top+=5
         scrub: 2,
         onEnter: () => {
           console.log("🚀 onEnter");
 
-          // Stop all mixer actions
           //mixer.stopAllAction();
 
-          // Optionally: reset position if leaveAnim changes something
-          // e.g., reset camera or object position here
 
           if (enterAnim) {
             enterAnim.reset().setLoop(THREE.LoopOnce, 1);
@@ -82,7 +79,7 @@ export function Web2({ isActive, ...props }) {
             leaveAnim.reset().setLoop(THREE.LoopOnce, 1);
             leaveAnim.clampWhenFinished = true;
             leaveAnim.play();
-            mixer.update(0.01); // force update
+            mixer.update(0.01);
           }
              leaveAnim.getMixer().addEventListener("finished", () => {
                 playedSecondScroll.current = true;
@@ -91,7 +88,6 @@ export function Web2({ isActive, ...props }) {
       },
     });
 
-    // Play other looping or ambient animations
     Animations.forEach((name) => {
       actions[name]?.reset().play();
     });

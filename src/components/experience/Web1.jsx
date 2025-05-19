@@ -4,26 +4,25 @@ import gsap from "gsap";
 import { AnimationContext } from "./AnimationContext";
 import * as THREE from "three";
 
-export function Web1({ isActive, ...props }) {
+export function Web1({ isActive, lenis, ...props }) {
   const group = useRef();
   const { nodes, materials, animations } = useGLTF("./models/Web1.glb");
   const animationsPlay = [
-  "Armature.001Action",
-  "Armature.003Action.003",
-  "Armature.004Action.002",
-  "Cube.032Action",
-  "Empty.001Action.001",
-  "Empty.003Action.001",
-  "Empty.005Action",
-  "Empty.006Action",
-  "Empty.009Action.002",
-  "Empty.010Action.002",
-  "Empty.010Action.004",
-  "Sphere.010Action",
-  "Sphere.011Action"
-];
+    "Armature.001Action",
+    "Armature.003Action.003",
+    "Armature.004Action.002",
+    "Cube.032Action",
+    "Empty.001Action.001",
+    "Empty.003Action.001",
+    "Empty.005Action",
+    "Empty.006Action",
+    "Empty.009Action.002",
+    "Empty.010Action.002",
+    "Empty.010Action.004",
+    "Sphere.010Action",
+    "Sphere.011Action",
+  ];
 
-  
   const enterBackPose = {
     pos: { x: 9.518234104129505, y: 10.246442276415198, z: 13.155294189145259 },
     rot: {
@@ -33,83 +32,84 @@ export function Web1({ isActive, ...props }) {
     },
   };
   const { actions, mixer } = useAnimations(animations, group);
-    console.log("🚀 ~ useLayoutEffect ~ actions:", actions)
+  console.log("🚀 ~ useLayoutEffect ~ actions:", actions);
 
-  const { currentModel, setIsTransitioning,isTransitioning } = useContext(AnimationContext);
-const timelineMain = useRef();
+  const { currentModel, setIsTransitioning, isTransitioning } =
+    useContext(AnimationContext);
+  const timelineMain = useRef();
 
-useLayoutEffect(() => {
-  if (!isActive || !actions || !mixer || !group.current) return;
-   animationsPlay.forEach((name) => {
+  useLayoutEffect(() => {
+    if (!isActive || !actions || !mixer || !group.current) return;
+
+    animationsPlay.forEach((name) => {
       actions[name]?.reset().play();
     });
-  const camAct  = actions["CameraIn"];
-  const camera  = group.current.getObjectByName("Camera001");
-  if (!camAct || !camera) return;
+    const camAct = actions["CameraIn"];
+    const camera = group.current.getObjectByName("Camera001");
+    if (!camAct || !camera) return;
 
-  camAct.reset().play().paused = true;
-  const clipDur = camAct.getClip().duration;
+    camAct.reset().play().paused = true;
+    const clipDur = camAct.getClip().duration;
 
-  timelineMain.current = gsap.timeline({
-    scrollTrigger: {
-      trigger: "#section2",
-      start:   "top bottom",
-      end:     "top top",
-      scrub:   2,
-      onUpdate: self => {
-        if (currentModel === "Model1" && !isTransitioning) {
-        camAct.time = self.progress * clipDur;
-          mixer.update(0);
-        }
-      },
-      onLeave: () => {
-        //  console.log("pos :", camera.position.toArray());
-// console.log("rot :", camera.rotation.toArray());
-        if (currentModel !== "Model1" || isTransitioning) return;
-        setIsTransitioning(true);
+    timelineMain.current = gsap.timeline({
+      scrollTrigger: {
+        trigger: "#section2",
+        start: "top bottom",
+        end: "top top",
+        scrub: 2,
+        onUpdate: (self) => {
+          if (currentModel === "Model1" && !isTransitioning) {
+            camAct.time = self.progress * clipDur;
+            mixer.update(0);
+          }
+        },
+        onLeave: () => {
+          //  console.log("pos :", camera.position.toArray());
+          // console.log("rot :", camera.rotation.toArray());
+          if (currentModel !== "Model1" || isTransitioning) return;
+          setIsTransitioning(true);
 
-        timelineMain.current.pause();
-        gsap.to(camera.position, {
-          y: camera.position.y - 10,
-          duration: 0.5,
-          ease: "power2.inOut",
-          onUpdate: () => mixer.update(0),
-          onComplete: () => setIsTransitioning(false),
-        });
-      },
-      onEnterBack: () => {
-        
-        if (currentModel !== "Model1" || isTransitioning) return;
-        console.log("🚀 ~ useLayoutEffect ~ onEnterBack:")
-        setIsTransitioning(true);
-
-        const tl = gsap.timeline({
-          defaults: {
-            duration: 1,
-            ease: "power2.out",
+          timelineMain.current.pause();
+          gsap.to(camera.position, {
+            y: camera.position.y - 10,
+            duration: 0.5,
+            ease: "power2.inOut",
             onUpdate: () => mixer.update(0),
-          },
-          onComplete: () => {
-            console.log("🚀 ~ useLayoutEffect ~ onComplete:")
-            setIsTransitioning(false);
-          
-            timelineMain.current.play();     // ▶️ reprend le scrub
-          },
-        });
+            onComplete: () => setIsTransitioning(false),
+          });
+        },
+        onEnterBack: () => {
+          if (currentModel !== "Model1" || isTransitioning) return;
+          console.log("🚀 ~ useLayoutEffect ~ onEnterBack:");
+          setIsTransitioning(true);
+          lenis?.stop();
 
-        tl.to(camera.position, { ...enterBackPose.pos }, 0);
-        tl.to(camera.rotation, { ...enterBackPose.rot }, 0);
+          const tl = gsap.timeline({
+            defaults: {
+              duration: 1,
+              ease: "power2.out",
+              onUpdate: () => mixer.update(0),
+            },
+            onComplete: () => {
+              console.log("🚀 ~ useLayoutEffect ~ onComplete:");
+              setIsTransitioning(false);
+              lenis?.start();
+
+              timelineMain.current.play();
+            },
+          });
+
+          tl.to(camera.position, { ...enterBackPose.pos }, 0);
+          tl.to(camera.rotation, { ...enterBackPose.rot }, 0);
+        },
       },
-    },
-  });
+    });
 
-  return () => {
-    timelineMain.current?.kill();    
-    mixer.stopAllAction();
-  };
-}, []);
-
-
+    return () => {
+      timelineMain.current?.kill();
+      mixer.stopAllAction();
+    };
+  }, []);
 
   return (
     <group ref={group} {...props} dispose={null} visible={isActive}>

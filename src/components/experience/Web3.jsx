@@ -11,83 +11,87 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import * as THREE from "three";
 import { AnimationContext } from "./AnimationContext";
-
 gsap.registerPlugin(ScrollTrigger);
 
 export function Web3({ isActive, ...props }) {
   const group = useRef();
-  const { scene, animations } = useGLTF("./models/Web3.glb");
-
-  const clone = useMemo(() => SkeletonUtils.clone(scene), [scene]);
-  const { nodes, materials } = useGraph(clone);
-
-  const { actions } = useAnimations(animations, group);
-
-  const { currentModel, isTransitioning, transitionDirection } =
-    useContext(AnimationContext);
+  const timelineRef = useRef(null);
   const playedScroll = useRef(false);
   const playedSecondScroll = useRef(false);
 
+  const { scene, animations } = useGLTF("./models/Web3.glb");
+  const clone = useMemo(() => SkeletonUtils.clone(scene), [scene]);
+  const { nodes, materials } = useGraph(clone);
+  const { actions, mixer } = useAnimations(animations, group);
+
+  const { currentModel, isTransitioning, transitionDirection } =
+    useContext(AnimationContext);
+
+  const firstAnimations = [
+    "1.Tour",
+    "1.hook",
+    "1.slider",
+    "3.ManAnimation",
+    "Empty.005Action.001",
+    "Empty.006Action",
+  ];
+  const scrollAnimations = [
+    "2.Ladder2ndScroll",
+    "3.Man2ndScroll",
+    "4.Head2ndScroll",
+    "5.Metal2ndScroll",
+    "6.WaterTower2ndScroll",
+    "7.Door2ndScroll",
+    "9.Rocket2ndScroll",
+  ];
+  const secondScrollAnimations = ["Action", "8.Rocket3rdScroll"];
+
   useLayoutEffect(() => {
-    if (!isActive||!actions) return;
+    console.log("🚀 ~ useLayoutEffect ~ useLayoutEffect: web3")
+    if (!isActive || !actions) return;
 
-    const firstAnimations = [
-      "1.Tour",
-      "1.hook",
-      "1.slider",
-      "3.ManAnimation",
-      "Empty.005Action.001",
-      "Empty.006Action",
-    ];
-
-    const scrollAnimations = [
-      "2.Ladder2ndScroll",
-      "3.Man2ndScroll",
-      "4.Head2ndScroll",
-      "5.Metal2ndScroll",
-      "6.WaterTower2ndScroll",
-      "7.Door2ndScroll",
-      "9.Rocket2ndScroll",
-    ];
-
-    const secondScrollAnimations = ["Action", "8.Rocket3rdScroll"];
-
-    Object.keys(actions).forEach((name) => {
-      actions[name].reset().paused = true;
+    // Reset all actions
+    Object.values(actions).forEach((action) => {
+      action.reset().paused = true;
     });
+
+    // Play intro animations
     if (actions["ActionEnter"]) {
-      actions["ActionEnter"].setLoop(THREE.LoopOnce, 1);
+      actions["ActionEnter"].setLoop(THREE.LoopOnce, 1).reset().play();
       actions["ActionEnter"].clampWhenFinished = true;
-      actions["ActionEnter"].reset().play();
     }
-    if(actions["Armature.001Action"]){
-      actions["Armature.001Action"]?.reset().play();
-    }
-    firstAnimations.forEach((name) => {
-      actions[name]?.reset().play();
+
+    // Optional constant animation
+    actions["Armature.001Action"]?.reset().play();
+
+    // Setup GSAP timeline with ScrollTrigger
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: "#section4",
+        start: "top bottom",
+        end: "#section6 top",
+        scrub: 2,
+        markers: false,
+        onLeaveBack: () => {
+          console.log("🚀 ~ useLayoutEffect ~ onLeaveBack:")
+          const enterAction = actions["ActionEnter"];
+          if (enterAction) {
+            // enterAction.paused = false;
+            // enterAction.enabled = true;
+            // enterAction.setLoop(THREE.LoopOnce, 1);
+            // enterAction.clampWhenFinished = true;
+            // enterAction.timeScale = -1; // jouer en arrière
+            // enterAction.play();
+          }
+        },
+      },
     });
 
-    ScrollTrigger.create({
-      trigger: "#section5",
-      start: "top center",
-      end: "+=1",
-      once: true,
-      onEnter: () => {
-        if (!playedScroll.current) {
-          firstAnimations.forEach((name) => actions[name]?.stop());
-
-          playedScroll.current = true;
-        }
-      },
-      onEnterBack: () => {
-        firstAnimations.forEach((name) => {
-          actions[name]?.reset().play();
-        });
-      },
-      markers: false,
+    tl.add(() => {
+      firstAnimations.forEach((name) => actions[name]?.reset().play());
     });
 
-    gsap.to(
+    tl.to(
       {},
       {
         scrollTrigger: {
@@ -96,48 +100,46 @@ export function Web3({ isActive, ...props }) {
           end: "bottom top",
           scrub: 2.5,
           onEnter: () => {
-            const andScroll = actions["1.2ndScroll"];
-            if (andScroll) {
-              andScroll.setLoop(THREE.LoopOnce, 1);
-              andScroll.clampWhenFinished = true;
-              andScroll.paused = false;
+            if (!playedScroll.current) {
+              firstAnimations.forEach((name) => actions[name]?.stop());
+              playedScroll.current = true;
+            }
 
-              andScroll.time = andScroll.getClip().duration - 0.1;
-
-              andScroll.enabled = true;
-              andScroll.setEffectiveWeight(1);
-
-              andScroll.play();
+            const action = actions["1.2ndScroll"];
+            if (action) {
+              action.setLoop(THREE.LoopOnce, 1);
+              action.clampWhenFinished = true;
+              action.time = action.getClip().duration - 0.1;
+              action.enabled = true;
+              action.setEffectiveWeight(1);
+              action.paused = false;
+              action.play();
             }
 
             scrollAnimations.forEach((name) => {
-              const action = actions[name];
-              if (action) {
-                action.reset();
-                action.setLoop(THREE.LoopOnce, 1);
-                action.clampWhenFinished = true;
-                action.play();
+              const anim = actions[name];
+              if (anim) {
+                anim.reset();
+                anim.setLoop(THREE.LoopOnce, 1);
+                anim.clampWhenFinished = true;
+                anim.play();
               }
             });
 
-            const mainAction = actions[scrollAnimations[6]];
-            if (mainAction) {
-              mainAction.getMixer().addEventListener("finished", () => {
+            const mainScroll = actions[scrollAnimations[6]];
+            if (mainScroll) {
+              mainScroll.getMixer().addEventListener("finished", () => {
                 playedSecondScroll.current = true;
               });
             }
           },
-          /**/
           onUpdate: (self) => {
             if (!playedSecondScroll.current) return;
-
             const progress = self.progress;
-
             secondScrollAnimations.forEach((name) => {
               const action = actions[name];
               if (action) {
                 const duration = action.getClip().duration;
-              
                 action.paused = true;
                 action.play();
                 action.time = duration * progress;
@@ -145,25 +147,28 @@ export function Web3({ isActive, ...props }) {
               }
             });
           },
-          markers: false,
         },
       }
     );
 
+    timelineRef.current = tl;
+
     return () => {
+      timelineRef.current?.kill();
       ScrollTrigger.getAll().forEach((t) => t.kill());
+      mixer.stopAllAction();
     };
- }, [currentModel, isTransitioning]);
+  }, [isActive, currentModel]);
 
   return (
-     <group ref={group} {...props} dispose={null} visible={isActive}>
+    <group ref={group} {...props} dispose={null} visible={isActive}>
       <group name="Scene">
         <mesh
           name="Cylinder011"
           castShadow
           receiveShadow
           geometry={nodes.Cylinder011.geometry}
-          material={materials['Material.022']}
+          material={materials["Material.022"]}
           position={[-0.208, 0.174, 0.184]}
           rotation={[Math.PI, -0.93, Math.PI]}
           scale={0.01}
@@ -173,7 +178,7 @@ export function Web3({ isActive, ...props }) {
           castShadow
           receiveShadow
           geometry={nodes.Cylinder010.geometry}
-          material={materials['Material.022']}
+          material={materials["Material.022"]}
           position={[0.027, 0.166, -0.217]}
           rotation={[-0.236, -1.235, -0.241]}
           scale={0.01}
@@ -183,7 +188,7 @@ export function Web3({ isActive, ...props }) {
           castShadow
           receiveShadow
           geometry={nodes.Cylinder012.geometry}
-          material={materials['Material.022']}
+          material={materials["Material.022"]}
           position={[0.243, 0.164, -0.112]}
           rotation={[-3.046, -0.631, -3.103]}
           scale={0.008}
@@ -198,16 +203,17 @@ export function Web3({ isActive, ...props }) {
           castShadow
           receiveShadow
           geometry={nodes.Cylinder101.geometry}
-          material={materials['Material.002']}
+          material={materials["Material.002"]}
           position={[0.072, 0.323, -0.067]}
           rotation={[0.259, -0.477, 0.113]}
-          scale={[0.006, 0.111, 0.004]}>
+          scale={[0.006, 0.111, 0.004]}
+        >
           <mesh
             name="Cube031"
             castShadow
             receiveShadow
             geometry={nodes.Cube031.geometry}
-            material={materials['Material.002']}
+            material={materials["Material.002"]}
             position={[-5.591, -0.78, -0.016]}
             rotation={[-Math.PI, 0, -1.571]}
             scale={[0.012, 5.527, 0.828]}
@@ -230,7 +236,8 @@ export function Web3({ isActive, ...props }) {
           material={materials.Material}
           position={[-0.365, 0.269, 0.296]}
           rotation={[0, -0.432, 0]}
-          scale={[0.01, 0.036, 0.01]}>
+          scale={[0.01, 0.036, 0.01]}
+        >
           <mesh
             name="Cube060"
             castShadow
@@ -239,25 +246,27 @@ export function Web3({ isActive, ...props }) {
             material={materials.Material}
             position={[4.865, 18.97, -5.005]}
             rotation={[0, -1.546, 0]}
-            scale={[23.068, 8.486, 35.574]}>
+            scale={[23.068, 8.486, 35.574]}
+          >
             <group
               name="Cube059"
               position={[-1.286, -0.311, 0]}
               rotation={[0, 1.571, 0]}
-              scale={[0.214, 0.068, 0.204]}>
+              scale={[0.214, 0.068, 0.204]}
+            >
               <mesh
                 name="Cube053"
                 castShadow
                 receiveShadow
                 geometry={nodes.Cube053.geometry}
-                material={materials['Material.015']}
+                material={materials["Material.015"]}
               />
               <mesh
                 name="Cube053_1"
                 castShadow
                 receiveShadow
                 geometry={nodes.Cube053_1.geometry}
-                material={materials['Material.015']}
+                material={materials["Material.015"]}
               />
             </group>
             <mesh
@@ -265,7 +274,7 @@ export function Web3({ isActive, ...props }) {
               castShadow
               receiveShadow
               geometry={nodes.Cube061.geometry}
-              material={materials['Material.009']}
+              material={materials["Material.009"]}
               position={[1.151, -0.346, 0]}
               rotation={[0, 1.571, 0]}
               scale={[0.1, 0.235, 0.329]}
@@ -284,13 +293,14 @@ export function Web3({ isActive, ...props }) {
               name="Cylinder129"
               position={[-1.265, -0.435, -0.003]}
               rotation={[0, 1.571, 0]}
-              scale={[0.015, 0.231, 0.023]}>
+              scale={[0.015, 0.231, 0.023]}
+            >
               <mesh
                 name="Cylinder129_1"
                 castShadow
                 receiveShadow
                 geometry={nodes.Cylinder129_1.geometry}
-                material={materials['Material.009']}
+                material={materials["Material.009"]}
               />
               <mesh
                 name="Cylinder129_2"
@@ -303,7 +313,8 @@ export function Web3({ isActive, ...props }) {
                 name="Torus001"
                 position={[-0.201, -1.717, 0.626]}
                 rotation={[Math.PI / 2, 0, -0.83]}
-                scale={[1.979, 1.979, 0.146]}>
+                scale={[1.979, 1.979, 0.146]}
+              >
                 <mesh
                   name="Torus001_1"
                   castShadow
@@ -316,21 +327,21 @@ export function Web3({ isActive, ...props }) {
                   castShadow
                   receiveShadow
                   geometry={nodes.Torus001_2.geometry}
-                  material={materials['Material.007']}
+                  material={materials["Material.007"]}
                 />
                 <mesh
                   name="Torus001_3"
                   castShadow
                   receiveShadow
                   geometry={nodes.Torus001_3.geometry}
-                  material={materials['Material.008']}
+                  material={materials["Material.008"]}
                 />
                 <mesh
                   name="Torus001_4"
                   castShadow
                   receiveShadow
                   geometry={nodes.Torus001_4.geometry}
-                  material={materials['Material.009']}
+                  material={materials["Material.009"]}
                 />
               </group>
             </group>
@@ -350,7 +361,7 @@ export function Web3({ isActive, ...props }) {
           castShadow
           receiveShadow
           geometry={nodes.Sphere001.geometry}
-          material={materials['Material.001']}
+          material={materials["Material.001"]}
           position={[-0.203, 0.408, -0.21]}
           scale={0}
         />
@@ -359,7 +370,7 @@ export function Web3({ isActive, ...props }) {
           castShadow
           receiveShadow
           geometry={nodes.Cube.geometry}
-          material={materials['Material.001']}
+          material={materials["Material.001"]}
           position={[0.006, 0.859, 0.222]}
           scale={0}
         />
@@ -389,51 +400,51 @@ export function Web3({ isActive, ...props }) {
           scale={0.079}
         />
         <group name="Empty" position={[4.089, 2.103, -0.346]}>
-          {currentModel=="Model3"&&(
-           <PerspectiveCamera
-            name="Camera"
-            makeDefault={true}
-            far={1000}
-            near={0.1}
-            fov={19.157}
-            rotation={[-Math.PI / 2, 1.519, Math.PI / 2]}
-            scale={0.217}
-          /> 
+          {currentModel == "Model3" && (
+            <PerspectiveCamera
+              name="Camera"
+              makeDefault={isActive}
+              far={1000}
+              near={0.1}
+              fov={19.157}
+              rotation={[-Math.PI / 2, 1.519, Math.PI / 2]}
+              scale={0.217}
+            />
           )}
-          
         </group>
         <group
           name="Cylinder095"
           position={[0.004, 0.391, 0.002]}
           rotation={[-0.004, 0.02, -0.002]}
-          scale={0.052}>
+          scale={0.052}
+        >
           <mesh
             name="Cylinder101_1"
             castShadow
             receiveShadow
             geometry={nodes.Cylinder101_1.geometry}
-            material={materials['Material.007']}
+            material={materials["Material.007"]}
           />
           <mesh
             name="Cylinder101_2"
             castShadow
             receiveShadow
             geometry={nodes.Cylinder101_2.geometry}
-            material={materials['Material.008']}
+            material={materials["Material.008"]}
           />
           <mesh
             name="Cylinder101_3"
             castShadow
             receiveShadow
             geometry={nodes.Cylinder101_3.geometry}
-            material={materials['Material.017']}
+            material={materials["Material.017"]}
           />
           <mesh
             name="Cylinder101_4"
             castShadow
             receiveShadow
             geometry={nodes.Cylinder101_4.geometry}
-            material={materials['Material.015']}
+            material={materials["Material.015"]}
           />
           <group name="Cylinder001" position={[0.006, 3.553, 0.007]} scale={0}>
             <mesh
@@ -441,84 +452,90 @@ export function Web3({ isActive, ...props }) {
               castShadow
               receiveShadow
               geometry={nodes.Cylinder001_1.geometry}
-              material={materials['Material.007']}
+              material={materials["Material.007"]}
             />
             <mesh
               name="Cylinder001_2"
               castShadow
               receiveShadow
               geometry={nodes.Cylinder001_2.geometry}
-              material={materials['Material.008']}
+              material={materials["Material.008"]}
             />
           </group>
           <group
             name="Cylinder096"
             position={[-0.008, -1.548, -1.192]}
             rotation={[0, 1.571, 0]}
-            scale={0.489}>
+            scale={0.489}
+          >
             <mesh
               name="Cylinder102_1"
               castShadow
               receiveShadow
               geometry={nodes.Cylinder102_1.geometry}
-              material={materials['Material.007']}
+              material={materials["Material.007"]}
             />
             <mesh
               name="Cylinder102_2"
               castShadow
               receiveShadow
               geometry={nodes.Cylinder102_2.geometry}
-              material={materials['Material.008']}
+              material={materials["Material.008"]}
             />
             <mesh
               name="Cylinder102_3"
               castShadow
               receiveShadow
               geometry={nodes.Cylinder102_3.geometry}
-              material={materials['Material.009']}
+              material={materials["Material.009"]}
             />
           </group>
-          <group name="Cylinder097" position={[1.256, -1.548, 0.055]} scale={0.489}>
+          <group
+            name="Cylinder097"
+            position={[1.256, -1.548, 0.055]}
+            scale={0.489}
+          >
             <mesh
               name="Cylinder103_1"
               castShadow
               receiveShadow
               geometry={nodes.Cylinder103_1.geometry}
-              material={materials['Material.007']}
+              material={materials["Material.007"]}
             />
             <mesh
               name="Cylinder103_2"
               castShadow
               receiveShadow
               geometry={nodes.Cylinder103_2.geometry}
-              material={materials['Material.008']}
+              material={materials["Material.008"]}
             />
             <mesh
               name="Cylinder103_3"
               castShadow
               receiveShadow
               geometry={nodes.Cylinder103_3.geometry}
-              material={materials['Material.009']}
+              material={materials["Material.009"]}
             />
           </group>
           <group
             name="Cylinder098"
             position={[1.103, 0.633, 0.065]}
             rotation={[0, 0, -1.445]}
-            scale={[0.491, 0.093, 0.491]}>
+            scale={[0.491, 0.093, 0.491]}
+          >
             <mesh
               name="Cylinder104_1"
               castShadow
               receiveShadow
               geometry={nodes.Cylinder104_1.geometry}
-              material={materials['Material.009']}
+              material={materials["Material.009"]}
             />
             <mesh
               name="Cylinder104_2"
               castShadow
               receiveShadow
               geometry={nodes.Cylinder104_2.geometry}
-              material={materials['Material.013']}
+              material={materials["Material.013"]}
             />
           </group>
           <mesh
@@ -526,7 +543,7 @@ export function Web3({ isActive, ...props }) {
             castShadow
             receiveShadow
             geometry={nodes.Cylinder099.geometry}
-            material={materials['Material.009']}
+            material={materials["Material.009"]}
             position={[0, -3.265, -0.769]}
             rotation={[0.137, 0, 0]}
             scale={0.146}
@@ -536,7 +553,7 @@ export function Web3({ isActive, ...props }) {
             castShadow
             receiveShadow
             geometry={nodes.Cylinder100.geometry}
-            material={materials['Material.009']}
+            material={materials["Material.009"]}
             position={[-0.779, -3.265, 0]}
             rotation={[Math.PI / 2, 1.434, -Math.PI / 2]}
             scale={0.146}
@@ -546,7 +563,7 @@ export function Web3({ isActive, ...props }) {
             castShadow
             receiveShadow
             geometry={nodes.Cylinder102.geometry}
-            material={materials['Material.017']}
+            material={materials["Material.017"]}
             position={[0.424, 2.008, -0.803]}
             rotation={[2.137, 0.803, 0.456]}
           />
@@ -555,7 +572,7 @@ export function Web3({ isActive, ...props }) {
             castShadow
             receiveShadow
             geometry={nodes.Cylinder103.geometry}
-            material={materials['Material.009']}
+            material={materials["Material.009"]}
             position={[0.015, 1.658, -0.346]}
             scale={[0.125, 1.435, 0.125]}
           />
@@ -564,7 +581,7 @@ export function Web3({ isActive, ...props }) {
             castShadow
             receiveShadow
             geometry={nodes.Cylinder104.geometry}
-            material={materials['Material.009']}
+            material={materials["Material.009"]}
             position={[-0.214, 1.29, -0.777]}
             rotation={[0.147, 0.055, -0.018]}
             scale={[0.096, 0.761, 0.096]}
@@ -574,7 +591,7 @@ export function Web3({ isActive, ...props }) {
             castShadow
             receiveShadow
             geometry={nodes.Cylinder106.geometry}
-            material={materials['Material.009']}
+            material={materials["Material.009"]}
             position={[-0.111, 0.999, 0.235]}
             scale={[0.125, 1.435, 0.125]}
           />
@@ -585,70 +602,79 @@ export function Web3({ isActive, ...props }) {
             castShadow
             receiveShadow
             geometry={nodes.Cylinder007.geometry}
-            material={materials['Material.003']}
+            material={materials["Material.003"]}
           />
           <mesh
             name="Cylinder007_1"
             castShadow
             receiveShadow
             geometry={nodes.Cylinder007_1.geometry}
-            material={materials['Material.005']}
+            material={materials["Material.005"]}
           />
           <mesh
             name="Cylinder007_2"
             castShadow
             receiveShadow
             geometry={nodes.Cylinder007_2.geometry}
-            material={materials['Material.006']}
+            material={materials["Material.006"]}
           />
           <mesh
             name="Cylinder007_3"
             castShadow
             receiveShadow
             geometry={nodes.Cylinder007_3.geometry}
-            material={materials['Material.010']}
+            material={materials["Material.010"]}
           />
           <mesh
             name="Cylinder007_4"
             castShadow
             receiveShadow
             geometry={nodes.Cylinder007_4.geometry}
-            material={materials['Material.011']}
+            material={materials["Material.011"]}
           />
           <mesh
             name="Cylinder007_5"
             castShadow
             receiveShadow
             geometry={nodes.Cylinder007_5.geometry}
-            material={materials['Material.012']}
+            material={materials["Material.012"]}
           />
         </group>
         <group
           name="Armature002"
           position={[2.919, -1.205, -0.53]}
           rotation={[0, 1.107, 0]}
-          scale={0.064}>
+          scale={0.064}
+        >
           <group name="Retopo_Sphere002">
             <skinnedMesh
               name="mesh003"
               geometry={nodes.mesh003.geometry}
-              material={materials['Material.004']}
+              material={materials["Material.004"]}
               skeleton={nodes.mesh003.skeleton}
             />
             <skinnedMesh
               name="mesh003_1"
               geometry={nodes.mesh003_1.geometry}
-              material={materials['pants.001']}
+              material={materials["pants.001"]}
               skeleton={nodes.mesh003_1.skeleton}
             />
             <skinnedMesh
               name="mesh003_2"
               geometry={nodes.mesh003_2.geometry}
-              material={materials['skin.001']}
+              material={materials["skin.001"]}
               skeleton={nodes.mesh003_2.skeleton}
             />
-            <group name="Empty001" position={[0.606, -0.576, 0.21]} scale={1.043} />
-            <group name="Empty002" position={[-0.555, -0.686, 0.037]} scale={0.834} />
+            <group
+              name="Empty001"
+              position={[0.606, -0.576, 0.21]}
+              scale={1.043}
+            />
+            <group
+              name="Empty002"
+              position={[-0.555, -0.686, 0.037]}
+              scale={0.834}
+            />
           </group>
           <primitive object={nodes.Bone} />
           <primitive object={nodes.Bone007} />
@@ -658,12 +684,13 @@ export function Web3({ isActive, ...props }) {
           name="Armature001"
           position={[0.052, 0.421, -0.086]}
           rotation={[0, -0.516, 0]}
-          scale={0.029}>
+          scale={0.029}
+        >
           <group name="Retopo_Sphere001">
             <skinnedMesh
               name="mesh001"
               geometry={nodes.mesh001.geometry}
-              material={materials['Material.016']}
+              material={materials["Material.016"]}
               skeleton={nodes.mesh001.skeleton}
             />
             <skinnedMesh
@@ -678,8 +705,16 @@ export function Web3({ isActive, ...props }) {
               material={materials.skin}
               skeleton={nodes.mesh001_2.skeleton}
             />
-            <group name="Empty005" position={[0.392, 1.453, 1.578]} scale={1.043} />
-            <group name="Empty006" position={[-0.616, 0.807, 1.625]} scale={0.834} />
+            <group
+              name="Empty005"
+              position={[0.392, 1.453, 1.578]}
+              scale={1.043}
+            />
+            <group
+              name="Empty006"
+              position={[-0.616, 0.807, 1.625]}
+              scale={0.834}
+            />
           </group>
           <primitive object={nodes.Bone_1} />
           <primitive object={nodes.Bone007_1} />

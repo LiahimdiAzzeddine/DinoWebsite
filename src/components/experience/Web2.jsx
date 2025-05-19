@@ -69,7 +69,7 @@ export function Web2({ isActive, ...props }) {
           }
         },
         onLeave: () => {
-          setIsTransitioning(true);
+          //setIsTransitioning(true);
 
           console.log("🚀 onLeave",isTransitioning);
 
@@ -82,7 +82,7 @@ export function Web2({ isActive, ...props }) {
             mixer.update(0.01);
           }
              leaveAnim.getMixer().addEventListener("finished", () => {
-                playedSecondScroll.current = true;
+               // playedSecondScroll.current = true;
               });
         },
       },

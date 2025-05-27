@@ -100,7 +100,7 @@ useEffect(() => {
 
       function raf(time) {
         lenis.raf(time);
-        ScrollTrigger.update(); // 👈 Synchronisation clé ici
+        ScrollTrigger.update(); 
         requestAnimationFrame(raf);
       }
   
@@ -113,6 +113,12 @@ useEffect(() => {
    
   return (
     <Canvas>
+      {
+        /**
+         * 
+         * 
+         */
+      }
       <AnimatedGradientBackground />
       <ambientLight intensity={0.03} />
       <spotLight

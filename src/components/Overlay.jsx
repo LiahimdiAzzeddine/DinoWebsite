@@ -95,7 +95,7 @@ export const Overlay = () => {
         </a>
       </Section>
       
-      <Section right id="section2" class="second-section">
+      <Section  id="section2" class="second-section">
         <span className="notranslate text-white tracking-[1px] uppercase text-center md:text-left">
           Next Hit
         </span>

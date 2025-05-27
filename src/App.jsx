@@ -44,7 +44,8 @@ function App() {
 				<CanvasContainer />
 			</div>
     <Overlay />
-  </main></AnimationProvider>
+  </main>
+  </AnimationProvider>
   );
 }
 /*

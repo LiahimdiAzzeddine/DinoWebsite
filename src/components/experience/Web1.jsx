@@ -39,6 +39,7 @@ export function Web1({ isActive, lenis, ...props }) {
   const timelineMain = useRef();
   let isEnteringBack = false;
   let hasLeft = false;
+  const currentTween = useRef(null);
 
 
   useLayoutEffect(() => {
@@ -49,6 +50,7 @@ export function Web1({ isActive, lenis, ...props }) {
     });
     const camAct = actions["CameraIn"];
     const camera = group.current.getObjectByName("Camera001");
+    let sectionScrollProgress = 0;
     if (!camAct || !camera) return;
 
     camAct.reset().play().paused = true;
@@ -61,15 +63,21 @@ export function Web1({ isActive, lenis, ...props }) {
         start: "top bottom",
         end: "top top",
         scrub: 2,
-        onStart :()=>{
-          isEnteringBack = false;
-          hasLeft = false;
-        },
         onUpdate: (self) => {
-        if (!isTransitioning && !isEnteringBack && !hasLeft) {
-            console.log("🚀 ~ useLayoutEffect ~ isTransitioning:", isTransitioning)
-            camAct.time = self.progress * clipDur;
-            console.log("self.progress: " , self.progress);
+          sectionScrollProgress = self.progress;
+          if (!isTransitioning && !isEnteringBack && !hasLeft) {
+            // Kill any existing tween
+            if (currentTween.current) {
+              currentTween.current.kill();
+            }
+
+            // Create new tween
+            currentTween.current = gsap.to(camAct, {
+              time: sectionScrollProgress * clipDur,
+              duration: 0.5, // Adjust this value to control smoothing amount
+              ease: "power2.out",
+              overwrite: true
+            });
           }
         },
         onLeave: () => {
@@ -102,14 +110,21 @@ export function Web1({ isActive, lenis, ...props }) {
               ease: "power2.out",
               onUpdate: () => {
                 console.log("progress:", tl.progress(), " camPosition: "+ camera.position.y, " enterBackPose.pos: " +enterBackPose.pos.y );
+
               },
             },
             onComplete: () => {
-              setIsTransitioning(false);
-              isEnteringBack = false;
-              lenis?.start();
-
-              // timelineMain.current.play();
+              // Add new tween here
+              gsap.to(camAct, {
+                time: sectionScrollProgress * clipDur,
+                duration: 1,
+                ease: "power2.out",
+                onComplete: () => {
+                  setIsTransitioning(false);
+                  isEnteringBack = false;
+                  hasLeft = false;
+                }
+              });
             },
           });
 

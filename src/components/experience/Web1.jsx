@@ -32,7 +32,6 @@ export function Web1({ isActive, lenis, ...props }) {
     },
   };
   const { actions, mixer } = useAnimations(animations, group);
-  console.log("🚀 ~ useLayoutEffect ~ actions:", actions);
 
   const { currentModel, setIsTransitioning, isTransitioning } =
     useContext(AnimationContext);
@@ -58,11 +57,11 @@ export function Web1({ isActive, lenis, ...props }) {
         end: "top top",
         scrub: 2,
         onUpdate: (self) => {
-        /* */ if ( !isTransitioning) {
+        /*  if ( !isTransitioning) {
             console.log("🚀 ~ useLayoutEffect ~ isTransitioning:", isTransitioning)
             camAct.time = self.progress * clipDur;
             mixer.update(0);
-          }
+          }*/
         },
         onLeave: () => {
           //  console.log("pos :", camera.position.toArray());
@@ -89,7 +88,7 @@ export function Web1({ isActive, lenis, ...props }) {
 
           const tl = gsap.timeline({
             defaults: {
-              duration: 0.5,
+              duration:1,
               ease: "power2.out",
               onUpdate: () => mixer.update(0),
             },

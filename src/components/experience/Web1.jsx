@@ -3,6 +3,7 @@ import { useGLTF, PerspectiveCamera, useAnimations } from "@react-three/drei";
 import gsap from "gsap";
 import { AnimationContext } from "./AnimationContext";
 import * as THREE from "three";
+import {Clock} from "three";
 
 export function Web1({ isActive, lenis, ...props }) {
   const group = useRef();
@@ -36,6 +37,9 @@ export function Web1({ isActive, lenis, ...props }) {
   const { currentModel, setIsTransitioning, isTransitioning } =
     useContext(AnimationContext);
   const timelineMain = useRef();
+  let isEnteringBack = false;
+  let hasLeft = false;
+
 
   useLayoutEffect(() => {
     if (!isActive || !actions || !mixer || !group.current) return;
@@ -50,17 +54,22 @@ export function Web1({ isActive, lenis, ...props }) {
     camAct.reset().play().paused = true;
     const clipDur = camAct.getClip().duration;
 
+
     timelineMain.current = gsap.timeline({
       scrollTrigger: {
         trigger: "#section2",
         start: "top bottom",
         end: "top top",
         scrub: 2,
+        onStart :()=>{
+          isEnteringBack = false;
+          hasLeft = false;
+        },
         onUpdate: (self) => {
-        if ( !isTransitioning) {
+        if (!isTransitioning && !isEnteringBack && !hasLeft) {
             console.log("🚀 ~ useLayoutEffect ~ isTransitioning:", isTransitioning)
             camAct.time = self.progress * clipDur;
-            mixer.update(0);
+            console.log("self.progress: " , self.progress);
           }
         },
         onLeave: () => {
@@ -68,35 +77,39 @@ export function Web1({ isActive, lenis, ...props }) {
           // console.log("rot :", camera.rotation.toArray());
           if (currentModel !== "Model1" || isTransitioning) return;
           setIsTransitioning(true);
+          hasLeft = true;
 
-          timelineMain.current.pause();
+          // timelineMain.current.pause();
           gsap.to(camera.position, {
             y: camera.position.y - 50,
             duration: 1,
             ease: "power2.inOut",
-            onUpdate: () => mixer.update(0),
-            onComplete: () => setIsTransitioning(false),
+            onComplete: () => {
+              setIsTransitioning(false);
+              console.log("onComplete: cam position: " , camera.position.y);
+            },
           });
         },
         onEnterBack: () => {
           if (currentModel !== "Model1" || isTransitioning) return;
           console.log("🚀 ~ useLayoutEffect ~ onEnterBack:");
           setIsTransitioning(true);
-          if(lenis){
-            lenis?.stop();
-          }
+          isEnteringBack = true;
 
           const tl = gsap.timeline({
             defaults: {
               duration:1,
               ease: "power2.out",
-              onUpdate: () => mixer.update(0),
+              onUpdate: () => {
+                console.log("progress:", tl.progress(), " camPosition: "+ camera.position.y, " enterBackPose.pos: " +enterBackPose.pos.y );
+              },
             },
             onComplete: () => {
               setIsTransitioning(false);
+              isEnteringBack = false;
               lenis?.start();
 
-              timelineMain.current.play();
+              // timelineMain.current.play();
             },
           });
 

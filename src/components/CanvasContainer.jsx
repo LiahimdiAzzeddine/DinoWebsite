@@ -6,6 +6,7 @@ import {
   AnimationProvider,
   AnimationContext,
 } from "./experience/AnimationContext";
+import { useGSAP } from "@gsap/react";
 
 import MODEL_CONFIGS from "./experience/MODEL_CONFIGS";
 import AnimatedGradientBackground from "./experience/SceneColor";
@@ -43,11 +44,10 @@ export function ModelContainer({lenis}) {
 
 // Handles model switching and scene positioning based on scroll
 const SceneManager = ({lenis}) => {
-  const { setCurrentModel, isTransitioning,currentModel,setIsTransitioning } =
+  const { setCurrentModel, isTransitioning, setIsTransitioning } = 
     useContext(AnimationContext);
 
-
-  useEffect(() => {
+  useGSAP(() => {
     Object.entries(MODEL_CONFIGS).forEach(([key, { triggerSection }]) => {
       ScrollTrigger.create({
         trigger: triggerSection,
@@ -55,26 +55,25 @@ const SceneManager = ({lenis}) => {
         end: "clamp(top top)",
         scrub: true,
         markers: true,
-
         onEnter: () => {
-            if (!isTransitioning ) {
-            gsap.delayedCall(0.5, () => setCurrentModel(key),setIsTransitioning(false));
-            
-          } else {
-            console.log("Blocked change to", key, "due to transition");
+          if (!isTransitioning) {
+            gsap.delayedCall(0.5, () => {
+              setCurrentModel(key);
+              setIsTransitioning(false);
+            });
           }
         },
         onEnterBack: () => {
           if (!isTransitioning) {
-            gsap.delayedCall(0.5, () => setCurrentModel(key),setIsTransitioning(false));
-            
-          } else {
-            console.log("Blocked back change to", key, "due to transition");
+            gsap.delayedCall(0.5, () => {
+              setCurrentModel(key);
+              setIsTransitioning(false);
+            });
           }
-        },
+        }
       });
     });
-  }, [setCurrentModel, isTransitioning,currentModel]);
+  }, { dependencies: [], scope: "" });
 
   return <ModelContainer lenis={lenis} />;
 };

@@ -57,11 +57,11 @@ export function Web1({ isActive, lenis, ...props }) {
         end: "top top",
         scrub: 2,
         onUpdate: (self) => {
-        /*  if ( !isTransitioning) {
+        if ( !isTransitioning) {
             console.log("🚀 ~ useLayoutEffect ~ isTransitioning:", isTransitioning)
             camAct.time = self.progress * clipDur;
             mixer.update(0);
-          }*/
+          }
         },
         onLeave: () => {
           //  console.log("pos :", camera.position.toArray());

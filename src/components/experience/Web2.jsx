@@ -18,6 +18,8 @@ export function Web2({ isActive, ...props }) {
   const clone = React.useMemo(() => SkeletonUtils.clone(scene), [scene]);
   const { nodes, materials } = useGraph(clone);
   const { actions, mixer } = useAnimations(animations, group);
+  const clock = new THREE.Clock();
+
   const { currentModel, isTransitioning, setIsTransitioning } =
     useContext(AnimationContext);
   const Animations = [
@@ -52,38 +54,65 @@ export function Web2({ isActive, ...props }) {
     timelineRef.current = gsap.timeline({
       scrollTrigger: {
         trigger: "#section3",
-        start: "top bottom",
-        end: "top top", //  top+=5
+        start: "top bottom-=10",
+        end: "top top+=10",
+        markers:true,
         scrub: 2,
         onEnter: () => {
-          console.log("🚀 onEnter");
-
-          //mixer.stopAllAction();
-
-
+          console.log("🚀az onEnter - scroll down entering section");
+          setIsTransitioning(true);
           if (enterAnim) {
             enterAnim.reset().setLoop(THREE.LoopOnce, 1);
             enterAnim.clampWhenFinished = true;
+            enterAnim.timeScale = 0.7;
             enterAnim.play();
-            mixer.update(0.01); // force update
+            enterAnim.getMixer().addEventListener("finished", () => {
+              setIsTransitioning(false);
+            });
           }
         },
-        onLeave: () => {
-          //setIsTransitioning(true);
+        onEnterBack: () => {
+          console.log("🚀az onEnterBack - scroll up entering section");
+        },
+        onLeaveBack: () => {
+          console.log("🚀az onLeaveBack - scroll up leaving section");
+          if (enterAnim) {
+  enterAnim.reset(); 
+  enterAnim.setLoop(THREE.LoopOnce, 1);
+  enterAnim.clampWhenFinished = true;
 
-          console.log("🚀 onLeave",isTransitioning);
+  enterAnim.time = enterAnim.getClip().duration;
+
+  enterAnim.timeScale = -0.7;
+
+  enterAnim.play();
+enterAnim.getMixer().update(0.05);
+  enterAnim.getMixer().addEventListener("finished", () => {
+    setIsTransitioning(false);
+  });
+}
+
+        },
+
+        onLeave: () => {
+          setIsTransitioning(true);
+
+          console.log("🚀az onLeave - scroll down leaving section");
 
           //mixer.stopAllAction();
 
           if (leaveAnim) {
             leaveAnim.reset().setLoop(THREE.LoopOnce, 1);
             leaveAnim.clampWhenFinished = true;
+            leaveAnim.timeScale = 0.5;
             leaveAnim.play();
-            mixer.update(0.01);
+            //const delta = clock.getDelta();
+            //console.log("🚀 ~ useLayoutEffect ~ delta:", delta)
+            leaveAnim.getMixer().update(0.05);
           }
-             leaveAnim.getMixer().addEventListener("finished", () => {
-               // playedSecondScroll.current = true;
-              });
+          leaveAnim.getMixer().addEventListener("finished", () => {
+            setIsTransitioning(false);
+          });
         },
       },
     });
@@ -104,7 +133,8 @@ export function Web2({ isActive, ...props }) {
   }, [currentModel]);
 
   return (
-    <group ref={group} {...props} dispose={null} visible={isActive}>
+        <group ref={group} {...props} dispose={null} visible={isActive}>
+
       <group name="Scene">
         <mesh
           name="Sphere014"
@@ -125,7 +155,8 @@ export function Web2({ isActive, ...props }) {
           rotation={[Math.PI, 0, Math.PI]}
           scale={[0.45, 0.767, 0.767]}
         />
-        <group name="Empty001" position={[23.142, 20.042, 1.408]} scale={0.15}>
+        <group name="Empty001" position={[23.142, 1.679, 1.408]} scale={0.15}>
+        
           <PerspectiveCamera
             name="Camera"
             makeDefault={isActive}
@@ -142,17 +173,15 @@ export function Web2({ isActive, ...props }) {
           castShadow
           receiveShadow
           geometry={nodes.Sphere002.geometry}
-          material={materials["Material.001"]}
+          material={materials['Material.001']}
           position={[-0.212, -0.265, -3.618]}
           rotation={[-0.413, 0.743, 0.652]}
-          scale={0.68}
-        >
+          scale={0.68}>
           <group
             name="glasss2"
             position={[0.003, 0.084, 1.035]}
             rotation={[1.706, -0.077, -0.068]}
-            scale={0.241}
-          >
+            scale={0.241}>
             <mesh
               name="Mesh006"
               castShadow
@@ -183,63 +212,61 @@ export function Web2({ isActive, ...props }) {
           name="BallonHotAir"
           position={[-14.582, 4.564, 2.476]}
           rotation={[0.007, -0.012, -0.001]}
-          scale={0.694}
-        >
+          scale={0.694}>
           <mesh
             name="Sphere010"
             castShadow
             receiveShadow
             geometry={nodes.Sphere010.geometry}
-            material={materials["Material.007"]}
+            material={materials['Material.007']}
           />
           <mesh
             name="Sphere010_1"
             castShadow
             receiveShadow
             geometry={nodes.Sphere010_1.geometry}
-            material={materials["Material.005"]}
+            material={materials['Material.005']}
           />
           <mesh
             name="Sphere010_2"
             castShadow
             receiveShadow
             geometry={nodes.Sphere010_2.geometry}
-            material={materials["Material.010"]}
+            material={materials['Material.010']}
           />
           <mesh
             name="Sphere010_3"
             castShadow
             receiveShadow
             geometry={nodes.Sphere010_3.geometry}
-            material={materials["Material.009"]}
+            material={materials['Material.009']}
           />
           <mesh
             name="Sphere010_4"
             castShadow
             receiveShadow
             geometry={nodes.Sphere010_4.geometry}
-            material={materials["Material.011"]}
+            material={materials['Material.011']}
           />
           <mesh
             name="Sphere010_5"
             castShadow
             receiveShadow
             geometry={nodes.Sphere010_5.geometry}
-            material={materials["Material.013"]}
+            material={materials['Material.013']}
           />
           <mesh
             name="Sphere010_6"
             castShadow
             receiveShadow
             geometry={nodes.Sphere010_6.geometry}
-            material={materials["Material.012"]}
+            material={materials['Material.012']}
           />
         </group>
         <group
           name="Cube043_Cube053"
           position={[2.297, -5.768, -1.96]}
-          rotation={[Math.PI / 2, 0, 0]}
-        >
+          rotation={[Math.PI / 2, 0, 0]}>
           <mesh
             name="Cube043_Cube053_1"
             castShadow
@@ -252,14 +279,13 @@ export function Web2({ isActive, ...props }) {
             castShadow
             receiveShadow
             geometry={nodes.Cube043_Cube053_2.geometry}
-            material={materials["Material.006"]}
+            material={materials['Material.006']}
           />
         </group>
         <group
           name="Cube044_Cube054"
           position={[-6.655, -4.081, 0.819]}
-          rotation={[Math.PI / 2, 0, -1.594]}
-        >
+          rotation={[Math.PI / 2, 0, -1.594]}>
           <mesh
             name="Cube044_Cube054_1"
             castShadow
@@ -272,40 +298,38 @@ export function Web2({ isActive, ...props }) {
             castShadow
             receiveShadow
             geometry={nodes.Cube044_Cube054_2.geometry}
-            material={materials["Material.006"]}
+            material={materials['Material.006']}
           />
         </group>
         <group
           name="Cube043_Cube001"
           position={[2.099, -7.888, 3.968]}
-          rotation={[Math.PI / 2, 0, 0]}
-        >
+          rotation={[Math.PI / 2, 0, 0]}>
           <mesh
             name="Cube043_Cube001_1"
             castShadow
             receiveShadow
             geometry={nodes.Cube043_Cube001_1.geometry}
-            material={materials["Orange.001"]}
+            material={materials['Orange.001']}
           />
           <mesh
             name="Cube043_Cube001_2"
             castShadow
             receiveShadow
             geometry={nodes.Cube043_Cube001_2.geometry}
-            material={materials["Material.006"]}
+            material={materials['Material.006']}
           />
         </group>
         <group
           name="Armature001"
           position={[-0.091, 0.84, -0.237]}
           rotation={[0.077, 1.536, -0.317]}
-          scale={0.336}
-        >
+          scale={0.336}>
           <group name="Retopo_Sphere001">
             <skinnedMesh
               name="mesh001"
               geometry={nodes.mesh001.geometry}
-              material={materials["Material.016"]}
+              material={materials['Material.016']}
               skeleton={nodes.mesh001.skeleton}
             />
             <skinnedMesh
@@ -329,14 +353,12 @@ export function Web2({ isActive, ...props }) {
           name="Empty005"
           position={[0.004, 1.693, -0.583]}
           rotation={[1.528, 1.519, -0.667]}
-          scale={1.047}
-        >
+          scale={1.047}>
           <group
             name="Trophy"
             position={[0.357, -0.012, 0.013]}
             rotation={[1.425, -1.328, 1.432]}
-            scale={0.955}
-          >
+            scale={0.955}>
             <mesh
               name="Cylinder009"
               castShadow
@@ -349,7 +371,7 @@ export function Web2({ isActive, ...props }) {
               castShadow
               receiveShadow
               geometry={nodes.Cylinder009_1.geometry}
-              material={materials["Material.008"]}
+              material={materials['Material.008']}
             />
             <mesh
               name="Cylinder009_2"
@@ -364,22 +386,7 @@ export function Web2({ isActive, ...props }) {
           name="Empty006"
           position={[-0.072, 1.82, 0.182]}
           rotation={[0.831, 1.513, -0.007]}
-          scale={0.268}
-        >
-          <group
-            name="Armature"
-            position={[0.239, 0.054, 0.33]}
-            rotation={[1.601, 0.618, 1.507]}
-            scale={3.568}
-          >
-            <skinnedMesh
-              name="Cube"
-              geometry={nodes.Cube.geometry}
-              material={materials.Blackk}
-              skeleton={nodes.Cube.skeleton}
-            />
-            <primitive object={nodes.Bone_1} />
-          </group>
+          scale={0.268}>
           <mesh
             name="Cube001"
             castShadow
@@ -404,8 +411,7 @@ export function Web2({ isActive, ...props }) {
             name="Cube011"
             position={[0.321, 0.089, 0.383]}
             rotation={[1.581, 0.176, -1.628]}
-            scale={[0.076, 2.381, 0.076]}
-          >
+            scale={[0.076, 2.381, 0.076]}>
             <mesh
               name="Cube019"
               castShadow
@@ -418,9 +424,19 @@ export function Web2({ isActive, ...props }) {
               castShadow
               receiveShadow
               geometry={nodes.Cube019_1.geometry}
-              material={materials["Material.008"]}
+              material={materials['Material.008']}
             />
           </group>
+          <mesh
+            name="Cube"
+            castShadow
+            receiveShadow
+            geometry={nodes.Cube.geometry}
+            material={materials.Blackk}
+            position={[-1.383, -1.103, 0.422]}
+            rotation={[1.601, 0.618, 1.507]}
+            scale={[0.054, 2.059, 0.054]}
+          />
         </group>
       </group>
     </group>

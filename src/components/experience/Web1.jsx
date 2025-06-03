@@ -75,7 +75,7 @@ export function Web1({ isActive, lenis, ...props }) {
             currentTween.current = gsap.to(camAct, {
               time: sectionScrollProgress * clipDur,
               duration: 0.5, // Adjust this value to control smoothing amount
-              ease: "power2.out",
+              ease: "sine.inOut",
               overwrite: true
             });
           }
@@ -89,9 +89,9 @@ export function Web1({ isActive, lenis, ...props }) {
 
           // timelineMain.current.pause();
           gsap.to(camera.position, {
-            y: camera.position.y - 50,
-            duration: 1,
-            ease: "power2.inOut",
+            y: camera.position.y - 10,
+            duration:2,
+            ease:"sine.inOut",
             onComplete: () => {
               setIsTransitioning(false);
               console.log("onComplete: cam position: " , camera.position.y);
@@ -107,7 +107,7 @@ export function Web1({ isActive, lenis, ...props }) {
           const tl = gsap.timeline({
             defaults: {
               duration:1,
-              ease: "power2.out",
+              ease: "sine.inOut",
               onUpdate: () => {
                 console.log("progress:", tl.progress(), " camPosition: "+ camera.position.y, " enterBackPose.pos: " +enterBackPose.pos.y );
 
@@ -118,7 +118,7 @@ export function Web1({ isActive, lenis, ...props }) {
               gsap.to(camAct, {
                 time: sectionScrollProgress * clipDur,
                 duration: 1,
-                ease: "power2.out",
+                ease: "sine.inOut",
                 onComplete: () => {
                   setIsTransitioning(false);
                   isEnteringBack = false;

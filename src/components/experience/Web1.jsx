@@ -7,6 +7,7 @@ import {Clock} from "three";
 
 export function Web1({ isActive, lenis, ...props }) {
   const group = useRef();
+  const sceneContainerGroup = useRef();
   const { nodes, materials, animations } = useGLTF("./models/Web1.glb");
   const animationsPlay = [
     "Armature.001Action",
@@ -63,7 +64,7 @@ export function Web1({ isActive, lenis, ...props }) {
         trigger: "#section2",
         start: "top bottom",
         end: "top top",
-        scrub: 1,
+        scrub: 0.3,
         onUpdate: (self) => {
           sectionScrollProgress = self.progress;
           if (!isTransitioning && !isEnteringBack && !hasLeft) {
@@ -87,13 +88,13 @@ export function Web1({ isActive, lenis, ...props }) {
           hasLeft = true;
 
           // timelineMain.current.pause();
-          gsap.to(camera.position, {
-            y: camera.position.y - 150,
-            duration:1,
+          gsap.to(sceneContainerGroup.current.position, {
+            y: sceneContainerGroup.current.position.y + 150,
+            duration:0.5,
             ease:"sine.inOut",
             onComplete: () => {
               setIsTransitioning(false);
-              console.log("onComplete: cam position: " , camera.position.y);
+              console.log("onComplete: cam position: " , sceneContainerGroup.current.y);
             },
           });
         },
@@ -102,29 +103,16 @@ export function Web1({ isActive, lenis, ...props }) {
           console.log("🚀 ~ useLayoutEffect ~ onEnterBack:");
           setIsTransitioning(true);
           isEnteringBack = true;
-
-          const tl = gsap.timeline({
-            defaults: {
-              duration:1,
-              ease: "sine.out",
-            },
+          gsap.to(sceneContainerGroup.current.position, {
+            y: sceneContainerGroup.current.position.y - 150,
+            duration: 1,
+            ease: "sine.out",
             onComplete: () => {
-              // Add new tween here
-              gsap.to(camAct, {
-                time: sectionScrollProgress * clipDur,
-                duration: 1,
-                ease: "sine.out",
-                onComplete: () => {
-                  setIsTransitioning(false);
-                  isEnteringBack = false;
-                  hasLeft = false;
-                }
-              });
-            },
+              setIsTransitioning(false);
+              isEnteringBack = false;
+              hasLeft = false;
+            }
           });
-
-          tl.to(camera.position, { ...enterBackPose.pos }, 0);
-          tl.to(camera.rotation, { ...enterBackPose.rot }, 0);
         },
       },
     });
@@ -147,6 +135,8 @@ export function Web1({ isActive, lenis, ...props }) {
           position={[3.446, 20.931, 15.945]}
           rotation={[-0.417, 0.041, -0.022]}
         />
+        <group ref={sceneContainerGroup} name="scene_container">
+
         <mesh
           name="GroundCubeQuad003"
           castShadow
@@ -737,6 +727,8 @@ export function Web1({ isActive, lenis, ...props }) {
             material={materials["CODE_SCREEN_MAT.002"]}
           />
         </group>
+        </group>
+
       </group>
     </group>
   );

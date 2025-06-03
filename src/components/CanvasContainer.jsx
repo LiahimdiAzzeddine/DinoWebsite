@@ -1,7 +1,7 @@
 import React, { Suspense, useContext, useEffect, useRef } from "react";
 import { Canvas, useThree } from "@react-three/fiber";
 import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
+import {ScrollTrigger} from "gsap/ScrollTrigger";
 import {
   AnimationProvider,
   AnimationContext,
@@ -50,11 +50,12 @@ const SceneManager = ({lenis}) => {
   useGSAP(() => {
     Object.entries(MODEL_CONFIGS).forEach(([key, { triggerSection }]) => {
       ScrollTrigger.create({
+          id:key,
         trigger: triggerSection,
-        start: "clamp(top bottom)",
-        end: "clamp(top top)",
+        start: "top bottom",
+        end: "top top",
         scrub: true,
-        markers:false,
+        markers:true,
         onEnter: () => {
           if (!isTransitioning) {
            // gsap.delayedCall(0.5, () => {
@@ -73,7 +74,7 @@ const SceneManager = ({lenis}) => {
         }
       });
     });
-  }, { dependencies: [], scope: "" });
+  }, { dependencies: []});
 
   return <ModelContainer lenis={lenis} />;
 };

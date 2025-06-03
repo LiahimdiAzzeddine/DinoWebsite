@@ -1,6 +1,7 @@
 import {useContext, useEffect, useLayoutEffect, useRef} from "react";
 import { useGLTF, PerspectiveCamera, useAnimations } from "@react-three/drei";
 import gsap from "gsap";
+import {ScrollTrigger} from "gsap/ScrollTrigger";
 import { AnimationContext } from "./AnimationContext";
 import * as THREE from "three";
 import {Clock} from "three";
@@ -57,6 +58,7 @@ export function Web1({ isActive, lenis, ...props }) {
 
     camAct.reset().play().paused = true;
     const clipDur = camAct.getClip().duration;
+    let nextScrollTrigger = null;
 
 
     timelineMain.current = gsap.timeline({
@@ -65,13 +67,24 @@ export function Web1({ isActive, lenis, ...props }) {
         start: "top bottom",
         end: "top top",
         scrub: 0.5,
+        onEnter: (self) =>{
+          // self.next().disable();
+          // const scrollTrigger = ScrollTrigger.getById(currentModel.toString());
+          // console.log(ScrollTrigger.getAll());
+          // scrollTrigger.kill();
+          // console.log(ScrollTrigger.getAll());
+          // console.log("scroll trigger: ", scrollTrigger.next());
+          // console.log( ScrollTrigger.getAll() );
+        },
         onUpdate: (self) => {
+          nextScrollTrigger = ScrollTrigger.getById(currentModel.toString()).next();
+          nextScrollTrigger.disable();
           sectionScrollProgress = self.progress;
           if (
               !isTransitioning
               // && !isEnteringBack
               // && !hasLeft
-          ) 
+          )
           {
             // Kill any existing tween
             if (currentTween.current) {
@@ -87,7 +100,7 @@ export function Web1({ isActive, lenis, ...props }) {
             });
           }
         },
-        onLeave: () => {
+        onLeave: (self) => {
           if (currentModel !== "Model1" || isTransitioning) return;
           setIsTransitioning(true);
           hasLeft = true;
@@ -99,6 +112,7 @@ export function Web1({ isActive, lenis, ...props }) {
             ease:"sine.inOut",
             onComplete: () => {
               setIsTransitioning(false);
+              nextScrollTrigger.enable();
               console.log("onComplete: cam position: " , sceneContainerGroup.current.y);
             },
           });
@@ -109,6 +123,7 @@ export function Web1({ isActive, lenis, ...props }) {
           setIsTransitioning(true);
           isEnteringBack = true;
           gsap.to(sceneContainerGroup.current.position, {
+            delay: 0.8,
             y: sceneContainerGroup.current.position.y - 150,
             duration:1,
             ease: "circ.out",

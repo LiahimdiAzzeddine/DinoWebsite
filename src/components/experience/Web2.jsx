@@ -49,55 +49,75 @@ export function Web2({ isActive, ...props }) {
     const enterAnim = actions["ActionEnter"];
     const leaveAnim = actions["ActionOut"];
 
+    let nextScrollTrigger = null;
+    let prevScrollTrigger = null;
+
+
     // Timeline GSAP
     timelineRef.current = gsap.timeline({
       scrollTrigger: {
         trigger: "#section3",
-        start: "top bottom-=10",
-        end: "top top+=10",
-        markers: true,
+        start: "top bottom",
+        end: "top top",
+        markers: false,
         scrub: 2,
-        onEnter: () => {
+        onEnter: (self) => {
           console.log("🚀az onEnter - scroll down entering section");
+          // const scrollTrigger = ScrollTrigger.getById(currentModel.toString());
+          // console.log(ScrollTrigger.getAll());
+          // scrollTrigger.kill();
+          // console.log(ScrollTrigger.getAll());
+          // console.log("scroll trigger: ", scrollTrigger.next());
           setIsTransitioning(true);
           if (enterAnim) {
             enterAnim.reset().setLoop(THREE.LoopOnce, 1);
             enterAnim.clampWhenFinished = true;
             enterAnim.timeScale = 0.7;
             enterAnim.play();
-            enterAnim.getMixer().addEventListener("finished", () => {
-              setIsTransitioning(false);
-             
-            });
           }
         },
-        onEnterBack: () => {
-          console.log("🚀az onEnterBack - scroll up entering section");
+        onUpdate: (self) => {
+          nextScrollTrigger = ScrollTrigger.getById(currentModel.toString()).next();
+          nextScrollTrigger.disable();
+          prevScrollTrigger = ScrollTrigger.getById(currentModel.toString()).previous();
+          prevScrollTrigger.disable();
+          // console.log("prev: " ,prevScrollTrigger);
+          // console.log("next: ", nextScrollTrigger);
         },
+        // onEnterBack: () => {
+        //   console.log("🚀az onEnterBack - scroll up entering section");
+        // },
         onLeaveBack: () => {
-          console.log("🚀az onLeaveBack - scroll up leaving section");
-          if (enterAnim) {
-            enterAnim.reset();
-            enterAnim.setLoop(THREE.LoopOnce, 1);
-            enterAnim.clampWhenFinished = true;
-            enterAnim.time = enterAnim.getClip().duration;
-            enterAnim.timeScale = -0.3;
-            enterAnim.play();
-            enterAnim.getMixer().update(0.05);
-            enterAnim.getMixer().addEventListener("finished", () => {
-              setIsTransitioning(false);
-               alert("fin")
-            });
-          }
+          console.log("🚀 onLeaveBack – scroll up leaving section");
+
+          if (!enterAnim) return;
+
+          // Reset & configure the action so that it plays backwards exactly once:
+          enterAnim.reset();
+          enterAnim.setLoop(THREE.LoopOnce, 1);
+          enterAnim.clampWhenFinished = true;
+          enterAnim.time = enterAnim.getClip().duration;     // jump to the very end of the clip
+          enterAnim.timeScale = -0.7;                        // negative → play backwards at 0.7× speed
+
+          // one-time callback for when this action actually finishes:
+          const onActionFinished = (event) => {
+            // event.action is the AnimationAction that just finished
+            if (event.action === enterAnim) {
+              // Remove listener so it only fires once
+              enterAnim.getMixer().removeEventListener("finished", onActionFinished);
+
+              prevScrollTrigger.enable();
+            }
+          };
+
+          // 3. Add the listener and start playing:
+          enterAnim.getMixer().addEventListener("finished", onActionFinished);
+          enterAnim.play();
         },
 
         onLeave: () => {
-          setIsTransitioning(true);
-
           console.log("🚀az onLeave - scroll down leaving section");
-
-          //mixer.stopAllAction();
-
+          setIsTransitioning(true);
           if (leaveAnim) {
             leaveAnim.reset().setLoop(THREE.LoopOnce, 1);
             leaveAnim.clampWhenFinished = true;
@@ -105,11 +125,11 @@ export function Web2({ isActive, ...props }) {
             leaveAnim.play();
             //const delta = clock.getDelta();
             //console.log("🚀 ~ useLayoutEffect ~ delta:", delta)
-            leaveAnim.getMixer().update(0.05);
+            // leaveAnim.getMixer().update(0.05);
           }
-          leaveAnim.getMixer().addEventListener("finished", () => {
-            setIsTransitioning(false);
-          });
+          // leaveAnim.getMixer().addEventListener("finished", () => {
+          //   setIsTransitioning(false);
+          // });
         },
       },
     });

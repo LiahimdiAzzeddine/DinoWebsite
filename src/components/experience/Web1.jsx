@@ -1,4 +1,4 @@
-import { useContext, useLayoutEffect, useRef } from "react";
+import {useContext, useEffect, useLayoutEffect, useRef} from "react";
 import { useGLTF, PerspectiveCamera, useAnimations } from "@react-three/drei";
 import gsap from "gsap";
 import { AnimationContext } from "./AnimationContext";
@@ -37,6 +37,7 @@ export function Web1({ isActive, lenis, ...props }) {
   const { currentModel, setIsTransitioning, isTransitioning } =
     useContext(AnimationContext);
   const timelineMain = useRef();
+  // track scrolling status
   let isEnteringBack = false;
   let hasLeft = false;
   const currentTween = useRef(null);
@@ -62,7 +63,7 @@ export function Web1({ isActive, lenis, ...props }) {
         trigger: "#section2",
         start: "top bottom",
         end: "top top",
-        scrub: 2,
+        scrub: 1,
         onUpdate: (self) => {
           sectionScrollProgress = self.progress;
           if (!isTransitioning && !isEnteringBack && !hasLeft) {
@@ -74,23 +75,21 @@ export function Web1({ isActive, lenis, ...props }) {
             // Create new tween
             currentTween.current = gsap.to(camAct, {
               time: sectionScrollProgress * clipDur,
-              duration: 0.5, // Adjust this value to control smoothing amount
-              ease: "sine.inOut",
+              duration: 0.1, // Adjust this value to control smoothing amount
+              ease: "sine.out",
               overwrite: true
             });
           }
         },
         onLeave: () => {
-          //  console.log("pos :", camera.position.toArray());
-          // console.log("rot :", camera.rotation.toArray());
           if (currentModel !== "Model1" || isTransitioning) return;
           setIsTransitioning(true);
           hasLeft = true;
 
           // timelineMain.current.pause();
           gsap.to(camera.position, {
-            y: camera.position.y - 10,
-            duration:2,
+            y: camera.position.y - 150,
+            duration:1,
             ease:"sine.inOut",
             onComplete: () => {
               setIsTransitioning(false);
@@ -107,18 +106,14 @@ export function Web1({ isActive, lenis, ...props }) {
           const tl = gsap.timeline({
             defaults: {
               duration:1,
-              ease: "sine.inOut",
-              onUpdate: () => {
-                console.log("progress:", tl.progress(), " camPosition: "+ camera.position.y, " enterBackPose.pos: " +enterBackPose.pos.y );
-
-              },
+              ease: "sine.out",
             },
             onComplete: () => {
               // Add new tween here
               gsap.to(camAct, {
                 time: sectionScrollProgress * clipDur,
                 duration: 1,
-                ease: "sine.inOut",
+                ease: "sine.out",
                 onComplete: () => {
                   setIsTransitioning(false);
                   isEnteringBack = false;

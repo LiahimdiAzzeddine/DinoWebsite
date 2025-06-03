@@ -64,10 +64,15 @@ export function Web1({ isActive, lenis, ...props }) {
         trigger: "#section2",
         start: "top bottom",
         end: "top top",
-        scrub: 0.3,
+        scrub: 0.5,
         onUpdate: (self) => {
           sectionScrollProgress = self.progress;
-          if (!isTransitioning && !isEnteringBack && !hasLeft) {
+          if (
+              !isTransitioning
+              // && !isEnteringBack
+              // && !hasLeft
+          ) 
+          {
             // Kill any existing tween
             if (currentTween.current) {
               currentTween.current.kill();
@@ -106,7 +111,7 @@ export function Web1({ isActive, lenis, ...props }) {
           gsap.to(sceneContainerGroup.current.position, {
             y: sceneContainerGroup.current.position.y - 150,
             duration: 1,
-            ease: "sine.out",
+            ease: "circ.out",
             onComplete: () => {
               setIsTransitioning(false);
               isEnteringBack = false;

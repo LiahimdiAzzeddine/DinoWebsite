@@ -54,21 +54,21 @@ const SceneManager = ({lenis}) => {
         start: "clamp(top bottom)",
         end: "clamp(top top)",
         scrub: true,
-        markers: false,
+        markers:false,
         onEnter: () => {
           if (!isTransitioning) {
-            gsap.delayedCall(0.5, () => {
+           // gsap.delayedCall(0.5, () => {
               setCurrentModel(key);
-              setIsTransitioning(false);
-            });
+              setIsTransitioning(true);
+            //});
           }
         },
         onEnterBack: () => {
           if (!isTransitioning) {
-            gsap.delayedCall(0.5, () => {
+            //gsap.delayedCall(0.5, () => {
               setCurrentModel(key);
-              setIsTransitioning(false);
-            });
+              setIsTransitioning(true);
+            //});
           }
         }
       });

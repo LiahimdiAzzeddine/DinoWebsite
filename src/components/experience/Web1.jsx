@@ -110,7 +110,7 @@ export function Web1({ isActive, lenis, ...props }) {
           isEnteringBack = true;
           gsap.to(sceneContainerGroup.current.position, {
             y: sceneContainerGroup.current.position.y - 150,
-            duration: 1,
+            duration:1,
             ease: "circ.out",
             onComplete: () => {
               setIsTransitioning(false);

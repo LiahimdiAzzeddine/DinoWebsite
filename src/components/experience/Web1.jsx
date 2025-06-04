@@ -90,14 +90,15 @@ export function Web1({ sectionID, isActive, lenis, ...props }) {
         });
       },
       onLeave: (self) => {
-        console.log(ScrollTrigger.getAll());
+        console.log("web1 onLeave", Date.now());
         isEnteringBack = true;
 
         gsap.to(sceneContainerGroup.current.position, {
-          y: sceneContainerGroup.current.position.y + 150,
-          duration:0.5,
+          y: sceneContainerGroup.current.position.y + 50,
+          duration:.8,
           ease:"sine.inOut",
           onComplete: () => {
+            console.log("web1 onLeave complete", Date.now());
             nextScrollTrigger.enable();
           },
         });
@@ -105,11 +106,12 @@ export function Web1({ sectionID, isActive, lenis, ...props }) {
       onEnter: (self) => {
         console.log(ScrollTrigger.getAll());
         setCurrentModel(sectionID);
+        nextScrollTrigger.disable();
         if (isEnteringBack) {
           gsap.to(sceneContainerGroup.current.position, {
-            delay: 1,
+            delay: 0.0,
             y: sceneContainerGroup.current.position.y - 50,
-            duration:1,
+            duration:0.3,
             ease: "circ.out",
             onComplete: () => {
               isEnteringBack = false;
@@ -120,11 +122,13 @@ export function Web1({ sectionID, isActive, lenis, ...props }) {
       },
       onEnterBack: () => {
         setCurrentModel(sectionID);
+        nextScrollTrigger.disable();
         console.log(ScrollTrigger.getAll());
         console.log("🚀 ~ useLayoutEffect ~ onEnterBack:", isActive);
         gsap.to(sceneContainerGroup.current.position, {
+          delay: 0.0,
           y: sceneContainerGroup.current.position.y - 50,
-          duration:0.5,
+          duration:0.3,
           ease: "circ.out",
           onComplete: () => {
             isEnteringBack = false;

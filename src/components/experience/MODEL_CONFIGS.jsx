@@ -9,7 +9,7 @@ const MODEL_CONFIGS = {
     triggerSection: "#section2",
     sectioncolor: 0x9a70e7,
     colorA: '#d7e0eb', 
-    colorB: '#cc64ca',
+    colorB: '#a8e9fd',
     Component: Web1,
   }, 
   Model2: {

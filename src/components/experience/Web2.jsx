@@ -44,6 +44,7 @@ export function Web2({sectionID, isActive, ...props }) {
 
     let nextScrollTrigger = null;
     let prevScrollTrigger = null;
+    let dummyObject = {x: 0, y: 0};
 
     ScrollTrigger.create({
       id: sectionID,
@@ -54,14 +55,16 @@ export function Web2({sectionID, isActive, ...props }) {
       scrub: 2,
       onEnter: (self) => {
         setCurrentModel(sectionID);
-        if (!nextScrollTrigger){
-          let currentScrollTrigger = ScrollTrigger.getById(sectionID);
-          if (currentScrollTrigger && currentScrollTrigger.next()) {
-            nextScrollTrigger = currentScrollTrigger.next();
-            console.log("nextScrollTrigger", nextScrollTrigger);
-            nextScrollTrigger.disable();
-          }
-        }
+        // if (!nextScrollTrigger){
+        //   let currentScrollTrigger = ScrollTrigger.getById(sectionID);
+        //   if (currentScrollTrigger && currentScrollTrigger.next()) {
+        //     nextScrollTrigger = currentScrollTrigger.next();
+        //     console.log("nextScrollTrigger", nextScrollTrigger);
+        //     nextScrollTrigger.disable();
+        //   }
+        // }else{
+        //   nextScrollTrigger.disable();
+        // }
         if (!prevScrollTrigger){
           let currentScrollTrigger = ScrollTrigger.getById(sectionID);
           if (currentScrollTrigger && currentScrollTrigger.previous()) {
@@ -69,6 +72,8 @@ export function Web2({sectionID, isActive, ...props }) {
             prevScrollTrigger.disable();
             console.log("nextScrollTrigger", prevScrollTrigger);
           }
+        }else{
+          prevScrollTrigger.disable();
         }
 
         console.log("🚀az onEnter - scroll down entering section");
@@ -100,13 +105,17 @@ export function Web2({sectionID, isActive, ...props }) {
         enterAnim.setLoop(THREE.LoopOnce, 1);
         enterAnim.clampWhenFinished = true;
         enterAnim.time = enterAnim.getClip().duration;     // jump to the very end of the clip
-        enterAnim.timeScale = -0.7;
+        enterAnim.timeScale = -1.5;
 
-        // prevScrollTrigger.enable();
-        setTimeout(()=>{
-          prevScrollTrigger.enable();
-          console.log(enterAnim.getClip().duration * 1000);
-        }, enterAnim.getClip().duration * 1000);
+
+        gsap.to(dummyObject, {
+          y: dummyObject.y + 150,
+          duration:0.7,
+          ease:"sine.inOut",
+          onComplete: () => {
+            prevScrollTrigger.enable();
+          },
+        });
       },
 
       onLeave: () => {

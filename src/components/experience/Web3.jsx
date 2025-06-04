@@ -158,7 +158,7 @@ export function Web3({ isActive, ...props }) {
       ScrollTrigger.getAll().forEach((t) => t.kill());
       mixer.stopAllAction();
     };
-  }, [isActive, currentModel]);
+  }, []);
 
   return (
     <group ref={group} {...props} dispose={null} visible={isActive}>

@@ -12,7 +12,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import * as THREE from "three";
 import { AnimationContext } from "./AnimationContext";
 
-export function Web2({ isActive, ...props }) {
+export function Web2({sectionID, isActive, ...props }) {
   const group = React.useRef();
   const { scene, animations } = useGLTF("./models/Web2.glb");
   const clone = React.useMemo(() => SkeletonUtils.clone(scene), [scene]);
@@ -46,14 +46,30 @@ export function Web2({ isActive, ...props }) {
     let prevScrollTrigger = null;
 
     ScrollTrigger.create({
-      id: "web2",
+      id: sectionID,
       trigger: "#section3",
       start: "top bottom",
       end: "top top",
       markers: true,
       scrub: 2,
       onEnter: (self) => {
-        setCurrentModel("web2");
+        setCurrentModel(sectionID);
+        if (!nextScrollTrigger){
+          let currentScrollTrigger = ScrollTrigger.getById(sectionID);
+          if (currentScrollTrigger && currentScrollTrigger.next()) {
+            nextScrollTrigger = currentScrollTrigger.next();
+            console.log("nextScrollTrigger", nextScrollTrigger);
+            nextScrollTrigger.disable();
+          }
+        }
+        if (!prevScrollTrigger){
+          let currentScrollTrigger = ScrollTrigger.getById(sectionID);
+          if (currentScrollTrigger && currentScrollTrigger.previous()) {
+            prevScrollTrigger = currentScrollTrigger.previous();
+            prevScrollTrigger.disable();
+            console.log("nextScrollTrigger", prevScrollTrigger);
+          }
+        }
 
         console.log("🚀az onEnter - scroll down entering section");
         console.log(ScrollTrigger.getAll());
@@ -65,7 +81,7 @@ export function Web2({ isActive, ...props }) {
         }
       },
       onEnterBack: () => {
-        setCurrentModel("web2");
+        setCurrentModel(sectionID);
         console.log(ScrollTrigger.getAll());
         if (enterAnim) {
           enterAnim.reset().setLoop(THREE.LoopOnce, 1);
@@ -84,20 +100,13 @@ export function Web2({ isActive, ...props }) {
         enterAnim.setLoop(THREE.LoopOnce, 1);
         enterAnim.clampWhenFinished = true;
         enterAnim.time = enterAnim.getClip().duration;     // jump to the very end of the clip
-        enterAnim.timeScale = -0.7;                        // negative → play backwards at 0.7× speed
+        enterAnim.timeScale = -0.7;
 
-        // one-time callback for when this action actually finishes:
-        const onActionFinished = (event) => {
-          // event.action is the AnimationAction that just finished
-          if (event.action === enterAnim) {
-            // Remove listener so it only fires once
-            enterAnim.getMixer().removeEventListener("finished", onActionFinished);
-          }
-        };
-
-        // 3. Add the listener and start playing:
-        enterAnim.getMixer().addEventListener("finished", onActionFinished);
-        enterAnim.play();
+        // prevScrollTrigger.enable();
+        setTimeout(()=>{
+          prevScrollTrigger.enable();
+          console.log(enterAnim.getClip().duration * 1000);
+        }, enterAnim.getClip().duration * 1000);
       },
 
       onLeave: () => {
@@ -125,110 +134,10 @@ export function Web2({ isActive, ...props }) {
         enterAnim.getMixer().addEventListener("finished", onActionFinished);
         enterAnim.play();
       },
+      onUpdate: () => {
+
+      }
     });
-
-
-    // Timeline GSAP
-    // timelineRef.current = gsap.timeline({
-    //   scrollTrigger: {
-    //     trigger: "#section3",
-    //     start: "top bottom",
-    //     end: "top top",
-    //     markers: false,
-    //     scrub: 2,
-    //     onEnter: (self) => {
-    //       console.log("🚀az onEnter - scroll down entering section");
-    //       setIsTransitioning(true);
-    //       if (enterAnim) {
-    //         enterAnim.reset().setLoop(THREE.LoopOnce, 1);
-    //         enterAnim.clampWhenFinished = true;
-    //         enterAnim.timeScale = 0.7;
-    //         enterAnim.play();
-    //       }
-    //     },
-    //     onUpdate: (self) => {
-    //       if (nextScrollTrigger == null || prevScrollTrigger == null) {
-    //         nextScrollTrigger = ScrollTrigger.getById(currentModel.toString()).next();
-    //         nextScrollTrigger.disable();
-    //         prevScrollTrigger = ScrollTrigger.getById(currentModel.toString()).previous();
-    //         prevScrollTrigger.disable();
-    //         console.log("prev: " ,prevScrollTrigger);
-    //         console.log("next: ", nextScrollTrigger);
-    //       }
-    //
-    //     },
-    //     onEnterBack: () => {
-    //       setIsTransitioning(true);
-    //       if (enterAnim) {
-    //         enterAnim.reset().setLoop(THREE.LoopOnce, 1);
-    //         enterAnim.clampWhenFinished = true;
-    //         enterAnim.timeScale = 0.7;
-    //         enterAnim.play();
-    //       }
-    //     },
-    //     onLeaveBack: () => {
-    //       console.log("🚀 onLeaveBack – scroll up leaving section");
-    //
-    //       if (!enterAnim) return;
-    //
-    //       // Reset & configure the action so that it plays backwards exactly once:
-    //       enterAnim.reset();
-    //       enterAnim.setLoop(THREE.LoopOnce, 1);
-    //       enterAnim.clampWhenFinished = true;
-    //       enterAnim.time = enterAnim.getClip().duration;     // jump to the very end of the clip
-    //       enterAnim.timeScale = -0.7;                        // negative → play backwards at 0.7× speed
-    //
-    //       // one-time callback for when this action actually finishes:
-    //       const onActionFinished = (event) => {
-    //         // event.action is the AnimationAction that just finished
-    //         if (event.action === enterAnim) {
-    //           // Remove listener so it only fires once
-    //           enterAnim.getMixer().removeEventListener("finished", onActionFinished);
-    //
-    //           prevScrollTrigger.enable();
-    //         }
-    //       };
-    //
-    //       // 3. Add the listener and start playing:
-    //       enterAnim.getMixer().addEventListener("finished", onActionFinished);
-    //       enterAnim.play();
-    //     },
-    //
-    //     onLeave: () => {
-    //       console.log("🚀az onLeave - scroll down leaving section");
-    //
-    //       if (!leaveAnim) return;
-    //       setIsTransitioning(true);
-    //
-    //       // Reset & configure the action
-    //       leaveAnim.reset().setLoop(THREE.LoopOnce, 1);
-    //       leaveAnim.clampWhenFinished = true;
-    //       leaveAnim.timeScale = 0.5;
-    //       leaveAnim.play();
-    //
-    //       // one-time callback for when this action actually finishes:
-    //       const onActionFinished = (event) => {
-    //         // event.action is the AnimationAction that just finished
-    //         if (event.action === leaveAnim) {
-    //           // Remove listener so it only fires once
-    //           enterAnim.getMixer().removeEventListener("finished", onActionFinished);
-    //           setIsTransitioning(false);
-    //           if (nextScrollTrigger){
-    //             nextScrollTrigger.enable();
-    //           }else{
-    //             console.log(nextScrollTrigger);
-    //           }
-    //         }
-    //       };
-    //
-    //       // 3. Add the listener and start playing:
-    //       enterAnim.getMixer().addEventListener("finished", onActionFinished);
-    //       enterAnim.play();
-    //
-    //
-    //     },
-    //   },
-    // });
 
     Animations.forEach((name) => {
       actions[name]?.reset().play();

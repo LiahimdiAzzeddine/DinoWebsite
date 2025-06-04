@@ -43,7 +43,20 @@ export function Web1({ sectionID, isActive, lenis, ...props }) {
   let isEnteringBack = false;
   let hasLeft = false;
   const currentTween = useRef(null);
+  let nextScrollTrigger = null;
 
+  let disableOtherSections = ()=>{
+    if (!nextScrollTrigger){
+      let currentScrollTrigger = ScrollTrigger.getById(sectionID);
+      if (currentScrollTrigger && currentScrollTrigger.next()) {
+        nextScrollTrigger = currentScrollTrigger.next();
+        console.log("nextScrollTrigger", nextScrollTrigger);
+        nextScrollTrigger.disable();
+      }
+    }else{
+      nextScrollTrigger.disable();
+    }
+  }
 
   useLayoutEffect(() => {
 
@@ -57,7 +70,6 @@ export function Web1({ sectionID, isActive, lenis, ...props }) {
 
     camAct.reset().play().paused = true;
     const clipDur = camAct.getClip().duration;
-    let nextScrollTrigger = null;
 
     ScrollTrigger.create({
       id: sectionID,
@@ -67,15 +79,6 @@ export function Web1({ sectionID, isActive, lenis, ...props }) {
       scrub: 0.5,
       markers: true,
       onUpdate: (self) => {
-        if (!nextScrollTrigger){
-          let currentScrollTrigger = ScrollTrigger.getById(sectionID);
-          if (currentScrollTrigger && currentScrollTrigger.next()) {
-            nextScrollTrigger = currentScrollTrigger.next();
-            console.log("nextScrollTrigger", nextScrollTrigger);
-            nextScrollTrigger.disable();
-          }
-        }
-
         sectionScrollProgress = self.progress;
         // Kill any existing tween
         if (currentTween.current) {
@@ -104,12 +107,14 @@ export function Web1({ sectionID, isActive, lenis, ...props }) {
         });
       },
       onEnter: (self) => {
-        console.log(ScrollTrigger.getAll());
         setCurrentModel(sectionID);
-        nextScrollTrigger.disable();
+        disableOtherSections();
+
+        // the following meant to simulate a onEnterBack scenario
+        // it's a workaround a problem of the onEnter triggering instead of it in some cases
+        // tween should be identical to the one in the actual onEnterBack
         if (isEnteringBack) {
           gsap.to(sceneContainerGroup.current.position, {
-            delay: 0.0,
             y: sceneContainerGroup.current.position.y - 50,
             duration:0.3,
             ease: "circ.out",
@@ -122,11 +127,8 @@ export function Web1({ sectionID, isActive, lenis, ...props }) {
       },
       onEnterBack: () => {
         setCurrentModel(sectionID);
-        nextScrollTrigger.disable();
-        console.log(ScrollTrigger.getAll());
-        console.log("🚀 ~ useLayoutEffect ~ onEnterBack:", isActive);
+        disableOtherSections();
         gsap.to(sceneContainerGroup.current.position, {
-          delay: 0.0,
           y: sceneContainerGroup.current.position.y - 50,
           duration:0.3,
           ease: "circ.out",

@@ -37,13 +37,39 @@ export function Web2({sectionID, isActive, ...props }) {
   const smoothAnimations = ["Clouds1", "Clouds2"];
   const timelineRef = useRef(null);
 
+  // scroll tracking
+  let nextScrollTrigger = null;
+  let prevScrollTrigger = null;
+  let disableOtherSections = ()=>{
+    if (!prevScrollTrigger){
+      let currentScrollTrigger = ScrollTrigger.getById(sectionID);
+      if (currentScrollTrigger && currentScrollTrigger.previous()) {
+        prevScrollTrigger = currentScrollTrigger.previous();
+        prevScrollTrigger.disable();
+        console.log("nextScrollTrigger", prevScrollTrigger);
+      }
+    }else{
+      prevScrollTrigger.disable();
+    }
+
+    if (!nextScrollTrigger){
+      let currentScrollTrigger = ScrollTrigger.getById(sectionID);
+      if (currentScrollTrigger && currentScrollTrigger.next()) {
+        nextScrollTrigger = currentScrollTrigger.next();
+        console.log("nextScrollTrigger", nextScrollTrigger);
+        nextScrollTrigger.disable();
+      }
+    }else{
+      nextScrollTrigger.disable();
+    }
+  }
+
   useLayoutEffect(() => {
 
     const enterAnim = actions["ActionEnter"];
     const leaveAnim = actions["ActionOut"];
 
-    let nextScrollTrigger = null;
-    let prevScrollTrigger = null;
+
     let dummyObject = {x: 0, y: 0};
 
     ScrollTrigger.create({
@@ -55,49 +81,25 @@ export function Web2({sectionID, isActive, ...props }) {
       scrub: 2,
       onEnter: (self) => {
         setCurrentModel(sectionID);
-        // if (!nextScrollTrigger){
-        //   let currentScrollTrigger = ScrollTrigger.getById(sectionID);
-        //   if (currentScrollTrigger && currentScrollTrigger.next()) {
-        //     nextScrollTrigger = currentScrollTrigger.next();
-        //     console.log("nextScrollTrigger", nextScrollTrigger);
-        //     nextScrollTrigger.disable();
-        //   }
-        // }else{
-        //   nextScrollTrigger.disable();
-        // }
-        if (!prevScrollTrigger){
-          let currentScrollTrigger = ScrollTrigger.getById(sectionID);
-          if (currentScrollTrigger && currentScrollTrigger.previous()) {
-            prevScrollTrigger = currentScrollTrigger.previous();
-            prevScrollTrigger.disable();
-            console.log("nextScrollTrigger", prevScrollTrigger);
-          }
-        }else{
-          prevScrollTrigger.disable();
-        }
-
-        console.log("🚀az onEnter - scroll down entering section");
-        console.log(ScrollTrigger.getAll());
+        disableOtherSections();
         if (enterAnim) {
           enterAnim.reset().setLoop(THREE.LoopOnce, 1);
           enterAnim.clampWhenFinished = true;
-          enterAnim.timeScale = 0.7;
+          enterAnim.timeScale = 1.5;
           enterAnim.play();
         }
       },
       onEnterBack: () => {
         setCurrentModel(sectionID);
-        console.log(ScrollTrigger.getAll());
+        disableOtherSections();
         if (enterAnim) {
           enterAnim.reset().setLoop(THREE.LoopOnce, 1);
           enterAnim.clampWhenFinished = true;
-          enterAnim.timeScale = 0.7;
+          enterAnim.timeScale = 1.5;
           enterAnim.play();
         }
       },
       onLeaveBack: () => {
-        console.log("🚀 onLeaveBack – scroll up leaving section");
-
         if (!enterAnim) return;
 
         // Reset & configure the action so that it plays backwards exactly once:
@@ -117,7 +119,6 @@ export function Web2({sectionID, isActive, ...props }) {
           },
         });
       },
-
       onLeave: () => {
         console.log("🚀az onLeave - scroll down leaving section");
 
@@ -142,9 +143,6 @@ export function Web2({sectionID, isActive, ...props }) {
         // 3. Add the listener and start playing:
         enterAnim.getMixer().addEventListener("finished", onActionFinished);
         enterAnim.play();
-      },
-      onUpdate: () => {
-
       }
     });
 

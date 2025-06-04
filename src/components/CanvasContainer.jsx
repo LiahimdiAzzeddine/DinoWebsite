@@ -27,16 +27,16 @@ export function ModelContainer({lenis}) {
     <>
       <Web1
         scale={size.width >= 1024 ? 0.2 : 0.1}
-        isActive={currentModel === "Model1"}
+        isActive={currentModel === "web1"}
         lenis={lenis}
       />
       <Web2
         scale={size.width >= 1024 ? 0.2 : 0.1}
-        isActive={currentModel === "Model2"}
+        isActive={currentModel === "web2"}
       />
         <Web3
         scale={size.width >= 1024 ? 0.2 : 0.1}
-        isActive={currentModel === "Model3"}
+        isActive={currentModel === "web3"}
       />
     </>
   );
@@ -47,34 +47,34 @@ const SceneManager = ({lenis}) => {
   const { setCurrentModel, isTransitioning, setIsTransitioning } = 
     useContext(AnimationContext);
 
-  useGSAP(() => {
-    Object.entries(MODEL_CONFIGS).forEach(([key, { triggerSection }]) => {
-      ScrollTrigger.create({
-        id:key,
-        trigger: triggerSection,
-        start: "top bottom",
-        end: "top top",
-        scrub: true,
-        markers:true,
-        onEnter: () => {
-          if (!isTransitioning) {
-           // gsap.delayedCall(0.5, () => {
-              setCurrentModel(key);
-              setIsTransitioning(true);
-            //});
-          }
-        },
-        onEnterBack: () => {
-          if (!isTransitioning) {
-            //gsap.delayedCall(0.5, () => {
-              setCurrentModel(key);
-              setIsTransitioning(true);
-            //});
-          }
-        }
-      });
-    });
-  }, { dependencies: []});
+  // useGSAP(() => {
+  //   Object.entries(MODEL_CONFIGS).forEach(([key, { triggerSection }]) => {
+  //     ScrollTrigger.create({
+  //       id:key,
+  //       trigger: triggerSection,
+  //       start: "top bottom",
+  //       end: "top top",
+  //       scrub: true,
+  //       markers:true,
+  //       onEnter: () => {
+  //         if (!isTransitioning) {
+  //          // gsap.delayedCall(0.5, () => {
+  //             setCurrentModel(key);
+  //             setIsTransitioning(true);
+  //           //});
+  //         }
+  //       },
+  //       onEnterBack: () => {
+  //         if (!isTransitioning) {
+  //           //gsap.delayedCall(0.5, () => {
+  //             setCurrentModel(key);
+  //             setIsTransitioning(true);
+  //           //});
+  //         }
+  //       }
+  //     });
+  //   });
+  // }, { dependencies: []});
 
   return <ModelContainer lenis={lenis} />;
 };

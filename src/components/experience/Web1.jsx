@@ -36,7 +36,7 @@ export function Web1({ isActive, lenis, ...props }) {
   };
   const { actions, mixer } = useAnimations(animations, group);
 
-  const { currentModel, setIsTransitioning, isTransitioning } =
+  const { currentModel, setCurrentModel, setIsTransitioning, isTransitioning } =
     useContext(AnimationContext);
   const timelineMain = useRef();
   // track scrolling status
@@ -46,7 +46,6 @@ export function Web1({ isActive, lenis, ...props }) {
 
 
   useLayoutEffect(() => {
-    if (!isActive || !actions || !mixer || !group.current) return;
 
     animationsPlay.forEach((name) => {
       actions[name]?.reset().play();
@@ -60,77 +59,127 @@ export function Web1({ isActive, lenis, ...props }) {
     const clipDur = camAct.getClip().duration;
     let nextScrollTrigger = null;
 
+    ScrollTrigger.create({
+      id: "web1",
+      trigger: "#section2",
+      start: "top bottom",
+      end: "top top",
+      scrub: 0.5,
+      markers: true,
+      onUpdate: (self) => {
+        sectionScrollProgress = self.progress;
+        // Kill any existing tween
+        if (currentTween.current) {
+          currentTween.current.kill();
+        }
+        // Create new tween
+        currentTween.current = gsap.to(camAct, {
+          time: sectionScrollProgress * clipDur,
+          duration: 0.1, // Adjust this value to control smoothing amount
+          ease: "sine.out",
+          overwrite: true
+        });
+      },
+      onLeave: (self) => {
+        console.log(ScrollTrigger.getAll());
 
-    timelineMain.current = gsap.timeline({
-      scrollTrigger: {
-        trigger: "#section2",
-        start: "top bottom",
-        end: "top top",
-        scrub: 0.5,
-        onUpdate: (self) => {
-          // TODO: get nextScrollTrigger somewhere other than update if it causes performance issues
-          // if (nextScrollTrigger == null)
-          {
-            nextScrollTrigger = ScrollTrigger.getById(currentModel.toString()).next();
-            nextScrollTrigger.disable();
-          }
-          sectionScrollProgress = self.progress;
-          if (
-              !isTransitioning
-              // && !isEnteringBack
-              // && !hasLeft
-          )
-          {
-            // Kill any existing tween
-            if (currentTween.current) {
-              currentTween.current.kill();
-            }
-
-            // Create new tween
-            currentTween.current = gsap.to(camAct, {
-              time: sectionScrollProgress * clipDur,
-              duration: 0.1, // Adjust this value to control smoothing amount
-              ease: "sine.out",
-              overwrite: true
-            });
-          }
-        },
-        onLeave: (self) => {
-          if (currentModel !== "Model1" || isTransitioning) return;
-          setIsTransitioning(true);
-          hasLeft = true;
-
-          // timelineMain.current.pause();
-          gsap.to(sceneContainerGroup.current.position, {
-            y: sceneContainerGroup.current.position.y + 150,
-            duration:0.5,
-            ease:"sine.inOut",
-            onComplete: () => {
-              setIsTransitioning(false);
-              nextScrollTrigger.enable();
-              console.log("onComplete: cam position: " , sceneContainerGroup.current.y);
-            },
-          });
-        },
-        onEnterBack: () => {
-          if (currentModel !== "Model1" || isTransitioning) return;
-          console.log("🚀 ~ useLayoutEffect ~ onEnterBack:");
-          setIsTransitioning(true);
-          isEnteringBack = true;
-          gsap.to(sceneContainerGroup.current.position, {
-            delay: 0.8,
-            y: sceneContainerGroup.current.position.y - 150,
-            duration:1,
-            ease: "circ.out",
-            onComplete: () => {
-              setIsTransitioning(false);
-              isEnteringBack = false;
-              hasLeft = false;
-            }
-          });
-        },
+        gsap.to(sceneContainerGroup.current.position, {
+          y: sceneContainerGroup.current.position.y + 150,
+          duration:0.5,
+          ease:"sine.inOut",
+          onComplete: () => {
+            // nextScrollTrigger.enable();
+          },
+        });
+      },
+      onEnter: (self) => {
+        console.log(ScrollTrigger.getAll());
+        setCurrentModel("web1");
+      },
+      onEnterBack: () => {
+        setCurrentModel("web1");
+        console.log(ScrollTrigger.getAll());
+        console.log("🚀 ~ useLayoutEffect ~ onEnterBack:");
+        isEnteringBack = true;
+        gsap.to(sceneContainerGroup.current.position, {
+          delay: 0.2,
+          y: sceneContainerGroup.current.position.y - 150,
+          duration:1,
+          ease: "circ.out"
+        });
       },
     });
+
+
+    // timelineMain.current = gsap.timeline({
+    //   scrollTrigger: {
+    //     trigger: "#section2",
+    //     start: "top bottom",
+    //     end: "top top",
+    //     scrub: 0.5,
+    //     onUpdate: (self) => {
+    //       // if (nextScrollTrigger == null)
+    //       {
+    //         // nextScrollTrigger = ScrollTrigger.getById(currentModel.toString()).next();
+    //         // nextScrollTrigger.disable();
+    //       }
+    //       sectionScrollProgress = self.progress;
+    //       if (
+    //           !isTransitioning
+    //           // && !isEnteringBack
+    //           // && !hasLeft
+    //       )
+    //       {
+    //         // Kill any existing tween
+    //         if (currentTween.current) {
+    //           currentTween.current.kill();
+    //         }
+    //
+    //         // Create new tween
+    //         currentTween.current = gsap.to(camAct, {
+    //           time: sectionScrollProgress * clipDur,
+    //           duration: 0.1, // Adjust this value to control smoothing amount
+    //           ease: "sine.out",
+    //           overwrite: true
+    //         });
+    //       }
+    //     },
+    //     onLeave: (self) => {
+    //       if (currentModel !== "Model1" || isTransitioning) return;
+    //       setIsTransitioning(true);
+    //       hasLeft = true;
+    //
+    //       // timelineMain.current.pause();
+    //       gsap.to(sceneContainerGroup.current.position, {
+    //         y: sceneContainerGroup.current.position.y + 150,
+    //         duration:0.5,
+    //         ease:"sine.inOut",
+    //         onComplete: () => {
+    //           setIsTransitioning(false);
+    //           // nextScrollTrigger.enable();
+    //           console.log("onComplete: cam position: " , sceneContainerGroup.current.y);
+    //         },
+    //       });
+    //     },
+    //     onEnterBack: () => {
+    //
+    //       console.log("🚀 ~ useLayoutEffect ~ onEnterBack:");
+    //       setIsTransitioning(true);
+    //       isEnteringBack = true;
+    //       gsap.to(sceneContainerGroup.current.position, {
+    //         delay: 0.8,
+    //         y: sceneContainerGroup.current.position.y - 150,
+    //         duration:1,
+    //         ease: "circ.out",
+    //         onComplete: () => {
+    //           setIsTransitioning(false);
+    //           isEnteringBack = false;
+    //           hasLeft = false;
+    //         }
+    //       });
+    //     },
+    //   },
+    // });
 
     return () => {
       timelineMain.current?.kill();

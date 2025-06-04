@@ -121,19 +121,36 @@ export function Web2({ isActive, ...props }) {
 
         onLeave: () => {
           console.log("🚀az onLeave - scroll down leaving section");
+
+          if (!leaveAnim) return;
           setIsTransitioning(true);
-          if (leaveAnim) {
-            leaveAnim.reset().setLoop(THREE.LoopOnce, 1);
-            leaveAnim.clampWhenFinished = true;
-            leaveAnim.timeScale = 0.5;
-            leaveAnim.play();
-            //const delta = clock.getDelta();
-            //console.log("🚀 ~ useLayoutEffect ~ delta:", delta)
-            // leaveAnim.getMixer().update(0.05);
-          }
-          // leaveAnim.getMixer().addEventListener("finished", () => {
-          //   setIsTransitioning(false);
-          // });
+
+          // Reset & configure the action
+          leaveAnim.reset().setLoop(THREE.LoopOnce, 1);
+          leaveAnim.clampWhenFinished = true;
+          leaveAnim.timeScale = 0.5;
+          leaveAnim.play();
+
+          // one-time callback for when this action actually finishes:
+          const onActionFinished = (event) => {
+            // event.action is the AnimationAction that just finished
+            if (event.action === leaveAnim) {
+              // Remove listener so it only fires once
+              enterAnim.getMixer().removeEventListener("finished", onActionFinished);
+              setIsTransitioning(false);
+              if (nextScrollTrigger){
+                nextScrollTrigger.enable();
+              }else{
+                console.log(nextScrollTrigger);
+              }
+            }
+          };
+
+          // 3. Add the listener and start playing:
+          enterAnim.getMixer().addEventListener("finished", onActionFinished);
+          enterAnim.play();
+
+
         },
       },
     });

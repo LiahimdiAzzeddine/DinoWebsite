@@ -67,18 +67,13 @@ export function Web1({ isActive, lenis, ...props }) {
         start: "top bottom",
         end: "top top",
         scrub: 0.5,
-        onEnter: (self) =>{
-          // self.next().disable();
-          // const scrollTrigger = ScrollTrigger.getById(currentModel.toString());
-          // console.log(ScrollTrigger.getAll());
-          // scrollTrigger.kill();
-          // console.log(ScrollTrigger.getAll());
-          // console.log("scroll trigger: ", scrollTrigger.next());
-          // console.log( ScrollTrigger.getAll() );
-        },
         onUpdate: (self) => {
-          nextScrollTrigger = ScrollTrigger.getById(currentModel.toString()).next();
-          nextScrollTrigger.disable();
+          // TODO: get nextScrollTrigger somewhere other than update if it causes performance issues
+          // if (nextScrollTrigger == null)
+          {
+            nextScrollTrigger = ScrollTrigger.getById(currentModel.toString()).next();
+            nextScrollTrigger.disable();
+          }
           sectionScrollProgress = self.progress;
           if (
               !isTransitioning

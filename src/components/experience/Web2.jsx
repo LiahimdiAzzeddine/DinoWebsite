@@ -63,11 +63,6 @@ export function Web2({ isActive, ...props }) {
         scrub: 2,
         onEnter: (self) => {
           console.log("🚀az onEnter - scroll down entering section");
-          // const scrollTrigger = ScrollTrigger.getById(currentModel.toString());
-          // console.log(ScrollTrigger.getAll());
-          // scrollTrigger.kill();
-          // console.log(ScrollTrigger.getAll());
-          // console.log("scroll trigger: ", scrollTrigger.next());
           setIsTransitioning(true);
           if (enterAnim) {
             enterAnim.reset().setLoop(THREE.LoopOnce, 1);
@@ -77,16 +72,25 @@ export function Web2({ isActive, ...props }) {
           }
         },
         onUpdate: (self) => {
-          nextScrollTrigger = ScrollTrigger.getById(currentModel.toString()).next();
-          nextScrollTrigger.disable();
-          prevScrollTrigger = ScrollTrigger.getById(currentModel.toString()).previous();
-          prevScrollTrigger.disable();
-          // console.log("prev: " ,prevScrollTrigger);
-          // console.log("next: ", nextScrollTrigger);
+          if (nextScrollTrigger == null || prevScrollTrigger == null) {
+            nextScrollTrigger = ScrollTrigger.getById(currentModel.toString()).next();
+            nextScrollTrigger.disable();
+            prevScrollTrigger = ScrollTrigger.getById(currentModel.toString()).previous();
+            prevScrollTrigger.disable();
+            console.log("prev: " ,prevScrollTrigger);
+            console.log("next: ", nextScrollTrigger);
+          }
+
         },
-        // onEnterBack: () => {
-        //   console.log("🚀az onEnterBack - scroll up entering section");
-        // },
+        onEnterBack: () => {
+          setIsTransitioning(true);
+          if (enterAnim) {
+            enterAnim.reset().setLoop(THREE.LoopOnce, 1);
+            enterAnim.clampWhenFinished = true;
+            enterAnim.timeScale = 0.7;
+            enterAnim.play();
+          }
+        },
         onLeaveBack: () => {
           console.log("🚀 onLeaveBack – scroll up leaving section");
 

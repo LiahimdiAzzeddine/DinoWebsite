@@ -50,7 +50,7 @@ const SceneManager = ({lenis}) => {
   useGSAP(() => {
     Object.entries(MODEL_CONFIGS).forEach(([key, { triggerSection }]) => {
       ScrollTrigger.create({
-          id:key,
+        id:key,
         trigger: triggerSection,
         start: "top bottom",
         end: "top top",

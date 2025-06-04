@@ -41,7 +41,6 @@ export function Web1({ sectionID, isActive, lenis, ...props }) {
   const timelineMain = useRef();
   // track scrolling status
   let isEnteringBack = false;
-  let hasLeft = false;
   const currentTween = useRef(null);
   let nextScrollTrigger = null;
 
@@ -50,7 +49,6 @@ export function Web1({ sectionID, isActive, lenis, ...props }) {
       let currentScrollTrigger = ScrollTrigger.getById(sectionID);
       if (currentScrollTrigger && currentScrollTrigger.next()) {
         nextScrollTrigger = currentScrollTrigger.next();
-        console.log("nextScrollTrigger", nextScrollTrigger);
         nextScrollTrigger.disable();
       }
     }else{
@@ -93,7 +91,6 @@ export function Web1({ sectionID, isActive, lenis, ...props }) {
         });
       },
       onLeave: (self) => {
-        console.log("web1 onLeave", Date.now());
         isEnteringBack = true;
 
         gsap.to(sceneContainerGroup.current.position, {
@@ -101,7 +98,6 @@ export function Web1({ sectionID, isActive, lenis, ...props }) {
           duration:.8,
           ease:"sine.inOut",
           onComplete: () => {
-            console.log("web1 onLeave complete", Date.now());
             nextScrollTrigger.enable();
           },
         });

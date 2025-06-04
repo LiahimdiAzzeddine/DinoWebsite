@@ -38,6 +38,7 @@ export function ModelContainer({lenis}) {
       />
         <Web3
         scale={size.width >= 1024 ? 0.2 : 0.1}
+        sectionID={"web3"}
         isActive={currentModel === "web3"}
       />
     </>

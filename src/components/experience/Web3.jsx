@@ -13,7 +13,7 @@ import * as THREE from "three";
 import { AnimationContext } from "./AnimationContext";
 gsap.registerPlugin(ScrollTrigger);
 
-export function Web3({ isActive, ...props }) {
+export function Web3({sectionID, isActive, ...props }) {
   const group = useRef();
   const timelineRef = useRef(null);
   const playedScroll = useRef(false);
@@ -24,7 +24,7 @@ export function Web3({ isActive, ...props }) {
   const { nodes, materials } = useGraph(clone);
   const { actions, mixer } = useAnimations(animations, group);
 
-  const { currentModel, isTransitioning, transitionDirection } =
+  const { currentModel, setCurrentModel, isTransitioning, transitionDirection } =
     useContext(AnimationContext);
 
   const firstAnimations = [
@@ -46,9 +46,22 @@ export function Web3({ isActive, ...props }) {
   ];
   const secondScrollAnimations = ["Action", "8.Rocket3rdScroll"];
 
+  // scroll tracking
+  let prevScrollTrigger = null;
+  let disableOtherSections = ()=>{
+    if (!prevScrollTrigger){
+      let currentScrollTrigger = ScrollTrigger.getById(sectionID);
+      if (currentScrollTrigger && currentScrollTrigger.previous()) {
+        prevScrollTrigger = currentScrollTrigger.previous();
+        prevScrollTrigger.disable();
+        console.log("prevScrollTrigger", prevScrollTrigger);
+      }
+    }else{
+      prevScrollTrigger.disable();
+    }
+  }
+
   useLayoutEffect(() => {
-    console.log("🚀 ~ useLayoutEffect ~ useLayoutEffect: web3")
-    if (!isActive || !actions) return;
 
     // Reset all actions
     Object.values(actions).forEach((action) => {
@@ -64,98 +77,199 @@ export function Web3({ isActive, ...props }) {
     // Optional constant animation
     actions["Armature.001Action"]?.reset().play();
 
-    // Setup GSAP timeline with ScrollTrigger
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: "#section4",
-        start: "top bottom",
-        end: "#section6 top",
-        scrub: 2,
-        markers: false,
-        onLeaveBack: () => {
-          console.log("🚀 ~ useLayoutEffect ~ onLeaveBack:")
-          const enterAction = actions["ActionEnter"];
-          if (enterAction) {
-            // enterAction.paused = false;
-            // enterAction.enabled = true;
-            // enterAction.setLoop(THREE.LoopOnce, 1);
-            // enterAction.clampWhenFinished = true;
-            // enterAction.timeScale = -1; // jouer en arrière
-            // enterAction.play();
-          }
-        },
+    ScrollTrigger.create({
+      id: sectionID,
+      trigger: "#section4",
+      start: "top bottom",
+      end: "#section6 top",
+      scrub: 2,
+      markers: false,
+      onEnter: ()=>{
+        setCurrentModel(sectionID);
+        disableOtherSections();
+        firstAnimations.forEach((name) => actions[name]?.reset().play());
+      },
+      onLeaveBack: () => {
+        console.log("🚀 ~ useLayoutEffect ~ onLeaveBack:")
+        const enterAction = actions["ActionEnter"];
+        prevScrollTrigger.enable();
+
+        // if (enterAction) {
+        //   enterAction.paused = false;
+        //   enterAction.enabled = true;
+        //   enterAction.setLoop(THREE.LoopOnce, 1);
+        //   enterAction.clampWhenFinished = true;
+        //   enterAction.timeScale = -1; // jouer en arrière
+        //   enterAction.play();
+        //
+        //   // one-time callback for when this action actually finishes:
+        //   const onActionFinished = (event) => {
+        //     // event.action is the AnimationAction that just finished
+        //     if (event.action === enterAction) {
+        //       // Remove listener so it only fires once
+        //       enterAction.getMixer().removeEventListener("finished", onActionFinished);
+        //       prevScrollTrigger.enable();
+        //       console.log("nextScrollTrigger", prevScrollTrigger);
+        //     }
+        //   };
+        //
+        //   // Add the listener and start playing:
+        //   enterAction.getMixer().addEventListener("finished", onActionFinished);
+        //   enterAction.play();
+        // }
       },
     });
 
-    tl.add(() => {
-      firstAnimations.forEach((name) => actions[name]?.reset().play());
+    // ============================================
+
+    // Setup GSAP timeline with ScrollTrigger
+    // const tl = gsap.timeline({
+    //   scrollTrigger: {
+    //     trigger: "#section4",
+    //     start: "top bottom",
+    //     end: "#section6 top",
+    //     scrub: 2,
+    //     markers: false,
+    //     onLeaveBack: () => {
+    //       console.log("🚀 ~ useLayoutEffect ~ onLeaveBack:")
+    //       const enterAction = actions["ActionEnter"];
+    //       if (enterAction) {
+    //         // enterAction.paused = false;
+    //         // enterAction.enabled = true;
+    //         // enterAction.setLoop(THREE.LoopOnce, 1);
+    //         // enterAction.clampWhenFinished = true;
+    //         // enterAction.timeScale = -1; // jouer en arrière
+    //         // enterAction.play();
+    //       }
+    //     },
+    //   },
+    // });
+
+    // tl.add(() => {
+    //   firstAnimations.forEach((name) => actions[name]?.reset().play());
+    // });
+
+    ScrollTrigger.create({
+      id: sectionID + "_secondary",
+      trigger: "#section5",
+      start: "top center",
+      end: "bottom top",
+      scrub: 2.5,
+      onEnter: () => {
+        if (!playedScroll.current) {
+          firstAnimations.forEach((name) => actions[name]?.stop());
+          playedScroll.current = true;
+        }
+
+        const action = actions["1.2ndScroll"];
+        if (action) {
+          action.setLoop(THREE.LoopOnce, 1);
+          action.clampWhenFinished = true;
+          action.time = action.getClip().duration - 0.1;
+          action.enabled = true;
+          action.setEffectiveWeight(1);
+          action.paused = false;
+          action.play();
+        }
+
+        scrollAnimations.forEach((name) => {
+          const anim = actions[name];
+          if (anim) {
+            anim.reset();
+            anim.setLoop(THREE.LoopOnce, 1);
+            anim.clampWhenFinished = true;
+            anim.play();
+          }
+        });
+
+        const mainScroll = actions[scrollAnimations[6]];
+        if (mainScroll) {
+          mainScroll.getMixer().addEventListener("finished", () => {
+            playedSecondScroll.current = true;
+          });
+        }
+      },
+      onUpdate: (self) => {
+        if (!playedSecondScroll.current) return;
+        const progress = self.progress;
+        secondScrollAnimations.forEach((name) => {
+          const action = actions[name];
+          if (action) {
+            const duration = action.getClip().duration;
+            action.paused = true;
+            action.play();
+            action.time = duration * progress;
+            action.getMixer().update(0);
+          }
+        });
+      },
     });
 
-    tl.to(
-      {},
-      {
-        scrollTrigger: {
-          trigger: "#section5",
-          start: "top center",
-          end: "bottom top",
-          scrub: 2.5,
-          onEnter: () => {
-            if (!playedScroll.current) {
-              firstAnimations.forEach((name) => actions[name]?.stop());
-              playedScroll.current = true;
-            }
+    // tl.to(
+    //   {},
+    //   {
+    //     scrollTrigger: {
+    //       trigger: "#section5",
+    //       start: "top center",
+    //       end: "bottom top",
+    //       scrub: 2.5,
+    //       onEnter: () => {
+    //         if (!playedScroll.current) {
+    //           firstAnimations.forEach((name) => actions[name]?.stop());
+    //           playedScroll.current = true;
+    //         }
+    //
+    //         const action = actions["1.2ndScroll"];
+    //         if (action) {
+    //           action.setLoop(THREE.LoopOnce, 1);
+    //           action.clampWhenFinished = true;
+    //           action.time = action.getClip().duration - 0.1;
+    //           action.enabled = true;
+    //           action.setEffectiveWeight(1);
+    //           action.paused = false;
+    //           action.play();
+    //         }
+    //
+    //         scrollAnimations.forEach((name) => {
+    //           const anim = actions[name];
+    //           if (anim) {
+    //             anim.reset();
+    //             anim.setLoop(THREE.LoopOnce, 1);
+    //             anim.clampWhenFinished = true;
+    //             anim.play();
+    //           }
+    //         });
+    //
+    //         const mainScroll = actions[scrollAnimations[6]];
+    //         if (mainScroll) {
+    //           mainScroll.getMixer().addEventListener("finished", () => {
+    //             playedSecondScroll.current = true;
+    //           });
+    //         }
+    //       },
+    //       onUpdate: (self) => {
+    //         if (!playedSecondScroll.current) return;
+    //         const progress = self.progress;
+    //         secondScrollAnimations.forEach((name) => {
+    //           const action = actions[name];
+    //           if (action) {
+    //             const duration = action.getClip().duration;
+    //             action.paused = true;
+    //             action.play();
+    //             action.time = duration * progress;
+    //             action.getMixer().update(0);
+    //           }
+    //         });
+    //       },
+    //     },
+    //   }
+    // );
 
-            const action = actions["1.2ndScroll"];
-            if (action) {
-              action.setLoop(THREE.LoopOnce, 1);
-              action.clampWhenFinished = true;
-              action.time = action.getClip().duration - 0.1;
-              action.enabled = true;
-              action.setEffectiveWeight(1);
-              action.paused = false;
-              action.play();
-            }
-
-            scrollAnimations.forEach((name) => {
-              const anim = actions[name];
-              if (anim) {
-                anim.reset();
-                anim.setLoop(THREE.LoopOnce, 1);
-                anim.clampWhenFinished = true;
-                anim.play();
-              }
-            });
-
-            const mainScroll = actions[scrollAnimations[6]];
-            if (mainScroll) {
-              mainScroll.getMixer().addEventListener("finished", () => {
-                playedSecondScroll.current = true;
-              });
-            }
-          },
-          onUpdate: (self) => {
-            if (!playedSecondScroll.current) return;
-            const progress = self.progress;
-            secondScrollAnimations.forEach((name) => {
-              const action = actions[name];
-              if (action) {
-                const duration = action.getClip().duration;
-                action.paused = true;
-                action.play();
-                action.time = duration * progress;
-                action.getMixer().update(0);
-              }
-            });
-          },
-        },
-      }
-    );
-
-    timelineRef.current = tl;
+    // timelineRef.current = tl;
 
     return () => {
-      timelineRef.current?.kill();
-      ScrollTrigger.getAll().forEach((t) => t.kill());
+      // timelineRef.current?.kill();
+      // ScrollTrigger.getAll().forEach((t) => t.kill());
       mixer.stopAllAction();
     };
   }, []);

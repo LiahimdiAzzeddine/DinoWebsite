@@ -35,9 +35,9 @@ export function Web2({sectionID, isActive, ...props }) {
     "RightHand",
   ];
   const smoothAnimations = ["Clouds1", "Clouds2"];
-  const timelineRef = useRef(null);
 
   // scroll tracking
+  let isEnteringBack = false;
   let nextScrollTrigger = null;
   let prevScrollTrigger = null;
   let disableOtherSections = ()=>{
@@ -46,7 +46,6 @@ export function Web2({sectionID, isActive, ...props }) {
       if (currentScrollTrigger && currentScrollTrigger.previous()) {
         prevScrollTrigger = currentScrollTrigger.previous();
         prevScrollTrigger.disable();
-        console.log("nextScrollTrigger", prevScrollTrigger);
       }
     }else{
       prevScrollTrigger.disable();
@@ -56,7 +55,6 @@ export function Web2({sectionID, isActive, ...props }) {
       let currentScrollTrigger = ScrollTrigger.getById(sectionID);
       if (currentScrollTrigger && currentScrollTrigger.next()) {
         nextScrollTrigger = currentScrollTrigger.next();
-        console.log("nextScrollTrigger", nextScrollTrigger);
         nextScrollTrigger.disable();
       }
     }else{
@@ -70,8 +68,6 @@ export function Web2({sectionID, isActive, ...props }) {
     const leaveAnim = actions["ActionOut"];
 
 
-    let dummyObject = {x: 0, y: 0};
-
     ScrollTrigger.create({
       id: sectionID,
       trigger: "#section3",
@@ -80,28 +76,46 @@ export function Web2({sectionID, isActive, ...props }) {
       markers: true,
       scrub: 2,
       onEnter: (self) => {
+        console.log("onEnter");
+        playStaticAnimations();
         setCurrentModel(sectionID);
         disableOtherSections();
-        if (enterAnim) {
-          enterAnim.reset().setLoop(THREE.LoopOnce, 1);
-          enterAnim.clampWhenFinished = true;
-          enterAnim.timeScale = 1.5;
-          enterAnim.play();
+        if (isEnteringBack) {
+          // leaveAnim.reset();
+          // leaveAnim.stop();
+          if (leaveAnim) {
+            leaveAnim.reset().setLoop(THREE.LoopOnce, 1);
+            leaveAnim.clampWhenFinished = true;
+            leaveAnim.timeScale = -1;
+            leaveAnim.play();
+          }
+        }else{
+          if (enterAnim) {
+            enterAnim.reset().setLoop(THREE.LoopOnce, 1);
+            enterAnim.clampWhenFinished = true;
+            enterAnim.timeScale = 1.5;
+            enterAnim.play();
+          }
         }
+        isEnteringBack = false;
       },
       onEnterBack: () => {
+        console.log("onEnterBack");
+        playStaticAnimations();
         setCurrentModel(sectionID);
         disableOtherSections();
-        if (enterAnim) {
-          enterAnim.reset().setLoop(THREE.LoopOnce, 1);
-          enterAnim.clampWhenFinished = true;
-          enterAnim.timeScale = 1.5;
-          enterAnim.play();
+        // leaveAnim.reset();
+        // leaveAnim.stop();
+        if (leaveAnim) {
+          leaveAnim.reset().setLoop(THREE.LoopOnce, 1);
+          leaveAnim.clampWhenFinished = true;
+          leaveAnim.timeScale = -1;
+          leaveAnim.play();
         }
+        isEnteringBack = false;
       },
       onLeaveBack: () => {
         if (!enterAnim) return;
-
         // Reset & configure the action so that it plays backwards exactly once:
         enterAnim.reset();
         enterAnim.setLoop(THREE.LoopOnce, 1);
@@ -109,43 +123,58 @@ export function Web2({sectionID, isActive, ...props }) {
         enterAnim.time = enterAnim.getClip().duration;     // jump to the very end of the clip
         enterAnim.timeScale = -1.5;
 
-
-        gsap.to(dummyObject, {
-          y: dummyObject.y + 150,
-          duration:0.7,
-          ease:"sine.inOut",
-          onComplete: () => {
-            prevScrollTrigger.enable();
-          },
-        });
-      },
-      onLeave: () => {
-        console.log("🚀az onLeave - scroll down leaving section");
-
-        if (!leaveAnim) return;
-        setIsTransitioning(true);
-
-        // Reset & configure the action
-        leaveAnim.reset().setLoop(THREE.LoopOnce, 1);
-        leaveAnim.clampWhenFinished = true;
-        leaveAnim.timeScale = 0.5;
-        leaveAnim.play();
-
         // one-time callback for when this action actually finishes:
         const onActionFinished = (event) => {
           // event.action is the AnimationAction that just finished
-          if (event.action === leaveAnim) {
+          if (event.action === enterAnim) {
             // Remove listener so it only fires once
             enterAnim.getMixer().removeEventListener("finished", onActionFinished);
+            prevScrollTrigger.enable();
           }
         };
 
-        // 3. Add the listener and start playing:
+        // Add the listener and start playing:
         enterAnim.getMixer().addEventListener("finished", onActionFinished);
-        enterAnim.play();
+        // enterAnim.play();
+      },
+      onLeave: () => {
+        if (!leaveAnim) return;
+        isEnteringBack = true;
+        // Reset & configure the action
+        leaveAnim.reset().setLoop(THREE.LoopOnce, 1);
+        leaveAnim.clampWhenFinished = true;
+        leaveAnim.timeScale = 1;
+        leaveAnim.play();
+
+        setTimeout(() => {
+          nextScrollTrigger.enable();
+        }, 3000);
+
+        // one-time callback for when this action actually finishes:
+        // const onActionFinished = (event) => {
+        //   // event.action is the AnimationAction that just finished
+        //   if (event.action === leaveAnim) {
+        //     // Remove listener so it only fires once
+        //     leaveAnim.getMixer().removeEventListener("finished", onActionFinished);
+        //     nextScrollTrigger.enable();
+        //   }
+        // };
+        //
+        // // Add the listener and start playing:
+        // leaveAnim.getMixer().addEventListener("finished", onActionFinished);
+        // leaveAnim.play();
+
       }
     });
 
+
+    return () => {
+      // Clean up
+      mixer.stopAllAction();
+    };
+  }, []);
+
+  let playStaticAnimations = ()=>{
     Animations.forEach((name) => {
       actions[name]?.reset().play();
     });
@@ -153,13 +182,7 @@ export function Web2({sectionID, isActive, ...props }) {
     smoothAnimations.forEach((name) => {
       actions[name]?.reset().setEffectiveTimeScale(0.2).play();
     });
-
-    return () => {
-      // Clean up
-      timelineRef.current?.kill();
-      mixer.stopAllAction();
-    };
-  }, []);
+  }
 
   return (
     <group ref={group} {...props} dispose={null} visible={isActive}>

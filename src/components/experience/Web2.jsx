@@ -60,6 +60,8 @@ export function Web2({sectionID, isActive, ...props }) {
     }else{
       nextScrollTrigger.disable();
     }
+
+    console.log("nextScrollTrigger: ", nextScrollTrigger);
   }
 
   useLayoutEffect(() => {
@@ -77,16 +79,14 @@ export function Web2({sectionID, isActive, ...props }) {
       scrub: 2,
       onEnter: (self) => {
         console.log("onEnter");
+        disableOtherSections();
         playStaticAnimations();
         setCurrentModel(sectionID);
-        disableOtherSections();
         if (isEnteringBack) {
-          // leaveAnim.reset();
-          // leaveAnim.stop();
           if (leaveAnim) {
-            leaveAnim.reset().setLoop(THREE.LoopOnce, 1);
             leaveAnim.clampWhenFinished = true;
             leaveAnim.timeScale = -1;
+            leaveAnim.reset().setLoop(THREE.LoopOnce, 1);
             leaveAnim.play();
           }
         }else{
@@ -101,15 +101,13 @@ export function Web2({sectionID, isActive, ...props }) {
       },
       onEnterBack: () => {
         console.log("onEnterBack");
+        disableOtherSections();
         playStaticAnimations();
         setCurrentModel(sectionID);
-        disableOtherSections();
-        // leaveAnim.reset();
-        // leaveAnim.stop();
         if (leaveAnim) {
-          leaveAnim.reset().setLoop(THREE.LoopOnce, 1);
           leaveAnim.clampWhenFinished = true;
           leaveAnim.timeScale = -1;
+          leaveAnim.reset().setLoop(THREE.LoopOnce, 1);
           leaveAnim.play();
         }
         isEnteringBack = false;
@@ -135,34 +133,20 @@ export function Web2({sectionID, isActive, ...props }) {
 
         // Add the listener and start playing:
         enterAnim.getMixer().addEventListener("finished", onActionFinished);
-        // enterAnim.play();
+        enterAnim.play();
       },
       onLeave: () => {
         if (!leaveAnim) return;
+        nextScrollTrigger.disable();
         isEnteringBack = true;
         // Reset & configure the action
         leaveAnim.reset().setLoop(THREE.LoopOnce, 1);
         leaveAnim.clampWhenFinished = true;
         leaveAnim.timeScale = 1;
-        leaveAnim.play();
-
         setTimeout(() => {
           nextScrollTrigger.enable();
-        }, 3000);
-
-        // one-time callback for when this action actually finishes:
-        // const onActionFinished = (event) => {
-        //   // event.action is the AnimationAction that just finished
-        //   if (event.action === leaveAnim) {
-        //     // Remove listener so it only fires once
-        //     leaveAnim.getMixer().removeEventListener("finished", onActionFinished);
-        //     nextScrollTrigger.enable();
-        //   }
-        // };
-        //
-        // // Add the listener and start playing:
-        // leaveAnim.getMixer().addEventListener("finished", onActionFinished);
-        // leaveAnim.play();
+        }, leaveAnim.getClip().duration * 1000 * leaveAnim.timeScale);
+        leaveAnim.play();
 
       }
     });

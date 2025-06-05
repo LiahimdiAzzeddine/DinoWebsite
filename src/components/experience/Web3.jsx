@@ -13,19 +13,24 @@ import * as THREE from "three";
 import { AnimationContext } from "./AnimationContext";
 gsap.registerPlugin(ScrollTrigger);
 
-export function Web3({sectionID, isActive, ...props }) {
+export function Web3({ sectionID, isActive, ...props }) {
   const group = useRef();
   const timelineRef = useRef(null);
   const playedScroll = useRef(false);
   const playedSecondScroll = useRef(false);
+  const ManRef = useRef();
 
   const { scene, animations } = useGLTF("./models/Web3.glb");
   const clone = useMemo(() => SkeletonUtils.clone(scene), [scene]);
   const { nodes, materials } = useGraph(clone);
   const { actions, mixer } = useAnimations(animations, group);
 
-  const { currentModel, setCurrentModel, isTransitioning, transitionDirection } =
-    useContext(AnimationContext);
+  const {
+    currentModel,
+    setCurrentModel,
+    isTransitioning,
+    transitionDirection,
+  } = useContext(AnimationContext);
 
   const firstAnimations = [
     "1.Tour",
@@ -37,7 +42,6 @@ export function Web3({sectionID, isActive, ...props }) {
   ];
   const scrollAnimations = [
     "2.Ladder2ndScroll",
-    "3.Man2ndScroll",
     "4.Head2ndScroll",
     "5.Metal2ndScroll",
     "6.WaterTower2ndScroll",
@@ -49,35 +53,36 @@ export function Web3({sectionID, isActive, ...props }) {
 
   // scroll tracking
   let prevScrollTrigger = null;
-  let disableOtherSections = ()=>{
-    if (!prevScrollTrigger){
+  let disableOtherSections = () => {
+    if (!prevScrollTrigger) {
       let currentScrollTrigger = ScrollTrigger.getById(sectionID);
       if (currentScrollTrigger && currentScrollTrigger.previous()) {
         prevScrollTrigger = currentScrollTrigger.previous();
         prevScrollTrigger.disable();
       }
-    }else{
+    } else {
       prevScrollTrigger.disable();
     }
-  }
+  };
 
   let resetAllActions = () => {
     Object.values(actions).forEach((action) => {
       action.reset().paused = true;
     });
-  }
+  };
 
   let playIntroAnimations = (reversed = false) => {
     enterAnimation.reset();
     enterAnimation.setLoop(THREE.LoopOnce, 1);
-    enterAnimation.time = reversed ? enterAnimation.getClip().duration : 0;     // jump to the end or beginning of the clip
+    enterAnimation.time = reversed ? enterAnimation.getClip().duration : 0; // jump to the end or beginning of the clip
     enterAnimation.timeScale = reversed ? -1 : 1;
     enterAnimation.clampWhenFinished = true;
     enterAnimation.play();
-
-    firstAnimations.forEach((name) => actions[name]?.reset().play());
-    actions["Armature.001Action"]?.reset().play();
-  }
+    if (!reversed) {
+      firstAnimations.forEach((name) => actions[name]?.reset().play());
+      actions["Armature.001Action"]?.reset().play();
+    }
+  };
 
   useLayoutEffect(() => {
     enterAnimation = actions["ActionEnter"];
@@ -90,13 +95,13 @@ export function Web3({sectionID, isActive, ...props }) {
       end: "#section5 bottom",
       scrub: 2,
       markers: false,
-      onEnter: ()=>{
+      onEnter: () => {
         setCurrentModel(sectionID);
         disableOtherSections();
         resetAllActions();
         playIntroAnimations();
       },
-      onEnterBack: () =>{
+      onEnterBack: () => {
         setCurrentModel(sectionID);
         disableOtherSections();
         resetAllActions();
@@ -117,33 +122,60 @@ export function Web3({sectionID, isActive, ...props }) {
       start: "top bottom",
       end: "bottom top",
       scrub: 2.5,
-      markers: false,
+      markers: true,
       onEnter: () => {
         // if (!playedScroll.current) {
         //   firstAnimations.forEach((name) => actions[name]?.stop());
-          // playedScroll.current = true;
+        // playedScroll.current = true;
         // }
 
         const action = actions["1.2ndScroll"];
         if (action) {
+          console.log("🚀 ~ useLayoutEffect ~ 2ndScroll:", action)
+          action.reset();
           action.setLoop(THREE.LoopOnce, 1);
           action.clampWhenFinished = true;
           action.time = action.getClip().duration - 0.1;
+         action.timeScale = 1;
           action.enabled = true;
           action.setEffectiveWeight(1);
           action.paused = false;
           action.play();
+          setTimeout(() => {
+          console.log("🚀 ~ setTimeout ~ setTimeout:")
+          }, (action.getClip().duration - 0.1)*1000);
         }
 
         scrollAnimations.forEach((name) => {
           const anim = actions[name];
           if (anim) {
             anim.reset();
+            anim.timeScale = 1;
             anim.setLoop(THREE.LoopOnce, 1);
             anim.clampWhenFinished = true;
             anim.play();
           }
         });
+        console.log("ManRef.current.scale", ManRef.current.scale.toArray());
+        gsap.to(ManRef.current.scale, {
+          x: 0,
+          y: 0,
+          z: 0,
+          duration: 0.5,
+          ease: "power2.out",
+        });
+
+        // const manScroll= actions["3.Man2ndScroll"];
+        //  if (manScroll) {
+        //     manScroll.reset();
+        //     manScroll.setLoop(THREE.LoopOnce, 1);
+        //     manScroll.clampWhenFinished = true;
+        //     manScroll.play();
+
+        //     setTimeout(()=>{
+
+        //     }, manScroll.getClip().duration * 1000);
+        // }
 
         const mainScroll = actions[scrollAnimations[6]];
         if (mainScroll) {
@@ -152,17 +184,55 @@ export function Web3({sectionID, isActive, ...props }) {
           });
         }
       },
+
+      onLeaveBack: () => {
+        console.log("🚀 ~ useLayoutEffect ~ onLeaveBack:");
+        gsap.to(ManRef.current.scale, {
+          x: 0.029,
+          y: 0.029,
+          z: 0.029,
+          duration: 0.5,
+          ease: "power2.out",
+        });
+        scrollAnimations.forEach((name) => {
+          const anim = actions[name];
+          if (anim) {
+            anim.reset();
+            anim.setLoop(THREE.LoopOnce, 1);
+            anim.clampWhenFinished = true;
+            anim.time = 0.3;
+            anim.timeScale = -1; // Inverse l'animation
+
+            anim.play();
+          }
+        });
+        const action = actions["1.2ndScroll"];
+        if (action) {
+          action.reset();
+          action.setLoop(THREE.LoopOnce, 1);
+          action.clampWhenFinished = true;
+
+          action.time = action.getClip().duration;
+
+          action.timeScale = -1;
+
+          action.enabled = true;
+          action.setEffectiveWeight(1);
+          action.paused = false;
+          action.play();
+        }
+      },
       onUpdate: (self) => {
-        if (!playedSecondScroll.current) return;
+        //if (!playedSecondScroll.current) return;
         const progress = self.progress;
         secondScrollAnimations.forEach((name) => {
           const action = actions[name];
           if (action) {
             const duration = action.getClip().duration;
             action.paused = true;
-            action.play();
             action.time = duration * progress;
             action.getMixer().update(0);
+            action.play();
           }
         });
       },
@@ -228,7 +298,6 @@ export function Web3({sectionID, isActive, ...props }) {
     //     },
     //   }
     // );
-
 
     return () => {
       mixer.stopAllAction();
@@ -758,6 +827,7 @@ export function Web3({sectionID, isActive, ...props }) {
           position={[0.052, 0.421, -0.086]}
           rotation={[0, -0.516, 0]}
           scale={0.029}
+          ref={ManRef}
         >
           <group name="Retopo_Sphere001">
             <skinnedMesh

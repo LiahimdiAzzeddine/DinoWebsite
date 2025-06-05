@@ -76,7 +76,7 @@ export function Web2({sectionID, isActive, ...props }) {
       trigger: "#section3",
       start: "top bottom",
       end: "top top",
-      markers: true,
+      markers: false,
       scrub: 2,
       onEnter: (self) => {
         disableOtherSections();

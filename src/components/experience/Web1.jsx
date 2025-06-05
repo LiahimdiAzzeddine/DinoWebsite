@@ -75,7 +75,7 @@ export function Web1({ sectionID, isActive, lenis, ...props }) {
       start: "top bottom",
       end: "top top",
       scrub: 0.5,
-      markers: true,
+      markers: false,
       onUpdate: (self) => {
         sectionScrollProgress = self.progress;
         // Kill any existing tween

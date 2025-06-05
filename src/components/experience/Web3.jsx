@@ -45,6 +45,7 @@ export function Web3({sectionID, isActive, ...props }) {
     "9.Rocket2ndScroll",
   ];
   const secondScrollAnimations = ["Action", "8.Rocket3rdScroll"];
+  let enterAnimation = actions["ActionEnter"];
 
   // scroll tracking
   let prevScrollTrigger = null;
@@ -54,28 +55,33 @@ export function Web3({sectionID, isActive, ...props }) {
       if (currentScrollTrigger && currentScrollTrigger.previous()) {
         prevScrollTrigger = currentScrollTrigger.previous();
         prevScrollTrigger.disable();
-        console.log("prevScrollTrigger", prevScrollTrigger);
       }
     }else{
       prevScrollTrigger.disable();
     }
   }
 
-  useLayoutEffect(() => {
-
-    // Reset all actions
+  let resetAllActions = () => {
     Object.values(actions).forEach((action) => {
       action.reset().paused = true;
     });
+  }
 
-    // Play intro animations
-    if (actions["ActionEnter"]) {
-      actions["ActionEnter"].setLoop(THREE.LoopOnce, 1).reset().play();
-      actions["ActionEnter"].clampWhenFinished = true;
-    }
+  let playIntroAnimations = (reversed = false) => {
+    enterAnimation.reset();
+    enterAnimation.setLoop(THREE.LoopOnce, 1);
+    enterAnimation.time = reversed ? enterAnimation.getClip().duration : 0;     // jump to the end or beginning of the clip
+    enterAnimation.timeScale = reversed ? -1 : 1;
+    enterAnimation.clampWhenFinished = true;
+    enterAnimation.play();
 
-    // Optional constant animation
+    firstAnimations.forEach((name) => actions[name]?.reset().play());
     actions["Armature.001Action"]?.reset().play();
+  }
+
+  useLayoutEffect(() => {
+    enterAnimation = actions["ActionEnter"];
+    resetAllActions();
 
     ScrollTrigger.create({
       id: sectionID,
@@ -87,36 +93,21 @@ export function Web3({sectionID, isActive, ...props }) {
       onEnter: ()=>{
         setCurrentModel(sectionID);
         disableOtherSections();
-        firstAnimations.forEach((name) => actions[name]?.reset().play());
+        resetAllActions();
+        playIntroAnimations();
+      },
+      onEnterBack: () =>{
+        setCurrentModel(sectionID);
+        disableOtherSections();
+        resetAllActions();
+        playIntroAnimations(true);
       },
       onLeaveBack: () => {
-        console.log("🚀 ~ useLayoutEffect ~ onLeaveBack:")
-        const enterAction = actions["ActionEnter"];
-        prevScrollTrigger.enable();
+        playIntroAnimations(true);
 
-        // if (enterAction) {
-        //   enterAction.paused = false;
-        //   enterAction.enabled = true;
-        //   enterAction.setLoop(THREE.LoopOnce, 1);
-        //   enterAction.clampWhenFinished = true;
-        //   enterAction.timeScale = -1; // jouer en arrière
-        //   enterAction.play();
-        //
-        //   // one-time callback for when this action actually finishes:
-        //   const onActionFinished = (event) => {
-        //     // event.action is the AnimationAction that just finished
-        //     if (event.action === enterAction) {
-        //       // Remove listener so it only fires once
-        //       enterAction.getMixer().removeEventListener("finished", onActionFinished);
-        //       prevScrollTrigger.enable();
-        //       console.log("nextScrollTrigger", prevScrollTrigger);
-        //     }
-        //   };
-        //
-        //   // Add the listener and start playing:
-        //   enterAction.getMixer().addEventListener("finished", onActionFinished);
-        //   enterAction.play();
-        // }
+        setTimeout(() => {
+          prevScrollTrigger.enable();
+        }, enterAnimation.getClip().duration * 1000);
       },
     });
 
@@ -156,52 +147,52 @@ export function Web3({sectionID, isActive, ...props }) {
       end: "bottom top",
       scrub: 2.5,
       onEnter: () => {
-        if (!playedScroll.current) {
-          firstAnimations.forEach((name) => actions[name]?.stop());
-          playedScroll.current = true;
-        }
-
-        const action = actions["1.2ndScroll"];
-        if (action) {
-          action.setLoop(THREE.LoopOnce, 1);
-          action.clampWhenFinished = true;
-          action.time = action.getClip().duration - 0.1;
-          action.enabled = true;
-          action.setEffectiveWeight(1);
-          action.paused = false;
-          action.play();
-        }
-
-        scrollAnimations.forEach((name) => {
-          const anim = actions[name];
-          if (anim) {
-            anim.reset();
-            anim.setLoop(THREE.LoopOnce, 1);
-            anim.clampWhenFinished = true;
-            anim.play();
-          }
-        });
-
-        const mainScroll = actions[scrollAnimations[6]];
-        if (mainScroll) {
-          mainScroll.getMixer().addEventListener("finished", () => {
-            playedSecondScroll.current = true;
-          });
-        }
+        // if (!playedScroll.current) {
+        //   firstAnimations.forEach((name) => actions[name]?.stop());
+        //   playedScroll.current = true;
+        // }
+        //
+        // const action = actions["1.2ndScroll"];
+        // if (action) {
+        //   action.setLoop(THREE.LoopOnce, 1);
+        //   action.clampWhenFinished = true;
+        //   action.time = action.getClip().duration - 0.1;
+        //   action.enabled = true;
+        //   action.setEffectiveWeight(1);
+        //   action.paused = false;
+        //   action.play();
+        // }
+        //
+        // scrollAnimations.forEach((name) => {
+        //   const anim = actions[name];
+        //   if (anim) {
+        //     anim.reset();
+        //     anim.setLoop(THREE.LoopOnce, 1);
+        //     anim.clampWhenFinished = true;
+        //     anim.play();
+        //   }
+        // });
+        //
+        // const mainScroll = actions[scrollAnimations[6]];
+        // if (mainScroll) {
+        //   mainScroll.getMixer().addEventListener("finished", () => {
+        //     playedSecondScroll.current = true;
+        //   });
+        // }
       },
       onUpdate: (self) => {
-        if (!playedSecondScroll.current) return;
-        const progress = self.progress;
-        secondScrollAnimations.forEach((name) => {
-          const action = actions[name];
-          if (action) {
-            const duration = action.getClip().duration;
-            action.paused = true;
-            action.play();
-            action.time = duration * progress;
-            action.getMixer().update(0);
-          }
-        });
+        // if (!playedSecondScroll.current) return;
+        // const progress = self.progress;
+        // secondScrollAnimations.forEach((name) => {
+        //   const action = actions[name];
+        //   if (action) {
+        //     const duration = action.getClip().duration;
+        //     action.paused = true;
+        //     action.play();
+        //     action.time = duration * progress;
+        //     action.getMixer().update(0);
+        //   }
+        // });
       },
     });
 
@@ -514,17 +505,15 @@ export function Web3({sectionID, isActive, ...props }) {
           scale={0.079}
         />
         <group name="Empty" position={[4.089, 2.103, -0.346]}>
-          {currentModel == "Model3" && (
-            <PerspectiveCamera
-              name="Camera"
-              makeDefault={isActive}
-              far={1000}
-              near={0.1}
-              fov={19.157}
-              rotation={[-Math.PI / 2, 1.519, Math.PI / 2]}
-              scale={0.217}
-            />
-          )}
+          <PerspectiveCamera
+            name="Camera"
+            makeDefault={isActive}
+            far={1000}
+            near={0.1}
+            fov={19.157}
+            rotation={[-Math.PI / 2, 1.519, Math.PI / 2]}
+            scale={0.217}
+          />
         </group>
         <group
           name="Cylinder095"

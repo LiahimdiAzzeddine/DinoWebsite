@@ -40,6 +40,7 @@ export function Web2({sectionID, isActive, ...props }) {
   let isEnteringBack = false;
   let nextScrollTrigger = null;
   let prevScrollTrigger = null;
+  const sceneContainerGroup = useRef();
   let disableOtherSections = ()=>{
     if (!prevScrollTrigger){
       let currentScrollTrigger = ScrollTrigger.getById(sectionID);
@@ -60,15 +61,15 @@ export function Web2({sectionID, isActive, ...props }) {
     }else{
       nextScrollTrigger.disable();
     }
-
-    console.log("nextScrollTrigger: ", nextScrollTrigger);
   }
+
+  let enterAnim = actions["ActionEnter"];
+  let leaveAnim = actions["ActionOut"];
 
   useLayoutEffect(() => {
 
-    const enterAnim = actions["ActionEnter"];
-    const leaveAnim = actions["ActionOut"];
-
+    enterAnim = actions["ActionEnter"];
+    leaveAnim = actions["ActionOut"];
 
     ScrollTrigger.create({
       id: sectionID,
@@ -78,17 +79,11 @@ export function Web2({sectionID, isActive, ...props }) {
       markers: true,
       scrub: 2,
       onEnter: (self) => {
-        console.log("onEnter");
         disableOtherSections();
         playStaticAnimations();
         setCurrentModel(sectionID);
         if (isEnteringBack) {
-          if (leaveAnim) {
-            leaveAnim.clampWhenFinished = true;
-            leaveAnim.timeScale = -1;
-            leaveAnim.reset().setLoop(THREE.LoopOnce, 1);
-            leaveAnim.play();
-          }
+          playOnEnterBackSequence();
         }else{
           if (enterAnim) {
             enterAnim.reset().setLoop(THREE.LoopOnce, 1);
@@ -100,16 +95,10 @@ export function Web2({sectionID, isActive, ...props }) {
         isEnteringBack = false;
       },
       onEnterBack: () => {
-        console.log("onEnterBack");
         disableOtherSections();
         playStaticAnimations();
         setCurrentModel(sectionID);
-        if (leaveAnim) {
-          leaveAnim.clampWhenFinished = true;
-          leaveAnim.timeScale = -1;
-          leaveAnim.reset().setLoop(THREE.LoopOnce, 1);
-          leaveAnim.play();
-        }
+        playOnEnterBackSequence();
         isEnteringBack = false;
       },
       onLeaveBack: () => {
@@ -143,6 +132,13 @@ export function Web2({sectionID, isActive, ...props }) {
         leaveAnim.reset().setLoop(THREE.LoopOnce, 1);
         leaveAnim.clampWhenFinished = true;
         leaveAnim.timeScale = 1;
+
+        gsap.to(sceneContainerGroup.current.position, {
+          y: sceneContainerGroup.current.position.y + 10,
+          duration: leaveAnim.getClip().duration ,
+          ease:"back.in"
+        });
+
         setTimeout(() => {
           nextScrollTrigger.enable();
         }, leaveAnim.getClip().duration * 1000 * leaveAnim.timeScale);
@@ -158,6 +154,20 @@ export function Web2({sectionID, isActive, ...props }) {
     };
   }, []);
 
+  let playOnEnterBackSequence = ()=>{
+    if (leaveAnim) {
+      leaveAnim.clampWhenFinished = true;
+      leaveAnim.timeScale = -1;
+      leaveAnim.reset().setLoop(THREE.LoopOnce, 1);
+      leaveAnim.play();
+    }
+    gsap.to(sceneContainerGroup.current.position, {
+      y: sceneContainerGroup.current.position.y - 10,
+      duration: leaveAnim.getClip().duration,
+      ease:"back.out"
+    });
+  }
+
   let playStaticAnimations = ()=>{
     Animations.forEach((name) => {
       actions[name]?.reset().play();
@@ -171,6 +181,20 @@ export function Web2({sectionID, isActive, ...props }) {
   return (
     <group ref={group} {...props} dispose={null} visible={isActive}>
       <group name="Scene">
+        <group name="Empty001" position={[23.142, 1.679, 1.408]} scale={0.15}>
+          <PerspectiveCamera
+              name="Camera"
+              makeDefault={isActive}
+              far={1000}
+              near={0.1}
+              fov={16.696}
+              position={[0, 0.151, 0.577]}
+              rotation={[0, 1.571, 0]}
+              scale={6.678}
+          />
+        </group>
+        <group ref={sceneContainerGroup} name="scene_container">
+
         <mesh
           name="Sphere014"
           castShadow
@@ -190,18 +214,6 @@ export function Web2({sectionID, isActive, ...props }) {
           rotation={[Math.PI, 0, Math.PI]}
           scale={[0.45, 0.767, 0.767]}
         />
-        <group name="Empty001" position={[23.142, 1.679, 1.408]} scale={0.15}>
-          <PerspectiveCamera
-            name="Camera"
-            makeDefault={isActive}
-            far={1000}
-            near={0.1}
-            fov={16.696}
-            position={[0, 0.151, 0.577]}
-            rotation={[0, 1.571, 0]}
-            scale={6.678}
-          />
-        </group>
         <mesh
           name="Sphere002"
           castShadow
@@ -483,6 +495,7 @@ export function Web2({sectionID, isActive, ...props }) {
             scale={[0.054, 2.059, 0.054]}
           />
         </group>
+      </group>
       </group>
     </group>
   );

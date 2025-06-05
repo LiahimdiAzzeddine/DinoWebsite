@@ -88,6 +88,7 @@ export function Web2({sectionID, isActive, ...props }) {
           if (enterAnim) {
             enterAnim.reset().setLoop(THREE.LoopOnce, 1);
             enterAnim.clampWhenFinished = true;
+            enterAnim.time = 0;
             enterAnim.timeScale = 1.5;
             enterAnim.play();
           }
@@ -156,9 +157,11 @@ export function Web2({sectionID, isActive, ...props }) {
 
   let playOnEnterBackSequence = ()=>{
     if (leaveAnim) {
-      leaveAnim.clampWhenFinished = true;
+      leaveAnim.reset();
+      leaveAnim.setLoop(THREE.LoopOnce, 1);
+      leaveAnim.time = leaveAnim.getClip().duration;
       leaveAnim.timeScale = -1;
-      leaveAnim.reset().setLoop(THREE.LoopOnce, 1);
+      leaveAnim.clampWhenFinished = true;
       leaveAnim.play();
     }
     gsap.to(sceneContainerGroup.current.position, {

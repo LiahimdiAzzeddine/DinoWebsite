@@ -89,7 +89,7 @@ export function Web3({sectionID, isActive, ...props }) {
       start: "top bottom",
       end: "#section6 top",
       scrub: 2,
-      markers: false,
+      markers: true,
       onEnter: ()=>{
         setCurrentModel(sectionID);
         disableOtherSections();
@@ -146,6 +146,7 @@ export function Web3({sectionID, isActive, ...props }) {
       start: "top center",
       end: "bottom top",
       scrub: 2.5,
+      markers: true,
       onEnter: () => {
         // if (!playedScroll.current) {
         //   firstAnimations.forEach((name) => actions[name]?.stop());

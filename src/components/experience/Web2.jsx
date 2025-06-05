@@ -86,7 +86,6 @@ export function Web2({ isActive, ...props }) {
             enterAnim.getMixer().update(0.05);
             enterAnim.getMixer().addEventListener("finished", () => {
               setIsTransitioning(false);
-               alert("fin")
             });
           }
         },

@@ -142,7 +142,7 @@ export const Overlay = () => {
         </div>
       </Section>
 
-      <Section  id="section3" class="section3">
+      <Section  id="section3" class="section3" right>
         <h2 className="font-bold text-white text-[1em] md:text-[2em] leading-[1.1em] mt-[0.4em] mb-[0.4em] section_2">
           Meet (First name), a Game designer
         </h2>
@@ -162,7 +162,7 @@ export const Overlay = () => {
         </p>
       </Section>
 
-      <Section right id="section4" class="second-section2">
+      <Section right id="section4" class="second-section2" >
         <h2 className="font-bold text-white text-[1em] md:text-[2em] leading-[1.1em] mt-[0.4em] mb-[0.4em] ">
           what can Dinomite studio help you with
         </h2>
@@ -260,7 +260,7 @@ export const Overlay = () => {
           </a>
         </div>
       </Section>
-      <Section  id="section5">
+      <Section  id="section5" >
         <h2 className="font-bold text-white text-[1em] md:text-[2em] leading-[1.1em] mt-[0.4em] mb-[0.4em]">
           what can Dinomite studio help you with section5
         </h2>
@@ -338,7 +338,7 @@ export const Overlay = () => {
           </a>
         </div>
       </Section>
-      <Section right>
+      <Section >
         <h2 className="font-bold text-white text-[1em] md:text-[2em] leading-[1.1em] mt-[0.4em] mb-[0.4em]  ">
           what can Dinomite studio help you with
         </h2>

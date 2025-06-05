@@ -47,7 +47,6 @@ export function Web3({ isActive, ...props }) {
   const secondScrollAnimations = ["Action", "8.Rocket3rdScroll"];
 
   useLayoutEffect(() => {
-    console.log("🚀 ~ useLayoutEffect ~ useLayoutEffect: web3")
     if (!isActive || !actions) return;
 
     // Reset all actions
@@ -55,13 +54,22 @@ export function Web3({ isActive, ...props }) {
       action.reset().paused = true;
     });
 
-    // Play intro animations
-    if (actions["ActionEnter"]) {
-      actions["ActionEnter"].setLoop(THREE.LoopOnce, 1).reset().play();
-      actions["ActionEnter"].clampWhenFinished = true;
+    const enterAnim = actions["ActionEnter"];
+
+    if (enterAnim) {
+      enterAnim.reset().setLoop(THREE.LoopOnce, 1).play();
+      enterAnim.clampWhenFinished = true;
+
+      // Attendre la fin de l'animation
+      mixer.addEventListener("finished", function onFinish(e) {
+        if (e.action === enterAnim) {
+          mixer.removeEventListener("finished", onFinish);
+          firstAnimations.forEach((name) => actions[name]?.reset().play());
+        }
+      });
     }
 
-    // Optional constant animation
+    // Animation de dernier character
     actions["Armature.001Action"]?.reset().play();
 
     // Setup GSAP timeline with ScrollTrigger
@@ -72,23 +80,15 @@ export function Web3({ isActive, ...props }) {
         end: "#section6 top",
         scrub: 2,
         markers: false,
+
         onLeaveBack: () => {
-          console.log("🚀 ~ useLayoutEffect ~ onLeaveBack:")
           const enterAction = actions["ActionEnter"];
+
           if (enterAction) {
-            // enterAction.paused = false;
-            // enterAction.enabled = true;
-            // enterAction.setLoop(THREE.LoopOnce, 1);
-            // enterAction.clampWhenFinished = true;
-            // enterAction.timeScale = -1; // jouer en arrière
-            // enterAction.play();
+         
           }
         },
       },
-    });
-
-    tl.add(() => {
-      firstAnimations.forEach((name) => actions[name]?.reset().play());
     });
 
     tl.to(
@@ -101,7 +101,7 @@ export function Web3({ isActive, ...props }) {
           scrub: 2.5,
           onEnter: () => {
             if (!playedScroll.current) {
-              firstAnimations.forEach((name) => actions[name]?.stop());
+             firstAnimations.forEach((name) => actions[name]?.stop());
               playedScroll.current = true;
             }
 
@@ -123,6 +123,7 @@ export function Web3({ isActive, ...props }) {
                 anim.setLoop(THREE.LoopOnce, 1);
                 anim.clampWhenFinished = true;
                 anim.play();
+                mixer.update(0.05)
               }
             });
 
@@ -143,7 +144,7 @@ export function Web3({ isActive, ...props }) {
                 action.paused = true;
                 action.play();
                 action.time = duration * progress;
-                action.getMixer().update(0);
+                action.getMixer().update(0.05);
               }
             });
           },

@@ -26,18 +26,18 @@ export function ModelContainer({lenis}) {
   return (
     <>
       <Web1
-        scale={size.width >= 1024 ? 0.2 : 0.1}
+        scale={size.width >= 1024 ? 0.2 : 0.01}
         sectionID={"web1"}
         isActive={currentModel === "web1"}
         lenis={lenis}
       />
       <Web2
-        scale={size.width >= 1024 ? 0.2 : 0.1}
+        scale={size.width >= 1024 ? 0.2 : 0.01}
         sectionID={"web2"}
         isActive={currentModel === "web2"}
       />
         <Web3
-        scale={size.width >= 1024 ? 0.2 : 0.1}
+        scale={size.width >= 1024 ? 0.2 : 0.01}
         sectionID={"web3"}
         isActive={currentModel === "web3"}
       />
@@ -88,12 +88,7 @@ useEffect(() => {
    
   return (
     <Canvas>
-      {
-        /**
-         * 
-         * 
-         */
-      }
+     
       <AnimatedGradientBackground />
       <ambientLight intensity={0.03} />
       <spotLight

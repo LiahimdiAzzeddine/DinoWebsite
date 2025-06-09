@@ -35,6 +35,7 @@ body {
   padding: 0px;
   min-height: -webkit-fill-available;
   overflow-x: hidden;
+  overflow-y: hidden;
 
   -webkit-font-smoothing: antialiased;
   scrollbar-width: thin;

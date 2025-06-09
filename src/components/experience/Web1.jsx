@@ -143,8 +143,8 @@ export function Web1({ sectionID, isActive, lenis, ...props }) {
   }, []);
 
   return (
-    <group ref={group} {...props} dispose={null} visible={isActive}>
-      <group name="Scene">
+    <group ref={group} {...props} dispose={null} visible={isActive}  >
+      <group name="Scene" >
         <PerspectiveCamera
           name="Camera001"
           makeDefault={isActive}
@@ -154,7 +154,7 @@ export function Web1({ sectionID, isActive, lenis, ...props }) {
           position={[3.446, 20.931, 15.945]}
           rotation={[-0.417, 0.041, -0.022]}
         />
-        <group ref={sceneContainerGroup} name="scene_container">
+        <group ref={sceneContainerGroup} name="scene_container" >
 
         <mesh
           name="GroundCubeQuad003"

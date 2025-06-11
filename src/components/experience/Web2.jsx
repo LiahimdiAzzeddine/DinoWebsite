@@ -66,6 +66,8 @@ export function Web2({sectionID, isActive, ...props }) {
   }
 
   let enableOtherSections = ()=>{
+    // use when scroll is too quick for transitions
+    // this way any section t the end of the scroll could take control and disable the others
     ScrollTrigger.getAll().forEach((trigger) => {
       if (trigger.id !== sectionID) {
         trigger.enable();
@@ -108,7 +110,11 @@ export function Web2({sectionID, isActive, ...props }) {
             console.log("web-2 onEnterBack logic (up)");
           }
         } else {
-          console.log("web-2 Section left");
+          if (scrollDirection >= 0) {
+            // onLeave
+            handleOnLeave(self);
+            console.log("web-2 onLeave logic (down)");
+          }
         }
       },
       onEnter: (self) => {
@@ -136,6 +142,7 @@ export function Web2({sectionID, isActive, ...props }) {
         isEnteringBack = false;
       },
       onLeaveBack: (self) => {
+        console.log("web-2 onLeaveBack");
         if (Math.abs(self.getVelocity()) <= 1500) {
           // Reset & configure the action so that it plays backwards exactly once:
           enterAnim.reset();
@@ -160,27 +167,6 @@ export function Web2({sectionID, isActive, ...props }) {
         }else{
           enableOtherSections();
         }
-
-      },
-      onLeave: () => {
-        if (!leaveAnim) return;
-        nextScrollTrigger.disable();
-        isEnteringBack = true;
-        // Reset & configure the action
-        leaveAnim.reset().setLoop(THREE.LoopOnce, 1);
-        leaveAnim.clampWhenFinished = true;
-        leaveAnim.timeScale = 1;
-
-        gsap.to(sceneContainerGroup.current.position, {
-          y: sceneContainerGroup.current.position.y + 10,
-          duration: leaveAnim.getClip().duration ,
-          ease:"back.in"
-        });
-
-        setTimeout(() => {
-          nextScrollTrigger.enable();
-        }, leaveAnim.getClip().duration * 1000 * leaveAnim.timeScale);
-        leaveAnim.play();
 
       }
     });
@@ -216,6 +202,30 @@ export function Web2({sectionID, isActive, ...props }) {
     smoothAnimations.forEach((name) => {
       actions[name]?.reset().setEffectiveTimeScale(0.2).play();
     });
+  }
+
+  let handleOnLeave = (self)=>{
+    if (Math.abs(self.getVelocity()) <= 1500) {
+      nextScrollTrigger.disable();
+      isEnteringBack = true;
+      // Reset & configure the action
+      leaveAnim.reset().setLoop(THREE.LoopOnce, 1);
+      leaveAnim.clampWhenFinished = true;
+      leaveAnim.timeScale = 1;
+
+      gsap.to(sceneContainerGroup.current.position, {
+        y: sceneContainerGroup.current.position.y + 10,
+        duration: leaveAnim.getClip().duration ,
+        ease:"back.in"
+      });
+
+      setTimeout(() => {
+        nextScrollTrigger.enable();
+      }, leaveAnim.getClip().duration * 1000 * leaveAnim.timeScale);
+      leaveAnim.play();
+    }else{
+      enableOtherSections();
+    }
   }
 
   return (

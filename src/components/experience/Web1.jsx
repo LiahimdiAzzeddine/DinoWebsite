@@ -56,6 +56,16 @@ export function Web1({ sectionID, isActive, lenis, ...props }) {
     }
   }
 
+  let enableOtherSections = ()=>{
+    // use when scroll is too quick for transitions
+    // this way any section t the end of the scroll could take control and disable the others
+    ScrollTrigger.getAll().forEach((trigger) => {
+      if (trigger.id !== sectionID) {
+        trigger.enable();
+      }
+    })
+  }
+
   useLayoutEffect(() => {
 
     // animations
@@ -115,7 +125,7 @@ export function Web1({ sectionID, isActive, lenis, ...props }) {
             },
           });
         }else{
-          nextScrollTrigger.enable();
+          enableOtherSections();
         }
       }
     });

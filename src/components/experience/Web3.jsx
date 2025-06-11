@@ -65,6 +65,16 @@ export function Web3({ sectionID, isActive, ...props }) {
     }
   };
 
+  let enableOtherSections = ()=>{
+    // use when scroll is too quick for transitions
+    // this way any section t the end of the scroll could take control and disable the others
+    ScrollTrigger.getAll().forEach((trigger) => {
+      if (trigger.id !== sectionID) {
+        trigger.enable();
+      }
+    })
+  }
+
   let resetAllActions = () => {
     Object.values(actions).forEach((action) => {
       action.reset().paused = true;
@@ -124,10 +134,8 @@ export function Web3({ sectionID, isActive, ...props }) {
       scrub: 2.5,
       markers: true,
       onEnter: () => {
-        // if (!playedScroll.current) {
-        //   firstAnimations.forEach((name) => actions[name]?.stop());
-        // playedScroll.current = true;
-        // }
+        setCurrentModel(sectionID);
+        disableOtherSections();
 
         const action = actions["1.2ndScroll"];
         if (action) {
@@ -164,18 +172,6 @@ export function Web3({ sectionID, isActive, ...props }) {
           duration: 0.5,
           ease: "power2.out",
         });
-
-        // const manScroll= actions["3.Man2ndScroll"];
-        //  if (manScroll) {
-        //     manScroll.reset();
-        //     manScroll.setLoop(THREE.LoopOnce, 1);
-        //     manScroll.clampWhenFinished = true;
-        //     manScroll.play();
-
-        //     setTimeout(()=>{
-
-        //     }, manScroll.getClip().duration * 1000);
-        // }
 
         const mainScroll = actions[scrollAnimations[6]];
         if (mainScroll) {
@@ -223,7 +219,6 @@ export function Web3({ sectionID, isActive, ...props }) {
         }
       },
       onUpdate: (self) => {
-        //if (!playedSecondScroll.current) return;
         const progress = self.progress;
         secondScrollAnimations.forEach((name) => {
           const action = actions[name];
@@ -237,67 +232,6 @@ export function Web3({ sectionID, isActive, ...props }) {
         });
       },
     });
-    // ============================================
-
-    // tl.to(
-    //   {},
-    //   {
-    //     scrollTrigger: {
-    //       trigger: "#section5",
-    //       start: "top center",
-    //       end: "bottom top",
-    //       scrub: 2.5,
-    //       onEnter: () => {
-    //         if (!playedScroll.current) {
-    //           firstAnimations.forEach((name) => actions[name]?.stop());
-    //           playedScroll.current = true;
-    //         }
-    //
-    //         const action = actions["1.2ndScroll"];
-    //         if (action) {
-    //           action.setLoop(THREE.LoopOnce, 1);
-    //           action.clampWhenFinished = true;
-    //           action.time = action.getClip().duration - 0.1;
-    //           action.enabled = true;
-    //           action.setEffectiveWeight(1);
-    //           action.paused = false;
-    //           action.play();
-    //         }
-    //
-    //         scrollAnimations.forEach((name) => {
-    //           const anim = actions[name];
-    //           if (anim) {
-    //             anim.reset();
-    //             anim.setLoop(THREE.LoopOnce, 1);
-    //             anim.clampWhenFinished = true;
-    //             anim.play();
-    //           }
-    //         });
-    //
-    //         const mainScroll = actions[scrollAnimations[6]];
-    //         if (mainScroll) {
-    //           mainScroll.getMixer().addEventListener("finished", () => {
-    //             playedSecondScroll.current = true;
-    //           });
-    //         }
-    //       },
-    //       onUpdate: (self) => {
-    //         if (!playedSecondScroll.current) return;
-    //         const progress = self.progress;
-    //         secondScrollAnimations.forEach((name) => {
-    //           const action = actions[name];
-    //           if (action) {
-    //             const duration = action.getClip().duration;
-    //             action.paused = true;
-    //             action.play();
-    //             action.time = duration * progress;
-    //             action.getMixer().update(0);
-    //           }
-    //         });
-    //       },
-    //     },
-    //   }
-    // );
 
     return () => {
       mixer.stopAllAction();

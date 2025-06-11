@@ -87,7 +87,7 @@ export function Web2({sectionID, isActive, ...props }) {
     ScrollTrigger.create({
       id: sectionID,
       trigger: "#section3",
-      start: "top bottom",
+      start: "top bottom-=100px",
       end: "top top",
       markers: false,
       scrub: true,

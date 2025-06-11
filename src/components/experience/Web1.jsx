@@ -43,7 +43,6 @@ export function Web1({ sectionID, isActive, lenis, ...props }) {
   // track scrolling status
   const currentTween = useRef(null);
   let nextScrollTrigger = null;
-  let scrollDirection = 1;
 
   let disableOtherSections = ()=>{
     if (!nextScrollTrigger){
@@ -72,17 +71,6 @@ export function Web1({ sectionID, isActive, lenis, ...props }) {
     const clipDur = camAct.getClip().duration;
     let sceneDefaultPos = sceneContainerGroup.current.position.y;
 
-    // scroll tracking
-    Observer.create({
-      target: window,
-      type: "wheel,touch,pointer,scroll",
-      onChange: obs => {
-        // obs.deltaY < 0 means scrolling up, > 0 means down
-        // console.log(obs.deltaY < 0 ? "raw ↑" : "raw ↓");
-        scrollDirection = obs.deltaY < 0 ? -1 : 1;
-      }
-    });
-
     // scroll triggers
     ScrollTrigger.create({
       id: sectionID,
@@ -90,7 +78,7 @@ export function Web1({ sectionID, isActive, lenis, ...props }) {
       start: "top bottom-=100px",
       end: "top top",
       scrub: true,
-      markers: true,
+      markers: false,
       onUpdate: (self) => {
         sectionScrollProgress = self.progress;
         // Kill any existing tween
@@ -114,18 +102,6 @@ export function Web1({ sectionID, isActive, lenis, ...props }) {
             duration:0.3,
             ease: "circ.out",
           });
-          //
-          // // direction: +1 means scrolling forward/down, –1 is backward/up
-          // if (scrollDirection >= 0) {
-          //   // onEnter
-          //   console.log("web-1 onEnter logic (down)");
-          // } else {
-          //   // onEnterBack
-          //   console.log("web-1 onEnterBack logic (up)");
-          //
-          // }
-        } else {
-          console.log("web-1 Section left");
         }
       },
       onLeave: (self) => {
@@ -141,7 +117,6 @@ export function Web1({ sectionID, isActive, lenis, ...props }) {
         }else{
           nextScrollTrigger.enable();
         }
-
       }
     });
 

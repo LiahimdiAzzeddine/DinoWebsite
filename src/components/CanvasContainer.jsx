@@ -36,11 +36,12 @@ export function ModelContainer({lenis}) {
         sectionID={"web2"}
         isActive={currentModel === "web2"}
       />
+      {/** 
         <Web3
         scale={size.width >= 1024 ? 0.2 : 0.01}
         sectionID={"web3"}
         isActive={currentModel === "web3"}
-      />
+      />*/}
     </>
   );
 }
@@ -61,30 +62,52 @@ export const CanvasContainer = () => {
 
 /**/ 
 useEffect(() => {
-     const lenis = new Lenis({
-      duration: 1.5, // Increased for smoother, slower scrolling
-      smoothWheel: true,
-      wheelMultiplier: 0.7, // Reduce wheel speed
-      touchMultiplier: 0.7, // Reduce touch speed
-      infinite: false,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      direction: "vertical",
-      gestureOrientation: "vertical",
-    });      
-    lenisRef.current = lenis;
+  const lenis = new Lenis({
+    duration: 1.5,
+    smoothWheel: true,
+    wheelMultiplier: 0.7,
+    touchMultiplier: 0.7,
+    infinite: false,
+    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    direction: "vertical",
+    gestureOrientation: "vertical",
+  });
 
-      function raf(time) {
-        lenis.raf(time);
-        ScrollTrigger.update(); 
-        requestAnimationFrame(raf);
-      }
-  
-      requestAnimationFrame(raf);
-  
-      return () => {
-        lenis.destroy();
+  lenisRef.current = lenis;
+
+  // ScrollTrigger: scrollerProxy setup
+  ScrollTrigger.defaults({ scroller: document.body }); // or a custom container
+
+  ScrollTrigger.scrollerProxy(document.body, {
+    scrollTop(value) {
+      return arguments.length ? lenis.scrollTo(value, { immediate: true }) : lenis.scroll;
+    },
+    getBoundingClientRect() {
+      return {
+        top: 0,
+        left: 0,
+        width: window.innerWidth,
+        height: window.innerHeight,
       };
-    }, []);
+    },
+    pinType: document.body.style.transform ? "transform" : "fixed",
+  });
+
+  function raf(time) {
+    lenis.raf(time);
+    ScrollTrigger.update(); // <- Important to keep in sync
+    requestAnimationFrame(raf);
+  }
+
+  requestAnimationFrame(raf);
+  ScrollTrigger.refresh(); // <- Important after setup
+
+  return () => {
+    lenis.destroy();
+    ScrollTrigger.kill();
+  };
+}, []);
+
    
   return (
     <Canvas>

@@ -5,19 +5,26 @@ Command: npx gltfjsx@6.5.3 ./public/models/Web2.glb
 
 import React, { useContext, useLayoutEffect, useRef } from "react";
 import { useGraph } from "@react-three/fiber";
-import {useGLTF, PerspectiveCamera, useAnimations, Scroll} from "@react-three/drei";
+import {
+  useGLTF,
+  PerspectiveCamera,
+  useAnimations,
+  Scroll,
+} from "@react-three/drei";
 import { SkeletonUtils } from "three-stdlib";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import * as THREE from "three";
 import { AnimationContext } from "./AnimationContext";
 
-export function Web2({sectionID, isActive, ...props }) {
+export function Web2({ sectionID, isActive, ...props }) {
   const group = React.useRef();
   const { scene, animations } = useGLTF("./models/Web2.glb");
   const clone = React.useMemo(() => SkeletonUtils.clone(scene), [scene]);
   const { nodes, materials } = useGraph(clone);
   const { actions, mixer } = useAnimations(animations, group);
+  const alreadyTriggeredLeaveBack = useRef(false);
+
   const clock = new THREE.Clock();
 
   const { currentModel, setCurrentModel, isTransitioning, setIsTransitioning } =
@@ -40,34 +47,34 @@ export function Web2({sectionID, isActive, ...props }) {
   let isEnteringBack = false;
   let nextScrollTrigger = null;
   let prevScrollTrigger = null;
+  let sectionScrollProgress = 0;
   const sceneContainerGroup = useRef();
-  let disableOtherSections = ()=>{
-    if (!prevScrollTrigger){
+  let disableOtherSections = () => {
+    if (!prevScrollTrigger) {
       let currentScrollTrigger = ScrollTrigger.getById(sectionID);
       if (currentScrollTrigger && currentScrollTrigger.previous()) {
         prevScrollTrigger = currentScrollTrigger.previous();
         prevScrollTrigger.disable();
       }
-    }else{
+    } else {
       prevScrollTrigger.disable();
     }
 
-    if (!nextScrollTrigger){
+    if (!nextScrollTrigger) {
       let currentScrollTrigger = ScrollTrigger.getById(sectionID);
       if (currentScrollTrigger && currentScrollTrigger.next()) {
         nextScrollTrigger = currentScrollTrigger.next();
         nextScrollTrigger.disable();
       }
-    }else{
+    } else {
       nextScrollTrigger.disable();
     }
-  }
+  };
 
   let enterAnim = actions["ActionEnter"];
   let leaveAnim = actions["ActionOut"];
 
   useLayoutEffect(() => {
-
     enterAnim = actions["ActionEnter"];
     leaveAnim = actions["ActionOut"];
 
@@ -78,13 +85,16 @@ export function Web2({sectionID, isActive, ...props }) {
       end: "top top",
       markers: false,
       scrub: 2,
+      preventOverlaps: true,
+      fastScrollEnd: true,
       onEnter: (self) => {
+        console.log("🚀 ~ useLayoutEffect ~ onEnter: web2");
         disableOtherSections();
         playStaticAnimations();
         setCurrentModel(sectionID);
         if (isEnteringBack) {
           playOnEnterBackSequence();
-        }else{
+        } else {
           if (enterAnim) {
             enterAnim.reset().setLoop(THREE.LoopOnce, 1);
             enterAnim.clampWhenFinished = true;
@@ -95,37 +105,102 @@ export function Web2({sectionID, isActive, ...props }) {
         }
         isEnteringBack = false;
       },
-      onEnterBack: () => {
-        disableOtherSections();
-        playStaticAnimations();
-        setCurrentModel(sectionID);
-        playOnEnterBackSequence();
-        isEnteringBack = false;
+      onUpdate: (self) => {
+        sectionScrollProgress = self.progress;
+        /* console.log(
+          "🚀 ~ useLayoutEffect ~ onUpdate:",
+          alreadyTriggeredLeaveBack.current,
+          self.progress,
+          self.direction
+        );
+
+        if (
+          self.direction === -1 &&
+          self.progress < 0.01 &&
+          !alreadyTriggeredLeaveBack.current
+        ) {
+          alreadyTriggeredLeaveBack.current = true;
+          console.log("🚀 ~ useLayoutEffect ~ onUpdate web2", self.progress);
+          if (enterAnim) {
+            enterAnim.reset();
+            enterAnim.setLoop(THREE.LoopOnce, 1);
+            enterAnim.clampWhenFinished = true;
+            enterAnim.time = enterAnim.getClip().duration;
+            enterAnim.timeScale = -1.5;
+
+            prevScrollTrigger.enable();
+
+            enterAnim.play();
+          }
+        }*/
       },
-      onLeaveBack: () => {
+      onEnterBack: () => {
+        if (isActive) {
+          console.log("🚀 ~ useLayoutEffect ~ onEnterBack: web2");
+          disableOtherSections();
+          playStaticAnimations();
+          setCurrentModel(sectionID);
+          playOnEnterBackSequence();
+          isEnteringBack = false;
+        }
+      },
+
+      onLeaveBack: (self) => {
+        console.log(
+          "🚀 ~ useLayoutEffect ~ onLeaveBack: web2",
+          sectionScrollProgress
+        );
+        console.log(
+          "progress:",
+          self.progress.toFixed(3),
+          "direction:",
+          self.direction,
+          "velocity",
+          self.getVelocity()
+        );
+        alreadyTriggeredLeaveBack.current = true;
+
         if (!enterAnim) return;
+        const velocityThreshold = 2000;
+        if (Math.abs(self.getVelocity()) > velocityThreshold) {
+          console.log(
+            "⚠️ Fast scroll detected, we skip the animation and activate the trigger directly."
+          );
+          prevScrollTrigger.enable();
+           setTimeout(() => {
+            prevScrollTrigger.refresh();
+             console.log("🚀 ~ setTimeout ~ refresh:",prevScrollTrigger)
+          }, 500);
+           
+          return;
+        }else{
         // Reset & configure the action so that it plays backwards exactly once:
         enterAnim.reset();
         enterAnim.setLoop(THREE.LoopOnce, 1);
         enterAnim.clampWhenFinished = true;
-        enterAnim.time = enterAnim.getClip().duration;     // jump to the very end of the clip
+        enterAnim.time = enterAnim.getClip().duration; // jump to the very end of the clip
         enterAnim.timeScale = -1.5;
+        
 
         // one-time callback for when this action actually finishes:
         const onActionFinished = (event) => {
           // event.action is the AnimationAction that just finished
           if (event.action === enterAnim) {
             // Remove listener so it only fires once
-            enterAnim.getMixer().removeEventListener("finished", onActionFinished);
+            enterAnim
+              .getMixer()
+              .removeEventListener("finished", onActionFinished);
             prevScrollTrigger.enable();
           }
         };
 
         // Add the listener and start playing:
         enterAnim.getMixer().addEventListener("finished", onActionFinished);
-        enterAnim.play();
+        enterAnim.play();}
       },
+      /*
       onLeave: () => {
+        console.log("🚀 ~ useLayoutEffect ~ onLeave: web2");
         if (!leaveAnim) return;
         nextScrollTrigger.disable();
         isEnteringBack = true;
@@ -136,18 +211,16 @@ export function Web2({sectionID, isActive, ...props }) {
 
         gsap.to(sceneContainerGroup.current.position, {
           y: sceneContainerGroup.current.position.y + 10,
-          duration: leaveAnim.getClip().duration ,
-          ease:"back.in"
+          duration: leaveAnim.getClip().duration,
+          ease: "back.in",
         });
 
         setTimeout(() => {
           nextScrollTrigger.enable();
         }, leaveAnim.getClip().duration * 1000 * leaveAnim.timeScale);
         leaveAnim.play();
-
-      }
+      },*/
     });
-
 
     return () => {
       // Clean up
@@ -155,7 +228,7 @@ export function Web2({sectionID, isActive, ...props }) {
     };
   }, []);
 
-  let playOnEnterBackSequence = ()=>{
+  let playOnEnterBackSequence = () => {
     if (leaveAnim) {
       leaveAnim.reset();
       leaveAnim.setLoop(THREE.LoopOnce, 1);
@@ -167,11 +240,11 @@ export function Web2({sectionID, isActive, ...props }) {
     gsap.to(sceneContainerGroup.current.position, {
       y: sceneContainerGroup.current.position.y - 10,
       duration: leaveAnim.getClip().duration,
-      ease:"back.out"
+      ease: "back.out",
     });
-  }
+  };
 
-  let playStaticAnimations = ()=>{
+  let playStaticAnimations = () => {
     Animations.forEach((name) => {
       actions[name]?.reset().play();
     });
@@ -179,326 +252,325 @@ export function Web2({sectionID, isActive, ...props }) {
     smoothAnimations.forEach((name) => {
       actions[name]?.reset().setEffectiveTimeScale(0.2).play();
     });
-  }
+  };
 
   return (
     <group ref={group} {...props} dispose={null} visible={isActive}>
       <group name="Scene">
         <group name="Empty001" position={[23.142, 1.679, 1.408]} scale={0.15}>
           <PerspectiveCamera
-              name="Camera"
-              makeDefault={isActive}
-              far={1000}
-              near={0.1}
-              fov={16.696}
-              position={[0, 0.151, 0.577]}
-              rotation={[0, 1.571, 0]}
-              scale={6.678}
+            name="Camera"
+            makeDefault={isActive}
+            far={1000}
+            near={0.1}
+            fov={16.696}
+            position={[0, 0.151, 0.577]}
+            rotation={[0, 1.571, 0]}
+            scale={6.678}
           />
         </group>
         <group ref={sceneContainerGroup} name="scene_container">
-
-        <mesh
-          name="Sphere014"
-          castShadow
-          receiveShadow
-          geometry={nodes.Sphere014.geometry}
-          material={nodes.Sphere014.material}
-          position={[-3.668, 4.08, -2.876]}
-          scale={[0.45, 0.767, 0.767]}
-        />
-        <mesh
-          name="Sphere001"
-          castShadow
-          receiveShadow
-          geometry={nodes.Sphere001.geometry}
-          material={nodes.Sphere001.material}
-          position={[-3.668, 12.438, 2.018]}
-          rotation={[Math.PI, 0, Math.PI]}
-          scale={[0.45, 0.767, 0.767]}
-        />
-        <mesh
-          name="Sphere002"
-          castShadow
-          receiveShadow
-          geometry={nodes.Sphere002.geometry}
-          material={materials["Material.001"]}
-          position={[-0.212, -0.265, -3.618]}
-          rotation={[-0.413, 0.743, 0.652]}
-          scale={0.68}
-        >
-          <group
-            name="glasss2"
-            position={[0.003, 0.084, 1.035]}
-            rotation={[1.706, -0.077, -0.068]}
-            scale={0.241}
-          >
-            <mesh
-              name="Mesh006"
-              castShadow
-              receiveShadow
-              geometry={nodes.Mesh006.geometry}
-              material={materials.glass_mat}
-            />
-            <mesh
-              name="Mesh006_1"
-              castShadow
-              receiveShadow
-              geometry={nodes.Mesh006_1.geometry}
-              material={materials.Glass_shader_out}
-            />
-          </group>
           <mesh
-            name="Mouth_Cube002"
+            name="Sphere014"
             castShadow
             receiveShadow
-            geometry={nodes.Mouth_Cube002.geometry}
-            material={materials.Eye_Lid}
-            position={[-0.001, -0.532, 0.853]}
+            geometry={nodes.Sphere014.geometry}
+            material={nodes.Sphere014.material}
+            position={[-3.668, 4.08, -2.876]}
+            scale={[0.45, 0.767, 0.767]}
+          />
+          <mesh
+            name="Sphere001"
+            castShadow
+            receiveShadow
+            geometry={nodes.Sphere001.geometry}
+            material={nodes.Sphere001.material}
+            position={[-3.668, 12.438, 2.018]}
+            rotation={[Math.PI, 0, Math.PI]}
+            scale={[0.45, 0.767, 0.767]}
+          />
+          <mesh
+            name="Sphere002"
+            castShadow
+            receiveShadow
+            geometry={nodes.Sphere002.geometry}
+            material={materials["Material.001"]}
+            position={[-0.212, -0.265, -3.618]}
+            rotation={[-0.413, 0.743, 0.652]}
+            scale={0.68}
+          >
+            <group
+              name="glasss2"
+              position={[0.003, 0.084, 1.035]}
+              rotation={[1.706, -0.077, -0.068]}
+              scale={0.241}
+            >
+              <mesh
+                name="Mesh006"
+                castShadow
+                receiveShadow
+                geometry={nodes.Mesh006.geometry}
+                material={materials.glass_mat}
+              />
+              <mesh
+                name="Mesh006_1"
+                castShadow
+                receiveShadow
+                geometry={nodes.Mesh006_1.geometry}
+                material={materials.Glass_shader_out}
+              />
+            </group>
+            <mesh
+              name="Mouth_Cube002"
+              castShadow
+              receiveShadow
+              geometry={nodes.Mouth_Cube002.geometry}
+              material={materials.Eye_Lid}
+              position={[-0.001, -0.532, 0.853]}
+              rotation={[Math.PI / 2, 0, 0]}
+              scale={0.43}
+            />
+          </mesh>
+          <group
+            name="BallonHotAir"
+            position={[-14.582, 4.564, 2.476]}
+            rotation={[0.007, -0.012, -0.001]}
+            scale={0.694}
+          >
+            <mesh
+              name="Sphere010"
+              castShadow
+              receiveShadow
+              geometry={nodes.Sphere010.geometry}
+              material={materials["Material.007"]}
+            />
+            <mesh
+              name="Sphere010_1"
+              castShadow
+              receiveShadow
+              geometry={nodes.Sphere010_1.geometry}
+              material={materials["Material.005"]}
+            />
+            <mesh
+              name="Sphere010_2"
+              castShadow
+              receiveShadow
+              geometry={nodes.Sphere010_2.geometry}
+              material={materials["Material.010"]}
+            />
+            <mesh
+              name="Sphere010_3"
+              castShadow
+              receiveShadow
+              geometry={nodes.Sphere010_3.geometry}
+              material={materials["Material.009"]}
+            />
+            <mesh
+              name="Sphere010_4"
+              castShadow
+              receiveShadow
+              geometry={nodes.Sphere010_4.geometry}
+              material={materials["Material.011"]}
+            />
+            <mesh
+              name="Sphere010_5"
+              castShadow
+              receiveShadow
+              geometry={nodes.Sphere010_5.geometry}
+              material={materials["Material.013"]}
+            />
+            <mesh
+              name="Sphere010_6"
+              castShadow
+              receiveShadow
+              geometry={nodes.Sphere010_6.geometry}
+              material={materials["Material.012"]}
+            />
+          </group>
+          <group
+            name="Cube043_Cube053"
+            position={[2.297, -5.768, -1.96]}
             rotation={[Math.PI / 2, 0, 0]}
-            scale={0.43}
-          />
-        </mesh>
-        <group
-          name="BallonHotAir"
-          position={[-14.582, 4.564, 2.476]}
-          rotation={[0.007, -0.012, -0.001]}
-          scale={0.694}
-        >
-          <mesh
-            name="Sphere010"
-            castShadow
-            receiveShadow
-            geometry={nodes.Sphere010.geometry}
-            material={materials["Material.007"]}
-          />
-          <mesh
-            name="Sphere010_1"
-            castShadow
-            receiveShadow
-            geometry={nodes.Sphere010_1.geometry}
-            material={materials["Material.005"]}
-          />
-          <mesh
-            name="Sphere010_2"
-            castShadow
-            receiveShadow
-            geometry={nodes.Sphere010_2.geometry}
-            material={materials["Material.010"]}
-          />
-          <mesh
-            name="Sphere010_3"
-            castShadow
-            receiveShadow
-            geometry={nodes.Sphere010_3.geometry}
-            material={materials["Material.009"]}
-          />
-          <mesh
-            name="Sphere010_4"
-            castShadow
-            receiveShadow
-            geometry={nodes.Sphere010_4.geometry}
-            material={materials["Material.011"]}
-          />
-          <mesh
-            name="Sphere010_5"
-            castShadow
-            receiveShadow
-            geometry={nodes.Sphere010_5.geometry}
-            material={materials["Material.013"]}
-          />
-          <mesh
-            name="Sphere010_6"
-            castShadow
-            receiveShadow
-            geometry={nodes.Sphere010_6.geometry}
-            material={materials["Material.012"]}
-          />
-        </group>
-        <group
-          name="Cube043_Cube053"
-          position={[2.297, -5.768, -1.96]}
-          rotation={[Math.PI / 2, 0, 0]}
-        >
-          <mesh
-            name="Cube043_Cube053_1"
-            castShadow
-            receiveShadow
-            geometry={nodes.Cube043_Cube053_1.geometry}
-            material={materials.Orange}
-          />
-          <mesh
-            name="Cube043_Cube053_2"
-            castShadow
-            receiveShadow
-            geometry={nodes.Cube043_Cube053_2.geometry}
-            material={materials["Material.006"]}
-          />
-        </group>
-        <group
-          name="Cube044_Cube054"
-          position={[-6.655, -4.081, 0.819]}
-          rotation={[Math.PI / 2, 0, -1.594]}
-        >
-          <mesh
-            name="Cube044_Cube054_1"
-            castShadow
-            receiveShadow
-            geometry={nodes.Cube044_Cube054_1.geometry}
-            material={materials.blue}
-          />
-          <mesh
-            name="Cube044_Cube054_2"
-            castShadow
-            receiveShadow
-            geometry={nodes.Cube044_Cube054_2.geometry}
-            material={materials["Material.006"]}
-          />
-        </group>
-        <group
-          name="Cube043_Cube001"
-          position={[2.099, -7.888, 3.968]}
-          rotation={[Math.PI / 2, 0, 0]}
-        >
-          <mesh
-            name="Cube043_Cube001_1"
-            castShadow
-            receiveShadow
-            geometry={nodes.Cube043_Cube001_1.geometry}
-            material={materials["Orange.001"]}
-          />
-          <mesh
-            name="Cube043_Cube001_2"
-            castShadow
-            receiveShadow
-            geometry={nodes.Cube043_Cube001_2.geometry}
-            material={materials["Material.006"]}
-          />
-        </group>
-        <group
-          name="Armature001"
-          position={[-0.091, 0.84, -0.237]}
-          rotation={[0.077, 1.536, -0.317]}
-          scale={0.336}
-        >
-          <group name="Retopo_Sphere001">
-            <skinnedMesh
-              name="mesh001"
-              geometry={nodes.mesh001.geometry}
-              material={materials["Material.016"]}
-              skeleton={nodes.mesh001.skeleton}
+          >
+            <mesh
+              name="Cube043_Cube053_1"
+              castShadow
+              receiveShadow
+              geometry={nodes.Cube043_Cube053_1.geometry}
+              material={materials.Orange}
             />
-            <skinnedMesh
-              name="mesh001_1"
-              geometry={nodes.mesh001_1.geometry}
-              material={materials.pants}
-              skeleton={nodes.mesh001_1.skeleton}
+            <mesh
+              name="Cube043_Cube053_2"
+              castShadow
+              receiveShadow
+              geometry={nodes.Cube043_Cube053_2.geometry}
+              material={materials["Material.006"]}
             />
-            <skinnedMesh
-              name="mesh001_2"
-              geometry={nodes.mesh001_2.geometry}
+          </group>
+          <group
+            name="Cube044_Cube054"
+            position={[-6.655, -4.081, 0.819]}
+            rotation={[Math.PI / 2, 0, -1.594]}
+          >
+            <mesh
+              name="Cube044_Cube054_1"
+              castShadow
+              receiveShadow
+              geometry={nodes.Cube044_Cube054_1.geometry}
+              material={materials.blue}
+            />
+            <mesh
+              name="Cube044_Cube054_2"
+              castShadow
+              receiveShadow
+              geometry={nodes.Cube044_Cube054_2.geometry}
+              material={materials["Material.006"]}
+            />
+          </group>
+          <group
+            name="Cube043_Cube001"
+            position={[2.099, -7.888, 3.968]}
+            rotation={[Math.PI / 2, 0, 0]}
+          >
+            <mesh
+              name="Cube043_Cube001_1"
+              castShadow
+              receiveShadow
+              geometry={nodes.Cube043_Cube001_1.geometry}
+              material={materials["Orange.001"]}
+            />
+            <mesh
+              name="Cube043_Cube001_2"
+              castShadow
+              receiveShadow
+              geometry={nodes.Cube043_Cube001_2.geometry}
+              material={materials["Material.006"]}
+            />
+          </group>
+          <group
+            name="Armature001"
+            position={[-0.091, 0.84, -0.237]}
+            rotation={[0.077, 1.536, -0.317]}
+            scale={0.336}
+          >
+            <group name="Retopo_Sphere001">
+              <skinnedMesh
+                name="mesh001"
+                geometry={nodes.mesh001.geometry}
+                material={materials["Material.016"]}
+                skeleton={nodes.mesh001.skeleton}
+              />
+              <skinnedMesh
+                name="mesh001_1"
+                geometry={nodes.mesh001_1.geometry}
+                material={materials.pants}
+                skeleton={nodes.mesh001_1.skeleton}
+              />
+              <skinnedMesh
+                name="mesh001_2"
+                geometry={nodes.mesh001_2.geometry}
+                material={materials.skin}
+                skeleton={nodes.mesh001_2.skeleton}
+              />
+            </group>
+            <primitive object={nodes.Bone} />
+            <primitive object={nodes.Bone007} />
+            <primitive object={nodes.Bone008} />
+          </group>
+          <group
+            name="Empty005"
+            position={[0.004, 1.693, -0.583]}
+            rotation={[1.528, 1.519, -0.667]}
+            scale={1.047}
+          >
+            <group
+              name="Trophy"
+              position={[0.357, -0.012, 0.013]}
+              rotation={[1.425, -1.328, 1.432]}
+              scale={0.955}
+            >
+              <mesh
+                name="Cylinder009"
+                castShadow
+                receiveShadow
+                geometry={nodes.Cylinder009.geometry}
+                material={materials.M_Tropy}
+              />
+              <mesh
+                name="Cylinder009_1"
+                castShadow
+                receiveShadow
+                geometry={nodes.Cylinder009_1.geometry}
+                material={materials["Material.008"]}
+              />
+              <mesh
+                name="Cylinder009_2"
+                castShadow
+                receiveShadow
+                geometry={nodes.Cylinder009_2.geometry}
+                material={materials.Material}
+              />
+            </group>
+          </group>
+          <group
+            name="Empty006"
+            position={[-0.072, 1.82, 0.182]}
+            rotation={[0.831, 1.513, -0.007]}
+            scale={0.268}
+          >
+            <mesh
+              name="Cube001"
+              castShadow
+              receiveShadow
+              geometry={nodes.Cube001.geometry}
               material={materials.skin}
-              skeleton={nodes.mesh001_2.skeleton}
-            />
-          </group>
-          <primitive object={nodes.Bone} />
-          <primitive object={nodes.Bone007} />
-          <primitive object={nodes.Bone008} />
-        </group>
-        <group
-          name="Empty005"
-          position={[0.004, 1.693, -0.583]}
-          rotation={[1.528, 1.519, -0.667]}
-          scale={1.047}
-        >
-          <group
-            name="Trophy"
-            position={[0.357, -0.012, 0.013]}
-            rotation={[1.425, -1.328, 1.432]}
-            scale={0.955}
-          >
-            <mesh
-              name="Cylinder009"
-              castShadow
-              receiveShadow
-              geometry={nodes.Cylinder009.geometry}
-              material={materials.M_Tropy}
+              position={[-0.12, -0.118, 0.312]}
+              rotation={[-1.58, 0.644, 1.602]}
+              scale={3.568}
             />
             <mesh
-              name="Cylinder009_1"
+              name="Cube008"
               castShadow
               receiveShadow
-              geometry={nodes.Cylinder009_1.geometry}
-              material={materials["Material.008"]}
+              geometry={nodes.Cube008.geometry}
+              material={materials.skin}
+              position={[0.136, -0.126, 0.306]}
+              rotation={[1.611, 1.033, -1.617]}
+              scale={3.568}
             />
+            <group
+              name="Cube011"
+              position={[0.321, 0.089, 0.383]}
+              rotation={[1.581, 0.176, -1.628]}
+              scale={[0.076, 2.381, 0.076]}
+            >
+              <mesh
+                name="Cube019"
+                castShadow
+                receiveShadow
+                geometry={nodes.Cube019.geometry}
+                material={materials.Blackk}
+              />
+              <mesh
+                name="Cube019_1"
+                castShadow
+                receiveShadow
+                geometry={nodes.Cube019_1.geometry}
+                material={materials["Material.008"]}
+              />
+            </group>
             <mesh
-              name="Cylinder009_2"
+              name="Cube"
               castShadow
               receiveShadow
-              geometry={nodes.Cylinder009_2.geometry}
-              material={materials.Material}
-            />
-          </group>
-        </group>
-        <group
-          name="Empty006"
-          position={[-0.072, 1.82, 0.182]}
-          rotation={[0.831, 1.513, -0.007]}
-          scale={0.268}
-        >
-          <mesh
-            name="Cube001"
-            castShadow
-            receiveShadow
-            geometry={nodes.Cube001.geometry}
-            material={materials.skin}
-            position={[-0.12, -0.118, 0.312]}
-            rotation={[-1.58, 0.644, 1.602]}
-            scale={3.568}
-          />
-          <mesh
-            name="Cube008"
-            castShadow
-            receiveShadow
-            geometry={nodes.Cube008.geometry}
-            material={materials.skin}
-            position={[0.136, -0.126, 0.306]}
-            rotation={[1.611, 1.033, -1.617]}
-            scale={3.568}
-          />
-          <group
-            name="Cube011"
-            position={[0.321, 0.089, 0.383]}
-            rotation={[1.581, 0.176, -1.628]}
-            scale={[0.076, 2.381, 0.076]}
-          >
-            <mesh
-              name="Cube019"
-              castShadow
-              receiveShadow
-              geometry={nodes.Cube019.geometry}
+              geometry={nodes.Cube.geometry}
               material={materials.Blackk}
-            />
-            <mesh
-              name="Cube019_1"
-              castShadow
-              receiveShadow
-              geometry={nodes.Cube019_1.geometry}
-              material={materials["Material.008"]}
+              position={[-1.383, -1.103, 0.422]}
+              rotation={[1.601, 0.618, 1.507]}
+              scale={[0.054, 2.059, 0.054]}
             />
           </group>
-          <mesh
-            name="Cube"
-            castShadow
-            receiveShadow
-            geometry={nodes.Cube.geometry}
-            material={materials.Blackk}
-            position={[-1.383, -1.103, 0.422]}
-            rotation={[1.601, 0.618, 1.507]}
-            scale={[0.054, 2.059, 0.054]}
-          />
         </group>
-      </group>
       </group>
     </group>
   );

@@ -96,23 +96,28 @@ export function Web3({ sectionID, isActive, ...props }) {
       scrub: 2,
       markers: false,
       onEnter: () => {
+        console.log("🚀 ~ useLayoutEffect ~ onEnter: web3")
         setCurrentModel(sectionID);
         disableOtherSections();
         resetAllActions();
         playIntroAnimations();
       },
       onEnterBack: () => {
+        console.log("🚀 ~ useLayoutEffect ~ onEnterBack: web3")
         setCurrentModel(sectionID);
         disableOtherSections();
         resetAllActions();
         playIntroAnimations(true);
       },
       onLeaveBack: () => {
+        console.log("🚀 ~ useLayoutEffect ~ onLeaveBack: web3")
         playIntroAnimations(true);
 
-        setTimeout(() => {
+        //setTimeout(() => {
           prevScrollTrigger.enable();
-        }, enterAnimation.getClip().duration * 1000);
+
+        //}, enterAnimation.getClip().duration * 1000);
+         
       },
     });
 
@@ -122,6 +127,8 @@ export function Web3({ sectionID, isActive, ...props }) {
       start: "top bottom",
       end: "bottom top",
       scrub: 2.5,
+      preventOverlaps: true,
+      fastScrollEnd: true,
       markers: true,
       onEnter: () => {
         // if (!playedScroll.current) {

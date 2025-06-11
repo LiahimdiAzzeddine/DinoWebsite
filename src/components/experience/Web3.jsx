@@ -88,11 +88,23 @@ export function Web3({ sectionID, isActive, ...props }) {
     enterAnimation.timeScale = reversed ? -1 : 1;
     enterAnimation.clampWhenFinished = true;
     enterAnimation.play();
+    scaleManToOriginalSize();
     if (!reversed) {
       firstAnimations.forEach((name) => actions[name]?.reset().play());
       actions["Armature.001Action"]?.reset().play();
     }
   };
+
+  let scaleManToOriginalSize = () => {
+    // scale man to original size
+    gsap.to(ManRef.current.scale, {
+      x: 0.029,
+      y: 0.029,
+      z: 0.029,
+      duration: 0.5,
+      ease: "power2.out",
+    });
+  }
 
   useLayoutEffect(() => {
     enterAnimation = actions["ActionEnter"];
@@ -103,6 +115,7 @@ export function Web3({ sectionID, isActive, ...props }) {
       trigger: "#section4",
       start: "top bottom",
       end: "#section5 bottom",
+      preventClicks: true,
       scrub: true,
       markers: false,
       onEnter: () => {
@@ -117,12 +130,15 @@ export function Web3({ sectionID, isActive, ...props }) {
         resetAllActions();
         playIntroAnimations(true);
       },
-      onLeaveBack: () => {
+      onLeaveBack: (self) => {
         playIntroAnimations(true);
-
-        setTimeout(() => {
-          prevScrollTrigger.enable();
-        }, enterAnimation.getClip().duration * 1000);
+        if (Math.abs(self.getVelocity()) <= 2000) {
+          setTimeout(() => {
+            prevScrollTrigger.enable();
+          }, enterAnimation.getClip().duration * 1000);
+        } else {
+          enableOtherSections();
+        }
       },
     });
 
@@ -132,26 +148,22 @@ export function Web3({ sectionID, isActive, ...props }) {
       start: "top bottom",
       end: "bottom top",
       scrub: 2.5,
-      markers: true,
+      markers: false,
       onEnter: () => {
         setCurrentModel(sectionID);
         disableOtherSections();
 
         const action = actions["1.2ndScroll"];
         if (action) {
-          console.log("🚀 ~ useLayoutEffect ~ 2ndScroll:", action)
           action.reset();
           action.setLoop(THREE.LoopOnce, 1);
           action.clampWhenFinished = true;
           action.time = action.getClip().duration - 0.1;
-         action.timeScale = 1;
+          action.timeScale = 1;
           action.enabled = true;
           action.setEffectiveWeight(1);
           action.paused = false;
           action.play();
-          setTimeout(() => {
-          console.log("🚀 ~ setTimeout ~ setTimeout:")
-          }, (action.getClip().duration - 0.1)*1000);
         }
 
         scrollAnimations.forEach((name) => {
@@ -164,7 +176,7 @@ export function Web3({ sectionID, isActive, ...props }) {
             anim.play();
           }
         });
-        console.log("ManRef.current.scale", ManRef.current.scale.toArray());
+        // console.log("ManRef.current.scale", ManRef.current.scale.toArray());
         gsap.to(ManRef.current.scale, {
           x: 0,
           y: 0,
@@ -181,15 +193,8 @@ export function Web3({ sectionID, isActive, ...props }) {
         }
       },
 
-      onLeaveBack: () => {
-        console.log("🚀 ~ useLayoutEffect ~ onLeaveBack:");
-        gsap.to(ManRef.current.scale, {
-          x: 0.029,
-          y: 0.029,
-          z: 0.029,
-          duration: 0.5,
-          ease: "power2.out",
-        });
+      onLeaveBack: (self) => {
+        scaleManToOriginalSize();
         scrollAnimations.forEach((name) => {
           const anim = actions[name];
           if (anim) {
@@ -216,6 +221,9 @@ export function Web3({ sectionID, isActive, ...props }) {
           action.setEffectiveWeight(1);
           action.paused = false;
           action.play();
+        }
+        if (Math.abs(self.getVelocity()) > 2000) {
+          enableOtherSections();
         }
       },
       onUpdate: (self) => {

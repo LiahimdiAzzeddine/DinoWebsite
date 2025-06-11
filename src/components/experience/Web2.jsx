@@ -38,7 +38,6 @@ export function Web2({sectionID, isActive, ...props }) {
   const smoothAnimations = ["Clouds1", "Clouds2"];
 
   // scroll tracking
-  let isEnteringBack = false;
   let nextScrollTrigger = null;
   let prevScrollTrigger = null;
   let scrollDirection = 1;
@@ -77,11 +76,14 @@ export function Web2({sectionID, isActive, ...props }) {
 
   let enterAnim = actions["ActionEnter"];
   let leaveAnim = actions["ActionOut"];
+  let sceneDefaultPos = 0;
+
 
   useLayoutEffect(() => {
 
     enterAnim = actions["ActionEnter"];
     leaveAnim = actions["ActionOut"];
+    sceneDefaultPos = sceneContainerGroup.current.position.y;
 
     // scroll tracking
     Observer.create({
@@ -97,53 +99,42 @@ export function Web2({sectionID, isActive, ...props }) {
     ScrollTrigger.create({
       id: sectionID,
       trigger: "#section3",
-      start: "top bottom+=100px",
+      start: "top bottom",
       end: "top top",
       scrub: true,
-      markers: true,
+      markers: false,
+      preventClicks: true,
       onToggle: self => {
         if (self.isActive) {
+          disableOtherSections();
+          playStaticAnimations();
+          setCurrentModel(sectionID);
+
           // direction: +1 means scrolling forward/down, –1 is backward/up
           if (scrollDirection >= 0) {
-            console.log("web-2 onEnter logic (down)");
+            // onEnter
+            if (enterAnim) {
+              enterAnim.reset().setLoop(THREE.LoopOnce, 1);
+              enterAnim.clampWhenFinished = true;
+              enterAnim.time = 0;
+              enterAnim.timeScale = 1;
+              enterAnim.play();
+            }
           } else {
-            console.log("web-2 onEnterBack logic (up)");
+            // onEnterBack
+            playOnEnterBackSequence();
+
           }
         } else {
           if (scrollDirection >= 0) {
             // onLeave
             handleOnLeave(self);
-            console.log("web-2 onLeave logic (down)");
           }
         }
-      },
-      onEnter: (self) => {
-        disableOtherSections();
-        playStaticAnimations();
-        setCurrentModel(sectionID);
-        if (isEnteringBack) {
-          playOnEnterBackSequence();
-        }else{
-          if (enterAnim) {
-            enterAnim.reset().setLoop(THREE.LoopOnce, 1);
-            enterAnim.clampWhenFinished = true;
-            enterAnim.time = 0;
-            enterAnim.timeScale = 1;
-            enterAnim.play();
-          }
-        }
-        isEnteringBack = false;
-      },
-      onEnterBack: () => {
-        disableOtherSections();
-        playStaticAnimations();
-        setCurrentModel(sectionID);
-        playOnEnterBackSequence();
-        isEnteringBack = false;
       },
       onLeaveBack: (self) => {
         console.log("web-2 onLeaveBack");
-        if (Math.abs(self.getVelocity()) <= 1500) {
+        if (Math.abs(self.getVelocity()) <= 2000) {
           // Reset & configure the action so that it plays backwards exactly once:
           enterAnim.reset();
           enterAnim.setLoop(THREE.LoopOnce, 1);
@@ -188,7 +179,7 @@ export function Web2({sectionID, isActive, ...props }) {
       leaveAnim.play();
     }
     gsap.to(sceneContainerGroup.current.position, {
-      y: sceneContainerGroup.current.position.y - 10,
+      y: sceneDefaultPos,
       duration: leaveAnim.getClip().duration,
       ease:"back.out"
     });
@@ -205,16 +196,15 @@ export function Web2({sectionID, isActive, ...props }) {
   }
 
   let handleOnLeave = (self)=>{
-    if (Math.abs(self.getVelocity()) <= 1500) {
+    if (Math.abs(self.getVelocity()) <= 4000) {
       nextScrollTrigger.disable();
-      isEnteringBack = true;
       // Reset & configure the action
       leaveAnim.reset().setLoop(THREE.LoopOnce, 1);
       leaveAnim.clampWhenFinished = true;
       leaveAnim.timeScale = 1;
 
       gsap.to(sceneContainerGroup.current.position, {
-        y: sceneContainerGroup.current.position.y + 10,
+        y: sceneDefaultPos + 10,
         duration: leaveAnim.getClip().duration ,
         ease:"back.in"
       });

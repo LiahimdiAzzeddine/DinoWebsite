@@ -85,10 +85,10 @@ export function Web1({ sectionID, isActive, lenis, ...props }) {
     ScrollTrigger.create({
       id: sectionID,
       trigger: "#section2",
-      start: "top bottom-=100px",
+      start: "top bottom",
       end: "top top",
       scrub: true,
-      markers: true,
+      markers: false,
       onUpdate: (self) => {
         sectionScrollProgress = self.progress;
         // Kill any existing tween
@@ -115,7 +115,7 @@ export function Web1({ sectionID, isActive, lenis, ...props }) {
         }
       },
       onLeave: (self) => {
-        if (Math.abs(self.getVelocity()) <= 1500) {
+        if (Math.abs(self.getVelocity()) <= 2000) {
           gsap.to(sceneContainerGroup.current.position, {
             y: sceneDefaultPos + 50,
             duration:.3,

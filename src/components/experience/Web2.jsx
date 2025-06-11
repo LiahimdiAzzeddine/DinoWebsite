@@ -8,6 +8,7 @@ import { useGraph } from "@react-three/fiber";
 import {useGLTF, PerspectiveCamera, useAnimations, Scroll} from "@react-three/drei";
 import { SkeletonUtils } from "three-stdlib";
 import gsap from "gsap";
+import {Observer} from "gsap/Observer";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import * as THREE from "three";
 import { AnimationContext } from "./AnimationContext";
@@ -40,6 +41,7 @@ export function Web2({sectionID, isActive, ...props }) {
   let isEnteringBack = false;
   let nextScrollTrigger = null;
   let prevScrollTrigger = null;
+  let scrollDirection = 1;
   const sceneContainerGroup = useRef();
   let disableOtherSections = ()=>{
     if (!prevScrollTrigger){
@@ -71,13 +73,36 @@ export function Web2({sectionID, isActive, ...props }) {
     enterAnim = actions["ActionEnter"];
     leaveAnim = actions["ActionOut"];
 
+    // scroll tracking
+    Observer.create({
+      target: window,
+      type: "wheel,touch,pointer,scroll",
+      onChange: obs => {
+        // obs.deltaY < 0 means scrolling up, > 0 means down
+        // console.log(obs.deltaY < 0 ? "raw ↑" : "raw ↓");
+        scrollDirection = obs.deltaY < 0 ? -1 : 1;
+      }
+    });
+
     ScrollTrigger.create({
       id: sectionID,
       trigger: "#section3",
       start: "top bottom",
       end: "top top",
       markers: false,
-      scrub: 2,
+      scrub: true,
+      onToggle: self => {
+        if (self.isActive) {
+          // direction: +1 means scrolling forward/down, –1 is backward/up
+          if (scrollDirection >= 0) {
+            console.log("web-2 onEnter logic (down)");
+          } else {
+            console.log("web-2 onEnterBack logic (up)");
+          }
+        } else {
+          console.log("web-2 Section left");
+        }
+      },
       onEnter: (self) => {
         disableOtherSections();
         playStaticAnimations();

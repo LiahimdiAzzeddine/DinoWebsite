@@ -1,6 +1,7 @@
 import {useContext, useEffect, useLayoutEffect, useRef} from "react";
 import { useGLTF, PerspectiveCamera, useAnimations } from "@react-three/drei";
 import gsap from "gsap";
+import {Observer} from "gsap/Observer";
 import {ScrollTrigger} from "gsap/ScrollTrigger";
 import { AnimationContext } from "./AnimationContext";
 import * as THREE from "three";
@@ -40,9 +41,9 @@ export function Web1({ sectionID, isActive, lenis, ...props }) {
     useContext(AnimationContext);
   const timelineMain = useRef();
   // track scrolling status
-  let isEnteringBack = false;
   const currentTween = useRef(null);
   let nextScrollTrigger = null;
+  let scrollDirection = 1;
 
   let disableOtherSections = ()=>{
     if (!nextScrollTrigger){
@@ -58,6 +59,7 @@ export function Web1({ sectionID, isActive, lenis, ...props }) {
 
   useLayoutEffect(() => {
 
+    // animations
     animationsPlay.forEach((name) => {
       actions[name]?.reset().play();
     });
@@ -68,14 +70,27 @@ export function Web1({ sectionID, isActive, lenis, ...props }) {
 
     camAct.reset().play().paused = true;
     const clipDur = camAct.getClip().duration;
+    let sceneDefaultPos = sceneContainerGroup.current.position.y;
 
+    // scroll tracking
+    Observer.create({
+      target: window,
+      type: "wheel,touch,pointer,scroll",
+      onChange: obs => {
+        // obs.deltaY < 0 means scrolling up, > 0 means down
+        // console.log(obs.deltaY < 0 ? "raw ↑" : "raw ↓");
+        scrollDirection = obs.deltaY < 0 ? -1 : 1;
+      }
+    });
+
+    // scroll triggers
     ScrollTrigger.create({
       id: sectionID,
       trigger: "#section2",
-      start: "top bottom",
+      start: "top bottom-=100px",
       end: "top top",
-      scrub: 0.5,
-      markers: false,
+      scrub: true,
+      markers: true,
       onUpdate: (self) => {
         sectionScrollProgress = self.progress;
         // Kill any existing tween
@@ -90,49 +105,44 @@ export function Web1({ sectionID, isActive, lenis, ...props }) {
           overwrite: true
         });
       },
-      onLeave: (self) => {
-        isEnteringBack = true;
-
-        gsap.to(sceneContainerGroup.current.position, {
-          y: sceneContainerGroup.current.position.y + 50,
-          duration:.8,
-          ease:"sine.inOut",
-          onComplete: () => {
-            nextScrollTrigger.enable();
-          },
-        });
-      },
-      onEnter: (self) => {
-        setCurrentModel(sectionID);
-        disableOtherSections();
-
-        // the following meant to simulate a onEnterBack scenario
-        // it's a workaround a problem of the onEnter triggering instead of it in some cases
-        // tween should be identical to the one in the actual onEnterBack
-        if (isEnteringBack) {
+      onToggle: self => {
+        if (self.isActive) {
+          setCurrentModel(sectionID);
+          disableOtherSections();
           gsap.to(sceneContainerGroup.current.position, {
-            y: sceneContainerGroup.current.position.y - 50,
+            y: sceneDefaultPos,
             duration:0.3,
             ease: "circ.out",
-            onComplete: () => {
-              isEnteringBack = false;
-            }
           });
+          //
+          // // direction: +1 means scrolling forward/down, –1 is backward/up
+          // if (scrollDirection >= 0) {
+          //   // onEnter
+          //   console.log("web-1 onEnter logic (down)");
+          // } else {
+          //   // onEnterBack
+          //   console.log("web-1 onEnterBack logic (up)");
+          //
+          // }
+        } else {
+          console.log("web-1 Section left");
+        }
+      },
+      onLeave: (self) => {
+        if (self.getVelocity() <= 3000) {
+          gsap.to(sceneContainerGroup.current.position, {
+            y: sceneDefaultPos + 50,
+            duration:.3,
+            ease:"sine.inOut",
+            onComplete: () => {
+              nextScrollTrigger.enable();
+            },
+          });
+        }else{
+          nextScrollTrigger.enable();
         }
 
-      },
-      onEnterBack: () => {
-        setCurrentModel(sectionID);
-        disableOtherSections();
-        gsap.to(sceneContainerGroup.current.position, {
-          y: sceneContainerGroup.current.position.y - 50,
-          duration:0.3,
-          ease: "circ.out",
-          onComplete: () => {
-            isEnteringBack = false;
-          }
-        });
-      },
+      }
     });
 
 

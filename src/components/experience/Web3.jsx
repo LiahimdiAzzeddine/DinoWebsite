@@ -93,7 +93,7 @@ export function Web3({ sectionID, isActive, ...props }) {
       trigger: "#section4",
       start: "top bottom",
       end: "#section5 bottom",
-      scrub: 2,
+      scrub: true,
       markers: false,
       onEnter: () => {
         setCurrentModel(sectionID);

@@ -78,7 +78,7 @@ export function Web1({ sectionID, isActive, lenis, ...props }) {
       start: "top bottom-=100px",
       end: "top top",
       scrub: true,
-      markers: false,
+      markers: true,
       onUpdate: (self) => {
         sectionScrollProgress = self.progress;
         // Kill any existing tween
@@ -105,7 +105,7 @@ export function Web1({ sectionID, isActive, lenis, ...props }) {
         }
       },
       onLeave: (self) => {
-        if (self.getVelocity() <= 3000) {
+        if (Math.abs(self.getVelocity()) <= 1500) {
           gsap.to(sceneContainerGroup.current.position, {
             y: sceneDefaultPos + 50,
             duration:.3,

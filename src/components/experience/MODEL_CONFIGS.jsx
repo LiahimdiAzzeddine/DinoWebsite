@@ -9,7 +9,7 @@ const MODEL_CONFIGS = {
     triggerSection: "#section2",
     sectioncolor: 0x9a70e7,
     colorA: '#d7e0eb', 
-    colorB: '#cc64ca',
+    colorB: '#6ac0f1',
     Component: Web1,
   },
   Model2: {
@@ -17,7 +17,7 @@ const MODEL_CONFIGS = {
     triggerSection: "#section3",
     sectioncolor: 0x9a70e7,
     colorA: '#d7e0eb', 
-    colorB: '#cc64ca',
+    colorB: '#6ac0f1',
     Component: Web2,
   }, 
   Model3: {
@@ -25,7 +25,7 @@ const MODEL_CONFIGS = {
     triggerSection: "#section4",
     sectioncolor: 0x9a70e7,
     colorA: '#d7e0eb', 
-    colorB: '#cc64ca',
+    colorB: '#6ac0f1',
     Component: Web3,
   },
   // I added this to fix a lightning change, I found that a lot of places reference Model1 explicitly.
@@ -36,7 +36,7 @@ const MODEL_CONFIGS = {
     triggerSection: "#section2",
     sectioncolor: 0x9a70e7,
     colorA: '#d7e0eb',
-    colorB: '#cc64ca',
+    colorB: '#6ac0f1',
     Component: Web1,
   },
   web2: {
@@ -44,7 +44,7 @@ const MODEL_CONFIGS = {
     triggerSection: "#section3",
     sectioncolor: 0x9a70e7,
     colorA: '#d7e0eb',
-    colorB: '#cc64ca',
+    colorB: '#6ac0f1',
     Component: Web2,
   },
   web3: {
@@ -52,7 +52,7 @@ const MODEL_CONFIGS = {
     triggerSection: "#section4",
     sectioncolor: 0x9a70e7,
     colorA: '#d7e0eb',
-    colorB: '#cc64ca',
+    colorB: '#6ac0f1',
     Component: Web3,
   },
 

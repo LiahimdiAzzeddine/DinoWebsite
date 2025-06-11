@@ -65,6 +65,14 @@ export function Web2({sectionID, isActive, ...props }) {
     }
   }
 
+  let enableOtherSections = ()=>{
+    ScrollTrigger.getAll().forEach((trigger) => {
+      if (trigger.id !== sectionID) {
+        trigger.enable();
+      }
+    })
+  }
+
   let enterAnim = actions["ActionEnter"];
   let leaveAnim = actions["ActionOut"];
 
@@ -87,10 +95,10 @@ export function Web2({sectionID, isActive, ...props }) {
     ScrollTrigger.create({
       id: sectionID,
       trigger: "#section3",
-      start: "top bottom-=100px",
+      start: "top bottom+=100px",
       end: "top top",
-      markers: false,
       scrub: true,
+      markers: true,
       onToggle: self => {
         if (self.isActive) {
           // direction: +1 means scrolling forward/down, –1 is backward/up
@@ -114,7 +122,7 @@ export function Web2({sectionID, isActive, ...props }) {
             enterAnim.reset().setLoop(THREE.LoopOnce, 1);
             enterAnim.clampWhenFinished = true;
             enterAnim.time = 0;
-            enterAnim.timeScale = 1.5;
+            enterAnim.timeScale = 1;
             enterAnim.play();
           }
         }
@@ -127,28 +135,32 @@ export function Web2({sectionID, isActive, ...props }) {
         playOnEnterBackSequence();
         isEnteringBack = false;
       },
-      onLeaveBack: () => {
-        if (!enterAnim) return;
-        // Reset & configure the action so that it plays backwards exactly once:
-        enterAnim.reset();
-        enterAnim.setLoop(THREE.LoopOnce, 1);
-        enterAnim.clampWhenFinished = true;
-        enterAnim.time = enterAnim.getClip().duration;     // jump to the very end of the clip
-        enterAnim.timeScale = -1.5;
+      onLeaveBack: (self) => {
+        if (Math.abs(self.getVelocity()) <= 1500) {
+          // Reset & configure the action so that it plays backwards exactly once:
+          enterAnim.reset();
+          enterAnim.setLoop(THREE.LoopOnce, 1);
+          enterAnim.clampWhenFinished = true;
+          enterAnim.time = enterAnim.getClip().duration;     // jump to the very end of the clip
+          enterAnim.timeScale = -1.5;
 
-        // one-time callback for when this action actually finishes:
-        const onActionFinished = (event) => {
-          // event.action is the AnimationAction that just finished
-          if (event.action === enterAnim) {
-            // Remove listener so it only fires once
-            enterAnim.getMixer().removeEventListener("finished", onActionFinished);
-            prevScrollTrigger.enable();
-          }
-        };
+          // one-time callback for when this action actually finishes:
+          const onActionFinished = (event) => {
+            // event.action is the AnimationAction that just finished
+            if (event.action === enterAnim) {
+              // Remove listener so it only fires once
+              enterAnim.getMixer().removeEventListener("finished", onActionFinished);
+              prevScrollTrigger.enable();
+            }
+          };
 
-        // Add the listener and start playing:
-        enterAnim.getMixer().addEventListener("finished", onActionFinished);
-        enterAnim.play();
+          // Add the listener and start playing:
+          enterAnim.getMixer().addEventListener("finished", onActionFinished);
+          enterAnim.play();
+        }else{
+          enableOtherSections();
+        }
+
       },
       onLeave: () => {
         if (!leaveAnim) return;

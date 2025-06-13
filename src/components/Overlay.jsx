@@ -12,7 +12,7 @@ const Section = (props) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
-      className={`min-h-screen relative flex flex-col justify-center p-4 md:p-6 lg:p-10 ${
+      className={`min-h-screen relative flex flex-col justify-start py-4 pt-32  md:p-6 lg:p-10 ${
         props.right ? "items-end" : "items-start"
       } ${props.class}`}
       style={{ opacity: props.opacity }}

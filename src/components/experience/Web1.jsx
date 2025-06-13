@@ -6,40 +6,33 @@ import {ScrollTrigger} from "gsap/ScrollTrigger";
 import { AnimationContext } from "./AnimationContext";
 import * as THREE from "three";
 import {Clock} from "three";
+import {useThree} from "@react-three/fiber";
 
-export function Web1({ sectionID, isActive, lenis, ...props }) {
+const animationsPlay = [
+  "Armature.001Action",
+  "Armature.003Action.003",
+  "Armature.004Action.002",
+  "Cube.032Action",
+  "Empty.001Action.001",
+  "Empty.003Action.001",
+  "Empty.005Action",
+  "Empty.006Action",
+  "Empty.009Action.002",
+  "Empty.010Action.002",
+  "Empty.010Action.004",
+  "Sphere.010Action",
+  "Sphere.011Action",
+];
+
+export function Web1({sectionID, isActive, lenis, ...props }) {
   const group = useRef();
   const sceneContainerGroup = useRef();
   const { nodes, materials, animations } = useGLTF("./models/Web1.glb");
-  const animationsPlay = [
-    "Armature.001Action",
-    "Armature.003Action.003",
-    "Armature.004Action.002",
-    "Cube.032Action",
-    "Empty.001Action.001",
-    "Empty.003Action.001",
-    "Empty.005Action",
-    "Empty.006Action",
-    "Empty.009Action.002",
-    "Empty.010Action.002",
-    "Empty.010Action.004",
-    "Sphere.010Action",
-    "Sphere.011Action",
-  ];
-
-  const enterBackPose = {
-    pos: { x: 9.518234104129505, y: 10.246442276415198, z: 13.155294189145259 },
-    rot: {
-      x: -0.5847639562422204,
-      y: 0.6849448260986001,
-      z: 0.35641899589135906,
-    },
-  };
   const { actions, mixer } = useAnimations(animations, group);
-
-  const { currentModel, setCurrentModel, setIsTransitioning, isTransitioning } =
-    useContext(AnimationContext);
+  const { currentModel, setCurrentModel, setIsTransitioning, isTransitioning } = useContext(AnimationContext);
   const timelineMain = useRef();
+  const { viewport } = useThree()
+
   // track scrolling status
   const currentTween = useRef(null);
   let nextScrollTrigger = null;
@@ -81,6 +74,12 @@ export function Web1({ sectionID, isActive, lenis, ...props }) {
     const clipDur = camAct.getClip().duration;
     let sceneDefaultPos = sceneContainerGroup.current.position.y;
 
+    // mobile scroll animation
+    let lastProgress = 0;
+    let lastY = sceneContainerGroup.current.position.y;
+    const minY = 0; // your minimum Y value
+    const maxY = 2;  // your maximum Y value
+
     // scroll triggers
     ScrollTrigger.create({
       id: sectionID,
@@ -92,16 +91,40 @@ export function Web1({ sectionID, isActive, lenis, ...props }) {
       onUpdate: (self) => {
         sectionScrollProgress = self.progress;
         // Kill any existing tween
+        // if (currentTween.current) {
+        //   currentTween.current.kill();
+        // }
+        // // Create new tween
+        // currentTween.current = gsap.to(camAct, {
+        //   // time: sectionScrollProgress * clipDur,
+        //   time: 0,
+        //   duration: 0.1, // Adjust this value to control smoothing amount
+        //   ease: "sine.out",
+        //   overwrite: true
+        // });
+        let direction = self.direction; // 1 = scroll down, -1 = scroll up
+
+        // Compute delta and clamp new Y position
+        let delta = direction * 0.2; // Adjust speed here
+        let newY = THREE.MathUtils.clamp(lastY + delta, minY, maxY);
+
+        // Kill existing tween
         if (currentTween.current) {
           currentTween.current.kill();
         }
-        // Create new tween
-        currentTween.current = gsap.to(camAct, {
-          time: sectionScrollProgress * clipDur,
-          duration: 0.1, // Adjust this value to control smoothing amount
+
+        // Tween model Y position
+        currentTween.current = gsap.to(sceneContainerGroup.current.position, {
+          y: newY,
+          duration: 0.1,
           ease: "sine.out",
-          overwrite: true
+          overwrite: true,
+          onUpdate: () => {
+            lastY = sceneContainerGroup.current.position.y; // Track the current Y
+          }
         });
+
+        lastProgress = self.progress;
       },
       onToggle: self => {
         if (self.isActive) {
@@ -149,7 +172,11 @@ export function Web1({ sectionID, isActive, lenis, ...props }) {
           position={[3.446, 20.931, 15.945]}
           rotation={[-0.417, 0.041, -0.022]}
         />
-        <group ref={sceneContainerGroup} name="scene_container" >
+        <group ref={sceneContainerGroup} name="scene_container"
+               scale={0.5}
+               position-x={2.5}
+               // scale={viewport.width < 6 ? 0.5 : 1}
+        >
 
         <mesh
           name="GroundCubeQuad003"

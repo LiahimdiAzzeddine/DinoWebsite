@@ -59,6 +59,11 @@ export function Web1({sectionID, isActive, lenis, ...props }) {
     })
   }
 
+  const viewportRef = useRef(viewport);
+  useEffect(() => {
+    viewportRef.current = viewport;
+  }, [viewport]);
+
   useLayoutEffect(() => {
 
     // animations
@@ -90,41 +95,46 @@ export function Web1({sectionID, isActive, lenis, ...props }) {
       markers: false,
       onUpdate: (self) => {
         sectionScrollProgress = self.progress;
-        // Kill any existing tween
-        // if (currentTween.current) {
-        //   currentTween.current.kill();
-        // }
-        // // Create new tween
-        // currentTween.current = gsap.to(camAct, {
-        //   // time: sectionScrollProgress * clipDur,
-        //   time: 0,
-        //   duration: 0.1, // Adjust this value to control smoothing amount
-        //   ease: "sine.out",
-        //   overwrite: true
-        // });
-        let direction = self.direction; // 1 = scroll down, -1 = scroll up
+        if (viewportRef.current.width < 5){
+          // small screens
+          let direction = self.direction; // 1 = scroll down, -1 = scroll up
 
-        // Compute delta and clamp new Y position
-        let delta = direction * 0.2; // Adjust speed here
-        let newY = THREE.MathUtils.clamp(lastY + delta, minY, maxY);
+          // Compute delta and clamp new Y position
+          let delta = direction * 0.2; // Adjust speed here
+          let newY = THREE.MathUtils.clamp(lastY + delta, minY, maxY);
 
-        // Kill existing tween
-        if (currentTween.current) {
-          currentTween.current.kill();
+          // Kill existing tween
+          if (currentTween.current) {
+            currentTween.current.kill();
+          }
+
+          // Tween model Y position
+          currentTween.current = gsap.to(sceneContainerGroup.current.position, {
+            y: newY,
+            duration: 0.1,
+            ease: "sine.out",
+            overwrite: true,
+            onUpdate: () => {
+              lastY = sceneContainerGroup.current.position.y; // Track the current Y
+            }
+          });
+
+          lastProgress = self.progress;
+        }else{
+          // desktop
+          // Kill any existing tween
+          if (currentTween.current) {
+            currentTween.current.kill();
+          }
+          // Create new tween
+          currentTween.current = gsap.to(camAct, {
+            time: sectionScrollProgress * clipDur,
+            duration: 0.1, // Adjust this value to control smoothing amount
+            ease: "sine.out",
+            overwrite: true
+          });
         }
 
-        // Tween model Y position
-        currentTween.current = gsap.to(sceneContainerGroup.current.position, {
-          y: newY,
-          duration: 0.1,
-          ease: "sine.out",
-          overwrite: true,
-          onUpdate: () => {
-            lastY = sceneContainerGroup.current.position.y; // Track the current Y
-          }
-        });
-
-        lastProgress = self.progress;
       },
       onToggle: self => {
         if (self.isActive) {
@@ -173,9 +183,8 @@ export function Web1({sectionID, isActive, lenis, ...props }) {
           rotation={[-0.417, 0.041, -0.022]}
         />
         <group ref={sceneContainerGroup} name="scene_container"
-               scale={0.5}
-               position-x={2.5}
-               // scale={viewport.width < 6 ? 0.5 : 1}
+               scale={viewport.width < 5 ? 0.5 : 1}
+               position-x={viewport.width < 5 ? 2.5 : 0}
         >
 
         <mesh

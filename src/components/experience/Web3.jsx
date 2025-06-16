@@ -825,4 +825,4 @@ export function Web3({ sectionID, isActive, ...props }) {
   );
 }
 
-useGLTF.preload("./models/Web2.glb");
+useGLTF.preload("./models/Web3.glb");

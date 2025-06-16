@@ -17,7 +17,6 @@ export function Model4(props) {
   const clone = React.useMemo(() => SkeletonUtils.clone(scene), [scene])
   const { nodes, materials } = useGraph(clone)
   const { actions, mixer } = useAnimations(animations, group);
-  console.log("🚀 ~ Model4 ~ actions:", actions['CameraAction.001'])
 
   useEffect(() => {
     if (!actions || !mixer || !actions['CameraAction.001']) return;

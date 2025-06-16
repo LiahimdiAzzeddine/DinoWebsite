@@ -12,7 +12,6 @@ export function MultiUserCollab(props) {
   const group = React.useRef()
   const { scene, animations } = useGLTF('./models/multiusercollabnew.glb')
   const clone = React.useMemo(() => SkeletonUtils.clone(scene), [scene])
-  console.log("🚀 ~ MultiUserCollab ~ animations:", animations)
   const { nodes, materials } = useGraph(clone)
   const { actions } = useAnimations(animations, group)
   

@@ -13,7 +13,6 @@ export function Customshaders(props) {
   const { scene, animations } = useGLTF('./models/customshaders.glb')
   const clone = React.useMemo(() => SkeletonUtils.clone(scene), [scene])
   const { nodes, materials } = useGraph(clone)
-  console.log("🚀 ~ Customshaders ~ materials:", materials)
   const { actions } = useAnimations(animations, group)
   useEffect(() => {
     if (actions) {

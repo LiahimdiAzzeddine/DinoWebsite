@@ -8,6 +8,7 @@ import { Overlay } from "./components/Overlay";
 import { AnimationProvider } from "./components/experience/AnimationContext";
 import Loader from "./components/Loader";
 import Lenis from '@studio-freight/lenis';
+import Footer from "./components/Footer";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -43,8 +44,9 @@ function App() {
 			<div className="h-screen w-full fixed top-0 z-10 ">
 				<CanvasContainer />
 			</div>
-    <Overlay />
+    <Overlay />  
   </main>
+  <Footer />
   </AnimationProvider>
   );
 }

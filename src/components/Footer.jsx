@@ -502,27 +502,7 @@ export default function Footer() {
           </div>
         </div>
       </nav>
-      <style
-        dangerouslySetInnerHTML={{
-          __html: `
-html {
-  height: -webkit-fill-available;
-}
-
-body {
-  background: linear-gradient(90deg, rgb(254, 173, 139) 30%, rgb(255, 86, 66));
-  margin: 0px;
-  padding: 0px;
-  min-height: -webkit-fill-available;
-  overflow-x: hidden;
-  width: 100%;
-  -webkit-font-smoothing: antialiased;
-  scrollbar-width: thin;
-  font-family: "Nunito Sans", sans-serif;
-}
-`,
-        }}
-      />
+  
     </>
   );
 }

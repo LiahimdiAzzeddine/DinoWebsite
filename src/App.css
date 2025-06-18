@@ -28,19 +28,7 @@
       height: 50vh;
     }
   }
-body {
- 
 
-  margin: 0px;
-  padding: 0px;
-  min-height: -webkit-fill-available;
-  overflow-x: hidden;
-  overflow-y: hidden;
-
-  -webkit-font-smoothing: antialiased;
-  scrollbar-width: thin;
-  font-family: "Nunito Sans", sans-serif;
-}
 
 a,a:visited {
   border-radius: 1em;

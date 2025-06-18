@@ -120,10 +120,10 @@ export function Web2({sectionID, isActive, ...props }) {
     ScrollTrigger.create({
       id: sectionID,
       trigger: "#section3",
-      start: "top bottom",
-      end: "top top",
+      start: "center+=100 bottom",
+      end: "center+=100 top",
       scrub: true,
-      markers: false,
+      markers: true,
       preventClicks: true,
       onToggle: self => {
         if (self.isActive) {

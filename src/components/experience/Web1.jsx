@@ -115,9 +115,9 @@ export function Web1({sectionID, isActive, lenis, ...props }) {
       id: sectionID,
       trigger: "#section2",
       start: "top bottom",
-      end: "top top",
+      end: "center+=100 top",
       scrub: true,
-      markers: false,
+      markers: true,
       onUpdate: (self) => {
         sectionScrollProgress = self.progress;
         if (viewportRef.current.width < 5){
@@ -200,7 +200,7 @@ export function Web1({sectionID, isActive, lenis, ...props }) {
 
 // Créez un matériau de test
 const testMaterial = useMemo(() => new THREE.MeshStandardMaterial({
-  color: 0xebe890,
+  color: 0xd5c23b,
   roughness: 0.5,
   metalness: 0.1
 }), []);

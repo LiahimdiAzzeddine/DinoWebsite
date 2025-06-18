@@ -10,7 +10,7 @@ export default function NavBar() {
 
   return (
     <>
-      <nav className=" w-auto h-[54px] rounded-2xl fixed top-5 z-[11]  bg-[linear-gradient(90deg,#fff,hsla(0,0%,100%,.95))] shadow-[0px_2px_15px_rgba(2,2,43,0.2)] ease-in-out">
+      <nav className=" w-auto h-[54px] rounded-2xl fixed top-5 z-[1100]  bg-[linear-gradient(90deg,#fff,hsla(0,0%,100%,.95))] shadow-[0px_2px_15px_rgba(2,2,43,0.2)] ease-in-out">
         <div id="header-hover-zone" />
         <div className="relative mx-auto flex h-full max-w-[1200px] flex-row items-center px-[1em] text-[#020220]">
           <div className="flex items-center text-[1.35em]">

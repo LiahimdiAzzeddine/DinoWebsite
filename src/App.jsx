@@ -6,9 +6,11 @@ import { useEffect, useRef, useState } from "react";
 import { CanvasContainer } from "./components/CanvasContainer";
 import { Overlay } from "./components/Overlay";
 import { AnimationProvider } from "./components/experience/AnimationContext";
-import Loader from "./components/Loader";
 import Lenis from '@studio-freight/lenis';
 import Footer from "./components/Footer";
+import dino from "../public/assets/logos/dinoBlack.png";
+import Loader from "./components/Loader";
+
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -38,6 +40,7 @@ function App() {
 
   return (
      <AnimationProvider>
+          <div className="pages-gradient"></div>
     <main className="overflow-x-hidden">
       {isLoading && <Loader onLoadingComplete={() => setIsLoading(false)} />}
 
@@ -45,8 +48,9 @@ function App() {
 				<CanvasContainer />
 			</div>
     <Overlay />  
+      <Footer />
   </main>
-  <Footer />
+
   </AnimationProvider>
   );
 }

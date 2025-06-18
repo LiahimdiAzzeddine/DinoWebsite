@@ -24,6 +24,7 @@ export function ModelContainer({lenis}) {
 
   return (
     <>
+    
       <Web1
         sectionID={"web1"}
         isActive={currentModel === "web1"}

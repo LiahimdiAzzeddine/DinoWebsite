@@ -16,16 +16,98 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import * as THREE from "three";
 import { AnimationContext } from "./AnimationContext";
+import smokeTexture from '../../../public/assets/logos/smoke3.png' // texture PNG avec transparence
 gsap.registerPlugin(ScrollTrigger);
+function SmokeParticles({ count = 50, position = [0, 0, 0] }) {
+  const meshRef = useRef();
+  const dummy = useMemo(() => new THREE.Object3D(), []);
+
+  const particles = useMemo(() => {
+    const temp = [];
+    for (let i = 0; i < count; i++) {
+      temp.push({
+        position: [
+          position[0] + (Math.random() - 0.5) * 0.1,
+          position[1],
+          position[2] + (Math.random() - 0.5) * 0.1
+        ],
+        velocity: [
+          (Math.random() - 0.5) * 0.02,
+          -(Math.random() * 0.05 + 0.02), // vers le bas
+          (Math.random() - 0.5) * 0.02
+        ],
+        life: Math.random() * 100,
+        maxLife: 100 + Math.random() * 50,
+        scale: Math.random() * 0.5 + 0.2
+      });
+    }
+    return temp;
+  }, [count, position]);
+
+  useFrame((state, delta) => {
+    if (!meshRef.current) return;
+
+    particles.forEach((particle, i) => {
+      // Update position
+      particle.position[0] += particle.velocity[0];
+      particle.position[1] += particle.velocity[1];
+      particle.position[2] += particle.velocity[2];
+
+      // Life
+      particle.life += delta * 30;
+      if (particle.life > particle.maxLife) {
+        particle.position[0] = position[0] + (Math.random() - 0.5) * 0.1;
+        particle.position[1] = position[1];
+        particle.position[2] = position[2] + (Math.random() - 0.5) * 0.1;
+        particle.life = 0;
+        particle.velocity[0] = (Math.random() - 0.5) * 0.02;
+        particle.velocity[1] = -(Math.random() * 0.05 + 0.02); // reset vers le bas
+        particle.velocity[2] = (Math.random() - 0.5) * 0.02;
+      }
+
+      // Visual
+      const lifeRatio = particle.life / particle.maxLife;
+      dummy.position.set(...particle.position);
+      dummy.scale.setScalar(particle.scale * (1 + lifeRatio * 2));
+      dummy.updateMatrix();
+      meshRef.current.setMatrixAt(i, dummy.matrix);
+
+      const color = new THREE.Color().setHSL(0, 0, 0.8 - lifeRatio * 0.3);
+      meshRef.current.setColorAt(i, color);
+    });
+
+    meshRef.current.instanceMatrix.needsUpdate = true;
+    if (meshRef.current.instanceColor) {
+      meshRef.current.instanceColor.needsUpdate = true;
+    }
+  });
+{/**
+  <instancedMesh ref={meshRef} args={[null, null, count]}>
+  <planeGeometry args={[0.5, 0.5]} />
+  <meshBasicMaterial
+    map={new THREE.TextureLoader().load('../../../public/assets/logos/smoke3.png')}
+    transparent
+    depthWrite={false}
+    opacity={0.4}
+    blending={THREE.AdditiveBlending}
+    side={THREE.DoubleSide}
+  />
+</instancedMesh>
+  */}
+  return (
+    <instancedMesh ref={meshRef} args={[null, null, count]}>
+      <sphereGeometry args={[0.3, 8, 8]} />
+      <meshBasicMaterial transparent opacity={0.6} color="#666666" />
+    </instancedMesh>
+  );
+}
+
+
 
 export function Web3({ sectionID, isActive, ...props }) {
   const group = useRef();
   const timelineRef = useRef(null);
   const playedScroll = useRef(false);
-  const armatureRef = useRef();
-  let initialY = 0;
-  const armatureAnimationRef = useRef(null); // Référence pour l'animation GSAP
-
   const playedSecondScroll = useRef(false);
   const ManRef = useRef();
 
@@ -33,6 +115,9 @@ export function Web3({ sectionID, isActive, ...props }) {
   const clone = useMemo(() => SkeletonUtils.clone(scene), [scene]);
   const { nodes, materials } = useGraph(clone);
   const { actions, mixer } = useAnimations(animations, group);
+  const armatureRef = useRef();
+   const armatureAnimationRef = useRef(null); 
+  let initialY = 0;
 
   const {
     currentModel,
@@ -74,7 +159,7 @@ export function Web3({ sectionID, isActive, ...props }) {
     }
   };
 
-  let enableOtherSections = () => {
+  let enableOtherSections = ()=>{
     // use when scroll is too quick for transitions
     // this way any section t the end of the scroll could take control and disable the others
     ScrollTrigger.getAll().forEach((trigger) => {
@@ -83,8 +168,8 @@ export function Web3({ sectionID, isActive, ...props }) {
           trigger.id !== sectionID + "_armatureMove") {
         trigger.enable();
       }
-    });
-  };
+    })
+  }
 
   let resetAllActions = () => {
     Object.values(actions).forEach((action) => {
@@ -115,26 +200,17 @@ export function Web3({ sectionID, isActive, ...props }) {
       duration: 0.5,
       ease: "power2.out",
     });
-  };
+  }
 
-  // Fonction pour arrêter l'animation d'armature en cours
+  // handling screen width change
+  const {viewport} = useThree();
+// Fonction pour arrêter l'animation d'armature en cours
   const stopArmatureAnimation = () => {
     if (armatureAnimationRef.current) {
       armatureAnimationRef.current.kill();
       armatureAnimationRef.current = null;
     }
   };
-
-  // sauvegarder la position initiale une fois
-  useEffect(() => {
-    if (armatureRef.current?.position) {
-      initialY = armatureRef.current?.position?.y;
-    }
-  }, [armatureRef]);
-
-  // handling screen width change
-  const { viewport } = useThree();
-
   useLayoutEffect(() => {
     enterAnimation = actions["ActionEnter"];
     resetAllActions();
@@ -142,7 +218,7 @@ export function Web3({ sectionID, isActive, ...props }) {
     ScrollTrigger.create({
       id: sectionID,
       trigger: "#section4",
-      start: "center+=100 bottom",
+     start: "center+=100 bottom",
       end: "#section5 bottom",
       preventClicks: true,
       scrub: true,
@@ -151,23 +227,19 @@ export function Web3({ sectionID, isActive, ...props }) {
         setCurrentModel(sectionID);
         disableOtherSections();
         resetAllActions();
-        stopArmatureAnimation(); // Arrêter l'animation d'armature
         playIntroAnimations();
       },
       onEnterBack: () => {
         setCurrentModel(sectionID);
         disableOtherSections();
         resetAllActions();
-        stopArmatureAnimation(); // Arrêter l'animation d'armature
         playIntroAnimations(true);
       },
       onLeaveBack: (self) => {
         playIntroAnimations(true);
         if (Math.abs(self.getVelocity()) <= 2000) {
           setTimeout(() => {
-            if (prevScrollTrigger) {
-              prevScrollTrigger.enable();
-            }
+            prevScrollTrigger.enable();
           }, enterAnimation.getClip().duration * 1000);
         } else {
           enableOtherSections();
@@ -179,13 +251,12 @@ export function Web3({ sectionID, isActive, ...props }) {
       id: sectionID + "_secondary",
       trigger: "#section5",
       start: "top bottom",
-      end: "bottom+=75% top",
+     end: "bottom+=75% top",
       scrub: 2.5,
       markers: false,
       onEnter: () => {
         setCurrentModel(sectionID);
         disableOtherSections();
-        stopArmatureAnimation(); // Arrêter l'animation d'armature
 
         const action = actions["1.2ndScroll"];
         if (action) {
@@ -210,7 +281,7 @@ export function Web3({ sectionID, isActive, ...props }) {
             anim.play();
           }
         });
-
+        // console.log("ManRef.current.scale", ManRef.current.scale.toArray());
         gsap.to(ManRef.current.scale, {
           x: 0,
           y: 0,
@@ -221,11 +292,9 @@ export function Web3({ sectionID, isActive, ...props }) {
 
         const mainScroll = actions[scrollAnimations[6]];
         if (mainScroll) {
-          const onFinished = () => {
+          mainScroll.getMixer().addEventListener("finished", () => {
             playedSecondScroll.current = true;
-            mainScroll.getMixer().removeEventListener("finished", onFinished);
-          };
-          mainScroll.getMixer().addEventListener("finished", onFinished);
+          });
         }
       },
 
@@ -239,23 +308,25 @@ export function Web3({ sectionID, isActive, ...props }) {
             anim.clampWhenFinished = true;
             anim.time = 0.3;
             anim.timeScale = -1; // Inverse l'animation
+
             anim.play();
           }
         });
-        
         const action = actions["1.2ndScroll"];
         if (action) {
           action.reset();
           action.setLoop(THREE.LoopOnce, 1);
           action.clampWhenFinished = true;
+
           action.time = action.getClip().duration;
+
           action.timeScale = -1;
+
           action.enabled = true;
           action.setEffectiveWeight(1);
           action.paused = false;
           action.play();
         }
-        
         if (Math.abs(self.getVelocity()) > 2000) {
           enableOtherSections();
         }
@@ -275,7 +346,7 @@ export function Web3({ sectionID, isActive, ...props }) {
       },
     });
 
-    ScrollTrigger.create({
+     ScrollTrigger.create({
       id: sectionID + "_armatureMove",
       trigger: "#section6",
       start: "top bottom",
@@ -284,14 +355,14 @@ export function Web3({ sectionID, isActive, ...props }) {
       markers: false, // Retiré les markers pour la production
 
       onEnter: () => {
-        // Ne pas changer le currentModel ni désactiver les autres sections
-        // Cela évite l'interférence avec les autres triggers
+        setCurrentModel(sectionID);
+        disableOtherSections();
         console.log("🚀 ~ section6 ~ onEnter");
       },
 
       onLeave: () => {
         console.log("🚀 ~ section6 ~ onLeave");
-        stopArmatureAnimation(); // Arrêter toute animation précédente
+        stopArmatureAnimation(); 
         
         armatureAnimationRef.current = gsap.to(armatureRef.current.position, {
           y: initialY + 0.1,
@@ -306,11 +377,10 @@ export function Web3({ sectionID, isActive, ...props }) {
 
       onEnterBack: () => {
         console.log("🚀 ~ section6 ~ onEnterBack");
-        stopArmatureAnimation(); // Arrêter toute animation précédente
-        
+        stopArmatureAnimation(); 
         armatureAnimationRef.current = gsap.to(armatureRef.current.position, {
           y: initialY,
-          duration: 1,
+          duration: 0.1,
           ease: "power2.out",
           onComplete: () => {
             console.log("🚀 ~ onComplete ~ position.y:", armatureRef.current.position.y);
@@ -321,8 +391,7 @@ export function Web3({ sectionID, isActive, ...props }) {
 
       onLeaveBack: () => {
         console.log("🚀 ~ section6 ~ onLeaveBack");
-        // L'animation de retour à la position initiale se fait déjà dans onEnterBack
-        // Pas besoin d'actions supplémentaires ici
+
       },
     });
 
@@ -338,6 +407,12 @@ export function Web3({ sectionID, isActive, ...props }) {
       });
     };
   }, []);
+   // sauvegarder la position initiale une fois
+  useEffect(() => {
+    if (armatureRef.current?.position) {
+      initialY = armatureRef.current?.position?.y;
+    }
+  }, [armatureRef]);
   return (
     <group ref={group} {...props} dispose={null} visible={isActive}>
       <group name="Empty" position={[4.089, 2.103, -0.346]}>
@@ -820,6 +895,9 @@ export function Web3({ sectionID, isActive, ...props }) {
             geometry={nodes.Cylinder007_5.geometry}
             material={materials["Material.012"]}
           />
+         <group position={[0, -0.6, 0]}>
+    <SmokeParticles count={500} />
+  </group>
         </group>
         <group
           name="WavingMan"

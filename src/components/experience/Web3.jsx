@@ -16,11 +16,12 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import * as THREE from "three";
 import { AnimationContext } from "./AnimationContext";
-import smokeTexture from '../../../public/assets/logos/smoke3.png' // texture PNG avec transparence
+import smokeTexture from '../../assets/logos/smoke3.png' // texture PNG avec transparence
 gsap.registerPlugin(ScrollTrigger);
 function SmokeParticles({ count = 50, position = [0, 0, 0] }) {
   const meshRef = useRef();
   const dummy = useMemo(() => new THREE.Object3D(), []);
+  //const { nodes } = useGLTF('./models/Web3Final.glb')
 
   const particles = useMemo(() => {
     const temp = [];
@@ -94,10 +95,17 @@ function SmokeParticles({ count = 50, position = [0, 0, 0] }) {
   />
 </instancedMesh>
   */}
+  {/**
+     <instancedMesh
+  ref={meshRef}
+  args={[nodes.Retopo_Icosphere016.geometry, nodes.Retopo_Icosphere016.material, count]}
+>
+</instancedMesh>
+     */}
   return (
     <instancedMesh ref={meshRef} args={[null, null, count]}>
       <sphereGeometry args={[0.3, 8, 8]} />
-      <meshBasicMaterial transparent opacity={0.6} color="#666666" />
+      <meshBasicMaterial transparent opacity={0.6} color="#ffffff" />
     </instancedMesh>
   );
 }
@@ -658,15 +666,7 @@ export function Web3({ sectionID, isActive, ...props }) {
           material={materials.Ground2}
           position={[0.003, -0.027, -0.002]}
         />
-        <mesh
-          name="Retopo_Icosphere016"
-          castShadow
-          receiveShadow
-          geometry={nodes.Retopo_Icosphere016.geometry}
-          material={nodes.Retopo_Icosphere016.material}
-          position={[-0.843, 1.275, -5.535]}
-          scale={0.079}
-        />
+  
 
         <group
           name="Cylinder095"

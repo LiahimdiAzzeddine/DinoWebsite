@@ -16,13 +16,41 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import * as THREE from "three";
 import { AnimationContext } from "./AnimationContext";
-import smokeTexture from '../../assets/logos/smoke3.png' // texture PNG avec transparence
+import smokeTexture from "../../assets/logos/smoke3.png"; // texture PNG avec transparence
+
 gsap.registerPlugin(ScrollTrigger);
-function SmokeParticles({ count = 50, position = [0, 0, 0] }) {
+
+{
+  /**
+  <instancedMesh ref={meshRef} args={[null, null, count]}>
+  <planeGeometry args={[0.5, 0.5]} />
+  <meshBasicMaterial
+    map={new THREE.TextureLoader().load('../../../public/assets/logos/smoke3.png')}
+    transparent
+    depthWrite={false}
+    opacity={0.4}
+    blending={THREE.AdditiveBlending}
+    side={THREE.DoubleSide}
+  />
+</instancedMesh>
+  */
+}
+{
+  /**
+     <instancedMesh ref={meshRef} args={[null, null, count]}>
+      <sphereGeometry args={[0.3, 8, 8]} />
+      <meshBasicMaterial transparent opacity={0.6} color="#ffffff" />
+    </instancedMesh>
+     */
+}
+function SmokeParticles({
+  count = 50,
+  position = [0, 0, 0],
+  geometry,
+  material,
+}) {
   const meshRef = useRef();
   const dummy = useMemo(() => new THREE.Object3D(), []);
-  //const { nodes } = useGLTF('./models/Web3Final.glb')
-
   const particles = useMemo(() => {
     const temp = [];
     for (let i = 0; i < count; i++) {
@@ -30,16 +58,16 @@ function SmokeParticles({ count = 50, position = [0, 0, 0] }) {
         position: [
           position[0] + (Math.random() - 0.5) * 0.1,
           position[1],
-          position[2] + (Math.random() - 0.5) * 0.1
+          position[2] + (Math.random() - 0.5) * 0.1,
         ],
         velocity: [
           (Math.random() - 0.5) * 0.02,
           -(Math.random() * 0.05 + 0.02), // vers le bas
-          (Math.random() - 0.5) * 0.02
+          (Math.random() - 0.5) * 0.02,
         ],
         life: Math.random() * 100,
         maxLife: 100 + Math.random() * 50,
-        scale: Math.random() * 0.5 + 0.2
+        scale: Math.random() * 0.5 + 0.2,
       });
     }
     return temp;
@@ -73,7 +101,8 @@ function SmokeParticles({ count = 50, position = [0, 0, 0] }) {
       dummy.updateMatrix();
       meshRef.current.setMatrixAt(i, dummy.matrix);
 
-      const color = new THREE.Color().setHSL(0, 0, 0.8 - lifeRatio * 0.3);
+      //const color = new THREE.Color().setHSL(0, 0, 0.8 - lifeRatio * 0.3);
+      const color = new THREE.Color().setHSL(0, 0, 0.9 - lifeRatio * 0.4);
       meshRef.current.setColorAt(i, color);
     });
 
@@ -82,35 +111,89 @@ function SmokeParticles({ count = 50, position = [0, 0, 0] }) {
       meshRef.current.instanceColor.needsUpdate = true;
     }
   });
-{/**
-  <instancedMesh ref={meshRef} args={[null, null, count]}>
-  <planeGeometry args={[0.5, 0.5]} />
-  <meshBasicMaterial
-    map={new THREE.TextureLoader().load('../../../public/assets/logos/smoke3.png')}
-    transparent
-    depthWrite={false}
-    opacity={0.4}
-    blending={THREE.AdditiveBlending}
-    side={THREE.DoubleSide}
-  />
-</instancedMesh>
-  */}
-  {/**
-     <instancedMesh
-  ref={meshRef}
-  args={[nodes.Retopo_Icosphere016.geometry, nodes.Retopo_Icosphere016.material, count]}
->
-</instancedMesh>
-     */}
+
   return (
-    <instancedMesh ref={meshRef} args={[null, null, count]}>
-      <sphereGeometry args={[0.3, 8, 8]} />
-      <meshBasicMaterial transparent opacity={0.6} color="#ffffff" />
-    </instancedMesh>
+    <instancedMesh
+      ref={meshRef}
+      args={[geometry, material, count]}
+    ></instancedMesh>
   );
 }
 
+// function SmokeParticles({ count = 50, emitterRef, geometry, material }) {
+//   const meshRef = useRef();
+//   const dummy = useMemo(() => new THREE.Object3D(), []);
+//   const particles = useRef([]);
 
+//   const createParticle = () => {
+//     const pos = emitterRef.current?.getWorldPosition(new THREE.Vector3()) || new THREE.Vector3();
+//     return {
+//       position: [
+//         pos.x + (Math.random() - 0.5) * 0.1,
+//         pos.y,
+//         pos.z + (Math.random() - 0.5) * 0.1,
+//       ],
+//       velocity: [
+//         (Math.random() - 0.5) * 0.02,
+//         -(Math.random() * 0.05 + 0.02),
+//         (Math.random() - 0.5) * 0.02
+//       ],
+//       life: 0,
+//       maxLife: 100 + Math.random() * 50,
+//       scale: Math.random() * 0.01 + 0.2
+//     };
+//   };
+
+//   // Initialisation une fois
+//   useEffect(() => {
+//     particles.current = Array.from({ length: count }, createParticle);
+//   }, [count]);
+
+//   useFrame((state, delta) => {
+//     if (!meshRef.current || !emitterRef.current) return;
+
+//     particles.current.forEach((particle, i) => {
+//       // Update position
+//       particle.position[0] += particle.velocity[0];
+//       particle.position[1] += particle.velocity[1];
+//       particle.position[2] += particle.velocity[2];
+//       particle.life += delta * 30;
+
+//       if (particle.life > particle.maxLife) {
+//         const pos = emitterRef.current.getWorldPosition(new THREE.Vector3());
+//         particle.position[0] = pos.x + (Math.random() - 0.5) * 0.1;
+//         particle.position[1] = pos.y;
+//         particle.position[2] = pos.z + (Math.random() - 0.5) * 0.1;
+//         particle.life = 0;
+//         particle.velocity[0] = (Math.random() - 0.5) * 0.02;
+//         particle.velocity[1] = -(Math.random() * 0.05 + 0.02);
+//         particle.velocity[2] = (Math.random() - 0.5) * 0.02;
+//       }
+
+//       const lifeRatio = particle.life / particle.maxLife;
+//       dummy.position.set(...particle.position);
+//       dummy.scale.setScalar(particle.scale * (1 + lifeRatio *0.5));
+//       dummy.updateMatrix();
+//       meshRef.current.setMatrixAt(i, dummy.matrix);
+
+//       const color = new THREE.Color().setHSL(0, 0, 0.9 - lifeRatio * 0.4);
+//       meshRef.current.setColorAt(i, color);
+//     });
+
+//     meshRef.current.instanceMatrix.needsUpdate = true;
+//     if (meshRef.current.instanceColor) {
+//       meshRef.current.instanceColor.needsUpdate = true;
+//     }
+//   });
+
+//   return (
+//     <instancedMesh
+//       ref={meshRef}
+//       args={[geometry, material, count]}
+//       vertexColors
+//     />
+//   );
+// }
 
 export function Web3({ sectionID, isActive, ...props }) {
   const group = useRef();
@@ -118,13 +201,15 @@ export function Web3({ sectionID, isActive, ...props }) {
   const playedScroll = useRef(false);
   const playedSecondScroll = useRef(false);
   const ManRef = useRef();
+  const rocketRef = useRef();
+  const emitterRef = useRef();
 
   const { scene, animations } = useGLTF("./models/Web3Final.glb");
   const clone = useMemo(() => SkeletonUtils.clone(scene), [scene]);
   const { nodes, materials } = useGraph(clone);
   const { actions, mixer } = useAnimations(animations, group);
   const armatureRef = useRef();
-   const armatureAnimationRef = useRef(null); 
+  const armatureAnimationRef = useRef(null);
   let initialY = 0;
 
   const {
@@ -167,17 +252,19 @@ export function Web3({ sectionID, isActive, ...props }) {
     }
   };
 
-  let enableOtherSections = ()=>{
+  let enableOtherSections = () => {
     // use when scroll is too quick for transitions
     // this way any section t the end of the scroll could take control and disable the others
     ScrollTrigger.getAll().forEach((trigger) => {
-      if (trigger.id !== sectionID && 
-          trigger.id !== sectionID + "_secondary" && 
-          trigger.id !== sectionID + "_armatureMove") {
+      if (
+        trigger.id !== sectionID &&
+        trigger.id !== sectionID + "_secondary" &&
+        trigger.id !== sectionID + "_armatureMove"
+      ) {
         trigger.enable();
       }
-    })
-  }
+    });
+  };
 
   let resetAllActions = () => {
     Object.values(actions).forEach((action) => {
@@ -208,11 +295,11 @@ export function Web3({ sectionID, isActive, ...props }) {
       duration: 0.5,
       ease: "power2.out",
     });
-  }
+  };
 
   // handling screen width change
-  const {viewport} = useThree();
-// Fonction pour arrêter l'animation d'armature en cours
+  const { viewport } = useThree();
+  // Fonction pour arrêter l'animation d'armature en cours
   const stopArmatureAnimation = () => {
     if (armatureAnimationRef.current) {
       armatureAnimationRef.current.kill();
@@ -226,7 +313,7 @@ export function Web3({ sectionID, isActive, ...props }) {
     ScrollTrigger.create({
       id: sectionID,
       trigger: "#section4",
-     start: "center+=100 bottom",
+      start: "center+=100 bottom",
       end: "#section5 bottom",
       preventClicks: true,
       scrub: true,
@@ -259,7 +346,7 @@ export function Web3({ sectionID, isActive, ...props }) {
       id: sectionID + "_secondary",
       trigger: "#section5",
       start: "top bottom",
-     end: "bottom+=75% top",
+      end: "bottom+=75% top",
       scrub: 2.5,
       markers: false,
       onEnter: () => {
@@ -354,7 +441,7 @@ export function Web3({ sectionID, isActive, ...props }) {
       },
     });
 
-     ScrollTrigger.create({
+    ScrollTrigger.create({
       id: sectionID + "_armatureMove",
       trigger: "#section6",
       start: "top bottom",
@@ -370,14 +457,17 @@ export function Web3({ sectionID, isActive, ...props }) {
 
       onLeave: () => {
         console.log("🚀 ~ section6 ~ onLeave");
-        stopArmatureAnimation(); 
-        
+        stopArmatureAnimation();
+
         armatureAnimationRef.current = gsap.to(armatureRef.current.position, {
           y: initialY + 0.1,
           duration: 2,
           ease: "power2.out",
           onComplete: () => {
-            console.log("🚀 ~ onComplete ~ position.y:", armatureRef.current.position.y);
+            console.log(
+              "🚀 ~ onComplete ~ position.y:",
+              armatureRef.current.position.y
+            );
             armatureAnimationRef.current = null;
           },
         });
@@ -385,13 +475,16 @@ export function Web3({ sectionID, isActive, ...props }) {
 
       onEnterBack: () => {
         console.log("🚀 ~ section6 ~ onEnterBack");
-        stopArmatureAnimation(); 
+        stopArmatureAnimation();
         armatureAnimationRef.current = gsap.to(armatureRef.current.position, {
           y: initialY,
           duration: 0.1,
           ease: "power2.out",
           onComplete: () => {
-            console.log("🚀 ~ onComplete ~ position.y:", armatureRef.current.position.y);
+            console.log(
+              "🚀 ~ onComplete ~ position.y:",
+              armatureRef.current.position.y
+            );
             armatureAnimationRef.current = null;
           },
         });
@@ -399,7 +492,6 @@ export function Web3({ sectionID, isActive, ...props }) {
 
       onLeaveBack: () => {
         console.log("🚀 ~ section6 ~ onLeaveBack");
-
       },
     });
 
@@ -407,15 +499,17 @@ export function Web3({ sectionID, isActive, ...props }) {
       mixer.stopAllAction();
       stopArmatureAnimation(); // Nettoyer les animations GSAP
       ScrollTrigger.getAll().forEach((trigger) => {
-        if (trigger.id === sectionID || 
-            trigger.id === sectionID + "_secondary" || 
-            trigger.id === sectionID + "_armatureMove") {
+        if (
+          trigger.id === sectionID ||
+          trigger.id === sectionID + "_secondary" ||
+          trigger.id === sectionID + "_armatureMove"
+        ) {
           trigger.kill();
         }
       });
     };
   }, []);
-   // sauvegarder la position initiale une fois
+  // sauvegarder la position initiale une fois
   useEffect(() => {
     if (armatureRef.current?.position) {
       initialY = armatureRef.current?.position?.y;
@@ -666,7 +760,6 @@ export function Web3({ sectionID, isActive, ...props }) {
           material={materials.Ground2}
           position={[0.003, -0.027, -0.002]}
         />
-  
 
         <group
           name="Cylinder095"
@@ -852,7 +945,12 @@ export function Web3({ sectionID, isActive, ...props }) {
             scale={[0.125, 1.435, 0.125]}
           />
         </group>
-        <group name="Cylinder019" position={[0.005, 0.3, 0.387]} scale={0}>
+        <group
+          ref={rocketRef}
+          name="Cylinder019"
+          position={[0.005, 0.3, 0.387]}
+          scale={0}
+        >
           <mesh
             name="Cylinder007"
             castShadow
@@ -895,10 +993,15 @@ export function Web3({ sectionID, isActive, ...props }) {
             geometry={nodes.Cylinder007_5.geometry}
             material={materials["Material.012"]}
           />
-         <group position={[0, -0.6, 0]}>
-    <SmokeParticles count={500} />
-  </group>
+          <group ref={emitterRef} position={[0, -2.8, 0]} />
+          <SmokeParticles
+            count={50}
+            position={[0, -2.8, 0]}
+            geometry={nodes.Retopo_Icosphere016.geometry}
+            material={nodes.Retopo_Icosphere016.material}
+          />
         </group>
+
         <group
           name="WavingMan"
           position-x={viewport.width < 1 ? -1 : 0}

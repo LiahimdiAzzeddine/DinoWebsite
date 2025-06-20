@@ -33,7 +33,7 @@ body {
   padding: 0px;
   min-height: -webkit-fill-available;
   overflow-x: hidden;
-  overflow-y: hidden;
+  
   width: 100%;
   -webkit-font-smoothing: antialiased;
   font-family: "Nunito Sans", sans-serif;

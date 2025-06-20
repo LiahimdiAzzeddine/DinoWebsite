@@ -19,12 +19,11 @@ import * as THREE from "three";
 import { AnimationContext } from "./AnimationContext";
 
 gsap.registerPlugin(ScrollTrigger);
-function SmokeParticles({ count = 50, emitterRef, geometry, material }) {
+function SmokeParticles({ count = 50, emitterRef, geometry, material, visible = true }) {
   const meshRef = useRef();
   const dummy = useMemo(() => new THREE.Object3D(), []);
   const worldPos = useRef(new THREE.Vector3());
   const speedFactor = 0.05;
-
 
   const particles = useMemo(() => {
     const temp = [];
@@ -33,7 +32,6 @@ function SmokeParticles({ count = 50, emitterRef, geometry, material }) {
         position: [0, 0, 0],
         velocity: [
           (Math.random() - 0.5) * 0.02 * speedFactor,
-          // Y fall speed between –(0.025→0.07) instead of –(0.05→0.07)
           -(Math.random() * 0.09 + 0.05) * speedFactor,
           (Math.random() - 0.5) * 0.02 * speedFactor
         ],
@@ -46,19 +44,16 @@ function SmokeParticles({ count = 50, emitterRef, geometry, material }) {
   }, [count]);
 
   useFrame((_, delta) => {
-    if (!meshRef.current || !emitterRef.current) return;
+    if (!visible || !meshRef.current || !emitterRef.current) return;
 
-    // get emitter world position each frame
     emitterRef.current.getWorldPosition(worldPos.current);
 
     particles.forEach((p, i) => {
-      // update physics
       p.position[0] += p.velocity[0];
       p.position[1] += p.velocity[1];
       p.position[2] += p.velocity[2];
       p.life += delta * 30;
       if (p.life > p.maxLife) {
-        // respawn at emitter
         p.position[0] = worldPos.current.x + (Math.random() - 0.5) * 0.1;
         p.position[1] = worldPos.current.y;
         p.position[2] = worldPos.current.z + (Math.random() - 0.5) * 0.1;
@@ -68,19 +63,13 @@ function SmokeParticles({ count = 50, emitterRef, geometry, material }) {
         p.velocity[2] = (Math.random() - 0.5) * 0.02 * speedFactor;
       }
 
-      // visual instance transform
       const lifeRatio = p.life / p.maxLife;
       dummy.position.set(...p.position);
       dummy.scale.setScalar(p.scale * (1 + lifeRatio * 1));
       dummy.updateMatrix();
       meshRef.current.setMatrixAt(i, dummy.matrix);
 
-      // color lerp
-      const col = new THREE.Color().lerpColors(
-          new THREE.Color(0xffffff),
-          new THREE.Color(0xffffff),
-          lifeRatio
-      );
+      const col = new THREE.Color(0xffffff);
       meshRef.current.setColorAt(i, col);
     });
 
@@ -88,8 +77,14 @@ function SmokeParticles({ count = 50, emitterRef, geometry, material }) {
     if (meshRef.current.instanceColor) meshRef.current.instanceColor.needsUpdate = true;
   });
 
+  // toggle mesh visibility
+  useEffect(() => {
+    if (meshRef.current) meshRef.current.visible = visible;
+  }, [visible]);
+
   return <instancedMesh ref={meshRef} args={[geometry, material, count]} />;
 }
+
 
 
 // function SmokeParticles({
@@ -436,7 +431,7 @@ export function Web3({ sectionID, isActive, ...props }) {
       },
 
       onLeaveBack: (self) => {
-        setPlay(false)
+        // setPlay(false)
         scaleManToOriginalSize();
         scrollAnimations.forEach((name) => {
           const anim = actions[name];
@@ -470,6 +465,7 @@ export function Web3({ sectionID, isActive, ...props }) {
         }
       },
       onUpdate: (self) => {
+        setPlay(true);
         const progress = self.progress;
         //setSmokeProgress(progress);
         secondScrollAnimations.forEach((name) => {
@@ -484,7 +480,10 @@ export function Web3({ sectionID, isActive, ...props }) {
         });
       },
       onLeave:()=>{
-        setPlay(false)
+        // setPlay(false)
+      },
+      onEnterBack: ()=>{
+        setPlay(true);
       }
     });
 
@@ -564,6 +563,13 @@ export function Web3({ sectionID, isActive, ...props }) {
   }, [armatureRef]);
   return (
     <group ref={group} {...props} dispose={null} visible={isActive}>
+      <SmokeParticles
+          count={100}
+          emitterRef={emitterRef}
+          geometry={nodes.Retopo_Icosphere016.geometry}
+          material={nodes.Retopo_Icosphere016.material}
+          visible={true}
+      />
       <group name="Empty" position={[4.089, 2.103, -0.346]}>
         <PerspectiveCamera
           name="Camera"
@@ -1048,12 +1054,13 @@ export function Web3({ sectionID, isActive, ...props }) {
           {/*  material={nodes.Retopo_Icosphere016.material}*/}
           {/*/>*/}
         </group>
-        <SmokeParticles
-            count={100}
-            emitterRef={emitterRef}
-            geometry={nodes.Retopo_Icosphere016.geometry}
-            material={nodes.Retopo_Icosphere016.material}
-        />
+        {/*<SmokeParticles*/}
+        {/*    count={100}*/}
+        {/*    emitterRef={emitterRef}*/}
+        {/*    geometry={nodes.Retopo_Icosphere016.geometry}*/}
+        {/*    material={nodes.Retopo_Icosphere016.material}*/}
+        {/*    visible={play}*/}
+        {/*/>*/}
         {/* <SmokeParticles
         count={150}
         emitterRef={emitterRef}

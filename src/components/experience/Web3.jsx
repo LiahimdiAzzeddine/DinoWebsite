@@ -19,87 +19,76 @@ import * as THREE from "three";
 import { AnimationContext } from "./AnimationContext";
 
 gsap.registerPlugin(ScrollTrigger);
-function SmokeParticles({
-  count = 50,
-  position = [0, 0, 0],
-  geometry,
-  material,
-}) {
+function SmokeParticles({ count = 50, emitterRef, geometry, material }) {
   const meshRef = useRef();
   const dummy = useMemo(() => new THREE.Object3D(), []);
+  const worldPos = useRef(new THREE.Vector3());
+  const speedFactor = 0.05;
+
+
   const particles = useMemo(() => {
     const temp = [];
     for (let i = 0; i < count; i++) {
       temp.push({
-        position: [
-          position[0] + (Math.random() - 0.5) * 0.1,
-          position[1],
-          position[2] + (Math.random() - 0.5) * 0.1,
-        ],
+        position: [0, 0, 0],
         velocity: [
-          (Math.random() - 0.5) * 0.02,
-          -(Math.random() * 0.05 + 0.02), // vers le bas
-          (Math.random() - 0.5) * 0.02,
+          (Math.random() - 0.5) * 0.02 * speedFactor,
+          // Y fall speed between –(0.025→0.07) instead of –(0.05→0.07)
+          -(Math.random() * 0.09 + 0.05) * speedFactor,
+          (Math.random() - 0.5) * 0.02 * speedFactor
         ],
         life: Math.random() * 100,
-        maxLife: 100 + Math.random() *100,
-        scale: Math.random() * 0.5 + 0.2,
+        maxLife: 200 + Math.random() * 200,
+        scale: Math.random() * 0.05 + 0.01,
       });
     }
     return temp;
-  }, [count, position]);
+  }, [count]);
 
-  useFrame((state, delta) => {
-    if (!meshRef.current) return;
+  useFrame((_, delta) => {
+    if (!meshRef.current || !emitterRef.current) return;
 
-    particles.forEach((particle, i) => {
-      // Update position
-      particle.position[0] += particle.velocity[0];
-      particle.position[1] += particle.velocity[1];
-      particle.position[2] += particle.velocity[2];
+    // get emitter world position each frame
+    emitterRef.current.getWorldPosition(worldPos.current);
 
-      // Life
-      particle.life += delta * 30;
-      if (particle.life > particle.maxLife) {
-        particle.position[0] = position[0] + (Math.random() - 0.5) * 0.1;
-        particle.position[1] = position[1];
-        particle.position[2] = position[2] + (Math.random() - 0.5) * 0.1;
-        particle.life = 0;
-        particle.velocity[0] = (Math.random() - 0.5) * 0.02;
-        particle.velocity[1] = -(Math.random() * 0.05 + 0.02); // reset vers le bas
-        particle.velocity[2] = (Math.random() - 0.5) * 0.02;
+    particles.forEach((p, i) => {
+      // update physics
+      p.position[0] += p.velocity[0];
+      p.position[1] += p.velocity[1];
+      p.position[2] += p.velocity[2];
+      p.life += delta * 30;
+      if (p.life > p.maxLife) {
+        // respawn at emitter
+        p.position[0] = worldPos.current.x + (Math.random() - 0.5) * 0.1;
+        p.position[1] = worldPos.current.y;
+        p.position[2] = worldPos.current.z + (Math.random() - 0.5) * 0.1;
+        p.life = 0;
+        p.velocity[0] = (Math.random() - 0.5) * 0.02 * speedFactor;
+        p.velocity[1] = -(Math.random() * 0.05 + 0.02) * speedFactor;
+        p.velocity[2] = (Math.random() - 0.5) * 0.02 * speedFactor;
       }
 
-      // Visual
-      const lifeRatio = particle.life / particle.maxLife;
-      dummy.position.set(...particle.position);
-      dummy.scale.setScalar(particle.scale * (1 + lifeRatio * 2));
+      // visual instance transform
+      const lifeRatio = p.life / p.maxLife;
+      dummy.position.set(...p.position);
+      dummy.scale.setScalar(p.scale * (1 + lifeRatio * 1));
       dummy.updateMatrix();
       meshRef.current.setMatrixAt(i, dummy.matrix);
 
-      //const color = new THREE.Color().setHSL(0, 0, 0.8 - lifeRatio * 0.3);
-      //const color = new THREE.Color().setHSL(0, 0, 0.9 - lifeRatio * 0.5);
-      const color = new THREE.Color().lerpColors(
-        new THREE.Color(0xbdbbbb), // couleur de naissance (noir)
-        new THREE.Color(0xffffff), // couleur de fin (blanc lumineux)
-        lifeRatio // ratio de vie [0 → 1]
+      // color lerp
+      const col = new THREE.Color().lerpColors(
+          new THREE.Color(0xffffff),
+          new THREE.Color(0xffffff),
+          lifeRatio
       );
-      
-      meshRef.current.setColorAt(i, color);
+      meshRef.current.setColorAt(i, col);
     });
 
     meshRef.current.instanceMatrix.needsUpdate = true;
-    if (meshRef.current.instanceColor) {
-      meshRef.current.instanceColor.needsUpdate = true;
-    }
+    if (meshRef.current.instanceColor) meshRef.current.instanceColor.needsUpdate = true;
   });
 
-  return (
-    <instancedMesh
-      ref={meshRef}
-      args={[geometry, material, count]}
-    ></instancedMesh>
-  );
+  return <instancedMesh ref={meshRef} args={[geometry, material, count]} />;
 }
 
 
@@ -1052,13 +1041,19 @@ export function Web3({ sectionID, isActive, ...props }) {
             material={materials["Material.012"]}
           />
           <group ref={emitterRef} position={[0, -3.5, 0]} />
-          <SmokeParticles
-            count={150}
-            position={[0, -3.5, 0]}
+          {/*<SmokeParticles*/}
+          {/*  count={150}*/}
+          {/*  position={[0, -3.5, 0]}*/}
+          {/*  geometry={nodes.Retopo_Icosphere016.geometry}*/}
+          {/*  material={nodes.Retopo_Icosphere016.material}*/}
+          {/*/>*/}
+        </group>
+        <SmokeParticles
+            count={100}
+            emitterRef={emitterRef}
             geometry={nodes.Retopo_Icosphere016.geometry}
             material={nodes.Retopo_Icosphere016.material}
-          />
-        </group>
+        />
         {/* <SmokeParticles
         count={150}
         emitterRef={emitterRef}

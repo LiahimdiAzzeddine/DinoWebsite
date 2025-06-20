@@ -2,7 +2,7 @@ import NavBar from "./nav/NavBar";
 import { Typewriter } from "react-simple-typewriter";
 
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 
 const NeddleButton = ({ href = "#", children = "No text" }) => {
@@ -76,31 +76,6 @@ const LinkButton = ({
   );
 };
 
-const Section = (props) => {
-  return (
-    <motion.section
-      id={props.id}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, ease: "easeOut" }}
-      className={`min-h-screen relative flex flex-col justify-center p-4 md:p-6 lg:p-10 ${
-        props.right ? "items-end" : "items-start"
-      } ${props.class}`}
-      style={{ opacity: props.opacity }}
-    >
-      <div className="w-full md:w-3/4 lg:w-1/2 flex items-center justify-center  ">
-        <div className="w-full max-w-sm relative z-10">
-          {/* Glass effect background */}
-          <div className="absolute top-[-15px] md:top-[-20px] lg:top-[-30px] left-[-15px] md:left-[-20px] lg:left-[-30px] h-[calc(100%+30px)] md:h-[calc(100%+40px)] lg:h-[calc(100%+60px)] w-[calc(100%+30px)] md:w-[calc(100%+40px)] lg:w-[calc(100%+60px)] rounded-[20px] md:rounded-[30px] lg:rounded-[40px] shadow-[0_0_10px_#5e5e5e38] md:shadow-[0_0_15px_#5e5e5e38] lg:shadow-[0_0_20px_#5e5e5e38] outline outline-[1px] outline-[#ffffff2b] backdrop-blur-[20px] md:backdrop-blur-[30px] lg:backdrop-blur-[40px] backdrop-saturate-[2] bg-[#6666660e]" />
-
-          <div className="relative z-10 rounded-lg md:rounded-xl lg:rounded-2xl">
-            {props.children}
-          </div>
-        </div>
-      </div>
-    </motion.section>
-  );
-};
 
 const Card = ({
   title,
@@ -117,33 +92,43 @@ const Card = ({
     threshold: 0.2, // déclenchement à 20% visible
   });
 
-  // Styles dynamiques pour la position (droite ou gauche)
-  const cardStyle = {
-    marginLeft: right ? "auto" : "calc(100% - 440px - 12vw)",
-    marginRight: right ? "calc(100% - 440px - 12vw)" : "auto",
-    left: right ? "auto" : 0,
-    right: right ? 0 : "auto",
-  };
+  // Hook pour détecter la taille d'écran
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsDesktop(window.innerWidth >= 1024);
+    };
+
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
 
   return (
     <motion.div
       id={id}
       ref={ref}
-      className={`block ${className}`}
-      style={cardStyle}
+      className={`
+        block relative w-[440px] mx-auto
+        ${right 
+          ? 'lg:ml-auto lg:mr-0 lg:right-0' 
+          : 'lg:mr-auto lg:ml-0 lg:left-0'
+        }
+        ${className}
+      `}
+      style={{
+        marginLeft: isDesktop ? (right ? "auto" : "calc(100% - 440px - 12vw)") : "auto",
+        marginRight: isDesktop ? (right ? "calc(100% - 440px - 12vw)" : "auto") : "auto",
+      }}
       initial={{ opacity: 0, y: 40 }}
       animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
     >
       <div className="wrapper">
         <header>
-          <h1
-            style={{
-              minHeight: "2em", // Ajustez selon votre design
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
+          <h1 className="min-h-[2em] flex items-center">
             {title}
           </h1>
           <p className="category">{subtitle}</p>
@@ -166,7 +151,6 @@ const Card = ({
                 inverted={link.inverted}
               />
             ))}
-
             {buttons.map((button, idx) => (
               <NeddleButton key={idx} href={button.href}>
                 {button.title}
@@ -178,12 +162,23 @@ const Card = ({
     </motion.div>
   );
 };
-
 const CardForm = ({ title, subtitle, form, right = false, id }) => {
   const { ref, inView } = useInView({
     triggerOnce: false, // pour l'animer une seule fois true
     threshold: 0.2, // déclenchement à 20% visible
   });
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsDesktop(window.innerWidth >= 1024);
+    };
+
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
 
   // Styles dynamiques pour la position (droite ou gauche)
   const cardStyle = {
@@ -197,8 +192,17 @@ const CardForm = ({ title, subtitle, form, right = false, id }) => {
     <motion.div
       id={id}
       ref={ref}
-      className={`block`}
-      style={cardStyle}
+      className={`
+      block relative w-[440px] mx-auto
+      ${right 
+        ? 'lg:ml-auto lg:mr-0 lg:right-0' 
+        : 'lg:mr-auto lg:ml-0 lg:left-0'
+      }
+    `}
+    style={{
+      marginLeft: isDesktop ? (right ? "auto" : "calc(100% - 440px - 12vw)") : "auto",
+      marginRight: isDesktop ? (right ? "calc(100% - 440px - 12vw)" : "auto") : "auto",
+    }}
       initial={{ opacity: 0, y: 40 }}
       animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
       transition={{ duration: 0.6, ease: "easeOut" }}

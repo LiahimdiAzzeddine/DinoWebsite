@@ -13,34 +13,28 @@ export const EnvironmentScene = () => {
   });
 
   const environmentConfigs = {
-    model4: {
+    web1: {
       preset: "sunset",
       intensity: 1.2,
       ambientIntensity: 0.8,
       hemiSkyColor: "#b090ff",
       hemiGroundColor: "#382b5c"
     },
-    Model1: {
+    web2: {
       preset: "city",
       intensity: 2.0,
       ambientIntensity: 1,
       hemiSkyColor: "#fff",
       hemiGroundColor: "#fff"
     },
-    model3: {
+    web3: {
       preset: "park",
       intensity: 1.3,
       ambientIntensity: 0.9,
       hemiSkyColor: "#a0ffc0",
       hemiGroundColor: "#2d6e41"
     },
-    Model2: {
-      preset: "warehouse",
-      intensity: 0.9,
-      ambientIntensity: 0.7,
-      hemiSkyColor: "#ffcf9a",
-      hemiGroundColor: "#5e3a1c"
-    }
+
   };
 
   const ambientLightRef = useRef();

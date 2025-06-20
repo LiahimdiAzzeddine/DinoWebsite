@@ -1,16 +1,12 @@
 import { OrbitControls, ScrollControls, useAnimations } from "@react-three/drei";
-import { useRef, useEffect, useState, useLayoutEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { useLoader, useThree } from "@react-three/fiber";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
 import { KTX2Loader } from "three/examples/jsm/loaders/KTX2Loader";
-import * as THREE from "three";
-import { Overlay } from "./Overlay";
-import gsap from "gsap";
 import EnvironmentScene from "./experience/Environment";
 
 export function Character({ url }) {
-  const { gl,scene } = useThree(); // Get WebGLRenderer
   const group = useRef()
 
   // Load the model

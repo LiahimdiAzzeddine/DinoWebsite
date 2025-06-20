@@ -1,59 +1,36 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { AnimationContext } from './experience/AnimationContext';
+import { useProgress } from '@react-three/drei';
 
-const Loader = ({ onLoadingComplete }) => {
-  const [progress, setProgress] = useState(0);
-  const [isComplete, setIsComplete] = useState(false);
-  const [fadeOut, setFadeOut] = useState(false);
+const Loader = () => {
+
+  const {
+    progress, setProgress,
+    fadeOut, setFadeOut,
+    isLoading, setIsLoading,
+  } = useContext(AnimationContext);
+
+  const { progress: gltfProgress, loaded, total } = useProgress();
 
   useEffect(() => {
-    // Simulate realistic loading phases
-    const phases = [
-      { target: 20, duration: 800, label: 'Unpacking...' },
-      { target: 45, duration: 600, label: 'Assembling...' },
-      { target: 70, duration: 500, label: 'Folding edges...' },
-      { target: 90, duration: 400, label: 'Final touches...' },
-      { target: 100, duration: 300, label: 'Ready!' }
-    ];
+    // Mettez à jour le pourcentage basé sur le chargement du modèle réel
+    if (gltfProgress < 100) {
+      setProgress(gltfProgress);
+    }
+  }, [gltfProgress]);
 
-    let currentPhase = 0;
-    let currentProgress = 0;
-
-    const animateProgress = () => {
-      if (currentPhase >= phases.length) return;
-
-      const phase = phases[currentPhase];
-      const increment = (phase.target - currentProgress) / (phase.duration / 16);
-
-      const interval = setInterval(() => {
-        currentProgress += increment;
-        
-        if (currentProgress >= phase.target) {
-          currentProgress = phase.target;
-          clearInterval(interval);
-          currentPhase++;
-          
-          if (currentPhase < phases.length) {
-            setTimeout(animateProgress, 100);
-          } else {
-            // Loading complete
-           setIsComplete(true);
-            setTimeout(() => {
-              setFadeOut(true);
-              setTimeout(() => {
-                onLoadingComplete();
-              }, 800);
-            }, 500);
-          }
-        }
-        
-        setProgress(currentProgress);
-      }, 16);
-    };
-
-    // Start loading animation after a brief delay
-    setTimeout(animateProgress, 300);
-  }, []);
-
+  useEffect(() => {
+    // Quand tout est chargé, on marque comme prêt
+    if (gltfProgress === 100 && loaded === total) {
+      setTimeout(() => {
+        setIsLoading(true);
+        setFadeOut(true);
+      }, 1000);
+    }
+  }, [gltfProgress, loaded, total]);
+if(fadeOut){
+  return
+}
   return (
     <div className={`fixed inset-0 bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 flex items-center justify-center z-[5000] transition-opacity duration-800 ${fadeOut ? 'opacity-0' : 'opacity-100'}`}>
       {/* Cardboard texture overlay */}
@@ -214,7 +191,7 @@ const Loader = ({ onLoadingComplete }) => {
           </div>
 
           {/* Completion message */}
-          {isComplete && (
+          {isLoading && (
             <div className="mt-6 text-center animate-fade-in">
               <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-emerald-100 to-teal-100 border-2 border-teal-400 relative">
                 <div className="w-2 h-2 bg-emerald-500 mr-2 transform rotate-45"></div>
@@ -228,22 +205,6 @@ const Loader = ({ onLoadingComplete }) => {
           )}
         </div>
       </div>
-
-      <style jsx>{`
-        @keyframes float {
-          0% { transform: translateY(0px) rotate(45deg); }
-          100% { transform: translateY(-20px) rotate(45deg); }
-        }
-        
-        @keyframes fade-in {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .animate-fade-in {
-          animation: fade-in 0.5s ease-out;
-        }
-      `}</style>
     </div>
   );
 };

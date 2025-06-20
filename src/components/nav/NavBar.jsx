@@ -10,127 +10,123 @@ export default function NavBar() {
 
   return (
     <>
-      <nav className=" w-auto h-[54px] rounded-2xl fixed top-5 z-[1100]  bg-[linear-gradient(90deg,#fff,hsla(0,0%,100%,.95))] shadow-[0px_2px_15px_rgba(2,2,43,0.2)] ease-in-out">
-        <div id="header-hover-zone" />
-        <div className="relative mx-auto flex h-full max-w-[1200px] flex-row items-center px-[1em] text-[#020220]">
-          <div className="flex items-center text-[1.35em]">
-            <a
-              aria-current="page"
-              href="#"
-              className="rounded-[1em] no-underline text-inherit font-[Nunito_Sans,sans-serif]"
-            >
-              <img
-                alt="needle logo"
-                src={dino}
-                className="h-[32.5px] mb-[2px] mt-[2px] max-h-[1.5em] align-middle"
-              />
-            </a>
-          </div>
-          <div className="spacer" />
-          <div className="main-menu pl-[16px]">
-            <div className="md:flex">
-              {/* Desktop menu */}
-              <ul className="hidden md:flex m-0 p-0 list-none items-center">
-                <li className="select-none p-2 md:p-[10px] md:inline-block group relative">
-                  <button
-                    aria-label="contact us"
-                    className="border-none cursor-pointer pointer-events-auto bg-none rounded-[1em] p-0 whitespace-nowrap text-black hover:text-[#48beaa] outline-offset-[4px] relative shadow-none"
-                  >
-                    contact us
-                  </button>
-                </li>
-                <li className="select-none p-2 md:p-[10px] md:inline-block group relative">
-                  <button
-                    aria-label="about us"
-                    className="border-none cursor-pointer pointer-events-auto bg-none rounded-[1em] p-0 whitespace-nowrap text-black hover:text-[#48beaa] outline-offset-[4px] relative shadow-none"
-                  >
-                    about us
-                  </button>
-                </li>
-                {/* our Games menu item */}
-                <li className="select-none p-2 md:p-[10px] md:inline-block group relative">
-                  <button
-                    aria-label="Products"
-                    className="border-none cursor-pointer pointer-events-auto bg-none rounded-[1em] p-0 whitespace-nowrap text-black hover:text-[#48beaa] outline-offset-[4px] relative shadow-none"
-                  >
-                    our Games
-                  </button>
-                  <div className="hidden md:group-hover:block transition-opacity duration-100 ease-in-out md:absolute md:z-[10] md:overflow-hidden md:p-5 md:transition-opacity md:duration-100 md:ease-in-out md:mt-[2px] md:min-w-[25em] md:ml-[-58px] md:text-black md:opacity-0 md:pointer-events-none md:h-auto md:group-hover:opacity-100 md:group-hover:pointer-events-auto">
-                    <div className="flex gap-[1em] p-[1.5em] rounded-[1.625em] shadow-[0_2px_15px_rgba(2,2,43,0.2)] bg-[linear-gradient(90deg,#fff,hsla(0,0%,100%,.95))]">
-                      <div className="m-0 inline-block leading-[1.5em] list-none pl-0 select-none">
-                        <ul className="list-none ml-0 pl-0">
-                          <li className="text-[1em] font-normal leading-[1.2em] mb-[4px]">
-                            <a
-                              href="#"
-                              className="no-underline text-inherit font-[Nunito_Sans,sans-serif] rounded-[12px] gap-[4px] p-[10px] transition-all duration-[100ms] linear flex flex-col tracking-[0px] relative transform scale-100"
-                            >
-                              <div className="gap-[8px] items-center flex flex-row">
-                                <div>
-                                  <p className="m-0">
-                                    <strong>
-                                      <span className="notranslate">hello</span>
-                                    </strong>
-                                  </p>
-                                  <p className="m-0 text-[rgb(127,126,144)] text-[0.9em] font-normal ml-0 mt-0 max-w-[360px]">
-                                    Lorem ipsum, dolor sit amet consectetur
-                                    adipisicing elit. Praesentium, eligendi
-                                    eaque. Vel
-                                    <span className="notranslate"> fgdfdg</span>
-                                    ,
-                                  </p>
-                                </div>
-                              </div>
-                            </a>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </li>
-                <li className="select-none p-2 md:p-[10px] md:inline-block group relative">
-                  <a
-                    aria-label="Blogs"
-                    href="#"
-                    className="border-none cursor-pointer pointer-events-auto bg-none rounded-[1em] p-0 whitespace-nowrap text-black hover:text-[#48beaa] outline-offset-[4px] relative shadow-none"
-                  >
-                    Blogs
-                  </a>
-                </li>
-                <li className="select-none p-2 md:p-[10px] md:inline-block group relative">
-                  <a
-                    aria-label="career"
-                    href="#"
-                    className="hover:bg-[#eee] no-underline font-[Nunito_Sans,sans-serif] border border-[rgba(224,224,224,1)] rounded-xl  px-4 py-[0.4rem] whitespace-nowrap shadow-[rgba(0,0,0,0.03)_0px_7px_0.5rem,_rgba(0,0,0,0.05)_0px_0px_1.3rem_inset] mr-4 bg-white text-[rgb(20,20,20)] cursor-pointer list-none text-left"
-                  >
-                    career
-                  </a>
-                  <a
-                    aria-label="Log in"
-                    href="#"
-                    target="_blank"
-                    className="no-underline font-[Nunito_Sans,sans-serif] bg-gradient-to-r from-[#3fbdA8] to-[#3fb127] hover:from-[#3eb1277e] hover:to-[#3fbda885] border-[1px] border-[rgba(255,255,255,0.1)] rounded-xl p-[0.4rem_1rem] whitespace-nowrap shadow-[rgba(0,0,0,0.03)_0px_7px_0.5rem,_rgba(0,0,0,0.05)_0px_0px_1.3rem_inset] text-white mr-[-12px]"
-                  >
-                    Book a Call
-                  </a>
-                </li>
-                <div
-                  id="header-footer"
-                  className="m-[50px] justify-around hidden"
-                >
-                  <img height={128} width={128} src={dino} />
-                </div>
-              </ul>
-
-              {/* Mobile menu dans un card */}
-              {isMenuOpen && <NavMobile />}
-            </div>
+      <nav className="w-auto h-[54px] rounded-2xl fixed top-5 z-[1100] bg-gradient-to-r from-emerald-50 via-teal-50 to-cyan-50 shadow-[0px_2px_15px_rgba(2,2,43,0.2)] ease-in-out">
+  <div id="header-hover-zone" />
+  <div className="relative mx-auto flex h-full max-w-[1200px] flex-row items-center px-[1em] text-teal-900">
+    <div className="flex items-center text-[1.35em]">
+      <a
+        aria-current="page"
+        href="#"
+        className="rounded-[1em] no-underline text-inherit font-[Nunito_Sans,sans-serif]"
+      >
+        <img
+          alt="needle logo"
+          src={dino}
+          className="h-[32.5px] mb-[2px] mt-[2px] max-h-[1.5em] align-middle"
+        />
+      </a>
+    </div>
+    <div className="spacer" />
+    <div className="main-menu pl-[16px]">
+      <div className="md:flex">
+        <ul className="hidden md:flex m-0 p-0 list-none items-center">
+          <li className="select-none p-2 md:p-[10px] md:inline-block group relative">
             <button
-              onClick={toggleMenu}
-              id="mobile-menu"
-              title="Show menu"
-              className="bg-[rgb(255,255,255)] mobile-menu show-on-mobile -mr-[20px] mt-[1.5px] bg-transparent border-0 appearance-none border-none rounded-[0.3em] p-[0.4em] text-[rgba(0,0,0,0.9)] cursor-pointer pointer-events-auto font-[Nunito_Sans,sans-serif] md:hidden"
+              aria-label="contact us"
+              className="border-none cursor-pointer pointer-events-auto bg-none rounded-[1em] p-0 whitespace-nowrap text-teal-900 hover:text-teal-500 outline-offset-[4px] relative shadow-none"
+              onClick={() => {
+                const target = document.querySelector("#section6");
+                if (target) target.scrollIntoView({ behavior: "smooth" });
+              }}
             >
-              {isMenuOpen ? (
+              contact us
+            </button>
+          </li>
+          <li className="select-none p-2 md:p-[10px] md:inline-block group relative">
+            <button
+              aria-label="about us"
+              className="border-none cursor-pointer pointer-events-auto bg-none rounded-[1em] p-0 whitespace-nowrap text-teal-900 hover:text-teal-500 outline-offset-[4px] relative shadow-none"
+            >
+              about us
+            </button>
+          </li>
+          <li className="select-none p-2 md:p-[10px] md:inline-block group relative">
+            <button
+              aria-label="Products"
+              className="border-none cursor-pointer pointer-events-auto bg-none rounded-[1em] p-0 whitespace-nowrap text-teal-900 hover:text-teal-500 outline-offset-[4px] relative shadow-none"
+            >
+              our Games
+            </button>
+            <div className="hidden md:group-hover:block transition-opacity duration-100 ease-in-out md:absolute md:z-[10] md:overflow-hidden md:p-5 md:transition-opacity md:duration-100 md:ease-in-out md:mt-[2px] md:min-w-[25em] md:ml-[-58px] md:text-black md:opacity-0 md:pointer-events-none md:h-auto md:group-hover:opacity-100 md:group-hover:pointer-events-auto">
+              <div className="flex gap-[1em] p-[1.5em] rounded-[1.625em] shadow-[0_2px_15px_rgba(2,2,43,0.2)] bg-gradient-to-r from-emerald-100 via-teal-100 to-cyan-100">
+                <div className="m-0 inline-block leading-[1.5em] list-none pl-0 select-none">
+                  <ul className="list-none ml-0 pl-0">
+                    <li className="text-[1em] font-normal leading-[1.2em] mb-[4px]">
+                      <a
+                        href="#"
+                        className="no-underline text-inherit font-[Nunito_Sans,sans-serif] rounded-[12px] gap-[4px] p-[10px] transition-all duration-[100ms] linear flex flex-col tracking-[0px] relative transform scale-100"
+                      >
+                        <div className="gap-[8px] items-center flex flex-row">
+                          <div>
+                            <p className="m-0">
+                              <strong>
+                                <span className="notranslate">hello</span>
+                              </strong>
+                            </p>
+                            <p className="m-0 text-[rgb(127,126,144)] text-[0.9em] font-normal ml-0 mt-0 max-w-[360px]">
+                              Lorem ipsum, dolor sit amet consectetur
+                              adipisicing elit.
+                            </p>
+                          </div>
+                        </div>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </li>
+          <li className="select-none p-2 md:p-[10px] md:inline-block group relative">
+            <a
+              aria-label="Blogs"
+              href="#"
+              className="border-none cursor-pointer pointer-events-auto bg-none rounded-[1em] p-0 whitespace-nowrap text-teal-900 hover:text-teal-500 outline-offset-[4px] relative shadow-none"
+            >
+              Blogs
+            </a>
+          </li>
+          <li className="select-none p-2 md:p-[10px] md:inline-block group relative">
+            <a
+              aria-label="career"
+              href="#"
+              className="hover:bg-emerald-100 no-underline font-[Nunito_Sans,sans-serif] border border-teal-200 rounded-xl px-4 py-[0.4rem] whitespace-nowrap shadow-[rgba(0,0,0,0.03)_0px_7px_0.5rem,_rgba(0,0,0,0.05)_0px_0px_1.3rem_inset] mr-4 bg-white text-teal-800 cursor-pointer list-none text-left"
+            >
+              career
+            </a>
+            <a
+              aria-label="Log in"
+              href="#"
+              target="_blank"
+              className="no-underline font-[Nunito_Sans,sans-serif] bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 border-[1px] border-[rgba(255,255,255,0.1)] rounded-xl p-[0.4rem_1rem] whitespace-nowrap shadow-[rgba(0,0,0,0.03)_0px_7px_0.5rem,_rgba(0,0,0,0.05)_0px_0px_1.3rem_inset] text-white mr-[-12px]"
+            >
+              Book a Call
+            </a>
+          </li>
+          <div id="header-footer" className="m-[50px] justify-around hidden">
+            <img height={128} width={128} src={dino} />
+          </div>
+        </ul>
+
+        {isMenuOpen && <NavMobile />}
+      </div>
+
+      <button
+        onClick={toggleMenu}
+        id="mobile-menu"
+        title="Show menu"
+        className="bg-[rgb(255,255,255)] mobile-menu show-on-mobile -mr-[20px] mt-[1.5px] bg-transparent border-0 appearance-none border-none rounded-[0.3em] p-[0.4em] text-[rgba(0,0,0,0.9)] cursor-pointer pointer-events-auto font-[Nunito_Sans,sans-serif] md:hidden"
+      >
+      {isMenuOpen ? (
                 <svg
                   className="ham hamRotate ham1 bg-transparent"
                   width="80"
@@ -233,10 +229,11 @@ export default function NavBar() {
                   />
                 </svg>
               )}
-            </button>
-          </div>
-        </div>
-      </nav>
+      </button>
+    </div>
+  </div>
+</nav>
+
     </>
   );
 }

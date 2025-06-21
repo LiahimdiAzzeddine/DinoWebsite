@@ -39,6 +39,12 @@ body {
   font-family: "Nunito Sans", sans-serif;
   scrollbar-width: thin;
 }
+@media (max-width: 768px) {
+  body {
+    overflow-y: auto; /* ✅ active le scroll vertical uniquement sur mobile */
+  }
+}
+
 
 .pages-gradient {
   background: linear-gradient(90deg, #99d5ff 30%, rgb(99, 194, 253));

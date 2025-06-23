@@ -1,4 +1,3 @@
-import NavBar from "./nav/NavBar";
 import { Typewriter } from "react-simple-typewriter";
 
 import { motion } from "framer-motion";
@@ -234,9 +233,7 @@ export const Overlay = () => {
   ];
   return (
     <>
-      <div className="w-full relative m-auto flex justify-center">
-        <NavBar />
-      </div>
+      
       <Card
         id="section1"
         title={

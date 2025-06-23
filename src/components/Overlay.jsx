@@ -3,78 +3,8 @@ import { Typewriter } from "react-simple-typewriter";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
-
-const NeddleButton = ({ href = "#", children = "No text" }) => {
-  return (
-    <a
-      href={href}
-       className="
-        inline-flex items-center gap-2 
-        px-4 py-2 
-        font-bold text-white text-base 
-        rounded-full 
-        border border-white/30 
-        bg-white/20 
-        shadow-[0_0_2px_rgba(0,0,0,0.5)] 
-        transition 
-        duration-150 
-        ease-out 
-        no-underline 
-        hover:bg-white/30
-        hover:shadow-[0_5px_20px_rgba(0,0,0,0.2)]
-        hover:-translate-y-[1px]
-        m-2
-        pointer-events-auto
-      "
-      style={{
-        fontFamily: '"Nunito Sans", sans-serif',
-      }}
-    >
-      {children}
-    </a>
-  );
-};
-
-
-
-const LinkButton = ({
-  href,
-  title,
-  alt,
-  imgSrc,
-  text,
-  inverted = false,
-}) => {
-  return (
-    <a
-      href={href}
-      title={title}
-      aria-label={title}
-      className={`
-        inline-block font-bold text-base pointer-events-auto no-underline transition-all ease-out duration-100 
-        rounded-full border shadow-[0_0_2px_rgba(0,0,0,0.5)] hover:shadow-[0_5px_20px_rgba(0,0,0,0.2)] hover:-translate-y-[1px]
-        ${inverted 
-          ? "bg-white text-black px-3 py-1 border-white border text-sm" 
-          : "bg-white/20 text-white px-4 py-2 border-white/30"}
-      `}
-      style={{
-        fontFamily: '"Nunito Sans", sans-serif',
-        margin: "0.5em 0.5em 0.5em 0",
-      }}
-    >
-      <div className="flex items-center gap-2">
-        {imgSrc && (
-          <img
-            src={imgSrc}
-            alt={alt}
-            className={inverted ? "h-[2em]" : "h-[2em]"}
-          />
-        )}
-        {text && <span>{text}</span>}
-      </div>
-    </a>
-  );
-};
+import LinkButton from "./ui/LinkButton";
+import NeddleButton from "./ui/NeddleButton";
 
 
 const Card = ({
@@ -219,9 +149,7 @@ const CardForm = ({ title, subtitle, form, right = false, id }) => {
 };
 
 export const Overlay = () => {
-  {
-    /** */
-  }
+
   const [activeSection, setActiveSection] = useState("section1");
 
   // Définir les sections
@@ -313,7 +241,7 @@ export const Overlay = () => {
         buttons={[
           {
             href: "#",
-            title: "Let’s launch The next hit, together",
+            title: "Let discuss your project",
           },
         ]}
       />
@@ -403,9 +331,9 @@ export const Overlay = () => {
               <div className="text-center">
                 <button
                   type="submit"
-                  className="inline-block transition duration-200 bg-[linear-gradient(69deg,_rgb(63,_189,_168),_rgb(63,_177,_39))] hover:bg-[linear-gradient(30deg,_rgb(63,_189,_118),_rgb(63,_167,_39))] text-white rounded-2xl px-4 py-2 shadow-[rgba(0,0,0,0.05)_0px_0px_1.3rem_inset]"
+                  className="inline-block transition duration-200 bg-[linear-gradient(69deg,_rgb(63,_189,_168),_rgb(63,_177,_39))] hover:bg-[linear-gradient(30deg,_rgb(63,_189,_118),_rgb(63,_167,_39))] text-white sm:rounded-2xl rounded-[10px] px-4 py-2 shadow-[rgba(0,0,0,0.05)_0px_0px_1.3rem_inset]"
                 >
-                  submit
+                  Submit
                 </button>
               </div>
             </form>

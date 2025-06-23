@@ -3,395 +3,155 @@ import dino from "/assets/logos/dinoBlack.png";
 
 export default function Footer() {
   return (
-    <>
-      <nav
-        id="footer"
-        className="listbox pill"
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          position: "relative",
-          width: "100%",
-        }}
-      >
-        <div
-          id="footer-wrapper"
-          className="soft-box-shadow"
-          style={{
-            boxShadow: "rgba(2, 2, 43, 0.2) 0px 2px 15px",
-            backdropFilter: "blur(30px)",
-            backgroundColor: "rgba(255, 255, 255, 0.667)",
-            display: "flex",
-            justifyContent: "space-around",
-            paddingBottom: "2.5em",
-            paddingTop: "2.5em",
-            width: "100%",
-            zIndex: 100,
-            position: "relative",
-          }}
-        >
-          <div
-            className="content"
-            style={{ display: "block", maxWidth: "1200px", width: "94%" }}
-          >
-            <div
-              className="columns shift"
-              style={{
-                marginLeft: "20px",
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-evenly",
-                paddingBottom: "1em",
-              }}
-            >
-              <div
-                className="column"
-                style={{
-                  padding: "0.5em",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                <div
-                  className="Dinomite-logo"
-                  style={{
-                    alignItems: "center",
-                    display: "flex",
-                    fontSize: "1.35em",
-                    marginLeft: "-19px",
-                  }}
+    <nav className="flex justify-center relative w-full">
+      <div className="flex justify-around w-full py-12 relative z-[100] bg-gradient-to-br bg-white/70 backdrop-blur-[30px] shadow-[0_2px_15px_rgba(2,2,43,0.2)]   border-t border-gray-100">
+        <div style={{ display: "block", maxWidth: "1400px", width: "100%" }}>
+          <div className="flex sm:flex-row flex-col justify-between gap-8 px-8">
+            {/* Logo Section */}
+            <div className="flex flex-col space-y-4 min-w-[280px]">
+              <div className="flex items-center">
+                <a
+                  aria-current="page"
+                  href="#"
+                  className="group transition-transform hover:scale-105 duration-300"
                 >
-                  <a
-                    className="router-link-active router-link-exact-active"
-                    aria-current="page"
-                    href="#"
-                    style={{
-                      borderRadius: "1em",
-                      textDecoration: "none",
-                      color: "inherit",
-                      fontFamily: '"Nunito Sans", sans-serif',
-                    }}
-                  >
-                    <img
-                      alt="Dinomite logo"
-                      src={dino}
-                      style={{
-                        height: "107px",
-                        marginBottom: "2px",
-                        marginTop: "2px",
-                        maxHeight: "2.5em",
-                        verticalAlign: "middle",
-                        width: "107px",
-                      }}
-                    />
-                  </a>
-                </div>
+                  <img
+                    alt="Dinomite logo"
+                    src={dino}
+                    className="w-[107px] h-[140px] max-h-[3em] mt-[2px] mb-[2px] align-middle"
+                  />
+                </a>
               </div>
-              <div
-                className="column"
-                style={{
-                  padding: "0.5em",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                <p
-                  style={{
-                    fontSize: "14px",
-                    lineHeight: 1.42859,
-                    marginBottom: "1rem",
-                    fontWeight: 700,
-                  }}
-                >
-                  Resources
+              <div className="max-w-[260px]">
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  Powerful development tools to accelerate your workflow and bring your ideas to life.
                 </p>
-            
+              </div>
+            </div>
+
+            {/* Resources */}
+            <div className="flex flex-col space-y-4">
+              <h4 className="text-gray-900 font-semibold text-base">Resources</h4>
+              <div className="flex flex-col space-y-3">
                 <a
                   href="#"
-                  style={{
-                    borderRadius: "1em",
-                    textDecoration: "none",
-                    color: "inherit",
-                    fontFamily: '"Nunito Sans", sans-serif',
-                    fontSize: "14px",
-                    lineHeight: 1.42859,
-                    marginBottom: "0.5rem",
-                  }}
+                  className="text-gray-600 hover:text-blue-600 transition-colors duration-200 text-sm font-medium"
                 >
                   FAQ
                 </a>
               </div>
-              <div
-                className="column"
-                style={{
-                  padding: "0.5em",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                <p
-                  style={{
-                    fontSize: "14px",
-                    lineHeight: 1.42859,
-                    marginBottom: "1rem",
-                    fontWeight: 700,
-                  }}
-                >
-                  Community
-                </p>
-                <a
-                  href="#"
-                  style={{
-                    borderRadius: "1em",
-                    textDecoration: "none",
-                    color: "inherit",
-                    fontFamily: '"Nunito Sans", sans-serif',
-                    fontSize: "14px",
-                    lineHeight: 1.42859,
-                    marginBottom: "0.5rem",
-                  }}
-                >
-                  Support Forum
-                </a>
-                <a
-                  href="#"
-                  style={{
-                    borderRadius: "1em",
-                    textDecoration: "none",
-                    color: "inherit",
-                    fontFamily: '"Nunito Sans", sans-serif',
-                    fontSize: "14px",
-                    lineHeight: 1.42859,
-                    marginBottom: "0.5rem",
-                  }}
-                >
-                  <span className="notranslate">Discord</span>
-                </a>
-                <a
-                  href="#"
-                  style={{
-                    borderRadius: "1em",
-                    textDecoration: "none",
-                    color: "inherit",
-                    fontFamily: '"Nunito Sans", sans-serif',
-                    fontSize: "14px",
-                    lineHeight: 1.42859,
-                    marginBottom: "0.5rem",
-                  }}
-                >
-                  <span className="notranslate">Twitter/X</span>
-                </a>
-                <a
-                  href="#"
-                  style={{
-                    borderRadius: "1em",
-                    textDecoration: "none",
-                    color: "inherit",
-                    fontFamily: '"Nunito Sans", sans-serif',
-                    fontSize: "14px",
-                    lineHeight: 1.42859,
-                    marginBottom: "0.5rem",
-                  }}
-                >
-                  <span className="notranslate">YouTube</span>
-                </a>
-                <a
-                  href="#"
-                  style={{
-                    borderRadius: "1em",
-                    textDecoration: "none",
-                    color: "inherit",
-                    fontFamily: '"Nunito Sans", sans-serif',
-                    fontSize: "14px",
-                    lineHeight: 1.42859,
-                    marginBottom: "0.5rem",
-                  }}
-                >
-                  <span className="notranslate">Instagram</span>
-                </a>
-                <a
-                  href="#"
-                  style={{
-                    borderRadius: "1em",
-                    textDecoration: "none",
-                    color: "inherit",
-                    fontFamily: '"Nunito Sans", sans-serif',
-                    fontSize: "14px",
-                    lineHeight: 1.42859,
-                    marginBottom: "0.5rem",
-                  }}
-                >
-                  <span className="notranslate">LinkedIn</span>
-                </a>
-                <a
-                  href="#"
-                  style={{
-                    borderRadius: "1em",
-                    textDecoration: "none",
-                    color: "inherit",
-                    fontFamily: '"Nunito Sans", sans-serif',
-                    fontSize: "14px",
-                    lineHeight: 1.42859,
-                    marginBottom: "0.5rem",
-                  }}
-                >
-                  <span className="notranslate">Bluesky</span>
-                </a>
-                <a
-                  href="#"
-                  style={{
-                    borderRadius: "1em",
-                    textDecoration: "none",
-                    color: "inherit",
-                    fontFamily: '"Nunito Sans", sans-serif',
-                    fontSize: "14px",
-                    lineHeight: 1.42859,
-                    marginBottom: "0.5rem",
-                  }}
-                >
-                  <span className="notranslate">Reddit</span>
-                </a>
-                <a
-                  href="#"
-                  style={{
-                    borderRadius: "1em",
-                    textDecoration: "none",
-                    color: "inherit",
-                    fontFamily: '"Nunito Sans", sans-serif',
-                    fontSize: "14px",
-                    lineHeight: 1.42859,
-                    marginBottom: "0.5rem",
-                  }}
-                >
-                  <span className="notranslate">TikTok</span>
-                </a>
-              </div>
-              <div
-                className="column"
-                style={{
-                  padding: "0.5em",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                <p
-                  style={{
-                    fontSize: "14px",
-                    lineHeight: 1.42859,
-                    marginBottom: "1rem",
-                    fontWeight: 700,
-                  }}
-                >
-                  Company
-                </p>
-                <a
-                  href="#"
-                  style={{
-                    borderRadius: "1em",
-                    textDecoration: "none",
-                    color: "inherit",
-                    fontFamily: '"Nunito Sans", sans-serif',
-                    fontSize: "14px",
-                    lineHeight: 1.42859,
-                    marginBottom: "0.5rem",
-                  }}
-                >
-                  About
-                </a>
-                <a
-                  href="#"
-                  style={{
-                    borderRadius: "1em",
-                    textDecoration: "none",
-                    color: "inherit",
-                    fontFamily: '"Nunito Sans", sans-serif',
-                    fontSize: "14px",
-                    lineHeight: 1.42859,
-                    marginBottom: "0.5rem",
-                  }}
-                >
-                  Terms and Conditions
-                </a>
-                <a
-                  href="#"
-                  style={{
-                    borderRadius: "1em",
-                    textDecoration: "none",
-                    color: "inherit",
-                    fontFamily: '"Nunito Sans", sans-serif',
-                    fontSize: "14px",
-                    lineHeight: 1.42859,
-                    marginBottom: "0.5rem",
-                  }}
-                >
-                  Website Privacy Policy
-                </a>
-                <a
-                  href="#"
-                  style={{
-                    borderRadius: "1em",
-                    textDecoration: "none",
-                    color: "inherit",
-                    fontFamily: '"Nunito Sans", sans-serif',
-                    fontSize: "14px",
-                    lineHeight: 1.42859,
-                    marginBottom: "0.5rem",
-                  }}
-                >
-                  GitHub
-                </a>
-                <a
-                  href="#"
-                  target="_blank"
-                  style={{
-                    borderRadius: "1em",
-                    textDecoration: "none",
-                    color: "inherit",
-                    fontFamily: '"Nunito Sans", sans-serif',
-                    fontSize: "14px",
-                    lineHeight: 1.42859,
-                    marginBottom: "0.5rem",
-                  }}
-                >
-                  hi@Dinomite.tools
-                </a>
+            </div>
+
+            {/* Community */}
+            <div className="flex flex-col space-y-4">
+              <h4 className="text-gray-900 font-semibold text-base">Community</h4>
+              <div className="flex flex-col space-y-3">
+                {[
+                  "Support Forum",
+                  "Discord",
+                  "Twitter/X",
+                  "Instagram",
+                  "LinkedIn",
+                ].map((item) => (
+                  <a
+                    key={item}
+                    href="#"
+                    className="text-gray-600 hover:text-blue-600 transition-colors duration-200 text-sm font-medium group flex items-center"
+                  >
+                    <span className={["Discord", "Twitter/X", "YouTube", "Instagram", "LinkedIn", "Bluesky", "Reddit", "TikTok"].includes(item) ? "notranslate" : ""}>
+                      {item}
+                    </span>
+                    <svg className="w-3 h-3 ml-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                    </svg>
+                  </a>
+                ))}
               </div>
             </div>
-            <div
-              className="copyright"
-              style={{
-                display: "flex",
-                fontSize: "0.75em",
-                justifyContent: "center",
-                opacity: 0.7,
-                paddingTop: "1em",
-              }}
-            >
-              <span style={{ marginRight: "3em" }}>
-                © 2024{" "}
-                <a
-                  href="#"
-                  style={{
-                    borderRadius: "1em",
-                    textDecoration: "none",
-                    color: "inherit",
-                    fontFamily: '"Nunito Sans", sans-serif',
-                    fontSize: "14px",
-                    lineHeight: 1.42859,
-                    marginBottom: "0.5rem",
-                  }}
-                >
-                  <span className="notranslate" style={{ marginRight: "3em" }}>
-                    {" "}
-                    Dinomite Tools GmbH{" "}
-                  </span>
-                </a>
+
+            {/* Company */}
+            <div className="flex flex-col space-y-4">
+              <h4 className="text-gray-900 font-semibold text-base">Company</h4>
+              <div className="flex flex-col space-y-3">
+                {[
+                  "About",
+                  "Terms and Conditions",
+                  "Website Privacy Policy",
+                  "GitHub",
+                  "contact@dinomite.tools",
+                ].map((item, idx) => (
+                  <a
+                    key={item}
+                    href="#"
+                    target={item === "hi@Dinomite.tools" ? "_blank" : undefined}
+                    className="text-gray-600 hover:text-blue-600 transition-colors duration-200 text-sm font-medium group flex items-center"
+                  >
+                    {item}
+                    {item.includes("@") && (
+                      <svg className="w-3 h-3 ml-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                      </svg>
+                    )}
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            {/* Location */}
+            <div className="flex flex-col space-y-4 min-w-[300px]">
+              <h4 className="text-gray-900 font-semibold text-base">Location</h4>
+              <div className="space-y-3">
+                <div className="flex items-start space-x-2">
+                  <svg className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                  </svg>
+                  <div>
+                    <div className="text-gray-900 font-medium text-sm">Tanger, Morocco</div>
+                    <div className="text-gray-500 text-xs mt-1">Technopark tanger office 215</div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Enhanced Map */}
+              <div className="relative group">
+                <div className="w-full h-40 rounded-xl overflow-hidden shadow-lg border border-gray-200 transition-transform duration-300 ">
+                  <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d202.31114890989693!2d-5.803138385030007!3d35.775907362066675!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd0c7f580f56224f%3A0x10633cdbe9d95d5b!2sTechnopark!5e0!3m2!1sfr!2sma!4v1750703145961!5m2!1sfr!2sma"
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0 }}
+                    allowFullScreen=""
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    title="Dinomite Tools Location"
+                    className="brightness-95 group-hover:brightness-100 transition-all duration-300"
+                  ></iframe>
+                </div>
+                <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm rounded-full p-1.5 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <svg className="w-3 h-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-center items-center pt-8 mt-8 border-t border-gray-200">
+            <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-6 text-center">
+              <span className="text-gray-500 text-sm">
+                © 2024 <span className="notranslate font-medium text-gray-700">Dinomite Tools GmbH</span>
               </span>
+              {/* <div className="flex items-center space-x-1 text-gray-400">
+                <span className="text-xs">Made with</span>
+                <svg className="w-3 h-3 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
+                </svg>
+                <span className="text-xs">in Tanger</span>
+              </div> */}
             </div>
           </div>
         </div>
-      </nav>
-  
-    </>
+      </div>
+    </nav>
   );
 }

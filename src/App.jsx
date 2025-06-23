@@ -1,6 +1,5 @@
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Overlay } from "./components/Overlay";
 import { AnimationProvider } from "./components/experience/AnimationContext";
 import Footer from "./components/Footer";
 import Loader from "./components/Loader";
@@ -9,7 +8,9 @@ import NavBar from "./components/nav/NavBar";
 // Import de tes pages
 import Home from "./pages/Home";
 import About from "./pages/About";
-import Fqa from "./pages/Fqas";
+import Faqs from "./pages/Faqs";
+import Blogs from "./pages/Blogs";
+import Career from "./pages/Career";
 
 function App() {
   return (
@@ -24,10 +25,10 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
-            <Route path="/gaqs" element={<Fqa />} />
+            <Route path="/faqs" element={<Faqs />} />
+            <Route path="/blogs" element={<Blogs />} />
+            <Route path="/career" element={<Career />} />
           </Routes>
-
-         
           <Footer />
         </main>
       </AnimationProvider>

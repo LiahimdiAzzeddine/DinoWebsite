@@ -33,11 +33,15 @@ body {
   padding: 0px;
   min-height: -webkit-fill-available;
   overflow-x: hidden;
-  overflow-y: hidden;
+  /*overflow-y: hidden;*/
   width: 100%;
   -webkit-font-smoothing: antialiased;
   font-family: "Nunito Sans", sans-serif;
   scrollbar-width: thin;
+}
+
+.nunito{
+  font-family: "Nunito Sans", sans-serif;
 }
 @media (max-width: 768px) {
   body {
@@ -93,6 +97,37 @@ div.block:before {
   top: calc(var(--offset)*-1);
   width: calc(100% + var(--offset)*2);
 }
+
+
+
+/* Container centré et responsive */
+div.block2 {
+  color: #fff;
+  pointer-events: none;
+  position: relative;
+  margin: 7em auto 35vh auto; /* Centré horizontalement */
+  top: 12vh;
+  width: 90vw;                /* 90% de la largeur de la fenêtre */
+ max-width: 1200px;
+  z-index: 25;
+}
+
+/* Effet glassmorphism */
+div.block2::before {
+ --offset: 30px;
+  backdrop-filter: blur(40px) saturate(1.4);
+  background-color: #6666664e;
+  border-radius: 40px;
+  box-shadow: 0 0 20px #5e5e5e38;
+  content: "";
+  height: calc(100% + var(--offset)*2);
+  left: calc(var(--offset)*-1);
+  outline: 1px solid #ffffff2b;
+  position: absolute;
+  top: calc(var(--offset)*-1);
+  width: calc(100% + var(--offset)*2);
+}
+
 
 .wrapper {
   pointer-events: auto;
@@ -168,7 +203,7 @@ div[data-v-7479a2c4] {
   gap: .5em;
 }
 /* Typography */
-.block h1 {
+.block h1,.block2 h1 {
   font-size: 3em;
   font-weight: 700;
   line-height: 1.05em;
@@ -193,7 +228,7 @@ div[data-v-7479a2c4] {
     width: 30%;
   }
 
-  .block h1 {
+  .block h1,.block2 h1 {
     font-size: 3.3em;
     line-height: 1em;
     
@@ -206,12 +241,18 @@ div[data-v-7479a2c4] {
     top: 5.5vh;
   }
 
-  .block h1 {
+  .block h1,.block2 h1 {
     font-size: 1.8em;
   }
 
   p {
     font-size: 1.1em;
+  }
+  div.block2::before {
+  border-radius:0;
+  }
+  div.block::before {
+  border-radius:0;
   }
 }
 

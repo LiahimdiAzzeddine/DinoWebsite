@@ -82,9 +82,15 @@ const GradientSkybox = () => {
 
   // Met à jour les couleurs en fonction du modèle actif
   useEffect(() => {
-    const config = MODEL_CONFIGS[currentModel];
+    let config = MODEL_CONFIGS[currentModel];
     if (config) {
       const modelColorA = new THREE.Color(config.colorA).multiplyScalar(1.1); // léger boost
+      const modelColorB = new THREE.Color(config.colorB).multiplyScalar(1.1);
+      targetA.current.copy(modelColorA);
+      targetB.current.copy(modelColorB);
+    }else{
+ config = MODEL_CONFIGS[1];
+ const modelColorA = new THREE.Color(config.colorA).multiplyScalar(1.1); // léger boost
       const modelColorB = new THREE.Color(config.colorB).multiplyScalar(1.1);
       targetA.current.copy(modelColorA);
       targetB.current.copy(modelColorB);

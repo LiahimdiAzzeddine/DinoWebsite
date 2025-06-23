@@ -77,7 +77,7 @@ if(fadeOut){
         <div className="mb-8 relative">
           <div className={`w-28 h-28 md:w-36 md:h-36 relative transition-all duration-1000 ${progress > 10 ? 'scale-100 opacity-100' : 'scale-75 opacity-0'}`}>
             {/* Main cardboard box */}
-            <div className="w-full h-full bg-gradient-to-br from-emerald-100 via-teal-100 to-cyan-200 border-2 border-teal-300 relative overflow-hidden shadow-lg">
+            <div className="w-full h-full rounded-[0.3em] bg-gradient-to-br from-emerald-100 via-teal-100 to-cyan-200 border-2 border-teal-300 relative overflow-hidden shadow-lg">
               {/* Cardboard corrugation lines */}
               <div className="absolute inset-0">
                 {[...Array(6)].map((_, i) => (
@@ -97,7 +97,7 @@ if(fadeOut){
               </div>
               
               {/* Logo */}
-              <div className="absolute inset-0 flex items-center justify-center">
+              <div className="absolute inset-0 flex items-center justify-center rounded-[0.3em]">
                 <img 
                   src="/assets/logos/dino.png" 
                   alt="ENTROPRES Logo" 
@@ -119,7 +119,7 @@ if(fadeOut){
             </div>
             
             {/* Box shadow/depth */}
-            <div className="absolute -bottom-2 -right-2 w-full h-full bg-teal-300 opacity-50 -z-10"></div>
+            <div className="absolute -bottom-2 -right-2 w-full h-full bg-teal-300 opacity-50 -z-10 rounded-[0.3em] "></div>
             
             {/* Tape strips */}
             <div className="absolute top-1/2 left-0 w-full h-3 bg-gradient-to-r from-transparent via-emerald-600 to-transparent opacity-60 transform -translate-y-1/2"></div>
@@ -147,7 +147,7 @@ if(fadeOut){
           {/* Progress Bar Container */}
           <div className="relative mb-4">
             {/* Cardboard progress track */}
-            <div className="w-full h-4 bg-gradient-to-r from-emerald-200 via-[#000000] to-cyan-200 border-2 border-teal-400 relative overflow-hidden shadow-inner">
+            <div className="w-full h-4 bg-gradient-to-r from-emerald-200 via-[#000000] to-cyan-200 border-2 border-teal-400 relative overflow-hidden shadow-inner rounded-[0.3em]">
               {/* Corrugation texture */}
               <div className="absolute inset-0">
                 {[...Array(20)].map((_, i) => (
@@ -185,7 +185,7 @@ if(fadeOut){
                progress < 90 ? 'Final touches...' :
                progress < 100 ? 'Sealing...' : 'Ready!'}
             </span>
-            <span className="text-emerald-700 font-bold tabular-nums bg-teal-100 px-2 py-1 border border-teal-300 transform rotate-1">
+            <span className="text-emerald-700 font-bold tabular-nums bg-teal-100 px-2 py-1 border border-teal-300 transform rotate-1 rounded-[0.3em]">
               {Math.round(progress)}%
             </span>
           </div>
@@ -193,11 +193,11 @@ if(fadeOut){
           {/* Completion message */}
           {isLoading && (
             <div className="mt-6 text-center animate-fade-in">
-              <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-emerald-100 to-teal-100 border-2 border-teal-400 relative">
+              <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-emerald-100 to-teal-100 border-2 border-teal-400 relative rounded-[0.3em]">
                 <div className="w-2 h-2 bg-emerald-500 mr-2 transform rotate-45"></div>
                 <span className="text-teal-800 text-sm font-medium tracking-wide">Package Ready!</span>
                 {/* Delivery stamp */}
-                <div className="absolute -top-2 -right-2 w-8 h-8 border-2 border-green-500 bg-green-100 flex items-center justify-center transform rotate-12 opacity-80">
+                <div className="absolute -top-2 -right-2 w-8 h-8 border-2 border-green-500 bg-green-100 flex items-center justify-center transform rotate-12 opacity-80 rounded-[0.3em]">
                   <span className="text-green-600 text-xs font-bold">✓</span>
                 </div>
               </div>

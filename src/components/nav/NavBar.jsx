@@ -1,9 +1,12 @@
 import dino from "../../assets/logos/dinoBlack.png";
 import React, { useState } from "react";
 import NavMobile from "./NavMobile";
+import { useNavigate } from "react-router-dom";
 
 export default function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+    let navigate = useNavigate();
+
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
@@ -52,10 +55,11 @@ export default function NavBar() {
           </li>
           <li className="select-none p-2 md:p-[10px] md:inline-block group relative">
             <button
+            
               aria-label="Products"
               className="border-none cursor-pointer pointer-events-auto bg-none rounded-[1em] p-0 whitespace-nowrap text-teal-900 hover:text-teal-500 outline-offset-[4px] relative shadow-none"
             >
-              our Games
+              Blogs
             </button>
             <div className="hidden md:group-hover:block transition-opacity duration-100 ease-in-out md:absolute md:z-[10] md:overflow-hidden md:p-5 md:transition-opacity md:duration-100 md:ease-in-out md:mt-[2px] md:min-w-[25em] md:ml-[-58px] md:text-black md:opacity-0 md:pointer-events-none md:h-auto md:group-hover:opacity-100 md:group-hover:pointer-events-auto">
               <div className="flex gap-[1em] p-[1.5em] rounded-[1.625em] shadow-[0_2px_15px_rgba(2,2,43,0.2)] bg-gradient-to-r from-emerald-100 via-teal-100 to-cyan-100">
@@ -89,10 +93,11 @@ export default function NavBar() {
           <li className="select-none p-2 md:p-[10px] md:inline-block group relative">
             <a
               aria-label="Blogs"
-              href="#"
+              onClick={()=>{ navigate("/faqs");}}
               className="border-none cursor-pointer pointer-events-auto bg-none rounded-[1em] p-0 whitespace-nowrap text-teal-900 hover:text-teal-500 outline-offset-[4px] relative shadow-none"
             >
-              Blogs
+              FAQs
+              
             </a>
           </li>
           <li className="select-none p-2 md:p-[10px] md:inline-block group relative">

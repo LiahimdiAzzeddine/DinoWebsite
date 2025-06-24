@@ -29,7 +29,6 @@ const Loader = () => {
 
   useEffect(() => {
     if (fakeProgress <10 && gltfProgress >= 90) {
-      console.log("🚀 ~ useEffect ~ fakeProgress:", fakeProgress)
       setProgress(gltfProgress);
       setFakeProgress(gltfProgress);
     } else if (fakeProgress < 80) {

@@ -7,7 +7,6 @@ import * as THREE from "three";
 import { useThree } from "@react-three/fiber";
 import { KTX2Loader } from "three/examples/jsm/loaders/KTX2Loader.js";
 
-
 const animationsPlay = [
   "Armature.001Action",
   "Armature.003Action.003",
@@ -26,7 +25,7 @@ const animationsPlay = [
 
 export function Web1({ sectionID, isActive, lenis, ...props }) {
   const gl = useThree((state) => state.gl);
-  const {  setCurrentModel } = useContext(AnimationContext);
+  const { setCurrentModel } = useContext(AnimationContext);
   const timelineMain = useRef();
   const { viewport } = useThree()
   // track scrolling status
@@ -47,9 +46,13 @@ export function Web1({ sectionID, isActive, lenis, ...props }) {
       loader.setKTX2Loader(ktx2loader);
     }
   );
- const { actions, mixer } = useAnimations(animations, group);
+  const { actions, mixer } = useAnimations(animations, group);
 
-  
+    const viewportRef = useRef(viewport);
+  useEffect(() => {
+    viewportRef.current = viewport;
+  }, [viewport]);
+
 
   let disableOtherSections = () => {
     if (!nextScrollTrigger) {
@@ -73,10 +76,7 @@ export function Web1({ sectionID, isActive, lenis, ...props }) {
     })
   }
 
-  const viewportRef = useRef(viewport);
-  useEffect(() => {
-    viewportRef.current = viewport;
-  }, [viewport]);
+
 
   useLayoutEffect(() => {
     // animations
@@ -99,7 +99,7 @@ export function Web1({ sectionID, isActive, lenis, ...props }) {
     const maxY = 2;  // your maximum Y value
 
     // scroll triggers
-     const scrollTriggerInstance = ScrollTrigger.create({
+    const scrollTriggerInstance = ScrollTrigger.create({
       id: sectionID,
       trigger: "#section2",
       start: "top bottom",
@@ -167,10 +167,10 @@ export function Web1({ sectionID, isActive, lenis, ...props }) {
             duration: 1,
             ease: "sine.inOut",
             onComplete: () => {
-              if(nextScrollTrigger){
+              if (nextScrollTrigger) {
                 nextScrollTrigger.enable();
               }
-              
+
             },
           });
         } else {
@@ -182,7 +182,7 @@ export function Web1({ sectionID, isActive, lenis, ...props }) {
     return () => {
       timelineMain.current?.kill();
       mixer.stopAllAction();
-      scrollTriggerInstance.kill(); 
+      scrollTriggerInstance.kill();
     };
   }, []);
 

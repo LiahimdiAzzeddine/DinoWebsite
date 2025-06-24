@@ -1,30 +1,31 @@
-import React, { Suspense, useContext, useEffect, useRef } from "react";
-import { Canvas, useThree } from "@react-three/fiber";
+import { Suspense, useContext, useEffect, useRef, useState } from "react";
+import { Canvas } from "@react-three/fiber";
 import { gsap } from "gsap";
-import {ScrollTrigger} from "gsap/ScrollTrigger";
-import {
-  AnimationProvider,
-  AnimationContext,
-} from "./experience/AnimationContext";
-import { useGSAP } from "@gsap/react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { AnimationContext } from "./experience/AnimationContext";
 
 import MODEL_CONFIGS from "./experience/MODEL_CONFIGS";
-import AnimatedGradientBackground from "./experience/SceneColor";
-import { Environment, Html } from "@react-three/drei";
+import { Environment, Html, PerformanceMonitor } from "@react-three/drei";
 import Lenis from '@studio-freight/lenis';
 import { Web1 } from "./experience/Web1";
 import { Web2 } from "./experience/Web2";
 import { Web3 } from "./experience/Web3";
+import GradientSkybox from "./experience/SceneColor";
+import round from 'lodash/round';
+
 gsap.registerPlugin(ScrollTrigger);
 
 // ModelContainer.jsx
-export function ModelContainer({lenis}) {
+export function ModelContainer({ lenis }) {
   const { currentModel } = useContext(AnimationContext);
   const config = MODEL_CONFIGS[currentModel];
+  const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+  console.log("🚀 ~ ModelContainer ~ isMobile:", isMobile)
+
 
   return (
     <>
-    
+
       <Web1
         sectionID={"web1"}
         isActive={currentModel === "web1"}
@@ -34,7 +35,7 @@ export function ModelContainer({lenis}) {
         sectionID={"web2"}
         isActive={currentModel === "web2"}
       />
-        <Web3
+      <Web3
         sectionID={"web3"}
         isActive={currentModel === "web3"}
       />
@@ -43,8 +44,8 @@ export function ModelContainer({lenis}) {
 }
 
 // Handles model switching and scene positioning based on scroll
-const SceneManager = ({lenis}) => {
-  const { setCurrentModel, isTransitioning, setIsTransitioning } = 
+const SceneManager = ({ lenis }) => {
+  const { setCurrentModel, isTransitioning, setIsTransitioning } =
     useContext(AnimationContext);
 
 
@@ -53,12 +54,14 @@ const SceneManager = ({lenis}) => {
 
 // Updated CanvasContainer component with gradient background
 export const CanvasContainer = () => {
-    const { isTransitioning } = useContext(AnimationContext);
-      const lenisRef = useRef(null);
+  const { isTransitioning } = useContext(AnimationContext);
+  const lenisRef = useRef(null);
+  const [dpr, setDpr] = useState(0.1);
+  const [effectsOn, setEffectsOn] = useState(true);
 
-/**/ 
-useEffect(() => {
-     const lenis = new Lenis({
+
+  useEffect(() => {
+    const lenis = new Lenis({
       duration: 1.5, // Increased for smoother, slower scrolling
       smoothWheel: true,
       wheelMultiplier: 0.7, // Reduce wheel speed
@@ -67,26 +70,33 @@ useEffect(() => {
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       direction: "vertical",
       gestureOrientation: "vertical",
-    });      
+    });
     lenisRef.current = lenis;
 
-      function raf(time) {
-        lenis.raf(time);
-        ScrollTrigger.update(); 
-        requestAnimationFrame(raf);
-      }
-  
+    function raf(time) {
+      lenis.raf(time);
+      ScrollTrigger.update();
       requestAnimationFrame(raf);
-  
-      return () => {
-        lenis.destroy();
-      };
-    }, []);
-   
+    }
+
+    requestAnimationFrame(raf);
+
+    return () => {
+      lenis.destroy();
+    };
+  }, []);
+
   return (
-    <Canvas scale={0.5}>
-     
-      <AnimatedGradientBackground />
+    <Canvas  dpr={dpr} shadows={false}  gl={{ antialias: false, powerPreference: "low-power" }}>
+      <PerformanceMonitor
+        bounds={() => [30, 60]}
+        flipflops={2}
+        onChange={({ factor }) => {
+    const dpr = Math.round((0.1 + 1.9 * factor) * 100) / 100;
+    setDpr(dpr);
+  }}
+      />
+      <GradientSkybox />
       <ambientLight intensity={0.03} />
       <spotLight
         angle={0.14}
@@ -105,8 +115,9 @@ useEffect(() => {
           </Html>
         }
       >
-        <SceneManager lenis={lenisRef.current}  />
+        <SceneManager lenis={lenisRef.current} />
       </Suspense>
+
     </Canvas>
   );
 };

@@ -28,7 +28,7 @@ const Loader = () => {
   }, [fakeProgress,isLoading]);
 
   useEffect(() => {
-    if (fakeProgress <10 && gltfProgress >= 90) {
+    if (fakeProgress <20 && gltfProgress >= 90) {
       setProgress(gltfProgress);
       setFakeProgress(gltfProgress);
     } else if (fakeProgress < 80) {
@@ -167,7 +167,7 @@ const Loader = () => {
         </div>*/}
 
         {/* Progress Section - Cardboard Style */}
-        <div className={`w-80 md:w-96 transition-all duration-1000 delay-500 ${(progress > 10 && display) ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
+        <div className={`w-80 md:w-96 transition-all duration-1000 delay-500 ${(progress > 20 && display) ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
           {/* Progress Bar Container */}
           <div className="relative mb-4">
             {/* Cardboard progress track */}

@@ -87,12 +87,12 @@ export const CanvasContainer = () => {
   }, []);
 
   return (
-    <Canvas  dpr={dpr} shadows={false}  gl={{ antialias: false, powerPreference: "low-power" }}>
+    <Canvas  dpr={0} shadows={false}  gl={{ antialias: false, powerPreference: "low-power" }}>
       <PerformanceMonitor
         bounds={() => [30, 60]}
         flipflops={2}
         onChange={({ factor }) => {
-    const dpr = Math.round((0.1 + 1.9 * factor) * 100) / 100;
+    const dpr = Math.round((0.1 + 1 * factor) * 100) / 100;
     setDpr(dpr);
   }}
       />

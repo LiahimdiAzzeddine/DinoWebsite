@@ -19,7 +19,7 @@ export default function Home() {
   
   return <>
   <div className="h-screen w-full fixed top-0 z-10">
-    {/* <CanvasContainer /> */}
+    {/* */} <CanvasContainer />
   </div>;
     <Overlay />
   </>

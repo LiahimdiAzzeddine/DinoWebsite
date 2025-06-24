@@ -111,13 +111,13 @@ export function Web2({ sectionID, isActive, ...props }) {
       }
     });
 
-    ScrollTrigger.create({
+   const scrollTriggerInstance= ScrollTrigger.create({
       id: sectionID,
       trigger: "#section3",
       start: "center+=100 bottom",
       end: "center+=100 top",
       scrub: true,
-      markers: true,
+      markers: false,
       preventClicks: true,
       onToggle: self => {
         if (self.isActive) {
@@ -186,6 +186,7 @@ export function Web2({ sectionID, isActive, ...props }) {
     return () => {
       // Clean up
       mixer.stopAllAction();
+      scrollTriggerInstance.kill(); 
     };
   }, []);
 

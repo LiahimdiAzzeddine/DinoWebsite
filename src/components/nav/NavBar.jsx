@@ -21,7 +21,9 @@ export default function NavBar() {
           <div className="flex items-center text-[1.35em]">
             <a
               aria-current="page"
-              onClick={() => { navigate("/"); }}
+              onClick={() => {
+                navigate("/");
+              }}
               className="rounded-[1em] no-underline text-inherit font-[Nunito_Sans,sans-serif]"
             >
               <img
@@ -46,7 +48,6 @@ export default function NavBar() {
                         if (el) el.scrollIntoView({ behavior: "smooth" });
                       }, 100); // Petit délai pour laisser la page charger
                     }}
-
                   >
                     contact us
                   </button>
@@ -60,7 +61,6 @@ export default function NavBar() {
                         if (el) el.scrollIntoView({ behavior: "smooth" });
                       }, 100); // Petit délai pour laisser la page charger
                     }}
-
                     aria-label="about us"
                     className="border-none cursor-pointer pointer-events-auto bg-none rounded-[1em] p-0 whitespace-nowrap text-teal-900 hover:text-teal-500 outline-offset-[4px] relative shadow-none font-bold"
                   >
@@ -69,10 +69,13 @@ export default function NavBar() {
                 </li>
                 <li className="select-none p-2 md:p-[10px] md:inline-block group relative">
                   <Link
-                    to={'/blogs'}
+                    to={"/blogs"}
                     aria-label="Blogs"
-                    className={`border-none cursor-pointer pointer-events-auto bg-none rounded-[1em] p-0 whitespace-nowrap outline-offset-[4px] relative shadow-none font-bold ${location.pathname === "/blogs" ? "text-teal-500" : "text-teal-900 hover:text-teal-500"
-                      }`}
+                    className={`border-none cursor-pointer pointer-events-auto bg-none rounded-[1em] p-0 whitespace-nowrap outline-offset-[4px] relative shadow-none font-bold ${
+                      location.pathname === "/blogs"
+                        ? "text-teal-500"
+                        : "text-teal-900 hover:text-teal-500"
+                    }`}
                   >
                     Blogs
                   </Link>
@@ -107,22 +110,26 @@ export default function NavBar() {
             </div> */}
                 </li>
                 <li className="select-none p-2 md:p-[10px] md:inline-block group relative">
-                  <Link to="/faqs"
+                  <Link
+                    to="/faqs"
                     aria-label="Blogs"
-                    className={`border-none cursor-pointer pointer-events-auto bg-none rounded-[1em] p-0 whitespace-nowrap outline-offset-[4px] relative shadow-none font-bold ${isActive ? "text-teal-500" : "text-teal-900 hover:text-teal-500"
-                      }`}
+                    className={`border-none cursor-pointer pointer-events-auto bg-none rounded-[1em] p-0 whitespace-nowrap outline-offset-[4px] relative shadow-none font-bold ${
+                      isActive
+                        ? "text-teal-500"
+                        : "text-teal-900 hover:text-teal-500"
+                    }`}
                   >
                     FAQs
                   </Link>
                 </li>
                 <li className="select-none p-2 md:p-[10px] md:inline-block group relative">
-                  <a
+                  <Link
+                    to="/career"
                     aria-label="career"
-                    href="#"
                     className="hover:bg-emerald-100 no-underline  font-bold  nunito border border-teal-200 rounded-xl px-4 py-[0.4rem] whitespace-nowrap shadow-[rgba(0,0,0,0.03)_0px_7px_0.5rem,_rgba(0,0,0,0.05)_0px_0px_1.3rem_inset] mr-4 bg-white text-teal-800 cursor-pointer list-none text-left"
                   >
                     career
-                  </a>
+                  </Link>
                   <a
                     aria-label="Log in"
                     href="https://calendar.app.google/3katng9rENsYB1mg8"
@@ -132,7 +139,10 @@ export default function NavBar() {
                     Book a Call
                   </a>
                 </li>
-                <div id="header-footer" className="m-[50px] justify-around hidden">
+                <div
+                  id="header-footer"
+                  className="m-[50px] justify-around hidden"
+                >
                   <img height={128} width={128} src={dino} />
                 </div>
               </ul>
@@ -144,7 +154,7 @@ export default function NavBar() {
               onClick={toggleMenu}
               id="mobile-menu"
               title="Show menu"
-              className="bg-[rgb(255,255,255)] mobile-menu show-on-mobile -mr-[20px] mt-[1.5px] bg-transparent border-0 appearance-none border-none rounded-[0.3em] p-[0.4em] text-[rgba(0,0,0,0.9)] cursor-pointer pointer-events-auto font-[Nunito_Sans,sans-serif] md:hidden"
+              className="bg-[rgb(255,255,255)] mobile-menu show-on-mobile -mr-[20px] mt-[1.5px] bg-transparent border-0 appearance-none border-none rounded-[0.3em] py-[0.4em] sm:px-[0.4em] px-[0.6em] text-[rgba(0,0,0,0.9)] cursor-pointer pointer-events-auto font-[Nunito_Sans,sans-serif] md:hidden"
             >
               {isMenuOpen ? (
                 <svg
@@ -152,8 +162,8 @@ export default function NavBar() {
                   width="80"
                   viewBox="0 0 100 100"
                   style={{
-                    height: "36px",
-                    width: "36px",
+                    height: "40px",
+                    width: "40px",
                     transition: "transform 0.4s",
                     cursor: "pointer",
                     WebkitTapHighlightColor: "transparent",
@@ -165,7 +175,8 @@ export default function NavBar() {
                     className="line top"
                     d="m 30,33 h 40 c 0,0 9.044436,-0.654587 9.044436,-8.508902 0,-7.854315 -8.024349,-11.958003 -14.89975,-10.85914 -6.875401,1.098863 -13.637059,4.171617 -13.637059,16.368042 v 40"
                     style={{
-                      transition: "stroke-dasharray 0.4s, stroke-dashoffset 0.4s",
+                      transition:
+                        "stroke-dasharray 0.4s, stroke-dashoffset 0.4s",
                       fill: "none",
                       stroke: "rgb(0, 0, 0)",
                       strokeWidth: 5.5,
@@ -178,7 +189,8 @@ export default function NavBar() {
                     className="line middle"
                     d="m 30,50 h 40"
                     style={{
-                      transition: "stroke-dasharray 0.4s, stroke-dashoffset 0.4s",
+                      transition:
+                        "stroke-dasharray 0.4s, stroke-dashoffset 0.4s",
                       fill: "none",
                       stroke: "rgb(0, 0, 0)",
                       strokeWidth: 5.5,
@@ -189,7 +201,8 @@ export default function NavBar() {
                     className="line bottom"
                     d="m 30,67 h 40 c 12.796276,0 15.357889,-11.717785 15.357889,-26.851538 0,-15.133752 -4.786586,-27.274118 -16.667516,-27.274118 -11.88093,0 -18.499247,6.994427 -18.435284,17.125656 l 0.252538,40"
                     style={{
-                      transition: "stroke-dasharray 0.4s, stroke-dashoffset 0.4s",
+                      transition:
+                        "stroke-dasharray 0.4s, stroke-dashoffset 0.4s",
                       fill: "none",
                       stroke: "rgb(0, 0, 0)",
                       strokeWidth: 5.5,
@@ -217,7 +230,8 @@ export default function NavBar() {
                     className="line top"
                     d="m 30,33 h 40"
                     style={{
-                      transition: "stroke-dasharray 0.4s, stroke-dashoffset 0.4s",
+                      transition:
+                        "stroke-dasharray 0.4s, stroke-dashoffset 0.4s",
                       fill: "none",
                       stroke: "rgb(0, 0, 0)",
                       strokeWidth: 5.5,
@@ -229,7 +243,8 @@ export default function NavBar() {
                     className="line middle"
                     d="m 30,50 h 40"
                     style={{
-                      transition: "stroke-dasharray 0.4s, stroke-dashoffset 0.4s",
+                      transition:
+                        "stroke-dasharray 0.4s, stroke-dashoffset 0.4s",
                       fill: "none",
                       stroke: "rgb(0, 0, 0)",
                       strokeWidth: 5.5,
@@ -240,7 +255,8 @@ export default function NavBar() {
                     className="line bottom"
                     d="m 30,67 h 40"
                     style={{
-                      transition: "stroke-dasharray 0.4s, stroke-dashoffset 0.4s",
+                      transition:
+                        "stroke-dasharray 0.4s, stroke-dashoffset 0.4s",
                       fill: "none",
                       stroke: "rgb(0, 0, 0)",
                       strokeWidth: 5.5,
@@ -253,7 +269,6 @@ export default function NavBar() {
           </div>
         </div>
       </nav>
-
     </>
   );
 }

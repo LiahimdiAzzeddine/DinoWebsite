@@ -19,7 +19,7 @@ const Loader = () => {
       const id = setInterval(() => {
         setFakeProgress(prev => {
           const next = Math.min(prev + 10, 80);
-          if (next >= 10) setDisplay(true);
+          if (next > 10) setDisplay(true);
           return next;
         });
       }, 500);
@@ -29,6 +29,7 @@ const Loader = () => {
 
   useEffect(() => {
     if (fakeProgress <10 && gltfProgress >= 90) {
+      console.log("🚀 ~ useEffect ~ fakeProgress:", fakeProgress)
       setProgress(gltfProgress);
       setFakeProgress(gltfProgress);
     } else if (fakeProgress < 80) {

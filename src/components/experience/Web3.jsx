@@ -362,7 +362,7 @@ export function Web3({ sectionID, isActive, ...props }) {
     enterAnimation = actions["ActionEnter"];
     resetAllActions();
 
-    ScrollTrigger.create({
+    const t1 =ScrollTrigger.create({
       id: sectionID,
       trigger: "#section4",
       start: "center+=100 bottom",
@@ -394,13 +394,13 @@ export function Web3({ sectionID, isActive, ...props }) {
       },
     });
 
-    ScrollTrigger.create({
+    const t2 =ScrollTrigger.create({
       id: sectionID + "_secondary",
       trigger: "#section5",
       start: "top bottom",
       end: "bottom+=75% top",
       scrub: 2.5,
-      markers: true,
+      markers: false,
       onEnter: () => {
         setPlay(true)
         setCurrentModel(sectionID);
@@ -499,7 +499,7 @@ export function Web3({ sectionID, isActive, ...props }) {
       }
     });
 
-    ScrollTrigger.create({
+   const t3 = ScrollTrigger.create({
       id: sectionID + "_armatureMove",
       trigger: "#section6",
       start: "top bottom",
@@ -565,6 +565,9 @@ export function Web3({ sectionID, isActive, ...props }) {
           trigger.kill();
         }
       });
+      t1.kill(); 
+      t2.kill(); 
+      t3.kill(); 
     };
   }, []);
   // sauvegarder la position initiale une fois

@@ -6,7 +6,7 @@ const NeddleButton = ({ href = "#", children = "No text" }) => {
         inline-flex items-center gap-2 
         px-4 py-2 
         font-bold text-white text-base 
-        rounded-[5px]
+        rounded-[1rem]
         sm:rounded-full 
         border border-white/30 
         bg-white/20 
@@ -20,6 +20,7 @@ const NeddleButton = ({ href = "#", children = "No text" }) => {
         hover:-translate-y-[1px]
         m-2
         pointer-events-auto
+        text-center
       "
       style={{
         fontFamily: '"Nunito Sans", sans-serif',

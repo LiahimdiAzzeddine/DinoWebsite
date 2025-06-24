@@ -249,10 +249,10 @@ div[data-v-7479a2c4] {
     font-size: 1.1em;
   }
   div.block2::before {
-  border-radius:0;
+  border-radius:1.625em;
   }
   div.block::before {
-  border-radius:0;
+  border-radius:1.625em;
   }
 }
 
@@ -261,8 +261,8 @@ div[data-v-7479a2c4] {
     margin-bottom: 60vh;
     margin-left: auto;
     max-width: min(600px, calc(100vw - 60px));
-    padding: 0 30px;
-    top: 6em;
+    padding: 0;
+    top: 0em;
   }
 }
 

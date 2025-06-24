@@ -89,7 +89,7 @@ export default function Faqs() {
 
               <button
                 onClick={() => toggle(i)}
-                className="w-full flex justify-between items-center p-6 text-left group/button bg-[#00000012]"
+                className="w-full flex justify-between items-center py-3 px-3 text-left group/button bg-[#00000012]"
               >
                 <span className="font-semibold text-lg text-white group-hover/button:text-teal-300 transition-colors duration-300 pr-4">
                   {item.question}

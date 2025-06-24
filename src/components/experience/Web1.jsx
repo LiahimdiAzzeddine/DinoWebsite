@@ -99,13 +99,13 @@ export function Web1({ sectionID, isActive, lenis, ...props }) {
     const maxY = 2;  // your maximum Y value
 
     // scroll triggers
-    ScrollTrigger.create({
+     const scrollTriggerInstance = ScrollTrigger.create({
       id: sectionID,
       trigger: "#section2",
       start: "top bottom",
       end: "center+=100 top",
       scrub: true,
-      markers: true,
+      markers: false,
       onUpdate: (self) => {
         sectionScrollProgress = self.progress;
         if (viewportRef.current.width < 5) {
@@ -155,7 +155,7 @@ export function Web1({ sectionID, isActive, lenis, ...props }) {
           disableOtherSections();
           gsap.to(sceneContainerGroup.current.position, {
             y: sceneDefaultPos,
-            duration: 0.3,
+            duration: 1,
             ease: "circ.out",
           });
         }
@@ -164,7 +164,7 @@ export function Web1({ sectionID, isActive, lenis, ...props }) {
         if (Math.abs(self.getVelocity()) <= 2000) {
           gsap.to(sceneContainerGroup.current.position, {
             y: sceneDefaultPos + 50,
-            duration: .3,
+            duration: 1,
             ease: "sine.inOut",
             onComplete: () => {
               if(nextScrollTrigger){
@@ -182,6 +182,7 @@ export function Web1({ sectionID, isActive, lenis, ...props }) {
     return () => {
       timelineMain.current?.kill();
       mixer.stopAllAction();
+      scrollTriggerInstance.kill(); 
     };
   }, []);
 

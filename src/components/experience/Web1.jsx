@@ -28,10 +28,10 @@ const ANIMATIONS_TO_PLAY = [
 const MOBILE_BREAKPOINT = 5;
 const SCROLL_CONFIG = {
   minY: 0,
-  maxY: 4,
+  maxY: 5,
   scrollSpeed: 0.1,
   tweenDuration: 0.1,
-  velocityThreshold: 2000,
+  velocityThreshold: 200,
   offsetOnLeave: 50
 };
 

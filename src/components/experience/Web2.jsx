@@ -17,6 +17,7 @@ import { KTX2Loader } from "three/examples/jsm/Addons.js";
 export function Web2({ sectionID, isActive, ...props }) {
   const gl = useThree((state) => state.gl);
   const group = React.useRef();
+   const currentTween = useRef(null);
   const { scene, animations } = useGLTF("/models/Web2Final.glb",
     undefined,
     undefined,
@@ -95,23 +96,25 @@ export function Web2({ sectionID, isActive, ...props }) {
     viewportRef.current = viewport;
   }, [viewport]);
 
-  useLayoutEffect(() => {
-    enterAnim = actions["ActionEnter"];
-    leaveAnim = actions["ActionOut"];
-    sceneDefaultPos = sceneContainerGroup.current.position.y;
+useLayoutEffect(() => {
+  enterAnim = actions["ActionEnter"];
+  leaveAnim = actions["ActionOut"];
+  sceneDefaultPos = sceneContainerGroup.current.position.y;
 
-    // scroll tracking
-    Observer.create({
-      target: window,
-      type: "wheel,touch,pointer,scroll",
-      onChange: obs => {
-        // obs.deltaY < 0 means scrolling up, > 0 means down
-        // console.log(obs.deltaY < 0 ? "raw ↑" : "raw ↓");
-        scrollDirection = obs.deltaY < 0 ? -1 : 1;
-      }
-    });
+  // scroll tracking
+  Observer.create({
+    target: window,
+    type: "wheel,touch,pointer,scroll",
+    onChange: obs => {
+      scrollDirection = obs.deltaY < 0 ? -1 : 1;
+    }
+  });
 
-   const scrollTriggerInstance= ScrollTrigger.create({
+  const mm = gsap.matchMedia();
+
+  // ✅ Desktop only
+  mm.add("(min-width: 768px)", () => {
+    const trigger = ScrollTrigger.create({
       id: sectionID,
       trigger: "#section3",
       start: "center+=100 bottom",
@@ -125,7 +128,6 @@ export function Web2({ sectionID, isActive, ...props }) {
           playStaticAnimations();
           setCurrentModel(sectionID);
 
-          // direction: +1 means scrolling forward/down, –1 is backward/up
           if (scrollDirection >= 0) {
             // onEnter
             if (enterAnim) {
@@ -141,54 +143,134 @@ export function Web2({ sectionID, isActive, ...props }) {
               ease: "back.out"
             });
           } else {
-            // onEnterBack
             playOnEnterBackSequence();
-
           }
         } else {
           if (scrollDirection >= 0) {
-            // onLeave
             handleOnLeave(self);
           }
         }
       },
       onLeaveBack: (self) => {
-        console.log("web-2 onLeaveBack");
         if (Math.abs(self.getVelocity()) <= 2000) {
-          // Reset & configure the action so that it plays backwards exactly once:
           enterAnim.reset();
           enterAnim.setLoop(THREE.LoopOnce, 1);
           enterAnim.clampWhenFinished = true;
-          enterAnim.time = enterAnim.getClip().duration;     // jump to the very end of the clip
+          enterAnim.time = enterAnim.getClip().duration;
           enterAnim.timeScale = -1.5;
 
-          // one-time callback for when this action actually finishes:
           const onActionFinished = (event) => {
-            // event.action is the AnimationAction that just finished
             if (event.action === enterAnim) {
-              // Remove listener so it only fires once
               enterAnim.getMixer().removeEventListener("finished", onActionFinished);
               prevScrollTrigger.enable();
             }
           };
 
-          // Add the listener and start playing:
           enterAnim.getMixer().addEventListener("finished", onActionFinished);
           enterAnim.play();
         } else {
           enableOtherSections();
         }
-
       }
     });
 
+    return () => trigger.kill();
+  });
 
-    return () => {
-      // Clean up
-      mixer.stopAllAction();
-      scrollTriggerInstance.kill(); 
-    };
-  }, []);
+  // ✅ Mobile only (tu peux mettre autre comportement ici si besoin)
+  mm.add("(max-width: 767px)", () => {
+     // Ajustement mobile initial (si nécessaire)
+  sceneContainerGroup.current.position.y -= 0.2;
+   sceneContainerGroup.current.position.z += 0.1;
+    // Valeurs de référence pour animation
+  const sceneDefaultPos = sceneContainerGroup.current.position.y;
+  const minY = sceneDefaultPos;
+  const maxY = sceneDefaultPos + 7; // ajuste selon la distance souhaitée
+    const trigger = ScrollTrigger.create({
+      id: sectionID + "-mobile",
+      trigger: "#section3",
+      start: "top bottom",
+      end: "bottom top",
+      scrub: true,
+      markers: false,
+      preventClicks: true,
+        onUpdate: (self) => {
+      const progress = self.progress;
+      const newY = THREE.MathUtils.lerp(minY, maxY, progress);
+
+      if (currentTween.current) currentTween.current.kill();
+
+      currentTween.current = gsap.to(sceneContainerGroup.current.position, {
+        y: newY,
+        duration: 0.3,
+        ease: "sine.out",
+        overwrite: true
+      });
+    },
+      onToggle: self => {
+        if (self.isActive) {
+          disableOtherSections();
+          playStaticAnimations();
+          setCurrentModel(sectionID);
+
+          if (scrollDirection >= 0) {
+            // onEnter
+            if (enterAnim) {
+              enterAnim.reset().setLoop(THREE.LoopOnce, 1);
+              enterAnim.clampWhenFinished = true;
+              enterAnim.time = 0;
+              enterAnim.timeScale = 1;
+              enterAnim.play();
+            }
+            gsap.to(sceneContainerGroup.current.position, {
+              y: sceneDefaultPos,
+              duration: leaveAnim.getClip().duration,
+              ease: "back.out"
+            });
+          } else {
+            playOnEnterBackSequence();
+          }
+        } else {
+          if (scrollDirection >= 0) {
+            handleOnLeave(self);
+          }
+        }
+      },
+      onLeaveBack: (self) => {
+        if (Math.abs(self.getVelocity()) <= 2000) {
+          enterAnim.reset();
+          enterAnim.setLoop(THREE.LoopOnce, 1);
+          enterAnim.clampWhenFinished = true;
+          enterAnim.time = enterAnim.getClip().duration;
+          enterAnim.timeScale = -1.5;
+
+          const onActionFinished = (event) => {
+            if (event.action === enterAnim) {
+              enterAnim.getMixer().removeEventListener("finished", onActionFinished);
+              if(prevScrollTrigger){
+                prevScrollTrigger.enable();
+              }
+              
+            }
+          };
+
+          enterAnim.getMixer().addEventListener("finished", onActionFinished);
+          enterAnim.play();
+        } else {
+          enableOtherSections();
+        }
+      }
+    });
+
+    return () => trigger.kill();
+  });
+
+  return () => {
+    mm.revert();
+    mixer.stopAllAction();
+  };
+}, []);
+
 
   let playOnEnterBackSequence = () => {
     if (leaveAnim) {
@@ -280,18 +362,6 @@ export function Web2({ sectionID, isActive, ...props }) {
             rotation={[Math.PI, 0, Math.PI]}
             scale={[0.45, 0.767, 0.767]}
           />
-          <group name="Empty001" position={[23.142, 20.042, 1.408]} scale={0.15}>
-            <PerspectiveCamera
-              name="Camera"
-              makeDefault={false}
-              far={1000}
-              near={0.1}
-              fov={16.696}
-              position={[0, 0.151, 0.577]}
-              rotation={[0, 1.571, 0]}
-              scale={6.678}
-            />
-          </group>
           <mesh
             name="Sphere002"
             castShadow

@@ -20,7 +20,6 @@ export function ModelContainer({ lenis }) {
   const { currentModel } = useContext(AnimationContext);
   const config = MODEL_CONFIGS[currentModel];
   const isMobile = /Mobi|Android/i.test(navigator.userAgent);
-  console.log("🚀 ~ ModelContainer ~ isMobile:", isMobile)
 
 
   return (
@@ -56,7 +55,7 @@ const SceneManager = ({ lenis }) => {
 export const CanvasContainer = () => {
   const { isTransitioning } = useContext(AnimationContext);
   const lenisRef = useRef(null);
-  const [dpr, setDpr] = useState(0.1);
+  const [dpr, setDpr] = useState(0.3);
   const [effectsOn, setEffectsOn] = useState(true);
 
 
@@ -92,7 +91,7 @@ export const CanvasContainer = () => {
         bounds={() => [30, 60]}
         flipflops={2}
         onChange={({ factor }) => {
-    const dpr = Math.round((0.1 + 1 * factor) * 100) / 100;
+    const dpr = Math.round((0.3 + 1 * factor) * 100) / 100;
     setDpr(dpr);
   }}
       />

@@ -198,7 +198,7 @@ export function Web1({ sectionID, isActive, lenis, ...props }) {
         id: sectionID,
         trigger: "#section2",
         start: "top bottom",
-        end: "top top",
+        end: "center+=100 top",
         scrub: true,
         markers: false,
         onUpdate: (self) => {

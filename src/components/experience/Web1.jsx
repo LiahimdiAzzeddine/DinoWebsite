@@ -28,7 +28,7 @@ const ANIMATIONS_TO_PLAY = [
 const MOBILE_BREAKPOINT = 5;
 const SCROLL_CONFIG = {
   minY: 0,
-  maxY: 2,
+  maxY: 4,
   scrollSpeed: 0.1,
   tweenDuration: 0.1,
   velocityThreshold: 2000,
@@ -177,7 +177,7 @@ export function Web1({ sectionID, isActive, lenis, ...props }) {
        sceneContainerGroup.current.position.z=sceneContainerGroup.current.position.z-0.4
        sceneContainerGroup.current.position.x=sceneContainerGroup.current.position.x+0.15
     }else{
-      sceneContainerGroup.current.position=InitialmodelPosition;
+      //sceneContainerGroup.current.position=InitialmodelPosition;
     }
 
     // Setup camera animation

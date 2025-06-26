@@ -301,11 +301,17 @@ export default function Web3({ sectionID, isActive, ...props }) {
     scaleManToHidden();
 
     const mainScroll = actions[ANIMATION_GROUPS.SCROLL[6]];
-    if (mainScroll) {
-      mainScroll.getMixer().addEventListener("finished", () => {
-        playedSecondScroll.current = true;
-      });
+          if (mainScroll) {
+  const onActionFinished = (event) => {
+      console.log("🚀 ~ onActionFinished ~ onActionFinished:")
+
+    if (event.action === mainScroll) {
+      mainScroll.getMixer().removeEventListener("finished", onActionFinished);
+      playedSecondScroll.current = true;
     }
+  };
+  mainScroll.getMixer().addEventListener("finished", onActionFinished);
+}
   }, [actions, scaleManToHidden]);
 
   const handleScrollAnimationsReverse = useCallback(() => {
@@ -472,7 +478,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
       stopArmatureAnimation();
       mainTrigger.kill();
       secondaryTrigger.kill();
-      armatureTrigger.kill();
+      //armatureTrigger.kill();
     };
   }, [
     sectionID,

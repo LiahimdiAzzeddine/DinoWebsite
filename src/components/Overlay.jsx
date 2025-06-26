@@ -7,6 +7,7 @@ import LinkButton from "./ui/LinkButton";
 import NeddleButton from "./ui/NeddleButton";
 
 
+
 const Card = ({
   title,
   subtitle,
@@ -216,13 +217,13 @@ export const Overlay = () => {
           {
             href: "#",
             title: "App Store",
-            imgSrc: "assets/logos/appStore.png",
+            imgSrc: "/src/assets/logos/appStore.webp",
             alt: "Logo ofApp Store",
           },
           {
             href: "#",
             title: "Play Store",
-            imgSrc: "assets/logos/play-store.png",
+            imgSrc: "/src/assets/logos/play-store.webp",
             alt: "Logo of Play Store",
           },
         ]}

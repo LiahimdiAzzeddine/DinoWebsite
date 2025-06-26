@@ -22,12 +22,12 @@ const ANIMATIONS_TO_PLAY = [
   "Sphere.010Action",
   "Sphere.011Action",
 ];
-const MOBILE_BREAKPOINT = 5;
 
 export default function Web1({ sectionID, isActive, lenis, ...props }) {
   const gl = useThree((state) => state.gl);
   const group = useRef();
   const sceneContainerGroup = useRef();
+
 
   const { nodes, materials, animations } = useGLTF(
     `/models/web1-opt.glb`,

@@ -27,6 +27,8 @@ const LinkButton = ({
         {imgSrc && (
           <img
             src={imgSrc}
+            loading="eager"
+                  decoding="async"
             alt={alt}
             className={inverted ? "h-[2em]" : "h-[2em]"}
           />

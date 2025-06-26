@@ -1,6 +1,8 @@
 import { useContext, useEffect, useState } from 'react';
 import { AnimationContext } from './experience/AnimationContext';
 import { useProgress } from '@react-three/drei';
+import dino from "/src/assets/logos/dinoBlack2.webp";
+
 
 
 const Loader = () => {
@@ -25,10 +27,10 @@ const Loader = () => {
       }, 500);
       return () => clearInterval(id);
     }
-  }, [fakeProgress,isLoading]);
+  }, [fakeProgress, isLoading]);
 
   useEffect(() => {
-    if (fakeProgress <20 && gltfProgress >= 90) {
+    if (fakeProgress < 20 && gltfProgress >= 90) {
       setProgress(gltfProgress);
       setFakeProgress(gltfProgress);
     } else if (fakeProgress < 80) {
@@ -37,7 +39,7 @@ const Loader = () => {
       const real = 80 + (gltfProgress / 100) * 20;
       setProgress(Math.min(real, 100));
     }
-  }, [fakeProgress, gltfProgress,isLoading]);
+  }, [fakeProgress, gltfProgress, isLoading]);
 
   // ✅ Fin du chargement
   useEffect(() => {
@@ -51,14 +53,14 @@ const Loader = () => {
         setFadeOut(true);
       }, 1000);
     }
-  }, [gltfProgress, loaded, total, fakeProgress,isLoading]);
+  }, [gltfProgress, loaded, total, fakeProgress, isLoading]);
 
   if (fadeOut) return null;
-  
+
   return (
     <div className={`fixed inset-0 bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 flex items-center justify-center z-[5000] transition-opacity duration-800 ${fadeOut ? 'opacity-0' : 'opacity-100'}`}>
       {/* Cardboard texture overlay */}
-      <div 
+      <div
         className="absolute inset-0 opacity-30"
         style={{
           backgroundImage: `
@@ -119,15 +121,15 @@ const Loader = () => {
                   />
                 ))}
               </div> */}
-              
+
               {/* Logo */}
               <div className="absolute inset-0 flex items-center justify-center rounded-[0.3em]">
-                <img 
-                  src="/src/assets/logos/dinoBlack2.png" 
-                  alt="Logo" 
-                   width="112" height="96"
-                     loading="eager"
-  decoding="async"
+                <img
+                  src={dino}
+                  alt="Logo"
+                  width="112" height="96"
+                  loading="eager"
+                  decoding="async"
                   className="md:w-36 md:h-32 object-contain opacity-80 z-50"
                   onError={(e) => {
                     e.currentTarget.style.display = 'none';
@@ -139,12 +141,12 @@ const Loader = () => {
                   <div className="w-8 h-8 md:w-10 md:h-10 bg-teal-100 rounded"></div>
                 </div>*/}
               </div>
-              
+
               {/* Box fold lines 
               <div className="absolute top-0 left-1/2 w-0.5 h-full bg-teal-400 opacity-70 transform -translate-x-0.5"></div>
               <div className="absolute left-0 top-1/2 w-full h-0.5 bg-teal-400 opacity-70 transform -translate-y-0.5"></div>*/}
             </div>
-            
+
             {/* Box shadow/depth 
             <div className="absolute -bottom-2 -right-2 w-full h-full bg-teal-300 opacity-50 -z-10 rounded-[0.3em] "></div>
             */}
@@ -185,14 +187,14 @@ const Loader = () => {
                   />
                 ))}
               </div>
-              
+
               {/* Progress fill - like tape being applied */}
-              <div 
+              <div
                 className="h-full bg-gradient-to-r from-[#87ffe9] via-[#6acab9] to-[#417d72] transition-all duration-300 ease-out relative"
                 style={{ width: `${progress}%`, backgroundColor: '#5bc6a9' }}
               >
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/20 to-transparent"></div>
-                
+
                 <div className="absolute right-0 top-0 w-1 h-full bg-[#396f66] opacity-70 rounded-[0.3em]"></div>
               </div>
             </div>
@@ -202,7 +204,7 @@ const Loader = () => {
                * 
                */
             }
-           
+
 
           </div>
 
@@ -210,10 +212,10 @@ const Loader = () => {
           <div className="flex justify-between items-center text-sm">
             <span className="text-[#4f968a] font-bold font-medium tracking-wide transform -rotate-1">
               {progress < 20 ? 'Unpacking...' :
-               progress < 45 ? 'Assembling...' :
-               progress < 70 ? 'Folding edges...' :
-               progress < 90 ? 'Final touches...' :
-               progress < 100 ? 'Sealing...' : 'Ready!'}
+                progress < 45 ? 'Assembling...' :
+                  progress < 70 ? 'Folding edges...' :
+                    progress < 90 ? 'Final touches...' :
+                      progress < 100 ? 'Sealing...' : 'Ready!'}
             </span>
             <span className="text-emerald-700 font-bold tabular-nums bg-[#bafbf1] px-2 py-1 border border-[#4f968a] transform rotate-1 rounded-[0.3em]">
               {Math.round(progress)}%
@@ -221,7 +223,7 @@ const Loader = () => {
           </div>
 
           {/* Completion message */}
-          {progress>95 && (
+          {progress > 95 && (
             <div className="mt-6 text-center animate-fade-in">
               <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-emerald-100 to-[#bafbf1] border-2 border-[#4f968a] relative rounded-[0.3em]">
                 <div className="w-2 h-2 bg-emerald-500 mr-2 transform rotate-45"></div>

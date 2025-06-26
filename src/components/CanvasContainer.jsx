@@ -16,7 +16,6 @@ gsap.registerPlugin(ScrollTrigger);
 // ModelContainer.jsx
 export function ModelContainer({ lenis }) {
   const { currentModel } = useContext(AnimationContext);
-
   return (
     <>
       <Web1
@@ -24,14 +23,14 @@ export function ModelContainer({ lenis }) {
         isActive={currentModel === "web1"}
         lenis={lenis}
       />
-       <Web2
+      <Web2
         sectionID={"web2"}
         isActive={currentModel === "web2"}
       />
-      {/*<Web3
+      <Web3
         sectionID={"web3"}
         isActive={currentModel === "web3"}
-      /> */}
+      />
     </>
   );
 }
@@ -45,8 +44,8 @@ const SceneManager = ({ lenis }) => {
 // Updated CanvasContainer component with gradient background
 export const CanvasContainer = () => {
   const lenisRef = useRef(null);
-  const [dpr, setDpr] = useState(0.3);
-    const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+  const [dpr, setDpr] = useState(0.5);
+  const isMobile = /Mobi|Android/i.test(navigator.userAgent);
 
 
   useEffect(() => {
@@ -81,14 +80,14 @@ export const CanvasContainer = () => {
         bounds={() => [30, 60]}
         flipflops={2}
         onChange={({ factor }) => {
-          const dpr = Math.round((0.3 + 1 * factor) * 100) / 100;
+          const dpr = Math.round((0.5 + 1 * factor) * 100) / 100;
           setDpr(dpr);
         }}
       />
-      {!isMobile&&(
+      {!isMobile && (
         <GradientSkybox />
       )}
-      
+
       <ambientLight intensity={0.03} />
       <spotLight
         angle={0.14}
@@ -111,7 +110,6 @@ export const CanvasContainer = () => {
       >
         <SceneManager lenis={lenisRef.current} />
       </Suspense>
-
     </Canvas>
   );
 };

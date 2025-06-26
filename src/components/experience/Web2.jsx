@@ -169,6 +169,7 @@ useLayoutEffect(() => {
           enterAnim.getMixer().addEventListener("finished", onActionFinished);
           enterAnim.play();
         } else {
+          
           enableOtherSections();
         }
       }

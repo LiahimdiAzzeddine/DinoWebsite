@@ -7,10 +7,9 @@ import * as THREE from "three";
 import { useThree } from "@react-three/fiber";
 import { KTX2Loader } from "three/examples/jsm/loaders/KTX2Loader.js";
 
-
-const animationsPlay = [
+const ANIMATIONS_TO_PLAY = [
   "Armature.001Action",
-  "Armature.003Action.003",
+  "Armature.003Action.003", 
   "Armature.004Action.002",
   "Cube.032Action",
   "Empty.001Action.001",
@@ -23,15 +22,13 @@ const animationsPlay = [
   "Sphere.010Action",
   "Sphere.011Action",
 ];
+const MOBILE_BREAKPOINT = 5;
 
-export function Web1({ sectionID, isActive, lenis, ...props }) {
+export default function Web1({ sectionID, isActive, lenis, ...props }) {
   const gl = useThree((state) => state.gl);
   const group = useRef();
   const sceneContainerGroup = useRef();
-  const [loadTime, setLoadTime] = useState(null);
 
-  // Start timer before loading model
-  const startTime = performance.now();
   const { nodes, materials, animations } = useGLTF(
     `/models/web1-opt.glb`,
     undefined,
@@ -45,15 +42,9 @@ export function Web1({ sectionID, isActive, lenis, ...props }) {
       loader.setKTX2Loader(ktx2loader);
     }
   );
-  // When model is loaded, compute load time
-  useEffect(() => {
-    const endTime = performance.now();
-    const duration = (endTime - startTime).toFixed(2);
-    setLoadTime(duration);
-  }, [nodes, materials, animations]);
 
   const { actions, mixer } = useAnimations(animations, group);
-  const { currentModel, setCurrentModel, setIsTransitioning, isTransitioning } = useContext(AnimationContext);
+  const { setCurrentModel } = useContext(AnimationContext);
   const timelineMain = useRef();
   const { viewport } = useThree()
 
@@ -88,167 +79,156 @@ export function Web1({ sectionID, isActive, lenis, ...props }) {
     viewportRef.current = viewport;
   }, [viewport]);
 
-  useLayoutEffect(() => {
-    // Démarre toutes les animations une fois
-    animationsPlay.forEach((name) => {
-      actions[name]?.reset().play();
-    });
+useLayoutEffect(() => {
+  // Lancer toutes les animations initiales
+  ANIMATIONS_TO_PLAY.forEach(name => actions[name]?.reset().play());
 
-    const camAct = actions["CameraIn"];
-    const camera = group.current.getObjectByName("Camera001");
-    if (!camAct || !camera) return;
+  const camAct = actions["CameraIn"];
+  const groupObj = group.current?.getObjectByName("Camera001");
+  const sceneGroup = sceneContainerGroup.current;
+  if (!camAct || !groupObj || !sceneGroup) return;
 
-    camAct.reset().play().paused = true;
-    const clipDur = camAct.getClip().duration;
+  camAct.reset().play().paused = true;
+  const clipDur = camAct.getClip().duration;
 
-    // Sauvegarder la position d'origine (pour desktop uniquement)
-    const defaultPosition = {
-      x: sceneContainerGroup.current.position.x,
-      y: sceneContainerGroup.current.position.y,
-      z: sceneContainerGroup.current.position.z,
-    };
+  const defaultPosition = { ...sceneGroup.position }; // position d’origine
+  const minY = 0;
+  const maxY = 7.7;
 
-    const minY = 0;
-    const maxY = 7.7;
+  const killTween = () => {
+    if (currentTween.current) {
+      currentTween.current.kill();
+      currentTween.current = null;
+    }
+  };
 
-    const mm = gsap.matchMedia();
+  const mm = gsap.matchMedia();
 
-    // ✅ MOBILE — max-width: 767px
-    mm.add("(max-width: 767px)", () => {
-      // Appliquer décalage mobile
-      sceneContainerGroup.current.position.y += 0.2;
-      sceneContainerGroup.current.position.z -= 0.5;
-      sceneContainerGroup.current.position.x += 0.15;
-      
+  // MOBILE
+  mm.add("(max-width: 767px)", () => {
+    sceneGroup.position.y += 0.2;
+    sceneGroup.position.z -= 0.5;
+    sceneGroup.position.x += 0.15;
 
-      // Sauvegarder la nouvelle position de départ (après décalage)
-      const sceneDefaultPos = sceneContainerGroup.current.position.y;
-      const startZ = sceneContainerGroup.current.position.z;
-      const endZ = startZ - 0.5; // Zoom/dézoom
-      const startX = sceneContainerGroup.current.position.x;
-      const endX = startX + 0.3; // Zoom/dézoom
-      const trigger = ScrollTrigger.create({
-        id: sectionID,
-        trigger: "#section2",
-        start: "top bottom",
-        end: "top top",
-        scrub: true,
-        markers: false,
-        onUpdate: (self) => {
-          const progress = self.progress;
-          const newY = THREE.MathUtils.lerp(minY, maxY, progress);
-          const newZ = THREE.MathUtils.lerp(startZ, endZ, progress);
-          const newX = THREE.MathUtils.lerp(startX, endX, progress);
+    const sceneDefaultPos = sceneGroup.position.y;
+    const startZ = sceneGroup.position.z;
+    const endZ = startZ - 0.5;
+    const startX = sceneGroup.position.x;
+    const endX = startX + 0.3;
 
-          const newRotationY = THREE.MathUtils.lerp(0, 1, progress);
-          const newRotationX = THREE.MathUtils.lerp(0, 1, progress);
-          if (currentTween.current) currentTween.current.kill();
+    const trigger = ScrollTrigger.create({
+      id: sectionID,
+      trigger: "#section2",
+      start: "top bottom",
+      end: "top top",
+      scrub: true,
+      markers: false,
+      onUpdate: ({ progress }) => {
+        killTween();
 
-          currentTween.current = gsap.to(sceneContainerGroup.current, {
+        const newY = THREE.MathUtils.lerp(minY, maxY, progress);
+        const newZ = THREE.MathUtils.lerp(startZ, endZ, progress);
+        const newX = THREE.MathUtils.lerp(startX, endX, progress);
+        const rotY = THREE.MathUtils.lerp(0, 1, progress);
+        const rotX = THREE.MathUtils.lerp(0, 1, progress);
+
+        currentTween.current = gsap.to(sceneGroup, {
+          duration: 0.3,
+          ease: "sine.out",
+          overwrite: true,
+          onUpdate: () => {
+            sceneGroup.position.set(newX, newY, newZ);
+            sceneGroup.rotation.set(rotX, rotY, sceneGroup.rotation.z);
+          },
+        });
+      },
+      onToggle: ({ isActive }) => {
+        if (isActive) {
+          setCurrentModel(sectionID);
+          disableOtherSections();
+          gsap.to(sceneGroup.position, {
+            y: sceneDefaultPos,
             duration: 0.3,
-            ease: "sine.out",
-            overwrite: true,
-            onUpdate: () => {
-              sceneContainerGroup.current.position.y = newY;
-              sceneContainerGroup.current.position.z = newZ;
-              sceneContainerGroup.current.position.x = newX;
-              sceneContainerGroup.current.rotation.y = newRotationY;
-              sceneContainerGroup.current.rotation.x = newRotationX;
-            },
+            ease: "circ.out",
           });
-        },
-        onToggle: (self) => {
-          if (self.isActive) {
-            setCurrentModel(sectionID);
-            disableOtherSections();
-            gsap.to(sceneContainerGroup.current.position, {
-              y: sceneDefaultPos,
-              duration: 0.3,
-              ease: "circ.out",
-            });
-          }
-        },
-        onLeave: (self) => {
-          if (Math.abs(self.getVelocity()) <= 2000) {
-            gsap.to(sceneContainerGroup.current.position, {
-              y: sceneDefaultPos + 50,
-              duration: 0.3,
-              ease: "sine.inOut",
-              onComplete: () => { if (nextScrollTrigger) nextScrollTrigger.enable() },
-            });
-          } else {
-            enableOtherSections();
-          }
-        },
-      });
+        }
+      },
+      onLeave: ({ getVelocity }) => {
 
-      return () => trigger.kill();
+        if (Math.abs(getVelocity()) <= 2000) {
+          gsap.to(sceneGroup.position, {
+            y: sceneDefaultPos + 50,
+            duration: 0.3,
+            ease: "sine.inOut",
+            onComplete: () => nextScrollTrigger?.enable(),
+          });
+        } else {
+          enableOtherSections();
+        }
+      },
+    });
+    return () => trigger.kill();
+  });
+
+  // DESKTOP
+  mm.add("(min-width: 768px)", () => {
+    sceneGroup.position.set(defaultPosition.x, defaultPosition.y, defaultPosition.z);
+
+    const trigger = ScrollTrigger.create({
+      id: sectionID,
+      trigger: "#section2",
+      start: "top bottom",
+      end: "center+=100 top",
+      scrub: true,
+      markers: false,
+      onUpdate: ({ progress }) => {
+        killTween();
+        currentTween.current = gsap.to(camAct, {
+          time: progress * clipDur,
+          duration: 0.1,
+          ease: "sine.out",
+          overwrite: true,
+        });
+      },
+      onToggle: ({ isActive }) => {
+        if (isActive) {
+          setCurrentModel(sectionID);
+          disableOtherSections();
+          gsap.to(sceneGroup.position, {
+            y: defaultPosition.y,
+            duration: 0.3,
+            ease: "circ.out",
+          });
+        }
+      },
+      onLeave: ({ getVelocity }) => {
+        if (Math.abs(getVelocity()) <= 2000) {
+          gsap.to(sceneGroup.position, {
+            y: defaultPosition.y + 50,
+            duration: 0.3,
+            ease: "sine.inOut",
+            onComplete: () => nextScrollTrigger?.enable(),
+          });
+        } else {
+          gsap.to(sceneGroup.position, {
+            y: defaultPosition.y + 50,
+            duration: 0.3,
+            ease: "sine.inOut",
+          });
+          enableOtherSections();
+        }
+      },
     });
 
-    // ✅ DESKTOP — min-width: 768px
-    mm.add("(min-width: 768px)", () => {
-      // Rétablir la position d’origine desktop
-      sceneContainerGroup.current.position.set(
-        defaultPosition.x,
-        defaultPosition.y,
-        defaultPosition.z
-      );
+    return () => trigger.kill();
+  });
 
-      const trigger = ScrollTrigger.create({
-        id: sectionID,
-        trigger: "#section2",
-        start: "top bottom",
-        end: "center+=100 top",
-        scrub: true,
-        markers: false,
-        onUpdate: (self) => {
-          const progress = self.progress;
-          if (currentTween.current) currentTween.current.kill();
-          currentTween.current = gsap.to(camAct, {
-            time: progress * clipDur,
-            duration: 0.1,
-            ease: "sine.out",
-            overwrite: true,
-          });
-        },
-        onToggle: (self) => {
-          if (self.isActive) {
-            setCurrentModel(sectionID);
-            disableOtherSections();
-            gsap.to(sceneContainerGroup.current.position, {
-              y: defaultPosition.y,
-              duration: 0.3,
-              ease: "circ.out",
-            });
-          }
-        },
-        onLeave: (self) => {
-          if (Math.abs(self.getVelocity()) <= 2000) {
-            gsap.to(sceneContainerGroup.current.position, {
-              y: defaultPosition.y + 50,
-              duration: 0.3,
-              ease: "sine.inOut",
-              onComplete: () => nextScrollTrigger.enable(),
-            });
-          } else {
-            enableOtherSections();
-          }
-        },
-      });
-
-      return () => trigger.kill();
-    });
-
-    // ✅ Cleanup global
-    return () => {
-      mm.revert(); // kill all triggers set by matchMedia
-      timelineMain.current?.kill();
-      mixer.stopAllAction();
-    };
-  }, []);
-
-
-
+  return () => {
+    mm.revert(); // clean all triggers
+    timelineMain.current?.kill();
+    mixer.stopAllAction();
+  };
+}, []);
 
 
   // Créez un matériau de test

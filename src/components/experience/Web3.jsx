@@ -166,8 +166,7 @@ function SmokeParticles({ count, position, geometry, material }) {
     />
   );
 }
-
-export function Web3({ sectionID, isActive, ...props }) {
+export default function Web3({ sectionID, isActive, ...props }) {
   // Context and state
   const { setCurrentModel } = useContext(AnimationContext);
   const { viewport } = useThree();
@@ -428,44 +427,44 @@ export function Web3({ sectionID, isActive, ...props }) {
     });
 
     // Armature movement trigger
-    const armatureTrigger = ScrollTrigger.create({
-      id: sectionID + "_armatureMove",
-      trigger: SCROLL_TRIGGERS.ARMATURE.trigger,
-      start: SCROLL_TRIGGERS.ARMATURE.start,
-      end: SCROLL_TRIGGERS.ARMATURE.end,
-      scrub: true,
-      markers: false,
-      onEnter: () => {
-        setCurrentModel(sectionID);
-        disableOtherSections();
-      },
-      onLeave: () => {
-        stopArmatureAnimation();
-        if (armatureRef.current) {
-          armatureAnimationRef.current = gsap.to(armatureRef.current.position, {
-            y: initialY.current + 0.1,
-            duration: 2,
-            ease: "power2.out",
-            onComplete: () => {
-              armatureAnimationRef.current = null;
-            },
-          });
-        }
-      },
-      onEnterBack: () => {
-        stopArmatureAnimation();
-        if (armatureRef.current) {
-          armatureAnimationRef.current = gsap.to(armatureRef.current.position, {
-            y: initialY.current,
-            duration: 0.1,
-            ease: "power2.out",
-            onComplete: () => {
-              armatureAnimationRef.current = null;
-            },
-          });
-        }
-      },
-    });
+    // const armatureTrigger = ScrollTrigger.create({
+    //   id: sectionID + "_armatureMove",
+    //   trigger: SCROLL_TRIGGERS.ARMATURE.trigger,
+    //   start: SCROLL_TRIGGERS.ARMATURE.start,
+    //   end: SCROLL_TRIGGERS.ARMATURE.end,
+    //   scrub: true,
+    //   markers: false,
+    //   onEnter: () => {
+    //     setCurrentModel(sectionID);
+    //     disableOtherSections();
+    //   },
+    //   onLeave: () => {
+    //     stopArmatureAnimation();
+    //     if (armatureRef.current) {
+    //       armatureAnimationRef.current = gsap.to(armatureRef.current.position, {
+    //         y: initialY.current + 0.1,
+    //         duration: 2,
+    //         ease: "power2.out",
+    //         onComplete: () => {
+    //           armatureAnimationRef.current = null;
+    //         },
+    //       });
+    //     }
+    //   },
+    //   onEnterBack: () => {
+    //     stopArmatureAnimation();
+    //     if (armatureRef.current) {
+    //       armatureAnimationRef.current = gsap.to(armatureRef.current.position, {
+    //         y: initialY.current,
+    //         duration: 0.1,
+    //         ease: "power2.out",
+    //         onComplete: () => {
+    //           armatureAnimationRef.current = null;
+    //         },
+    //       });
+    //     }
+    //   },
+    // });
 
     // Cleanup function
     return () => {

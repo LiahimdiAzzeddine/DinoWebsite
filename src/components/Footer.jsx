@@ -1,5 +1,5 @@
 import React from "react";
-import dino from "/assets/logos/dinoBlack.png";
+import dino from "/src/assets/logos/dinoBlack2.png";
 
 export default function Footer() {
   return (
@@ -18,6 +18,9 @@ export default function Footer() {
                   <img
                     alt="Dinomite logo"
                     src={dino}
+                     width="107" height="140"
+                       loading="eager"
+  decoding="async"
                     className="w-[107px] h-[140px] max-h-[3em] mt-[2px] mb-[2px] align-middle"
                   />
                 </a>

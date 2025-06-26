@@ -1,4 +1,4 @@
-import dino from "../../assets/logos/dinoBlack.png";
+import dino from "/src/assets/logos/dinoBlack2.png";
 import React, { useState } from "react";
 import NavMobile from "./NavMobile";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -29,6 +29,9 @@ export default function NavBar() {
               <img
                 alt="needle logo"
                 src={dino}
+                  loading="eager"
+  decoding="async"
+                 width="32.5" height="auto"
                 className="h-[32.5px] mb-[2px] mt-[2px] max-h-[1.5em] align-middle"
               />
             </a>

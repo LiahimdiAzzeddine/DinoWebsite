@@ -4,7 +4,7 @@ import MODEL_CONFIGS from "./MODEL_CONFIGS";
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from 'three';
 
-const GradientSkybox = () => {
+export default function GradientSkybox() {
   const { scene } = useThree();
   const { currentModel } = useContext(AnimationContext);
 
@@ -111,4 +111,3 @@ const GradientSkybox = () => {
   return null;
 };
 
-export default GradientSkybox;

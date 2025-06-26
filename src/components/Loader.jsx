@@ -123,9 +123,12 @@ const Loader = () => {
               {/* Logo */}
               <div className="absolute inset-0 flex items-center justify-center rounded-[0.3em]">
                 <img 
-                  src="/assets/logos/dinoBlack2.png" 
-                  alt="ENTROPRES Logo" 
-                  className="w-28 h-24 md:w-36 md:h-32 object-contain opacity-80 z-50"
+                  src="/src/assets/logos/dinoBlack2.png" 
+                  alt="Logo" 
+                   width="112" height="96"
+                     loading="eager"
+  decoding="async"
+                  className="md:w-36 md:h-32 object-contain opacity-80 z-50"
                   onError={(e) => {
                     e.currentTarget.style.display = 'none';
                     e.currentTarget.nextElementSibling?.classList.remove('hidden');

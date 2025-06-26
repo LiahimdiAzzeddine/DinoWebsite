@@ -14,7 +14,7 @@ import * as THREE from "three";
 import { AnimationContext } from "./AnimationContext";
 import { KTX2Loader } from "three/examples/jsm/Addons.js";
 
-export function Web2({ sectionID, isActive, ...props }) {
+export default function Web2({ sectionID, isActive, ...props }) {
   const gl = useThree((state) => state.gl);
   const group = React.useRef();
    const currentTween = useRef(null);
@@ -180,7 +180,7 @@ useLayoutEffect(() => {
   // ✅ Mobile only (tu peux mettre autre comportement ici si besoin)
   mm.add("(max-width: 767px)", () => {
      // Ajustement mobile initial (si nécessaire)
-  sceneContainerGroup.current.position.y -= 0.2;
+  sceneContainerGroup.current.position.y -= 0.6;
    sceneContainerGroup.current.position.z += 0.1;
     // Valeurs de référence pour animation
   const sceneDefaultPos = sceneContainerGroup.current.position.y;

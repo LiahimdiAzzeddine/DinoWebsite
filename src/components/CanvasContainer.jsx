@@ -1,4 +1,4 @@
-import { Suspense, useContext, useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useContext, useEffect, useRef, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -7,11 +7,10 @@ import { AnimationContext } from "./experience/AnimationContext";
 import MODEL_CONFIGS from "./experience/MODEL_CONFIGS";
 import { Environment, Html, PerformanceMonitor } from "@react-three/drei";
 import Lenis from '@studio-freight/lenis';
-import { Web1 } from "./experience/Web1";
-import { Web2 } from "./experience/Web2";
-import { Web3 } from "./experience/Web3";
-import GradientSkybox from "./experience/SceneColor";
-import round from 'lodash/round';
+const Web1 = lazy(() => import("./experience/Web1"));
+const Web2 = lazy(() => import("./experience/Web2"));
+const Web3 = lazy(() => import("./experience/Web3"));
+const GradientSkybox = lazy(() => import("./experience/SceneColor"));
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -30,14 +29,14 @@ export function ModelContainer({ lenis }) {
         isActive={currentModel === "web1"}
         lenis={lenis}
       />
-      <Web2
+      {/* <Web2
         sectionID={"web2"}
         isActive={currentModel === "web2"}
       />
       <Web3
         sectionID={"web3"}
         isActive={currentModel === "web3"}
-      />
+      /> */}
     </>
   );
 }
@@ -86,14 +85,14 @@ export const CanvasContainer = () => {
   }, []);
 
   return (
-    <Canvas  dpr={0} shadows={false}  gl={{ antialias: false, powerPreference: "low-power" }}>
+    <Canvas dpr={0} shadows={false} gl={{ antialias: false, powerPreference: "low-power" }}>
       <PerformanceMonitor
         bounds={() => [30, 60]}
         flipflops={2}
         onChange={({ factor }) => {
-    const dpr = Math.round((0.3 + 1 * factor) * 100) / 100;
-    setDpr(dpr);
-  }}
+          const dpr = Math.round((0.3 + 1 * factor) * 100) / 100;
+          setDpr(dpr);
+        }}
       />
       <GradientSkybox />
       <ambientLight intensity={0.03} />
@@ -110,7 +109,9 @@ export const CanvasContainer = () => {
       <Suspense
         fallback={
           <Html center>
-            <div className="loading">Model loading...</div>
+            <div className="loading">
+              <div className="h-6 w-6 animate-spin rounded-full border-2 border-white border-t-transparent" />
+            </div>
           </Html>
         }
       >

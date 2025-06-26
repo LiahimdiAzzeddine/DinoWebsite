@@ -1,6 +1,4 @@
-import { Web1 } from "./Web1";
-import { Web2 } from "./Web2";
-import { Web3 } from "./Web3";
+
 
 const MODEL_CONFIGS = {
   web1: {
@@ -9,7 +7,6 @@ const MODEL_CONFIGS = {
     sectioncolor: 0x10b981, // emerald-500 (#10b981)
     colorA: '#4abeab',  
     colorB: '#6ac0f1', 
-    Component: Web1,
   },
   web2: {
     url: "./models/web2.glb",
@@ -17,7 +14,6 @@ const MODEL_CONFIGS = {
     sectioncolor: 0x14b8a6, // teal-500 (#14b8a6)
     colorA: '#d7e0eb',
     colorB: '#6ac0f1',
-    Component: Web2,
   },
   web3: {
     url: "./models/web3.glb",
@@ -25,7 +21,6 @@ const MODEL_CONFIGS = {
     sectioncolor: 0x2dd4bf, // teal-400 (#2dd4bf)
     colorA: '#e6fcf5',                    // Très clair pastel vert/teal (plus clair que emerald-50)
     colorB: '#6ac0f1',                    // Teal-500 (plus saturé et profond)
-    Component: Web3,
   },
 };
 

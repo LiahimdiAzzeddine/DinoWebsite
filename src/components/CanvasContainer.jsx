@@ -4,7 +4,6 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { AnimationContext } from "./experience/AnimationContext";
 
-import MODEL_CONFIGS from "./experience/MODEL_CONFIGS";
 import { Environment, Html, PerformanceMonitor } from "@react-three/drei";
 import Lenis from '@studio-freight/lenis';
 const Web1 = lazy(() => import("./experience/Web1"));
@@ -17,23 +16,19 @@ gsap.registerPlugin(ScrollTrigger);
 // ModelContainer.jsx
 export function ModelContainer({ lenis }) {
   const { currentModel } = useContext(AnimationContext);
-  const config = MODEL_CONFIGS[currentModel];
-  const isMobile = /Mobi|Android/i.test(navigator.userAgent);
-
 
   return (
     <>
-
       <Web1
         sectionID={"web1"}
         isActive={currentModel === "web1"}
         lenis={lenis}
       />
-      {/* <Web2
+       <Web2
         sectionID={"web2"}
         isActive={currentModel === "web2"}
       />
-      <Web3
+      {/*<Web3
         sectionID={"web3"}
         isActive={currentModel === "web3"}
       /> */}
@@ -43,19 +38,15 @@ export function ModelContainer({ lenis }) {
 
 // Handles model switching and scene positioning based on scroll
 const SceneManager = ({ lenis }) => {
-  const { setCurrentModel, isTransitioning, setIsTransitioning } =
-    useContext(AnimationContext);
-
 
   return <ModelContainer lenis={lenis} />;
 };
 
 // Updated CanvasContainer component with gradient background
 export const CanvasContainer = () => {
-  const { isTransitioning } = useContext(AnimationContext);
   const lenisRef = useRef(null);
   const [dpr, setDpr] = useState(0.3);
-  const [effectsOn, setEffectsOn] = useState(true);
+    const isMobile = /Mobi|Android/i.test(navigator.userAgent);
 
 
   useEffect(() => {
@@ -85,7 +76,7 @@ export const CanvasContainer = () => {
   }, []);
 
   return (
-    <Canvas dpr={0} shadows={false} gl={{ antialias: false, powerPreference: "low-power" }}>
+    <Canvas dpr={dpr} shadows={false} gl={{ antialias: false, powerPreference: "low-power" }}>
       <PerformanceMonitor
         bounds={() => [30, 60]}
         flipflops={2}
@@ -94,7 +85,10 @@ export const CanvasContainer = () => {
           setDpr(dpr);
         }}
       />
-      <GradientSkybox />
+      {!isMobile&&(
+        <GradientSkybox />
+      )}
+      
       <ambientLight intensity={0.03} />
       <spotLight
         angle={0.14}

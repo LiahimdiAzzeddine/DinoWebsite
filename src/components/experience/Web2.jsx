@@ -180,16 +180,16 @@ useLayoutEffect(() => {
   // ✅ Mobile only (tu peux mettre autre comportement ici si besoin)
   mm.add("(max-width: 767px)", () => {
      // Ajustement mobile initial (si nécessaire)
-  sceneContainerGroup.current.position.y -= 0.6;
+  sceneContainerGroup.current.position.y -=1.7;
    sceneContainerGroup.current.position.z += 0.1;
     // Valeurs de référence pour animation
   const sceneDefaultPos = sceneContainerGroup.current.position.y;
   const minY = sceneDefaultPos;
-  const maxY = sceneDefaultPos + 7; // ajuste selon la distance souhaitée
+  const maxY = sceneDefaultPos + 8; // ajuste selon la distance souhaitée
     const trigger = ScrollTrigger.create({
       id: sectionID + "-mobile",
       trigger: "#section3",
-      start: "top bottom",
+      start: "top bottom+=275",
       end: "bottom top",
       scrub: true,
       markers: false,
@@ -300,7 +300,10 @@ useLayoutEffect(() => {
 
   let handleOnLeave = (self) => {
     if (Math.abs(self.getVelocity()) <= 4000) {
-      nextScrollTrigger.disable();
+      if(nextScrollTrigger){
+        nextScrollTrigger.disable();
+      }
+      
       // Reset & configure the action
       leaveAnim.reset().setLoop(THREE.LoopOnce, 1);
       leaveAnim.clampWhenFinished = true;
@@ -313,7 +316,9 @@ useLayoutEffect(() => {
       });
 
       setTimeout(() => {
+         if(nextScrollTrigger){
         nextScrollTrigger.enable();
+         }
       }, leaveAnim.getClip().duration * 1000 * leaveAnim.timeScale);
       leaveAnim.play();
     } else {

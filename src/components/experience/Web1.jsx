@@ -93,7 +93,7 @@ useLayoutEffect(() => {
 
   const defaultPosition = { ...sceneGroup.position }; // position d’origine
   const minY = 0;
-  const maxY = 7.7;
+  const maxY = 6;
 
   const killTween = () => {
     if (currentTween.current) {
@@ -106,7 +106,7 @@ useLayoutEffect(() => {
 
   // MOBILE
   mm.add("(max-width: 767px)", () => {
-    sceneGroup.position.y += 0.2;
+    sceneGroup.position.y += 0.3;
     sceneGroup.position.z -= 0.5;
     sceneGroup.position.x += 0.15;
 
@@ -120,7 +120,7 @@ useLayoutEffect(() => {
       id: sectionID,
       trigger: "#section2",
       start: "top bottom",
-      end: "top top",
+      end: "top center-=270",
       scrub: true,
       markers: false,
       onUpdate: ({ progress }) => {
@@ -709,9 +709,6 @@ useLayoutEffect(() => {
             skeleton={nodes.Retopo_Sphere001_primitive2.skeleton}
           />
         </group>
-
-
-
 
       </group>
     </group>

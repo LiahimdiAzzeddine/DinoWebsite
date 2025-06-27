@@ -75,7 +75,7 @@ const SCROLL_TRIGGERS = {
   },
   ARMATURE: {
     trigger: "#section6",
-    start: "top center",
+    start: "top-=40% center",
     end: "top top",
   },
 };
@@ -99,7 +99,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
   const rocketRef = useRef();
   const emitterRef = useRef();
   const currentTween = useRef(null);
-    const sceneContainerGroup = useRef();
+  const sceneContainerGroup = useRef();
   const armatureRef = useRef();
   const armatureAnimationRef = useRef(null);
   const initialY = useRef(0);
@@ -301,196 +301,260 @@ export default function Web3({ sectionID, isActive, ...props }) {
   useLayoutEffect(() => {
     resetAllActions();
     const mm = gsap.matchMedia();
-      const minY = 0;
-  const maxY = 0.1;
-
+    const minY = 0;
+    const maxY = 0.6;
     // Main scroll trigger
     mm.add("(max-width: 767px)", () => {
-    const mainTrigger = ScrollTrigger.create({
-      id: sectionID,
-      trigger: SCROLL_TRIGGERS.MAIN.trigger,
-      start: "top bottom",
-    end: "#section5 bottom",
-      preventClicks: true,
-      scrub: true,
-      markers: false,
-      onEnter: () => {
-        setCurrentModel(sectionID);
-        disableOtherSections();
-        resetAllActions();
-        playIntroAnimations();
-      },
-//   onUpdate: ({ progress }) => {
-//       // Stop previous tween
-//       if (currentTween.current) {
-//         currentTween.current.kill();
-//       }
+      const startY = armatureRef.current.position.y;
+      const adjustedStartY = startY - 0.75;
+      const endY = adjustedStartY + 5;
+      const mainTrigger = ScrollTrigger.create({
+        id: sectionID,
+        trigger: SCROLL_TRIGGERS.MAIN.trigger,
+        start: "top bottom",
+        end: "top center",
+        preventClicks: true,
+        scrub: true,
+        markers: false,
+        onEnter: () => {
+          console.log("🚀 ~ mm.add ~ onEnter:")
+          setCurrentModel(sectionID);
+          disableOtherSections();
+          resetAllActions();
+          playIntroAnimations();
+        },
+        onUpdate: ({ progress }) => {
+          if (sceneContainerGroup.current) {
+            sceneContainerGroup.current.position.y = THREE.MathUtils.lerp(minY, maxY, progress);
+          }
+        },
+        onEnterBack: () => {
+          console.log("🚀 ~ mm.add ~ onEnterBack:")
 
-//       const newY = THREE.MathUtils.lerp(minY, maxY, progress);
-// if (sceneContainerGroup.current) {
-//       currentTween.current = gsap.to(sceneContainerGroup.current.position, {
-//          duration: 0.3,
-//           ease: "sine.out",
-//           overwrite: true,
-//           onUpdate: () => {
-//             sceneContainerGroup.current.position.y+=newY
-//           },
-//       });
-// }
-//     },
-
-      
-      onEnterBack: () => {
-        setCurrentModel(sectionID);
-        disableOtherSections();
-        resetAllActions();
-        playIntroAnimations(true);
-      },
-      onLeaveBack: (self) => {
-        playIntroAnimations(true);
-        const enterAnimation = actions["ActionEnter"];
-        if (Math.abs(self.getVelocity()) <= 2000 && enterAnimation) {
-          setTimeout(() => {
-            if (prevScrollTrigger.current) {
-              prevScrollTrigger.current.enable();
-            }
-          }, enterAnimation.getClip().duration * 1000);
-        } else {
-          enableOtherSections();
-        }
-      },
-    });
-     return () => mainTrigger.kill();
-});
-
-
-mm.add("(min-width: 768px)", () => {
-   const mainTrigger = ScrollTrigger.create({
-      id: sectionID,
-      trigger: SCROLL_TRIGGERS.MAIN.trigger,
-      start: SCROLL_TRIGGERS.MAIN.start,
-      end: SCROLL_TRIGGERS.MAIN.end,
-      preventClicks: true,
-      scrub: true,
-      markers: false,
-      onEnter: () => {
-        setCurrentModel(sectionID);
-        disableOtherSections();
-        resetAllActions();
-        playIntroAnimations();
-      },
-      onEnterBack: () => {
-        setCurrentModel(sectionID);
-        disableOtherSections();
-        resetAllActions();
-        playIntroAnimations(true);
-      },
-      onLeaveBack: (self) => {
-        playIntroAnimations(true);
-        const enterAnimation = actions["ActionEnter"];
-        if (Math.abs(self.getVelocity()) <= 2000 && enterAnimation) {
-          setTimeout(() => {
-            if (prevScrollTrigger.current) {
-              prevScrollTrigger.current.enable();
-            }
-          }, enterAnimation.getClip().duration * 1000);
-        } else {
-          enableOtherSections();
-        }
-      },
-    });
-    return () => mainTrigger.kill();
-});
-    // Secondary scroll trigger
-    const secondaryTrigger = ScrollTrigger.create({
-      id: sectionID + "_secondary",
-      trigger: SCROLL_TRIGGERS.SECONDARY.trigger,
-      start: SCROLL_TRIGGERS.SECONDARY.start,
-      end: SCROLL_TRIGGERS.SECONDARY.end,
-      scrub: SCROLL_TRIGGERS.SECONDARY.scrub,
-      markers: false,
-      onEnter: (self) => {
-        setCurrentModel(sectionID);
-        disableOtherSections();
-        if (Math.abs(self.getVelocity()) > 1000) {
-          setTimeout(() => {
+          setCurrentModel(sectionID);
+          disableOtherSections();
+          //resetAllActions();
+          // playIntroAnimations(true);
+        },
+        onLeaveBack: (self) => {
+          console.log("🚀 ~ mm.add ~ onLeaveBack:")
+          playIntroAnimations(true);
+          const enterAnimation = actions["ActionEnter"];
+          if (Math.abs(self.getVelocity()) <= 2000 && enterAnimation) {
+            setTimeout(() => {
+              if (prevScrollTrigger.current) {
+                prevScrollTrigger.current.enable();
+              }
+            }, enterAnimation.getClip().duration * 1000);
+          } else {
+            enableOtherSections();
+          }
+        },
+      });
+      const secondaryTrigger = ScrollTrigger.create({
+        id: sectionID + "_secondary",
+        trigger: SCROLL_TRIGGERS.SECONDARY.trigger,
+        start: () => mainTrigger.end, // Synchronise le start ici
+        end: "bottom+=45% top",
+        scrub: SCROLL_TRIGGERS.SECONDARY.scrub,
+        markers: false,
+        onEnter: (self) => {
+          setCurrentModel(sectionID);
+          disableOtherSections();
+          if (Math.abs(self.getVelocity()) > 1000) {
+            setTimeout(() => {
+              handleScrollAnimations();
+            }, 50);
+          } else {
             handleScrollAnimations();
-          }, 500);
-        } else {
-          handleScrollAnimations();
 
-        }
+          }
 
-      },
-      onLeaveBack: (self) => {
-        handleScrollAnimationsReverse();
-        if (Math.abs(self.getVelocity()) > 2000) {
-          enableOtherSections();
+        },
+        onLeaveBack: (self) => {
+          handleScrollAnimationsReverse();
+          if (Math.abs(self.getVelocity()) > 2000) {
+            enableOtherSections();
+          }
+        },
+        onUpdate: (self) => {
+          handleProgressUpdate(self.progress);
+        },
+        onLeave: () => {
         }
-      },
-      onUpdate: (self) => {
-        handleProgressUpdate(self.progress);
-      },
-      onLeave: () => {
-      }
+      });
+
+      //Armature movement trigger
+      const armatureTrigger = ScrollTrigger.create({
+        id: sectionID + "_armatureMove",
+        trigger: "#section6",
+        start: "top bottom",
+        end: () => document.body.scrollHeight + "px",
+        scrub: true,
+        markers: false,
+
+        onEnter: () => {
+          setCurrentModel(sectionID);
+          disableOtherSections();
+
+          if (armatureRef.current) {
+            armatureRef.current.position.y = adjustedStartY;
+            gsap.to(armatureRef.current.scale, {
+              x: 0.1,
+              y: 0.1,
+              z: 0.1,
+              duration: 1,
+              ease: "back.out",
+            });
+          }
+        },
+
+        onUpdate: (self) => {
+          if (armatureRef.current) {
+            // Interpolation selon le scroll progress
+            armatureRef.current.position.y = gsap.utils.interpolate(adjustedStartY, endY, self.progress);
+
+          }
+        },
+        onLeaveBack: () => {
+          if (armatureRef.current) {
+            armatureRef.current.position.y = startY;
+            gsap.to(armatureRef.current.scale, {
+              x: 0,
+              y: 0,
+              z: 0,
+              duration: 0.1,
+              ease: "power2.inOut",
+            });
+          }
+        },
+      });
+
+            return () => { secondaryTrigger.kill(), mainTrigger.kill(), armatureTrigger.kill() };
     });
-    const startY = armatureRef.current.position.y; // Position de départ
-    const endY = startY + 0.23; // Position finale, tu peux l'ajuster selon le besoin
-    //Armature movement trigger
-    const armatureTrigger = ScrollTrigger.create({
-      id: sectionID + "_armatureMove",
-      trigger: SCROLL_TRIGGERS.ARMATURE.trigger,
-      start: SCROLL_TRIGGERS.ARMATURE.start,
-      end: SCROLL_TRIGGERS.ARMATURE.end,
-      scrub: true,
-      markers: false,
+    mm.add("(min-width: 768px)", () => {
+      const mainTrigger = ScrollTrigger.create({
+        id: sectionID,
+        trigger: SCROLL_TRIGGERS.MAIN.trigger,
+        start: SCROLL_TRIGGERS.MAIN.start,
+        end: SCROLL_TRIGGERS.MAIN.end,
+        preventClicks: true,
+        scrub: true,
+        markers: false,
+        onEnter: () => {
+          setCurrentModel(sectionID);
+          disableOtherSections();
+          resetAllActions();
+          playIntroAnimations();
+        },
+        onEnterBack: () => {
+          setCurrentModel(sectionID);
+          disableOtherSections();
+          resetAllActions();
+          playIntroAnimations(true);
+        },
+        onLeaveBack: (self) => {
+          playIntroAnimations(true);
+          const enterAnimation = actions["ActionEnter"];
+          if (Math.abs(self.getVelocity()) <= 2000 && enterAnimation) {
+            setTimeout(() => {
+              if (prevScrollTrigger.current) {
+                prevScrollTrigger.current.enable();
+              }
+            }, enterAnimation.getClip().duration * 1000);
+          } else {
+            enableOtherSections();
+          }
+        },
+      });
+      return () => mainTrigger.kill();
+    });
+    // Secondary scroll trigger
+    mm.add("(min-width: 767px)", () => {
+      const secondaryTrigger = ScrollTrigger.create({
+        id: sectionID + "_secondary",
+        trigger: SCROLL_TRIGGERS.SECONDARY.trigger,
+        start: SCROLL_TRIGGERS.SECONDARY.start,
+        end: SCROLL_TRIGGERS.SECONDARY.end,
+        scrub: SCROLL_TRIGGERS.SECONDARY.scrub,
+        markers: false,
+        onEnter: (self) => {
+          setCurrentModel(sectionID);
+          disableOtherSections();
+          if (Math.abs(self.getVelocity()) > 1000) {
+            setTimeout(() => {
+              handleScrollAnimations();
+            }, 500);
+          } else {
+            handleScrollAnimations();
 
-      onEnter: () => {
-        setCurrentModel(sectionID);
-        disableOtherSections();
+          }
 
-        if (armatureRef.current) {
-          gsap.to(armatureRef.current.scale, {
-            x: 0.064,
-            y: 0.064,
-            z: 0.064,
-            duration: 1,
-            ease: "back.out",
-          });
+        },
+        onLeaveBack: (self) => {
+          handleScrollAnimationsReverse();
+          if (Math.abs(self.getVelocity()) > 2000) {
+            enableOtherSections();
+          }
+        },
+        onUpdate: (self) => {
+          handleProgressUpdate(self.progress);
+        },
+        onLeave: () => {
         }
-      },
+      });
+      return () => secondaryTrigger.kill();
+    });
+    mm.add("(min-width: 768px)", () => {
+      
+      const startY = armatureRef.current.position.y;
+      const adjustedStartY = startY-0.055;
+      const endY = adjustedStartY + 0.25;
+      //Armature movement trigger
+      const armatureTrigger = ScrollTrigger.create({
+        id: sectionID + "_armatureMove",
+        trigger: SCROLL_TRIGGERS.ARMATURE.trigger,
+        start: SCROLL_TRIGGERS.ARMATURE.start,
+        end: SCROLL_TRIGGERS.ARMATURE.end,
+        scrub: true,
+        markers: false,
 
-      onLeave: () => {
-        // stopArmatureAnimation();
-        if (armatureRef.current) {
+        onEnter: () => {
+          setCurrentModel(sectionID);
+          disableOtherSections();
+ armatureRef.current.position.y = adjustedStartY;
+          if (armatureRef.current) {
+            gsap.to(armatureRef.current.scale, {
+              x: 0.045,
+              y: 0.045,
+              z: 0.045,
+              duration: 1,
+              ease: "back.out",
+            });
+          }
+        },
 
-        }
-      },
+         onUpdate: (self) => {
+          if (armatureRef.current) {
+            // Interpolation selon le scroll progress
+            armatureRef.current.position.y = gsap.utils.interpolate(adjustedStartY, endY, self.progress);
 
-      onEnterBack: () => {
-        if (armatureRef.current) {
-
-        }
-      },
-      onUpdate: (self) => {
-        if (armatureRef.current) {
-
-
-          // Interpolation selon le scroll progress
-          armatureRef.current.position.y = gsap.utils.interpolate(startY, endY, self.progress);
-        }
-      },
-      onLeaveBack: () => {
-        if (armatureRef.current) {
-          gsap.to(armatureRef.current.scale, {
-            x: 0,
-            y: 0,
-            z: 0,
-            duration: 0.1,
-            ease: "power2.inOut",
-          });
-        }
-      },
+          }
+        },
+        onLeaveBack: () => {
+          if (armatureRef.current) {
+            armatureRef.current.position.y = startY;
+            gsap.to(armatureRef.current.scale, {
+              x: 0,
+              y: 0,
+              z: 0,
+              duration: 0.1,
+              ease: "power2.inOut",
+            });
+          }
+        },
+      });
+      return () => armatureTrigger.kill();
     });
 
 
@@ -499,8 +563,8 @@ mm.add("(min-width: 768px)", () => {
       mixer.stopAllAction();
       stopArmatureAnimation();
       mainTrigger.kill();
-      secondaryTrigger.kill();
-      armatureTrigger.kill();
+      //secondaryTrigger.kill();
+      //armatureTrigger.kill();
     };
   }, []);
 

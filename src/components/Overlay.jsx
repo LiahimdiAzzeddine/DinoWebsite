@@ -217,13 +217,13 @@ export const Overlay = () => {
           {
             href: "#",
             title: "App Store",
-            imgSrc: "/src/assets/logos/appStore.webp",
+            imgSrc: "../assets/logos/appStore.webp",
             alt: "Logo ofApp Store",
           },
           {
             href: "#",
             title: "Play Store",
-            imgSrc: "/src/assets/logos/play-store.webp",
+            imgSrc: "../assets/logos/play-store.webp",
             alt: "Logo of Play Store",
           },
         ]}

@@ -25,6 +25,9 @@ p {
   animation: none !important;
   opacity: 1 !important;
 }
+#section2,#section6 {
+  scroll-margin-top: 30vh;
+}
 
 
 .lcp-paragraph {

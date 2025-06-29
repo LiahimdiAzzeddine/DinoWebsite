@@ -47,9 +47,9 @@ export default function NavBar() {
                     onClick={() => {
                       navigate("/"); // Navigue d'abord à la page d'accueil
                       setTimeout(() => {
-                        const el = document.getElementById("section2");
+                        const el = document.getElementById("section6");
                         if (el) el.scrollIntoView({ behavior: "smooth" });
-                      }, 100); // Petit délai pour laisser la page charger
+                      }, 200); // Petit délai pour laisser la page charger
                     }}
                   >
                     contact us
@@ -60,7 +60,7 @@ export default function NavBar() {
                     onClick={() => {
                       navigate("/"); // Navigue d'abord à la page d'accueil
                       setTimeout(() => {
-                        const el = document.getElementById("section6");
+                        const el = document.getElementById("section2");
                         if (el) el.scrollIntoView({ behavior: "smooth" });
                       }, 100); // Petit délai pour laisser la page charger
                     }}

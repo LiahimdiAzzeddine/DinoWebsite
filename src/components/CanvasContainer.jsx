@@ -84,8 +84,23 @@ export const CanvasContainer = () => {
           setDpr(dpr);
         }}
       />
-      {!isMobile && (
+      {!isMobile? (
         <GradientSkybox />
+      ):(
+          <>
+      <ambientLight color={0xffffff} intensity={0.6} />
+
+      <directionalLight
+        color={0xffffff}
+        intensity={1}
+        position={[1, 1, 1]}
+        castShadow
+        shadow-mapSize-width={1024}
+        shadow-mapSize-height={1024}
+        shadow-camera-near={0.5}
+        shadow-camera-far={500}
+      />
+    </>
       )}
 
       <ambientLight intensity={0.03} />

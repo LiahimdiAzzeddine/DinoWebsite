@@ -227,9 +227,9 @@ div[data-v-7479a2c4] {
   line-height: 1.05em;
   margin-bottom: .1em;
   margin-top: .1em;
-   min-height: '2.5em';
-            display: 'flex';
-            align-items: 'center';
+  min-height: '2.5em';
+  display: 'flex';
+  align-items: 'center';
 }
 /* Responsive design */
 @media screen and (max-height: 1200px) {

@@ -51,9 +51,7 @@ const Card = ({
         marginLeft: isDesktop ? (right ? "auto" : "calc(100% - 440px - 12vw)") : "auto",
         marginRight: isDesktop ? (right ? "calc(100% - 440px - 12vw)" : "auto") : "auto",
       }}
-      initial={{ opacity: 0, y: 40 }}
-      animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
+     
     >
       <div className="wrapper">
         <header>

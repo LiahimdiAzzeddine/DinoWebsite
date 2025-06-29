@@ -6,8 +6,6 @@ import { useInView } from "react-intersection-observer";
 import LinkButton from "./ui/LinkButton";
 import NeddleButton from "./ui/NeddleButton";
 
-
-
 const Card = ({
   title,
   subtitle,
@@ -43,8 +41,8 @@ const Card = ({
       ref={ref}
       className={`
         block relative w-[440px] mx-auto
-        ${right 
-          ? 'lg:ml-auto lg:mr-0 lg:right-0' 
+        ${right
+          ? 'lg:ml-auto lg:mr-0 lg:right-0'
           : 'lg:mr-auto lg:ml-0 lg:left-0'
         }
         ${className}
@@ -59,7 +57,7 @@ const Card = ({
     >
       <div className="wrapper">
         <header>
-          <h1 className="min-h-[2em] flex items-center">
+          <h1 className="sm:min-h-[2em] min-h-[2.5em]  flex items-center">
             {title}
           </h1>
           <p className="category">{subtitle}</p>
@@ -125,15 +123,15 @@ const CardForm = ({ title, subtitle, form, right = false, id }) => {
       ref={ref}
       className={`
       block relative w-[440px] mx-auto
-      ${right 
-        ? 'lg:ml-auto lg:mr-0 lg:right-0' 
-        : 'lg:mr-auto lg:ml-0 lg:left-0'
-      }
+      ${right
+          ? 'lg:ml-auto lg:mr-0 lg:right-0'
+          : 'lg:mr-auto lg:ml-0 lg:left-0'
+        }
     `}
-    style={{
-      marginLeft: isDesktop ? (right ? "auto" : "calc(100% - 440px - 12vw)") : "auto",
-      marginRight: isDesktop ? (right ? "calc(100% - 440px - 12vw)" : "auto") : "auto",
-    }}
+      style={{
+        marginLeft: isDesktop ? (right ? "auto" : "calc(100% - 440px - 12vw)") : "auto",
+        marginRight: isDesktop ? (right ? "calc(100% - 440px - 12vw)" : "auto") : "auto",
+      }}
       initial={{ opacity: 0, y: 40 }}
       animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
@@ -151,18 +149,8 @@ const CardForm = ({ title, subtitle, form, right = false, id }) => {
 
 export const Overlay = () => {
 
-  const [activeSection, setActiveSection] = useState("section1");
-
-  // Définir les sections
-  const sections = [
-    { id: "section1", label: "Intro" },
-    { id: "section2", label: "Next Hit" },
-    { id: "section3", label: "Designer" },
-    { id: "section4", label: "Services" },
-  ];
   return (
     <>
-      
       <Card
         id="section1"
         title={
@@ -247,34 +235,34 @@ export const Overlay = () => {
         ]}
       />
       <div id="section5">
-      <Card
-       
-        className="section3"
-        title={<>Rapid Game Prototyping</>}
-        subtitle="What we can do"
-        paragraphs={[
-          "Get high-quality, market-ready prototypes in record time. We turn your concepts into fully playable builds in just weeks—ready for testing or pitching.",
-        ]}
-        links={[]}
-        buttons={[]}
-      />
-      <Card
-        
-        className="section3"
-        subtitle="What we can do"
-        title={<>full game development and co-development</>}
-        paragraphs={[
-          "From concept to launch—or alongside your team—we build high-performing hybrid casual games with a focus on quality, speed, and scalability",
-        ]}
-        links={[]}
-        buttons={[
-          {
-            href: "#",
-            title: "Let’s launch The next hit, together",
-          },
-        ]}
-      />
- </div>
+        <Card
+
+          className="section3"
+          title={<>Rapid Game Prototyping</>}
+          subtitle="What we can do"
+          paragraphs={[
+            "Get high-quality, market-ready prototypes in record time. We turn your concepts into fully playable builds in just weeks—ready for testing or pitching.",
+          ]}
+          links={[]}
+          buttons={[]}
+        />
+        <Card
+
+          className="section3"
+          subtitle="What we can do"
+          title={<>full game development and co-development</>}
+          paragraphs={[
+            "From concept to launch—or alongside your team—we build high-performing hybrid casual games with a focus on quality, speed, and scalability",
+          ]}
+          links={[]}
+          buttons={[
+            {
+              href: "#",
+              title: "Let’s launch The next hit, together",
+            },
+          ]}
+        />
+      </div>
 
       <CardForm
         id="section6"
@@ -342,16 +330,6 @@ export const Overlay = () => {
         }
       />
 
-      {/* <Card
-        title={<>what can Dinomite studio help you with</>}
-        subtitle="second-section2"
-        paragraphs={[
-          "we specialize in fast, high-quality game development tailored for publishers and studios. Whether you need rapid prototyping to test new game concepts, full game development from ideation to launch, or co-development to enhance your existing projects, our expert team ensures efficient, risk-minimized production that meets industry standards. Partner with us to bring your games to life—faster,smarter, and better.",
-          "we specialize in fast, high-quality game development tailored for publishers and studios. Whether you need rapid prototyping to test new game concepts, full game development from ideation to launch, or co-development to enhance your existing projects, our expert team ensures efficient, risk-minimized production that meets industry standards. Partner with us to bring your games to life—faster,smarter, and better.",
-        ]}
-        links={[]}
-        buttons={[]}
-      /> */}
     </>
   );
 };

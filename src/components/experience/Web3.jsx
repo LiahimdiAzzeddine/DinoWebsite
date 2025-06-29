@@ -13,6 +13,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import * as THREE from "three";
 import { AnimationContext } from "./AnimationContext";
+import { useLocation } from "react-router-dom";
 //import SmokeParticles from "../SmokeParticles";
 
 // Register GSAP plugin
@@ -104,6 +105,8 @@ export default function Web3({ sectionID, isActive, ...props }) {
   const armatureAnimationRef = useRef(null);
   const initialY = useRef(0);
   const prevScrollTrigger = useRef(null);
+  const location = useLocation();
+
 
   // GLTF loading and setup
   const { scene, animations } = useGLTF("./models/Web3Final.glb");
@@ -299,16 +302,20 @@ export default function Web3({ sectionID, isActive, ...props }) {
 
   // Main scroll trigger setup
   useLayoutEffect(() => {
+    console.log(location.pathname)
     resetAllActions();
     const mm = gsap.matchMedia();
     const minY = 0;
     const maxY = 0.6;
+    let mainTrigger=null;
+    let secondaryTrigger =null;
+    let armatureTrigger =null;
     // Main scroll trigger
     mm.add("(max-width: 767px)", () => {
       const startY = armatureRef.current.position.y;
       const adjustedStartY = startY - 0.75;
       const endY = adjustedStartY + 5;
-      const mainTrigger = ScrollTrigger.create({
+     mainTrigger = ScrollTrigger.create({
         id: sectionID,
         trigger: SCROLL_TRIGGERS.MAIN.trigger,
         start: "top bottom",
@@ -351,7 +358,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
           }
         },
       });
-      const secondaryTrigger = ScrollTrigger.create({
+      secondaryTrigger = ScrollTrigger.create({
         id: sectionID + "_secondary",
         trigger: SCROLL_TRIGGERS.SECONDARY.trigger,
         start: () => mainTrigger.end, // Synchronise le start ici
@@ -385,7 +392,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
       });
 
       //Armature movement trigger
-      const armatureTrigger = ScrollTrigger.create({
+      armatureTrigger = ScrollTrigger.create({
         id: sectionID + "_armatureMove",
         trigger: "#section6",
         start: "top bottom",
@@ -433,7 +440,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
             return () => { secondaryTrigger.kill(), mainTrigger.kill(), armatureTrigger.kill() };
     });
     mm.add("(min-width: 768px)", () => {
-      const mainTrigger = ScrollTrigger.create({
+      mainTrigger = ScrollTrigger.create({
         id: sectionID,
         trigger: SCROLL_TRIGGERS.MAIN.trigger,
         start: SCROLL_TRIGGERS.MAIN.start,
@@ -471,7 +478,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
     });
     // Secondary scroll trigger
     mm.add("(min-width: 767px)", () => {
-      const secondaryTrigger = ScrollTrigger.create({
+      secondaryTrigger = ScrollTrigger.create({
         id: sectionID + "_secondary",
         trigger: SCROLL_TRIGGERS.SECONDARY.trigger,
         start: SCROLL_TRIGGERS.SECONDARY.start,
@@ -511,7 +518,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
       const adjustedStartY = startY-0.055;
       const endY = adjustedStartY + 0.25;
       //Armature movement trigger
-      const armatureTrigger = ScrollTrigger.create({
+      armatureTrigger = ScrollTrigger.create({
         id: sectionID + "_armatureMove",
         trigger: SCROLL_TRIGGERS.ARMATURE.trigger,
         start: SCROLL_TRIGGERS.ARMATURE.start,
@@ -562,11 +569,18 @@ export default function Web3({ sectionID, isActive, ...props }) {
     return () => {
       mixer.stopAllAction();
       stopArmatureAnimation();
-      mainTrigger.kill();
-      //secondaryTrigger.kill();
-      //armatureTrigger.kill();
+      if(mainTrigger){
+        mainTrigger.kill();
+      }
+      if(secondaryTrigger){
+        secondaryTrigger.kill();
+      }
+      if(armatureTrigger){
+        armatureTrigger.kill()
+      }
+    
     };
-  }, []);
+  }, [location.pathname]);
 
   // Render functions for better organization
   const renderEnvironment = () => (

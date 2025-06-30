@@ -324,7 +324,6 @@ export default function Web3({ sectionID, isActive, ...props }) {
         scrub: true,
         markers: false,
         onEnter: () => {
-          console.log("🚀 ~ mm.add ~ onEnter:")
           setCurrentModel(sectionID);
           disableOtherSections();
           resetAllActions();
@@ -336,8 +335,6 @@ export default function Web3({ sectionID, isActive, ...props }) {
           }
         },
         onEnterBack: () => {
-          console.log("🚀 ~ mm.add ~ onEnterBack:")
-
           setCurrentModel(sectionID);
           disableOtherSections();
           //resetAllActions();
@@ -358,6 +355,11 @@ export default function Web3({ sectionID, isActive, ...props }) {
           }
         },
       });
+        const startSY = armatureRef.current.position.y;
+      const adjustedStartSY = startY - 0.75;
+      const endSY = adjustedStartY + 5;
+      const minsY =-0.1;
+    const maxsY =0.05;
       secondaryTrigger = ScrollTrigger.create({
         id: sectionID + "_secondary",
         trigger: SCROLL_TRIGGERS.SECONDARY.trigger,
@@ -376,6 +378,14 @@ export default function Web3({ sectionID, isActive, ...props }) {
             handleScrollAnimations();
 
           }
+           if (sceneContainerGroup.current) {
+            sceneContainerGroup.current.position.y = adjustedStartY;
+            gsap.to(sceneContainerGroup.current.position, {
+              y: 0.6,
+              duration: 0,
+              ease: "power3.inOut",
+            });
+          }
 
         },
         onLeaveBack: (self) => {
@@ -385,7 +395,11 @@ export default function Web3({ sectionID, isActive, ...props }) {
           }
         },
         onUpdate: (self) => {
-          handleProgressUpdate(self.progress);
+          if (sceneContainerGroup.current) {
+            sceneContainerGroup.current.position.y = THREE.MathUtils.lerp(minsY, maxsY, self.progress);
+          }   
+                 handleProgressUpdate(self.progress);
+
         },
         onLeave: () => {
         }

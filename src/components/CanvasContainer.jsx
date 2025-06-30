@@ -45,7 +45,7 @@ const SceneManager = ({ lenis }) => {
 // Updated CanvasContainer component with gradient background
 export const CanvasContainer = () => {
   const lenisRef = useRef(null);
-  const [dpr, setDpr] = useState(0.5);
+  const [dpr, setDpr] = useState(0.7);
   const isMobile = /Mobi|Android/i.test(navigator.userAgent);
 
 
@@ -82,7 +82,7 @@ export const CanvasContainer = () => {
         bounds={() => [30, 60]}
         flipflops={2}
         onChange={({ factor }) => {
-          const dpr = Math.round((0.5 + 1 * factor) * 100) / 100;
+          const dpr = Math.round((0.7 + 1 * factor) * 100) / 100;
           setDpr(dpr);
         }}
       />

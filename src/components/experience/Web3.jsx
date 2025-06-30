@@ -494,7 +494,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
         start: SCROLL_TRIGGERS.SECONDARY.start,
         end: SCROLL_TRIGGERS.SECONDARY.end,
         scrub: SCROLL_TRIGGERS.SECONDARY.scrub,
-        markers: true,
+        markers: false,
         onEnter: (self) => {
           setCurrentModel(sectionID);
           disableOtherSections();

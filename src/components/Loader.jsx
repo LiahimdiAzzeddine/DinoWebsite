@@ -34,7 +34,7 @@ const Loader = () => {
       }, 400);
       return () => clearInterval(id);
     }
-  }, [fakeProgress]);
+  }, [fakeProgress,fadeOut]);
 
   // Progress calculation
   useEffect(() => {
@@ -47,7 +47,7 @@ const Loader = () => {
       const real = 80 + (effectiveGltfProgress / 100) * 20;
       setProgress(Math.min(real, 100));
     }
-  }, [fakeProgress, effectiveGltfProgress, setProgress]);
+  }, [fakeProgress, effectiveGltfProgress, setProgress,fadeOut]);
 
   // Loading completion
   useEffect(() => {
@@ -61,7 +61,7 @@ const Loader = () => {
         setFadeOut(true);
       }, 800);
     }
-  }, [effectiveGltfProgress, effectiveLoaded, effectiveTotal, fakeProgress, setIsLoading, setFadeOut]);
+  }, [effectiveGltfProgress, effectiveLoaded, effectiveTotal, fakeProgress,fadeOut]);
 
   if (fadeOut) return null;
 

@@ -336,10 +336,17 @@ div[data-v-7479a2c4] {
   div.block {
     margin-bottom: 60vh;
     margin-left: auto;
-    max-width: min(600px, calc(100vw - 60px));
+    max-width: min(600px, calc(100vw - 45px));
     padding: 0;
     top: 0em;
   }
+  .wrapper p {
+    font-size: 1.1em;
+        margin: 0.7em 0 .5em;
+  }
+      .block h1, .block2 h1 {
+        font-size: 2em;
+    }
 }
 
 canvas {

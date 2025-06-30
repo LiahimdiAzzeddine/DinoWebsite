@@ -17,25 +17,25 @@ export default function NavMobile() {
               aria-label="contact us"
               className="border-none cursor-pointer pointer-events-auto bg-none rounded-[1em] p-0 whitespace-nowrap text-teal-900 hover:text-teal-500 outline-offset-[4px] relative shadow-none font-bold"
               onClick={() => {
-                navigate("/"); // Navigue d'abord à la page d'accueil
-                setTimeout(() => {
-                  const el = document.getElementById("section2");
-                  if (el) el.scrollIntoView({ behavior: "smooth" });
-                }, 100); // Petit délai pour laisser la page charger
-              }}
+                      navigate("/"); // Navigue d'abord à la page d'accueil
+                      setTimeout(() => {
+                        const el = document.getElementById("section6");
+                        if (el) el.scrollIntoView({ behavior: "smooth" });
+                      }, 200); // Petit délai pour laisser la page charger
+                    }}
             >
               contact us
             </button>
           </li>
           <li>
             <button
-              onClick={() => {
-                navigate("/"); // Navigue d'abord à la page d'accueil
-                setTimeout(() => {
-                  const el = document.getElementById("section6");
-                  if (el) el.scrollIntoView({ behavior: "smooth" });
-                }, 100); // Petit délai pour laisser la page charger
-              }}
+             onClick={() => {
+                      navigate("/"); // Navigue d'abord à la page d'accueil
+                      setTimeout(() => {
+                        const el = document.getElementById("section2");
+                        if (el) el.scrollIntoView({ behavior: "smooth" });
+                      }, 100); // Petit délai pour laisser la page charger
+                    }}
               aria-label="about us"
               className="border-none cursor-pointer pointer-events-auto bg-none rounded-[1em] p-0 whitespace-nowrap text-teal-900 hover:text-teal-500 outline-offset-[4px] relative shadow-none font-bold"
             >
@@ -65,13 +65,27 @@ export default function NavMobile() {
             >
               FAQs
             </Link>
+           
+          </li>
+            <li>
+   
+            <Link
+                                to={"/blogs"}
+                                aria-label="Blogs"
+                                className={`border-none cursor-pointer pointer-events-auto bg-none rounded-[1em] p-0 whitespace-nowrap outline-offset-[4px] relative shadow-none font-bold ${location.pathname === "/blogs"
+                                    ? "text-teal-500"
+                                    : "text-teal-900 hover:text-teal-500"
+                                  }`}
+                              >
+                                Blogs
+                              </Link>
           </li>
           <li className="flex flex-col gap-2">
             <Link
               to="/career"
               className="hover:bg-emerald-100 text-center no-underline  font-bold w-full nunito border border-teal-200 rounded-xl px-4 py-[0.4rem] whitespace-nowrap shadow-[rgba(0,0,0,0.03)_0px_7px_0.5rem,_rgba(0,0,0,0.05)_0px_0px_1.3rem_inset] bg-white text-teal-800 cursor-pointer list-none "
             >
-              about us
+             Career
             </Link>
             <a
               href="https://calendar.app.google/3katng9rENsYB1mg8"

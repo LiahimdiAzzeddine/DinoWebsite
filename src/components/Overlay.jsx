@@ -55,7 +55,7 @@ const Card = ({
     >
       <div className="wrapper">
         <header>
-          <h1 className="sm:min-h-[2em] min-h-[2.5em]  flex items-center">
+          <h1 className="sm:min-h-[2em] min-h-[2.2em]  flex items-center">
             {title}
           </h1>
           <p className="category">{subtitle}</p>

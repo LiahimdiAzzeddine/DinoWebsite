@@ -29,9 +29,9 @@ export default function NavBar() {
               <img
                 alt="needle logo"
                 src={dino}
-                  
-               loading="eager"
-  decoding="async"
+
+                loading="eager"
+                decoding="async"
                 className="h-[32.5px] mb-[2px] mt-[2px] max-h-[1.5em] align-middle"
               />
             </a>
@@ -74,11 +74,10 @@ export default function NavBar() {
                   <Link
                     to={"/blogs"}
                     aria-label="Blogs"
-                    className={`border-none cursor-pointer pointer-events-auto bg-none rounded-[1em] p-0 whitespace-nowrap outline-offset-[4px] relative shadow-none font-bold ${
-                      location.pathname === "/blogs"
+                    className={`border-none cursor-pointer pointer-events-auto bg-none rounded-[1em] p-0 whitespace-nowrap outline-offset-[4px] relative shadow-none font-bold ${location.pathname === "/blogs"
                         ? "text-teal-500"
                         : "text-teal-900 hover:text-teal-500"
-                    }`}
+                      }`}
                   >
                     Blogs
                   </Link>
@@ -116,11 +115,10 @@ export default function NavBar() {
                   <Link
                     to="/faqs"
                     aria-label="Blogs"
-                    className={`border-none cursor-pointer pointer-events-auto bg-none rounded-[1em] p-0 whitespace-nowrap outline-offset-[4px] relative shadow-none font-bold ${
-                      isActive
+                    className={`border-none cursor-pointer pointer-events-auto bg-none rounded-[1em] p-0 whitespace-nowrap outline-offset-[4px] relative shadow-none font-bold ${isActive
                         ? "text-teal-500"
                         : "text-teal-900 hover:text-teal-500"
-                    }`}
+                      }`}
                   >
                     FAQs
                   </Link>

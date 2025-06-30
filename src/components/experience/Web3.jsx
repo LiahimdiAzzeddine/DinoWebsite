@@ -306,20 +306,20 @@ export default function Web3({ sectionID, isActive, ...props }) {
     resetAllActions();
     const mm = gsap.matchMedia();
     const minY = 0;
-    const maxY = 0.6;
+    const maxY =1;
     let mainTrigger=null;
     let secondaryTrigger =null;
     let armatureTrigger =null;
     // Main scroll trigger
     mm.add("(max-width: 767px)", () => {
       const startY = armatureRef.current.position.y;
-      const adjustedStartY = startY - 0.75;
+      const adjustedStartY = startY - 0.6;
       const endY = adjustedStartY + 5;
      mainTrigger = ScrollTrigger.create({
         id: sectionID,
         trigger: SCROLL_TRIGGERS.MAIN.trigger,
         start: "top bottom",
-        end: "top center",
+        end: "top top",
         preventClicks: true,
         scrub: true,
         markers: false,
@@ -341,7 +341,6 @@ export default function Web3({ sectionID, isActive, ...props }) {
           // playIntroAnimations(true);
         },
         onLeaveBack: (self) => {
-          console.log("🚀 ~ mm.add ~ onLeaveBack:")
           playIntroAnimations(true);
           const enterAnimation = actions["ActionEnter"];
           if (Math.abs(self.getVelocity()) <= 2000 && enterAnimation) {
@@ -355,16 +354,13 @@ export default function Web3({ sectionID, isActive, ...props }) {
           }
         },
       });
-        const startSY = armatureRef.current.position.y;
-      const adjustedStartSY = startY - 0.75;
-      const endSY = adjustedStartY + 5;
-      const minsY =-0.1;
-    const maxsY =0.05;
+      const minsY =0.3;
+    const maxsY =0.4;
       secondaryTrigger = ScrollTrigger.create({
         id: sectionID + "_secondary",
         trigger: SCROLL_TRIGGERS.SECONDARY.trigger,
         start: () => mainTrigger.end, // Synchronise le start ici
-        end: "bottom+=45% top",
+        end: "bottom+=20% top",
         scrub: SCROLL_TRIGGERS.SECONDARY.scrub,
         markers: false,
         onEnter: (self) => {
@@ -379,7 +375,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
 
           }
            if (sceneContainerGroup.current) {
-            sceneContainerGroup.current.position.y = adjustedStartY;
+            //sceneContainerGroup.current.position.y = adjustedStartY;
             gsap.to(sceneContainerGroup.current.position, {
               y: 0.6,
               duration: 0,
@@ -419,7 +415,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
           disableOtherSections();
 
           if (armatureRef.current) {
-            armatureRef.current.position.y = adjustedStartY;
+            //armatureRef.current.position.y = adjustedStartY;
             gsap.to(armatureRef.current.scale, {
               x: 0.1,
               y: 0.1,
@@ -439,7 +435,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
         },
         onLeaveBack: () => {
           if (armatureRef.current) {
-            armatureRef.current.position.y = startY;
+            //armatureRef.current.position.y = startY;
             gsap.to(armatureRef.current.scale, {
               x: 0,
               y: 0,

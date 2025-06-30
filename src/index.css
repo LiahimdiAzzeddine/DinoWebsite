@@ -350,6 +350,10 @@ div[data-v-7479a2c4] {
       .block h1, .block2 h1 {
         font-size: 2em;
     }
+        div.block2::before
+ {
+        border-radius: 0;
+    }
 }
 
 canvas {

@@ -70,7 +70,7 @@ const SCROLL_TRIGGERS = {
   },
   SECONDARY: {
     trigger: "#section5",
-    start: "top bottom",
+    start: "top+=45% bottom",
     end: "bottom+=45% top",
     scrub: 2.5,
   },
@@ -306,16 +306,16 @@ export default function Web3({ sectionID, isActive, ...props }) {
     resetAllActions();
     const mm = gsap.matchMedia();
     const minY = 0;
-    const maxY =1;
-    let mainTrigger=null;
-    let secondaryTrigger =null;
-    let armatureTrigger =null;
+    const maxY = 1;
+    let mainTrigger = null;
+    let secondaryTrigger = null;
+    let armatureTrigger = null;
     // Main scroll trigger
     mm.add("(max-width: 767px)", () => {
       const startY = armatureRef.current.position.y;
       const adjustedStartY = startY - 0.6;
       const endY = adjustedStartY + 5;
-     mainTrigger = ScrollTrigger.create({
+      mainTrigger = ScrollTrigger.create({
         id: sectionID,
         trigger: SCROLL_TRIGGERS.MAIN.trigger,
         start: "top bottom",
@@ -354,8 +354,8 @@ export default function Web3({ sectionID, isActive, ...props }) {
           }
         },
       });
-      const minsY =0.3;
-    const maxsY =0.4;
+      const minsY = 0.3;
+      const maxsY = 0.4;
       secondaryTrigger = ScrollTrigger.create({
         id: sectionID + "_secondary",
         trigger: SCROLL_TRIGGERS.SECONDARY.trigger,
@@ -374,7 +374,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
             handleScrollAnimations();
 
           }
-           if (sceneContainerGroup.current) {
+          if (sceneContainerGroup.current) {
             //sceneContainerGroup.current.position.y = adjustedStartY;
             gsap.to(sceneContainerGroup.current.position, {
               y: 0.6,
@@ -393,8 +393,8 @@ export default function Web3({ sectionID, isActive, ...props }) {
         onUpdate: (self) => {
           if (sceneContainerGroup.current) {
             sceneContainerGroup.current.position.y = THREE.MathUtils.lerp(minsY, maxsY, self.progress);
-          }   
-                 handleProgressUpdate(self.progress);
+          }
+          handleProgressUpdate(self.progress);
 
         },
         onLeave: () => {
@@ -447,7 +447,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
         },
       });
 
-            return () => { secondaryTrigger.kill(), mainTrigger.kill(), armatureTrigger.kill() };
+      return () => { secondaryTrigger.kill(), mainTrigger.kill(), armatureTrigger.kill() };
     });
     mm.add("(min-width: 768px)", () => {
       mainTrigger = ScrollTrigger.create({
@@ -494,7 +494,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
         start: SCROLL_TRIGGERS.SECONDARY.start,
         end: SCROLL_TRIGGERS.SECONDARY.end,
         scrub: SCROLL_TRIGGERS.SECONDARY.scrub,
-        markers: false,
+        markers: true,
         onEnter: (self) => {
           setCurrentModel(sectionID);
           disableOtherSections();
@@ -523,9 +523,9 @@ export default function Web3({ sectionID, isActive, ...props }) {
       return () => secondaryTrigger.kill();
     });
     mm.add("(min-width: 768px)", () => {
-      
+
       const startY = armatureRef.current.position.y;
-      const adjustedStartY = startY-0.055;
+      const adjustedStartY = startY - 0.055;
       const endY = adjustedStartY + 0.25;
       //Armature movement trigger
       armatureTrigger = ScrollTrigger.create({
@@ -539,7 +539,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
         onEnter: () => {
           setCurrentModel(sectionID);
           disableOtherSections();
- armatureRef.current.position.y = adjustedStartY;
+          armatureRef.current.position.y = adjustedStartY;
           if (armatureRef.current) {
             gsap.to(armatureRef.current.scale, {
               x: 0.045,
@@ -551,7 +551,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
           }
         },
 
-         onUpdate: (self) => {
+        onUpdate: (self) => {
           if (armatureRef.current) {
             // Interpolation selon le scroll progress
             armatureRef.current.position.y = gsap.utils.interpolate(adjustedStartY, endY, self.progress);
@@ -579,16 +579,16 @@ export default function Web3({ sectionID, isActive, ...props }) {
     return () => {
       mixer.stopAllAction();
       stopArmatureAnimation();
-      if(mainTrigger){
+      if (mainTrigger) {
         mainTrigger.kill();
       }
-      if(secondaryTrigger){
+      if (secondaryTrigger) {
         secondaryTrigger.kill();
       }
-      if(armatureTrigger){
+      if (armatureTrigger) {
         armatureTrigger.kill()
       }
-    
+
     };
   }, [location.pathname]);
 

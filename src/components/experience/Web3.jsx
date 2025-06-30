@@ -313,7 +313,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
     // Main scroll trigger
     mm.add("(max-width: 767px)", () => {
       const startY = armatureRef.current.position.y;
-      const adjustedStartY = startY - 0.6;
+      const adjustedStartY = startY - 0.58;
       const endY = adjustedStartY + 5;
       mainTrigger = ScrollTrigger.create({
         id: sectionID,

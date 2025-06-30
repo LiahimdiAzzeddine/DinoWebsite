@@ -13,6 +13,7 @@ import Faqs from "./pages/Faqs";
 import Blogs from "./pages/Blogs";
 import Career from "./pages/Career";
 import ScrollToTop from "./components/ScrollToTop";
+import BlogSingle from "./pages/BlogDetail";
 
 function App() {
   return (
@@ -30,8 +31,8 @@ function App() {
             <Route path="/about" element={<About />} />
             <Route path="/faqs" element={<Faqs />} />
             <Route path="/blogs" element={<Blogs />} />
+            <Route path="/blog/:id" element={<BlogSingle />} />
             <Route path="/career" element={<Career />} />
-            
           </Routes>
           <Footer />
         </main>

@@ -1,4 +1,3 @@
-
 :root {
   --bg-color: #f5f5f5;
   --color-on-dark: #fff;
@@ -17,15 +16,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 @font-face {
   font-family: 'Nunito Sans';
   font-display: swap;
 }
+
 p {
   animation: none !important;
   opacity: 1 !important;
 }
-#section2,#section6 {
+
+#section2,
+#section6 {
   scroll-margin-top: 30vh;
 }
 
@@ -53,12 +56,14 @@ body {
   scrollbar-width: thin;
 }
 
-.nunito{
+.nunito {
   font-family: "Nunito Sans", sans-serif;
 }
+
 @media (max-width: 768px) {
   body {
-    overflow-y: auto; /* ✅ active le scroll vertical uniquement sur mobile */
+    overflow-y: auto;
+    /* ✅ active le scroll vertical uniquement sur mobile */
   }
 }
 
@@ -81,6 +86,43 @@ body {
   height: 100vh;
 }
 
+.blog-card {
+  position: relative;
+  margin: 2rem;
+  pointer-events: auto;
+}
+
+.blog-card::before {
+  --offset: 20px;
+  backdrop-filter: blur(40px) saturate(1.4);
+  background-color: #6666664e;
+  border-radius: 30px;
+  box-shadow: 0 0 20px #5e5e5e38;
+  content: "";
+  height: calc(100% + var(--offset)*2);
+  left: calc(var(--offset)*-1);
+  outline: 1px solid #ffffff2b;
+  position: absolute;
+  top: calc(var(--offset)*-1);
+  width: calc(100% + var(--offset)*2);
+  z-index: -1;
+}
+
+.blog-card.featured::before {
+  outline: 2px solid #3b82f680;
+  box-shadow: 0 0 30px #3b82f630;
+}
+
+.blog-content {
+  position: relative;
+  z-index: 1;
+  padding: 10px;
+}
+
+.blog-card:hover::before {
+  backdrop-filter: blur(50px) saturate(1.6);
+  background-color: #77777750;
+}
 
 
 /* Main block styling */
@@ -99,9 +141,9 @@ div.block {
 div.block:before {
   --offset: 30px;
   backdrop-filter: blur(40px) saturate(1.4);
-  background-color: #66666624;
+  background-color: #66666648;
   border-radius: 40px;
-  box-shadow: 0 0 20px #5e5e5e38;
+  box-shadow: 0 0 10px #5e5e5e1c;
   content: "";
   height: calc(100% + var(--offset)*2);
   left: calc(var(--offset)*-1);
@@ -118,16 +160,18 @@ div.block2 {
   color: #fff;
   pointer-events: none;
   position: relative;
-  margin: 7em auto 35vh auto; /* Centré horizontalement */
+  margin: 7em auto 35vh auto;
+  /* Centré horizontalement */
   top: 12vh;
-  width: 90vw;                /* 90% de la largeur de la fenêtre */
- max-width: 1200px;
+  width: 90vw;
+  /* 90% de la largeur de la fenêtre */
+  max-width: 1200px;
   z-index: 25;
 }
 
 /* Effet glassmorphism */
 div.block2::before {
- --offset: 30px;
+  --offset: 30px;
   backdrop-filter: blur(40px) saturate(1.4);
   background-color: #6666664e;
   border-radius: 40px;
@@ -147,6 +191,7 @@ div.block2::before {
   transform: perspective(0) translateZ(0);
   transition: .1s ease-in;
 }
+
 .wrapper p {
   font-size: 1.4em;
   line-height: 1.35em;
@@ -177,7 +222,13 @@ p {
   margin-bottom: 1em;
   margin-top: 1em;
 }
-
+.pPerso{
+  font-size: 1.3em;
+  font-weight: 400;
+  line-height: 1.2em;
+  margin-bottom: 0.5em;
+  margin-top: 0.5em;
+}
 .small-margin {
   margin-bottom: .5em;
   margin-top: 1.5em;
@@ -220,8 +271,10 @@ div[data-v-7479a2c4] {
   display: flex;
   gap: .5em;
 }
+
 /* Typography */
-.block h1,.block2 h1 {
+.block h1,
+.block2 h1 {
   font-size: 3em;
   font-weight: 700;
   line-height: 1.05em;
@@ -231,6 +284,7 @@ div[data-v-7479a2c4] {
   display: 'flex';
   align-items: 'center';
 }
+
 /* Responsive design */
 @media screen and (max-height: 1200px) {
   .block {
@@ -246,10 +300,11 @@ div[data-v-7479a2c4] {
     width: 30%;
   }
 
-  .block h1,.block2 h1 {
+  .block h1,
+  .block2 h1 {
     font-size: 3.3em;
     line-height: 1em;
-    
+
   }
 }
 
@@ -259,18 +314,21 @@ div[data-v-7479a2c4] {
     top: 5.5vh;
   }
 
-  .block h1,.block2 h1 {
+  .block h1,
+  .block2 h1 {
     font-size: 2.7em;
   }
 
   p {
     font-size: 1.1em;
   }
+
   div.block2::before {
-  border-radius:1.625em;
+    border-radius: 1.625em;
   }
+
   div.block::before {
-  border-radius:1.625em;
+    border-radius: 1.625em;
   }
 }
 
@@ -289,13 +347,25 @@ canvas {
 }
 
 @keyframes float {
-  0% { transform: translateY(0px) rotate(45deg); }
-  100% { transform: translateY(-20px) rotate(45deg); }
+  0% {
+    transform: translateY(0px) rotate(45deg);
+  }
+
+  100% {
+    transform: translateY(-20px) rotate(45deg);
+  }
 }
 
 @keyframes fade-in {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .animate-fade-in {

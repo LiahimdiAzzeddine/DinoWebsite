@@ -36,7 +36,7 @@ const Block = ({
     <motion.div
       id={id}
       ref={ref}
-      className={`block2 relative sm:w-[90vw] sm:max-w-[1200px] mx-auto ${className}`}
+      className={`block2 relative sm:w-[90vw] sm:max-w-7xl mx-auto ${className}`}
       initial={{  y: 40 }}
       animate={inView ? { y: 0 } : {  y: 40 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
@@ -44,8 +44,13 @@ const Block = ({
       <div className="wrapper">
         {(title || subtitle) && (
            <header>
-          <h1>{title}</h1>
-          <p className="category">{subtitle}</p>
+            {title&&(
+              <h1 className="py-3">{title}</h1>
+            )}
+          {subtitle&&(
+            <p className="category">{subtitle}</p>
+          )}
+
         </header>
         )}
 

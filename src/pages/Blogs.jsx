@@ -10,74 +10,72 @@ import { useNavigate } from "react-router-dom";
 const blogs = [
   {
     id: 1,
-    title: "Getting Started with Dinomite Tools",
-    excerpt: "Learn how to set up and use our powerful development tools to accelerate your workflow and boost productivity.",
-    content: "Complete guide covering installation, configuration, and first steps with Dinomite Tools...",
-    author: "Abed Rahman",
-    date: "2024-01-15",
-    readTime: "5 min read",
-    category: "Tutorial",
-    tags: ["getting-started", "setup", "tools"],
-    image: "/assets/blog/blog-1.jpg",
+    title: "Hybrid Casual Games in 2025: The Future Is Already Here",
+    excerpt: "Hybrid casual isn’t just a genre. It’s a business model, a creative shift, and a growth engine for the mobile gaming industry.",
+    content: `
+If you’ve been watching the mobile gaming space closely, you’ll know that 2025 isn’t just another year, it’s a turning point.
+And at the heart of it all?, Hybrid casual games.
+
+**From Trend to Transformation**
+Back in the early days, hyper-casual ruled the charts. Fast downloads, quick fun, and simple monetization through ads made it the king of mobile. But like every kingdom, there's a successor. And it's smarter, stickier, and far more profitable.
+
+**Hybrid Casual Revenues Are Exploding**
+In 2021, hybrid casual games generated $500 million.
+By 2023? $1.5 billion.
+In 2024 alone, in-app purchase revenue from hybrid casuals jumped by 37%, helping push global IAP totals to $82 billion.
+
+**Why the Shift?**
+- Balanced monetization (ads + IAP)
+- High retention
+- Better ARPU
+
+**How We Fit In: Dinomite Studio**
+We’re a hybrid casual game studio based in Tangier since 2019. We help publishers build high-performing, high-retention titles.
+
+**Takeaway**
+Hybrid casual is a winning formula. Now’s the time to go hybrid.
+    `,
+    author: "Dinomite Studio",
+    date: "2025-06-15",
+    readTime: "6 min read",
+    category: "Trends",
+    tags: ["hybrid-casual", "mobile", "gaming"],
+    image: "/src/assets/blogs/Hybrid Casual Games in 2025.png",
     featured: true
   },
   {
     id: 2,
-    title: "Advanced Debugging Techniques",
-    excerpt: "Master advanced debugging strategies and troubleshooting methods to solve complex development challenges.",
-    content: "Deep dive into debugging methodologies, tools, and best practices for efficient problem solving...",
-    author: "Khalil",
-    date: "2024-01-10",
-    readTime: "8 min read",
-    category: "Development",
-    tags: ["debugging", "troubleshooting", "advanced"],
-    image: "/assets/blog/blog-2.jpg",
-    featured: false
-  },
-  {
-    id: 3,
-    title: "Building Scalable Applications",
-    excerpt: "Best practices for creating applications that can grow with your business needs and handle increased load.",
-    content: "Comprehensive guide on scalability patterns, architecture decisions, and performance optimization...",
-    author: "Fatima zouhra",
-    date: "2024-01-05",
-    readTime: "12 min read",
-    category: "Architecture",
-    tags: ["scalability", "architecture", "performance"],
-    image: "/assets/blog/blog-3.jpg",
-    featured: true
-  },
-  {
-    id: 4,
-    title: "UI/UX Design Principles",
-    excerpt: "Essential design principles and user experience guidelines for creating intuitive and engaging interfaces.",
-    content: "Explore modern design patterns, accessibility considerations, and user-centered design approaches...",
-    author: "Azzeddine",
-    date: "2023-12-28",
-    readTime: "6 min read",
-    category: "Design",
-    tags: ["ui", "ux", "design", "principles"],
-    image: "/assets/blog/blog-4.jpg",
-    featured: false
-  },
-  {
-    id: 5,
-    title: "API Integration Best Practices",
-    excerpt: "Learn how to effectively integrate third-party APIs and create robust, maintainable API connections.",
-    content: "Detailed walkthrough of API integration patterns, error handling, and security considerations...",
-    author: "Azzeddine",
-    date: "2023-12-20",
-    readTime: "10 min read",
-    category: "Development",
-    tags: ["api", "integration", "backend"],
-    image: "/assets/blog/blog-5.jpg",
+    title: "Why Cloning Games No Longer Works in 2025",
+    excerpt: "Game cloning used to be a shortcut to success. In 2025, it’s a recipe for irrelevance. Here’s why the mobile gaming industry is moving toward originality and engagement.",
+    content: `
+**Fewer Downloads, More Engagement**
+Game downloads are down, but player engagement and spending are up. Gamers are more selective, seeking quality over quantity.
+
+**The Hyper Casual Challenge**
+The simplicity of hyper-casual games makes them easy to copy. But the market is shifting away from clones.
+
+**Case Study: Screw Jam**
+A Zynga game that got cloned in weeks and led to lawsuits.
+
+**Dinomite Studio’s Response**
+We focus on originality, quality, and experiences that can’t be cloned.
+
+**The Path Forward**
+Don’t chase trends. Set them. In 2025 and beyond, originality wins.
+    `,
+    author: "Dinomite Studio",
+    date: "2025-06-25",
+    readTime: "5 min read",
+    category: "Opinion",
+    tags: ["cloning", "game-dev", "originality"],
+    image: "/src/assets/blogs/More Play, Less Download linkedin post.png",
     featured: false
   }
 ];
 
+
 export default function Blogs() {
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const [expandedBlog, setExpandedBlog] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   let navigate = useNavigate();
 
@@ -100,14 +98,11 @@ export default function Blogs() {
   const filteredBlogs = blogs.filter(blog => {
     const matchesCategory = selectedCategory === "All" || blog.category === selectedCategory;
     const matchesSearch = blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         blog.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         blog.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
+      blog.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      blog.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
     return matchesCategory && matchesSearch;
   });
 
-  const toggleExpanded = (id) => {
-    setExpandedBlog(expandedBlog === id ? null : id);
-  };
 
   const handleReadMore = (blogId) => {
     navigate(`/blog/${blogId}`);
@@ -154,11 +149,10 @@ export default function Blogs() {
               <button
                 key={category}
                 onClick={() => setSelectedCategory(category)}
-                className={`px-4 py-2 rounded-full text-sm font-medium backdrop-blur-sm ${
-                  selectedCategory === category
-                    ? 'bg-blue-500/80 text-white shadow-md border border-blue-400/50'
-                    : 'bg-white/15 text-white/80 hover:bg-white/25 border border-white/20'
-                }`}
+                className={`px-4 py-2 rounded-full text-sm font-medium backdrop-blur-sm ${selectedCategory === category
+                  ? 'bg-blue-500/80 text-white shadow-md border border-blue-400/50'
+                  : 'bg-white/15 text-white/80 hover:bg-white/25 border border-white/20'
+                  }`}
               >
                 {category}
               </button>
@@ -177,19 +171,21 @@ export default function Blogs() {
             filteredBlogs.map((blog) => (
               <article
                 key={blog.id}
-                className={`blog-card relative ${
-                  blog.featured ? 'featured' : ''
-                }`}
+                className={`blog-card relative ${blog.featured ? 'featured' : ''
+                  }`}
               >
                 <div className="blog-content">
                   <div className="md:flex">
                     {/* Blog Image */}
-                    <div className="md:w-1/3 relative">
-                      <div className="h-48 md:h-full bg-gradient-to-br from-blue-400/30 to-purple-500/30 flex items-center justify-center backdrop-blur-sm">
-                        <div className="text-white text-6xl font-bold opacity-40">
-                          {blog.title.charAt(0)}
-                        </div>
+                    <div className="md:w-1/3 relative flex items-center justify-center">
+                      <div className="w-full h-auto">
+                        <img
+                          src={blog.image}
+                          alt={blog.title}
+                          className="w-full h-auto object-contain rounded-xl"
+                        />
                       </div>
+
                       {blog.featured && (
                         <div className="absolute top-4 left-4 bg-yellow-400/90 text-yellow-900 px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-sm">
                           Featured
@@ -222,13 +218,6 @@ export default function Blogs() {
                         {blog.excerpt}
                       </p>
 
-                      {expandedBlog === blog.id && (
-                        <div className="mb-4 p-4 bg-white/10 rounded-lg backdrop-blur-sm border border-white/20">
-                          <p className="text-white/90 text-sm leading-relaxed">
-                            {blog.content}
-                          </p>
-                        </div>
-                      )}
 
                       <div className="flex items-center justify-between">
                         <div className="flex items-center">
@@ -239,25 +228,9 @@ export default function Blogs() {
                         </div>
 
                         <div className="flex items-center gap-3">
+
+
                           <button
-                            onClick={() => toggleExpanded(blog.id)}
-                            className="flex items-center text-sm text-white/70 hover:text-blue-300 transition-colors duration-200"
-                          >
-                            {expandedBlog === blog.id ? (
-                              <>
-                                <Minus className="w-4 h-4 mr-1" />
-                                Show Less
-                              </>
-                            ) : (
-                              <>
-                                <Plus className="w-4 h-4 mr-1" />
-                                Preview
-                              </>
-                            )}
-                          </button>
-                          
-                          <button
-                          disabled
                             onClick={() => handleReadMore(blog.id)}
                             className="flex items-center px-4 py-2 bg-white/20 text-white rounded-lg hover:bg-white/30 transition-all duration-200 text-sm font-medium backdrop-blur-sm border border-white/30"
                           >
@@ -292,47 +265,6 @@ export default function Blogs() {
             Showing {filteredBlogs.length} of {blogs.length} articles
           </div>
         )}
-
-        {/* CSS Styles pour l'effet glassmorphism */}
-        <style jsx>{`
-          .blog-card {
-            position: relative;
-            margin: 2rem;
-            pointer-events: auto;
-          }
-
-          .blog-card::before {
-            --offset: 20px;
-            backdrop-filter: blur(40px) saturate(1.4);
-            background-color: #6666664e;
-            border-radius: 30px;
-            box-shadow: 0 0 20px #5e5e5e38;
-            content: "";
-            height: calc(100% + var(--offset)*2);
-            left: calc(var(--offset)*-1);
-            outline: 1px solid #ffffff2b;
-            position: absolute;
-            top: calc(var(--offset)*-1);
-            width: calc(100% + var(--offset)*2);
-            z-index: -1;
-          }
-
-          .blog-card.featured::before {
-            outline: 2px solid #3b82f680;
-            box-shadow: 0 0 30px #3b82f630;
-          }
-
-          .blog-content {
-            position: relative;
-            z-index: 1;
-            padding: 10px;
-          }
-
-          .blog-card:hover::before {
-            backdrop-filter: blur(50px) saturate(1.6);
-            background-color: #77777750;
-          }
-        `}</style>
       </Block>
     </>
   );

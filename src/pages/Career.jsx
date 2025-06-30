@@ -52,69 +52,6 @@ const jobOpenings = [
       "Participate in art reviews and provide creative feedback"
     ]
   },
-  {
-    id: 3,
-    title: "Game Designer",
-    department: "Design",
-    location: "Remote",
-    type: "Full-time",
-    experience: "2-4 years",
-    description: "Shape the future of gaming by designing engaging mechanics, balanced progression systems, and memorable player experiences that keep audiences coming back.",
-    requirements: [
-      "Strong understanding of game design principles and player psychology",
-      "Experience with Unity editor tools and scripting",
-      "Proficiency in data analysis and A/B testing methodologies",
-      "Excellent communication and documentation skills"
-    ],
-    responsibilities: [
-      "Design and balance game mechanics, progression, and monetization",
-      "Create detailed game design documents and prototypes",
-      "Analyze player data to optimize game experience and retention",
-      "Work closely with development team to implement and iterate on features"
-    ]
-  },
-  {
-    id: 4,
-    title: "Technical Artist",
-    department: "Art & Technology",
-    location: "Montreal",
-    type: "Full-time",
-    experience: "4-7 years",
-    description: "Bridge the gap between art and technology by creating tools, shaders, and pipelines that empower our creative team to achieve their artistic vision.",
-    requirements: [
-      "Strong background in both art and programming",
-      "Experience with Unity's shader graph and HLSL",
-      "Knowledge of DCC tool scripting (Python, MEL, MaxScript)",
-      "Understanding of real-time rendering and optimization techniques"
-    ],
-    responsibilities: [
-      "Develop custom shaders and visual effects for games",
-      "Create and maintain art production pipelines and tools",
-      "Optimize rendering performance and memory usage",
-      "Support artists with technical guidance and problem-solving"
-    ]
-  },
-  {
-    id: 5,
-    title: "Mobile Game Producer",
-    department: "Production",
-    location: "Remote / Tokyo",
-    type: "Full-time",
-    experience: "5-8 years",
-    description: "Drive the development of successful mobile games from concept to launch, managing cross-functional teams and ensuring projects deliver on time and within budget.",
-    requirements: [
-      "Proven track record in mobile game production and live operations",
-      "Experience with agile development methodologies and project management tools",
-      "Strong understanding of mobile game monetization and user acquisition",
-      "Excellent leadership and stakeholder management skills"
-    ],
-    responsibilities: [
-      "Lead cross-functional teams through the full game development lifecycle",
-      "Manage project scope, timeline, and budget to ensure successful delivery",
-      "Coordinate with marketing, QA, and live operations teams",
-      "Analyze market trends and competitive landscape to inform product strategy"
-    ]
-  }
 ];
 
 const benefits = [
@@ -181,7 +118,7 @@ export default function Career() {
             <p className="category">Shape the Future of Interactive Entertainment</p>
           </header>
           
-          <div className="content space-y-4">
+          <div className="content space-y-6">
             <p>
               We're a passionate team of game developers, artists, and designers creating groundbreaking 
               experiences with Unity. Join us in building the next generation of games that inspire, 
@@ -189,25 +126,40 @@ export default function Career() {
             </p>
             
             <div className="space-y-8 pt-6">
-              {/* Tab Navigation */}
-              <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
+              {/* Tab Navigation with glassmorphism styling */}
+              <div className="flex justify-center space-x-2 p-2 rounded-2xl" style={{
+                backdropFilter: 'blur(20px) saturate(1.2)',
+                backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+              }}>
                 <button
                   onClick={() => setSelectedTab('positions')}
-                  className={`px-4 py-2 rounded-md transition-colors duration-200 ${
+                  className={`px-6 py-3 rounded-xl font-medium transition-all duration-300 ${
                     selectedTab === 'positions'
-                      ? 'bg-white text-gray-900 shadow-sm'
-                      : 'text-gray-600 hover:text-gray-900'
+                      ? 'text-white shadow-lg'
+                      : 'text-white/80 hover:text-white hover:bg-white/10'
                   }`}
+                  style={selectedTab === 'positions' ? {
+                    background: 'linear-gradient(135deg, #10b981 0%, #14b8a6 100%)',
+                    border: '1px solid rgba(255, 255, 255, 0.3)',
+                    boxShadow: 'rgba(0,0,0,0.03) 0px 7px 0.5rem, rgba(0,0,0,0.05) 0px 0px 1.3rem inset'
+                  } : {}}
                 >
                   Open Positions
                 </button>
                 <button
                   onClick={() => setSelectedTab('benefits')}
-                  className={`px-4 py-2 rounded-md transition-colors duration-200 ${
+                  className={`px-6 py-3 rounded-xl font-medium transition-all duration-300 ${
                     selectedTab === 'benefits'
-                      ? 'bg-white text-gray-900 shadow-sm'
-                      : 'text-gray-600 hover:text-gray-900'
+                      ? 'text-white shadow-lg'
+                      : 'text-white/80 hover:text-white hover:bg-white/10'
                   }`}
+                  style={selectedTab === 'benefits' ? {
+                    background: 'linear-gradient(135deg, #10b981 0%, #14b8a6 100%)',
+                    border: '1px solid rgba(255, 255, 255, 0.3)',
+                    boxShadow: 'rgba(0,0,0,0.03) 0px 7px 0.5rem, rgba(0,0,0,0.05) 0px 0px 1.3rem inset'
+                  } : {}}
                 >
                   Benefits & Culture
                 </button>
@@ -215,84 +167,110 @@ export default function Career() {
 
               {/* Open Positions Tab */}
               {selectedTab === 'positions' && (
-                <div className="space-y-4">
+                <div className="space-y-6">
                   {jobOpenings.map((job, i) => (
                     <div
                       key={job.id}
-                      className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow duration-200"
+                      className="rounded-2xl overflow-hidden transition-all duration-300"
+                      style={{
+                        backdropFilter: 'blur(30px) saturate(1.3)',
+                        backgroundColor: 'rgba(255, 255, 255, 0.12)',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+                      }}
                     >
                       <div
-                        className="p-6 cursor-pointer"
+                        className="p-8 cursor-pointer"
                         onClick={() => toggle(i)}
                       >
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
-                            <div className="flex items-center gap-3 mb-2">
-                              <h3 className="text-lg font-semibold text-gray-900">
+                            <div className="flex items-center gap-4 mb-3">
+                              <h3 className="text-xl font-bold text-white">
                                 {job.title}
                               </h3>
-                              <span className="px-2 py-1 bg-purple-100 text-purple-800 text-xs font-medium rounded-full">
+                              <span 
+                                className="px-3 py-1 text-xs font-semibold rounded-full"
+                                style={{
+                                  background: 'linear-gradient(135deg, #10b981 0%, #14b8a6 100%)',
+                                  color: 'white',
+                                  border: '1px solid rgba(255, 255, 255, 0.2)'
+                                }}
+                              >
                                 {job.department}
                               </span>
                             </div>
-                            <div className="flex items-center gap-4 text-sm text-gray-600 mb-3">
-                              <div className="flex items-center gap-1">
+                            <div className="flex items-center gap-6 text-sm text-white/80 mb-4">
+                              <div className="flex items-center gap-2">
                                 <MapPin className="h-4 w-4" />
                                 {job.location}
                               </div>
-                              <div className="flex items-center gap-1">
+                              <div className="flex items-center gap-2">
                                 <Clock className="h-4 w-4" />
                                 {job.type}
                               </div>
-                              <div className="flex items-center gap-1">
+                              <div className="flex items-center gap-2">
                                 <Users className="h-4 w-4" />
                                 {job.experience}
                               </div>
                             </div>
-                            <p className="text-gray-700 text-sm">
+                            <p className="text-white/90 text-base leading-relaxed">
                               {job.description}
                             </p>
                           </div>
-                          <div className="ml-4 flex-shrink-0">
-                            {openIndex === i ? (
-                              <Minus className="h-5 w-5 text-gray-500" />
-                            ) : (
-                              <Plus className="h-5 w-5 text-gray-500" />
-                            )}
+                          <div className="ml-6 flex-shrink-0">
+                            <div className="p-2 rounded-full transition-colors duration-200 hover:bg-white/10">
+                              {openIndex === i ? (
+                                <Minus className="h-6 w-6 text-white" />
+                              ) : (
+                                <Plus className="h-6 w-6 text-white" />
+                              )}
+                            </div>
                           </div>
                         </div>
                       </div>
                       
                       {openIndex === i && (
-                        <div className="border-t border-gray-200 bg-gray-50 p-6">
-                          <div className="grid md:grid-cols-2 gap-6">
+                        <div 
+                          className="border-t p-8"
+                          style={{
+                            borderColor: 'rgba(255, 255, 255, 0.2)',
+                            backgroundColor: 'rgba(255, 255, 255, 0.05)'
+                          }}
+                        >
+                          <div className="grid md:grid-cols-2 gap-8">
                             <div>
-                              <h4 className="font-semibold text-gray-900 mb-3">Requirements</h4>
-                              <ul className="space-y-2">
+                              <h4 className="font-bold text-white mb-4 text-lg">Requirements</h4>
+                              <ul className="space-y-3">
                                 {job.requirements.map((req, idx) => (
-                                  <li key={idx} className="text-sm text-gray-700 flex items-start gap-2">
-                                    <span className="text-purple-500 mt-1">•</span>
-                                    {req}
+                                  <li key={idx} className="text-white/90 flex items-start gap-3">
+                                    <span className="text-emerald-400 mt-1 text-lg">•</span>
+                                    <span className="leading-relaxed">{req}</span>
                                   </li>
                                 ))}
                               </ul>
                             </div>
                             <div>
-                              <h4 className="font-semibold text-gray-900 mb-3">Responsibilities</h4>
-                              <ul className="space-y-2">
+                              <h4 className="font-bold text-white mb-4 text-lg">Responsibilities</h4>
+                              <ul className="space-y-3">
                                 {job.responsibilities.map((resp, idx) => (
-                                  <li key={idx} className="text-sm text-gray-700 flex items-start gap-2">
-                                    <span className="text-green-500 mt-1">•</span>
-                                    {resp}
+                                  <li key={idx} className="text-white/90 flex items-start gap-3">
+                                    <span className="text-teal-400 mt-1 text-lg">•</span>
+                                    <span className="leading-relaxed">{resp}</span>
                                   </li>
                                 ))}
                               </ul>
                             </div>
                           </div>
-                          <div className="mt-6 pt-4 border-t border-gray-200">
+                          <div className="mt-8 pt-6" style={{ borderTop: '1px solid rgba(255, 255, 255, 0.2)' }}>
                             <button
                               onClick={() => handleApply(job.id)}
-                              className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors duration-200 font-medium"
+                              className="px-8 py-3 rounded-xl font-bold text-white transition-all duration-300 hover:from-emerald-400 hover:to-teal-400"
+                              style={{
+                                background: 'linear-gradient(135deg, #10b981 0%, #14b8a6 100%)',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                boxShadow: 'rgba(0,0,0,0.03) 0px 7px 0.5rem, rgba(0,0,0,0.05) 0px 0px 1.3rem inset'
+                              }}
                             >
                               Apply Now
                             </button>
@@ -306,90 +284,132 @@ export default function Career() {
 
               {/* Benefits & Culture Tab */}
               {selectedTab === 'benefits' && (
-                <div className="space-y-6">
-                  <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-lg p-6">
-                    <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                <div className="space-y-8">
+                  <div 
+                    className="rounded-2xl p-8"
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(20, 184, 166, 0.2) 100%)',
+                      backdropFilter: 'blur(30px) saturate(1.3)',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+                    }}
+                  >
+                    <h3 className="text-2xl font-bold text-white mb-6">
                       Why Join Our Gaming Studio?
                     </h3>
-                    <p className="text-gray-700 mb-6">
+                    <p className="text-white/90 mb-8 text-lg leading-relaxed">
                       We're more than just a game development company - we're a creative community 
                       where innovation thrives, ideas are celebrated, and every team member plays 
                       a crucial role in crafting unforgettable gaming experiences.
                     </p>
-                    <div className="grid md:grid-cols-2 gap-4">
+                    <div className="grid md:grid-cols-2 gap-6">
                       {benefits.map((benefit, idx) => (
-                        <div key={idx} className="flex items-center gap-3">
-                          <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                          <span className="text-gray-700">{benefit}</span>
+                        <div key={idx} className="flex items-start gap-4">
+                          <div className="w-3 h-3 bg-emerald-400 rounded-full mt-2 flex-shrink-0"></div>
+                          <span className="text-white/90 leading-relaxed">{benefit}</span>
                         </div>
                       ))}
                     </div>
                   </div>
                   
-                  <div className="bg-gray-50 rounded-lg p-6">
-                    <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                  <div 
+                    className="rounded-2xl p-8"
+                    style={{
+                      backdropFilter: 'blur(30px) saturate(1.3)',
+                      backgroundColor: 'rgba(255, 255, 255, 0.12)',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+                    }}
+                  >
+                    <h3 className="text-2xl font-bold text-white mb-8">
                       Our Core Values
                     </h3>
-                    <div className="grid md:grid-cols-3 gap-6">
+                    <div className="grid md:grid-cols-3 gap-8">
                       <div className="text-center">
-                        <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                          <Gamepad2 className="h-6 w-6 text-purple-600" />
+                        <div 
+                          className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4"
+                          style={{
+                            background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(20, 184, 166, 0.2) 100%)',
+                            border: '1px solid rgba(16, 185, 129, 0.3)'
+                          }}
+                        >
+                          <Gamepad2 className="h-8 w-8 text-emerald-400" />
                         </div>
-                        <h4 className="font-semibold text-gray-900 mb-2">Player First</h4>
-                        <p className="text-sm text-gray-600">
+                        <h4 className="font-bold text-white mb-3 text-lg">Player First</h4>
+                        <p className="text-white/80 leading-relaxed">
                           Every decision we make is guided by creating the best possible experience for our players.
                         </p>
                       </div>
                       <div className="text-center">
-                        <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                          <Code className="h-6 w-6 text-green-600" />
+                        <div 
+                          className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4"
+                          style={{
+                            background: 'linear-gradient(135deg, rgba(20, 184, 166, 0.2) 0%, rgba(6, 182, 212, 0.2) 100%)',
+                            border: '1px solid rgba(20, 184, 166, 0.3)'
+                          }}
+                        >
+                          <Code className="h-8 w-8 text-teal-400" />
                         </div>
-                        <h4 className="font-semibold text-gray-900 mb-2">Technical Excellence</h4>
-                        <p className="text-sm text-gray-600">
+                        <h4 className="font-bold text-white mb-3 text-lg">Technical Excellence</h4>
+                        <p className="text-white/80 leading-relaxed">
                           We push the boundaries of what's possible with cutting-edge technology and innovative solutions.
                         </p>
                       </div>
                       <div className="text-center">
-                        <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                          <Palette className="h-6 w-6 text-blue-600" />
+                        <div 
+                          className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4"
+                          style={{
+                            background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.2) 0%, rgba(14, 165, 233, 0.2) 100%)',
+                            border: '1px solid rgba(6, 182, 212, 0.3)'
+                          }}
+                        >
+                          <Palette className="h-8 w-8 text-cyan-400" />
                         </div>
-                        <h4 className="font-semibold text-gray-900 mb-2">Creative Vision</h4>
-                        <p className="text-sm text-gray-600">
+                        <h4 className="font-bold text-white mb-3 text-lg">Creative Vision</h4>
+                        <p className="text-white/80 leading-relaxed">
                           We believe in the power of creativity to transform ideas into extraordinary gaming experiences.
                         </p>
                       </div>
                     </div>
                   </div>
                   
-                  <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-6">
-                    <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                  <div 
+                    className="rounded-2xl p-8"
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(20, 184, 166, 0.2) 0%, rgba(16, 185, 129, 0.2) 100%)',
+                      backdropFilter: 'blur(30px) saturate(1.3)',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+                    }}
+                  >
+                    <h3 className="text-2xl font-bold text-white mb-8">
                       Our Game Development Philosophy
                     </h3>
-                    <div className="grid md:grid-cols-2 gap-6">
+                    <div className="grid md:grid-cols-2 gap-8">
                       <div>
-                        <h4 className="font-semibold text-gray-900 mb-2">Unity-Powered Innovation</h4>
-                        <p className="text-sm text-gray-600 mb-4">
+                        <h4 className="font-bold text-white mb-3 text-lg">Unity-Powered Innovation</h4>
+                        <p className="text-white/80 leading-relaxed mb-6">
                           We leverage Unity's powerful engine to create cross-platform experiences 
                           that reach players on mobile, PC, and console platforms.
                         </p>
                       </div>
                       <div>
-                        <h4 className="font-semibold text-gray-900 mb-2">Data-Driven Design</h4>
-                        <p className="text-sm text-gray-600 mb-4">
+                        <h4 className="font-bold text-white mb-3 text-lg">Data-Driven Design</h4>
+                        <p className="text-white/80 leading-relaxed mb-6">
                           Our games are built on solid analytics foundations, ensuring we create 
                           experiences that truly resonate with our audience.
                         </p>
                       </div>
                       <div>
-                        <h4 className="font-semibold text-gray-900 mb-2">Agile Development</h4>
-                        <p className="text-sm text-gray-600 mb-4">
+                        <h4 className="font-bold text-white mb-3 text-lg">Agile Development</h4>
+                        <p className="text-white/80 leading-relaxed mb-6">
                           We embrace iterative development cycles that allow for rapid prototyping 
                           and continuous improvement of our games.
                         </p>
                       </div>
                       <div>
-                        <h4 className="font-semibold text-gray-900 mb-2">Live Operations</h4>
-                        <p className="text-sm text-gray-600 mb-4">
+                        <h4 className="font-bold text-white mb-3 text-lg">Live Operations</h4>
+                        <p className="text-white/80 leading-relaxed mb-6">
                           Our commitment extends beyond launch, with ongoing content updates 
                           and community engagement that keeps games fresh and exciting.
                         </p>

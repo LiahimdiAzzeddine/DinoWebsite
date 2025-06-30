@@ -2,8 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { AnimationContext } from './experience/AnimationContext';
 import { useProgress } from '@react-three/drei';
 import dino from "/src/assets/logos/dinoBlack2.webp";
-
-
+import { useLocation } from 'react-router-dom';
 
 const Loader = () => {
   const {
@@ -11,83 +10,101 @@ const Loader = () => {
     fadeOut, setFadeOut,
     isLoading, setIsLoading,
   } = useContext(AnimationContext);
+  
   const { progress: gltfProgress, loaded, total } = useProgress();
   const [fakeProgress, setFakeProgress] = useState(0);
   const [display, setDisplay] = useState(false);
+  const { pathname } = useLocation();
+  
+  // Skip 3D loading for non-home pages
+  const isHomePage = pathname === "/";
+  const effectiveGltfProgress = isHomePage ? gltfProgress : 100;
+  const effectiveLoaded = isHomePage ? loaded : 100;
+  const effectiveTotal = isHomePage ? total : 100;
 
-  // 🚀 Phase artificielle
+  // Artificial progress phase
   useEffect(() => {
     if (fakeProgress < 80) {
       const id = setInterval(() => {
         setFakeProgress(prev => {
-          const next = Math.min(prev + 10, 80);
+          const next = Math.min(prev + Math.random() * 15 + 5, 80);
           if (next > 10) setDisplay(true);
           return next;
         });
-      }, 500);
+      }, 400);
       return () => clearInterval(id);
     }
-  }, [fakeProgress, isLoading]);
+  }, [fakeProgress]);
 
+  // Progress calculation
   useEffect(() => {
-    if (fakeProgress < 20 && gltfProgress >= 90) {
-      setProgress(gltfProgress);
-      setFakeProgress(gltfProgress);
+    if (fakeProgress < 20 && effectiveGltfProgress >= 90) {
+      setProgress(effectiveGltfProgress);
+      setFakeProgress(effectiveGltfProgress);
     } else if (fakeProgress < 80) {
       setProgress(fakeProgress);
     } else {
-      const real = 80 + (gltfProgress / 100) * 20;
+      const real = 80 + (effectiveGltfProgress / 100) * 20;
       setProgress(Math.min(real, 100));
     }
-  }, [fakeProgress, gltfProgress, isLoading]);
+  }, [fakeProgress, effectiveGltfProgress, setProgress]);
 
-  // ✅ Fin du chargement
+  // Loading completion
   useEffect(() => {
     if (
-      gltfProgress === 100 &&
-      loaded === total &&
+      effectiveGltfProgress === 100 &&
+      effectiveLoaded === effectiveTotal &&
       fakeProgress > 70
     ) {
       setTimeout(() => {
         setIsLoading(true);
         setFadeOut(true);
-      }, 1000);
+      }, 800);
     }
-  }, [gltfProgress, loaded, total, fakeProgress, isLoading]);
+  }, [effectiveGltfProgress, effectiveLoaded, effectiveTotal, fakeProgress, setIsLoading, setFadeOut]);
 
   if (fadeOut) return null;
+
+  const getLoadingText = () => {
+    if (progress < 20) return 'Unpacking...';
+    if (progress < 45) return 'Assembling...';
+    if (progress < 70) return 'Folding edges...';
+    if (progress < 90) return 'Final touches...';
+    if (progress < 100) return 'Sealing...';
+    return 'Ready!';
+  };
 
   return (
     <div className={`fixed inset-0 bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 flex items-center justify-center z-[5000] transition-opacity duration-800 ${fadeOut ? 'opacity-0' : 'opacity-100'}`}>
       {/* Cardboard texture overlay */}
       <div
-        className="absolute inset-0 opacity-30"
+        className="absolute inset-0 opacity-20"
         style={{
           backgroundImage: `
             repeating-linear-gradient(
               0deg,
               transparent,
               transparent 2px,
-              rgba(34, 139, 34, 0.1) 2px,
-              rgba(34, 139, 34, 0.1) 4px
+              rgba(16, 185, 129, 0.1) 2px,
+              rgba(16, 185, 129, 0.1) 4px
             ),
             repeating-linear-gradient(
               90deg,
               transparent,
               transparent 2px,
-              rgba(34, 139, 34, 0.05) 2px,
-              rgba(34, 139, 34, 0.05) 4px
+              rgba(20, 184, 166, 0.08) 2px,
+              rgba(20, 184, 166, 0.08) 4px
             )
           `
         }}
       />
 
-      {/* Floating cardboard pieces */}
+      {/* Floating elements */}
       <div className="absolute inset-0 overflow-hidden">
-        {[...Array(8)].map((_, i) => (
+        {[...Array(12)].map((_, i) => (
           <div
             key={i}
-            className="absolute w-3 h-3 bg-[#00000027] opacity-40 transform rotate-45"
+            className="absolute w-2 h-2 bg-emerald-300/30 opacity-60 rounded-full"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
@@ -99,144 +116,132 @@ const Loader = () => {
       </div>
 
       <div className="relative z-10 flex flex-col items-center">
-        {/* Logo Container - Cardboard Box Style */}
-        <div className=" relative">
-          <div className={`w-28 h-24 md:w-36 md:h-32 relative transition-all duration-1000 ${progress > 0 ? 'scale-100 opacity-100' : 'scale-75 opacity-0'}`}>
-            {/* Main cardboard box rounded-[0.3em] bg-gradient-to-br from-emerald-100 via-teal-100 to-cyan-200 border-2 border-teal-300  shadow-lg*/}
-            <div className="w-full h-full  relative overflow-hidden ">
-              {/* Cardboard corrugation lines
-              <div className="absolute inset-0">
-                {[...Array(6)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="absolute w-full h-0.5 bg-[#0000003f] opacity-60"
-                    style={{ top: `${(i + 1) * 16.66}%` }}
-                  />
-                ))}
-                {[...Array(6)].map((_, i) => (
-                  <div
-                    key={`v-${i}`}
-                    className="absolute h-full w-0.5 bg-[#0000003f] opacity-40"
-                    style={{ left: `${(i + 1) * 16.66}%` }}
-                  />
-                ))}
-              </div> */}
-
+        {/* Logo Container */}
+        <div className="relative mb-8">
+          <div className={`w-32 h-28 md:w-40 md:h-36 relative transition-all duration-1000 ${progress > 0 ? 'scale-100 opacity-100' : 'scale-75 opacity-0'}`}>
+            {/* Main container with glassmorphism */}
+            <div 
+              className="w-full h-full relative overflow-hidden rounded-2xl"
+              style={{
+                backdropFilter: 'blur(20px) saturate(1.2)',
+                backgroundColor: 'rgba(255, 255, 255, 0.25)',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+              }}
+            >
               {/* Logo */}
-              <div className="absolute inset-0 flex items-center justify-center rounded-[0.3em]">
+              <div className="absolute inset-0 flex items-center justify-center p-4">
                 <img
                   src={dino}
-                  alt="Logo"
-                  width="112" height="96"
-                  loading="eager"
-                  decoding="async"
-                  className="md:w-36 md:h-32 object-contain opacity-80 z-50"
+                  alt="Dinomite Logo"
+                  className="w-full h-full object-contain opacity-90 transition-transform duration-300 hover:scale-105"
                   onError={(e) => {
                     e.currentTarget.style.display = 'none';
                     e.currentTarget.nextElementSibling?.classList.remove('hidden');
                   }}
                 />
-                {/* Fallback icon 
-                <div className="hidden w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-teal-600 to-emerald-600 items-center justify-center">
-                  <div className="w-8 h-8 md:w-10 md:h-10 bg-teal-100 rounded"></div>
-                </div>*/}
+                {/* Fallback */}
+                <div className="hidden w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center">
+                  <div className="w-8 h-8 md:w-10 md:h-10 bg-white/20 rounded-lg"></div>
+                </div>
               </div>
 
-              {/* Box fold lines 
-              <div className="absolute top-0 left-1/2 w-0.5 h-full bg-teal-400 opacity-70 transform -translate-x-0.5"></div>
-              <div className="absolute left-0 top-1/2 w-full h-0.5 bg-teal-400 opacity-70 transform -translate-y-0.5"></div>*/}
+              {/* Animated border glow */}
+              <div 
+                className="absolute inset-0 rounded-2xl opacity-50 transition-opacity duration-1000"
+                style={{
+                  background: `linear-gradient(45deg, transparent 30%, rgba(16, 185, 129, 0.3) 50%, transparent 70%)`,
+                  animation: progress > 50 ? 'shimmer 2s ease-in-out infinite' : 'none'
+                }}
+              />
             </div>
-
-            {/* Box shadow/depth 
-            <div className="absolute -bottom-2 -right-2 w-full h-full bg-teal-300 opacity-50 -z-10 rounded-[0.3em] "></div>
-            */}
-            {/* Tape strips 
-            <div className="absolute top-1/2 left-0 w-full h-3 bg-gradient-to-r from-transparent via-emerald-600 to-transparent opacity-60 transform -translate-y-1/2"></div>
-            <div className="absolute left-1/2 top-0 w-3 h-full bg-gradient-to-b from-transparent via-emerald-600 to-transparent opacity-60 transform -translate-x-1/2"></div>
-*/}
-
           </div>
         </div>
 
-        {/* Company Name - Stamped Style 
-        <div className={`mb-8 transition-all duration-1000 delay-300 ${progress > 10 ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-          <div className="relative">
-            <h1 className="text-3xl md:text-4xl font-bold text-black tracking-wider relative">
-              Dinomite
-              <div className="absolute inset-0 border-2 border-teal-700 opacity-30 transform rotate-1"></div>
-              <div className="absolute inset-0 border border-teal-600 opacity-50 transform -rotate-1"></div>
-            </h1>
-            <div className="absolute -top-1 -right-2 w-2 h-2 bg-teal-700 rounded-full opacity-40"></div>
-            <div className="absolute -bottom-1 -left-1 w-1 h-1 bg-teal-600 rounded-full opacity-50"></div>
-          </div>
-        </div>*/}
-
-        {/* Progress Section - Cardboard Style */}
-        <div className={`w-80 md:w-96 transition-all duration-1000 delay-500 ${(progress > 20 && display) ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
+        {/* Progress Section */}
+        <div className={`w-80 md:w-96 transition-all duration-1000 delay-300 ${(progress > 10 && display) ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
           {/* Progress Bar Container */}
-          <div className="relative mb-4">
-            {/* Cardboard progress track */}
-            <div className="w-full h-4 bg-gradient-to-r from-cyan-100 via-cyan-100 to-cyan-100 border-2 border-[#4f968a] relative overflow-hidden rounded-[0.3em]">
-              {/* Corrugation texture */}
-              <div className="absolute inset-0">
-                {[...Array(20)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="absolute h-full w-0.5 bg-teal-200 opacity-40"
-                    style={{ left: `${i * 5}%` }}
-                  />
-                ))}
-              </div>
-
-              {/* Progress fill - like tape being applied */}
+          <div className="relative mb-6">
+            {/* Progress track with glassmorphism */}
+            <div 
+              className="w-full h-3 relative overflow-hidden rounded-full"
+              style={{
+                backdropFilter: 'blur(10px)',
+                backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                boxShadow: 'inset 0 2px 4px rgba(0, 0, 0, 0.1)'
+              }}
+            >
+              {/* Progress fill */}
               <div
-                className="h-full bg-gradient-to-r from-[#87ffe9] via-[#6acab9] to-[#417d72] transition-all duration-300 ease-out relative"
-                style={{ width: `${progress}%`, backgroundColor: '#5bc6a9' }}
+                className="h-full bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 transition-all duration-500 ease-out relative rounded-full"
+                style={{ width: `${progress}%` }}
               >
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/20 to-transparent"></div>
-
-                <div className="absolute right-0 top-0 w-1 h-full bg-[#396f66] opacity-70 rounded-[0.3em]"></div>
+                {/* Shine effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent rounded-full"></div>
+                
+                {/* Progress indicator dot */}
+                {progress > 5 && (
+                  <div className="absolute right-0 top-1/2 w-4 h-4 bg-white rounded-full transform translate-x-1/2 -translate-y-1/2 shadow-lg border-2 border-emerald-400">
+                    <div className="w-full h-full bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full animate-pulse"></div>
+                  </div>
+                )}
               </div>
             </div>
-            {
-              /**
-               *  <div className="absolute -bottom-1 -right-1 w-full h-4 bg-teal-300 opacity-30 -z-10 rounded-[0.3em]"></div>
-               * 
-               */
-            }
-
-
           </div>
 
-          {/* Progress Text - Hand-written style */}
-          <div className="flex justify-between items-center text-sm">
-            <span className="text-[#4f968a] font-bold font-medium tracking-wide transform -rotate-1">
-              {progress < 20 ? 'Unpacking...' :
-                progress < 45 ? 'Assembling...' :
-                  progress < 70 ? 'Folding edges...' :
-                    progress < 90 ? 'Final touches...' :
-                      progress < 100 ? 'Sealing...' : 'Ready!'}
+          {/* Progress Text */}
+          <div className="flex justify-between items-center text-sm mb-4">
+            <span className="text-emerald-700 font-medium tracking-wide">
+              {getLoadingText()}
             </span>
-            <span className="text-emerald-700 font-bold tabular-nums bg-[#bafbf1] px-2 py-1 border border-[#4f968a] transform rotate-1 rounded-[0.3em]">
+            <span 
+              className="font-bold tabular-nums text-white px-3 py-1 rounded-full text-xs"
+              style={{
+                background: 'linear-gradient(135deg, #10b981 0%, #14b8a6 100%)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 2px 8px rgba(16, 185, 129, 0.3)'
+              }}
+            >
               {Math.round(progress)}%
             </span>
           </div>
 
           {/* Completion message */}
           {progress > 95 && (
-            <div className="mt-6 text-center animate-fade-in">
-              <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-emerald-100 to-[#bafbf1] border-2 border-[#4f968a] relative rounded-[0.3em]">
-                <div className="w-2 h-2 bg-emerald-500 mr-2 transform rotate-45"></div>
-                <span className="text-teal-800 text-sm font-medium tracking-wide pr-5 nunito">Package Ready!</span>
-                {/* Delivery stamp */}
-                <div className="absolute -top-2 -right-2 w-8 h-8 border-2 border-[#4f968a] bg-green-100 flex items-center justify-center transform rotate-12 opacity-80 rounded-[0.3em]">
-                  <span className="text-[#4f968a] text-xs font-bold nunito">✓</span>
+            <div className="text-center animate-fade-in">
+              <div 
+                className="inline-flex items-center px-6 py-3 rounded-2xl relative"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(20, 184, 166, 0.2) 100%)',
+                  backdropFilter: 'blur(20px) saturate(1.2)',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+                }}
+              >
+                <div className="w-2 h-2 bg-emerald-400 rounded-full mr-3 animate-pulse"></div>
+                <span className="text-emerald-800 font-medium tracking-wide nunito">
+                  Ready to explore!
+                </span>
+                
+                {/* Success checkmark */}
+                <div 
+                  className="absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center transform rotate-12"
+                  style={{
+                    background: 'linear-gradient(135deg, #10b981 0%, #14b8a6 100%)',
+                    border: '2px solid white',
+                    boxShadow: '0 2px 8px rgba(16, 185, 129, 0.4)'
+                  }}
+                >
+                  <span className="text-white text-xs font-bold">✓</span>
                 </div>
               </div>
             </div>
           )}
         </div>
       </div>
+
+      
     </div>
   );
 };

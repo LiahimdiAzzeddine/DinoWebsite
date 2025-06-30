@@ -51,7 +51,7 @@ const Card = ({
         marginLeft: isDesktop ? (right ? "auto" : "calc(100% - 440px - 12vw)") : "auto",
         marginRight: isDesktop ? (right ? "calc(100% - 440px - 12vw)" : "auto") : "auto",
       }}
-     
+   
     >
       <div className="wrapper">
         <header>
@@ -62,10 +62,16 @@ const Card = ({
         </header>
         <div className="content">
           {paragraphs.map((text, idx) => (
-            <p key={idx} className={idx === 1 ? "small-margin" : ""}>
-              {text}
-            </p>
-          ))}
+  <motion.p
+    key={idx}
+    initial={{ opacity: 0, y: 20 }}
+    animate={inView ? { opacity: 1, y: 0 } : {}}
+    transition={{ delay: idx * 0.4, duration: 0.6 }}
+  >
+    {text}
+  </motion.p>
+))}
+
           <div data-v-7479a2c4="">
             {links.map((link, idx) => (
               <LinkButton
@@ -81,6 +87,7 @@ const Card = ({
             {buttons.map((button, idx) => (
               <NeddleButton key={idx} href={button.href}>
                 {button.title}
+                
               </NeddleButton>
             ))}
           </div>
@@ -248,9 +255,10 @@ export const Overlay = () => {
 
           className="section3"
           subtitle="What we can do"
+           right={true}
           title={<>full game development and co-development</>}
           paragraphs={[
-            "From concept to launch—or alongside your team—we build high-performing hybrid casual games with a focus on quality, speed, and scalability",
+            "From concept to launch or alongside your team we build high performing hybrid casual games with a focus on quality, speed, and scalability",
           ]}
           links={[]}
           buttons={[

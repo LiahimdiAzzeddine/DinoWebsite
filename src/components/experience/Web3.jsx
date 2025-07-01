@@ -71,7 +71,7 @@ const SCROLL_TRIGGERS = {
   SECONDARY: {
     trigger: "#section5",
     start: "top+=45% bottom",
-    end: "bottom+=45% top",
+    end: "bottom+=30% top",
     scrub: 2.5,
   },
   ARMATURE: {

@@ -6,7 +6,6 @@ import { AnimationContext } from "./experience/AnimationContext";
 
 import { Environment, Html, PerformanceMonitor } from "@react-three/drei";
 import Lenis from '@studio-freight/lenis';
-import ExplosionConfetti from "./Confetti";
 const Web1 = lazy(() => import("./experience/Web1"));
 const Web2 = lazy(() => import("./experience/Web2"));
 const Web3 = lazy(() => import("./experience/Web3"));
@@ -76,8 +75,9 @@ export const CanvasContainer = () => {
   }, []);
 
   return (
+    <div className="absolute top-0 left-0 w-full h-full z-10">
+
     <Canvas dpr={dpr} shadows={false} gl={{ antialias: false, powerPreference: "low-power" }}>
-      <ExplosionConfetti />
       <PerformanceMonitor
         bounds={() => [30, 60]}
         flipflops={2}
@@ -128,5 +128,6 @@ export const CanvasContainer = () => {
         <SceneManager lenis={lenisRef.current} />
       </Suspense>
     </Canvas>
+    </div>
   );
 };

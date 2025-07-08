@@ -4,30 +4,24 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { AnimationContext } from "./AnimationContext";
 import * as THREE from "three";
-import { useThree } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import { KTX2Loader } from "three/examples/jsm/loaders/KTX2Loader.js";
+import { WEB1_CONFIGS } from "./MODEL_CONFIGS";
+import { ConfettiParticle } from "../web1/ConfettiParticle";
 
-const ANIMATIONS_TO_PLAY = [
-  "Armature.001Action",
-  "Armature.003Action.003", 
-  "Armature.004Action.002",
-  "Cube.032Action",
-  "Empty.001Action.001",
-  "Empty.003Action.001",
-  "Empty.005Action",
-  "Empty.006Action",
-  "Empty.009Action.002",
-  "Empty.010Action.002",
-  "Empty.010Action.004",
-  "Sphere.010Action",
-  "Sphere.011Action",
-];
+
 
 export default function Web1({ sectionID, isActive, lenis, ...props }) {
   const gl = useThree((state) => state.gl);
   const group = useRef();
-  const sceneContainerGroup = useRef();
+  const glowMeshRef = useRef();
+    const directionalLightRef = useRef();
 
+
+  const currentTween = useRef(null);
+  const sceneContainerGroup = useRef();
+  const champignonRef = useRef();
+  const [confettis, setConfettis] = useState([]);
 
   const { nodes, materials, animations } = useGLTF(
     `/models/web1-opt.glb`,
@@ -42,14 +36,12 @@ export default function Web1({ sectionID, isActive, lenis, ...props }) {
       loader.setKTX2Loader(ktx2loader);
     }
   );
-
   const { actions, mixer } = useAnimations(animations, group);
   const { setCurrentModel } = useContext(AnimationContext);
   const timelineMain = useRef();
   const { viewport } = useThree()
 
   // track scrolling status
-  const currentTween = useRef(null);
   let nextScrollTrigger = null;
 
   let disableOtherSections = () => {
@@ -65,8 +57,6 @@ export default function Web1({ sectionID, isActive, lenis, ...props }) {
   }
 
   let enableOtherSections = () => {
-    // use when scroll is too quick for transitions
-    // this way any section t the end of the scroll could take control and disable the others
     ScrollTrigger.getAll().forEach((trigger) => {
       if (trigger.id !== sectionID) {
         trigger.enable();
@@ -79,164 +69,250 @@ export default function Web1({ sectionID, isActive, lenis, ...props }) {
     viewportRef.current = viewport;
   }, [viewport]);
 
-useLayoutEffect(() => {
-  // Lancer toutes les animations initiales
-  ANIMATIONS_TO_PLAY.forEach(name => actions[name]?.reset().play());
+  useLayoutEffect(() => {
+    WEB1_CONFIGS.ANIMATIONS_TO_PLAY.forEach(name => actions[name]?.reset().play());
+    const camAct = actions["CameraIn"];
+    const groupObj = group.current?.getObjectByName("Camera001");
+    const sceneGroup = sceneContainerGroup.current;
+    if (!camAct || !groupObj || !sceneGroup) return;
 
-  const camAct = actions["CameraIn"];
-  const groupObj = group.current?.getObjectByName("Camera001");
-  const sceneGroup = sceneContainerGroup.current;
-  if (!camAct || !groupObj || !sceneGroup) return;
+    camAct.reset().play().paused = true;
+    const clipDur = camAct.getClip().duration;
 
-  camAct.reset().play().paused = true;
-  const clipDur = camAct.getClip().duration;
+    const defaultPosition = { ...sceneGroup.position }; 
+    const minY = 0;
+    const maxY = 6;
 
-  const defaultPosition = { ...sceneGroup.position }; // position d’origine
-  const minY = 0;
-  const maxY = 6;
+    const killTween = () => {
+      if (currentTween.current) {
+        currentTween.current.kill();
+        currentTween.current = null;
+      }
+    };
+    const mm = gsap.matchMedia();
 
-  const killTween = () => {
-    if (currentTween.current) {
-      currentTween.current.kill();
-      currentTween.current = null;
-    }
-  };
+    // MOBILE
+    mm.add("(max-width: 767px)", () => {
+      sceneGroup.position.y += 0.3;
+      sceneGroup.position.z -= 0.5;
+      sceneGroup.position.x += 0.15;
 
-  const mm = gsap.matchMedia();
+      const sceneDefaultPos = sceneGroup.position.y;
+      const startZ = sceneGroup.position.z;
+      const endZ = startZ - 0.5;
+      const startX = sceneGroup.position.x;
+      const endX = startX + 0.3;
 
-  // MOBILE
-  mm.add("(max-width: 767px)", () => {
-    sceneGroup.position.y += 0.3;
-    sceneGroup.position.z -= 0.5;
-    sceneGroup.position.x += 0.15;
+      const trigger = ScrollTrigger.create({
+        id: sectionID,
+        trigger: "#section2",
+        start: "top bottom",
+        end: "top center-=270",
+        scrub: true,
+        markers: false,
+        onUpdate: ({ progress }) => {
+          killTween();
 
-    const sceneDefaultPos = sceneGroup.position.y;
-    const startZ = sceneGroup.position.z;
-    const endZ = startZ - 0.5;
-    const startX = sceneGroup.position.x;
-    const endX = startX + 0.3;
+          const newY = THREE.MathUtils.lerp(minY, maxY, progress);
+          const newZ = THREE.MathUtils.lerp(startZ, endZ, progress);
+          const newX = THREE.MathUtils.lerp(startX, endX, progress);
+          const rotY = THREE.MathUtils.lerp(0, 1, progress);
+          const rotX = THREE.MathUtils.lerp(0, 1, progress);
 
-    const trigger = ScrollTrigger.create({
-      id: sectionID,
-      trigger: "#section2",
-      start: "top bottom",
-      end: "top center-=270",
-      scrub: true,
-      markers: false,
-      onUpdate: ({ progress }) => {
-        killTween();
-
-        const newY = THREE.MathUtils.lerp(minY, maxY, progress);
-        const newZ = THREE.MathUtils.lerp(startZ, endZ, progress);
-        const newX = THREE.MathUtils.lerp(startX, endX, progress);
-        const rotY = THREE.MathUtils.lerp(0, 1, progress);
-        const rotX = THREE.MathUtils.lerp(0, 1, progress);
-
-        currentTween.current = gsap.to(sceneGroup, {
-          duration: 0.3,
-          ease: "sine.out",
-          overwrite: true,
-          onUpdate: () => {
-            sceneGroup.position.set(newX, newY, newZ);
-            sceneGroup.rotation.set(rotX, rotY, sceneGroup.rotation.z);
-          },
-        });
-      },
-      onToggle: ({ isActive }) => {
-        if (isActive) {
-          setCurrentModel(sectionID);
-          disableOtherSections();
-          gsap.to(sceneGroup.position, {
-            y: sceneDefaultPos,
+          currentTween.current = gsap.to(sceneGroup, {
             duration: 0.3,
-            ease: "circ.out",
+            ease: "sine.out",
+            overwrite: true,
+            onUpdate: () => {
+              sceneGroup.position.set(newX, newY, newZ);
+              sceneGroup.rotation.set(rotX, rotY, sceneGroup.rotation.z);
+            },
           });
-        }
-      },
-      onLeave: ({ getVelocity }) => {
+        },
+        onToggle: ({ isActive }) => {
+          if (isActive) {
+            setCurrentModel(sectionID);
+            disableOtherSections();
+            gsap.to(sceneGroup.position, {
+              y: sceneDefaultPos,
+              duration: 0.3,
+              ease: "circ.out",
+            });
+          }
+        },
+        onLeave: ({ getVelocity }) => {
 
-        if (Math.abs(getVelocity()) <= 2000) {
-          gsap.to(sceneGroup.position, {
-            y: sceneDefaultPos + 50,
-            duration: 0.3,
-            ease: "sine.inOut",
-            onComplete: () => nextScrollTrigger?.enable(),
-          });
-        } else {
-          enableOtherSections();
-        }
-      },
-    });
-    return () => trigger.kill();
-  });
-
-  // DESKTOP
-  mm.add("(min-width: 768px)", () => {
-    sceneGroup.position.set(defaultPosition.x, defaultPosition.y, defaultPosition.z);
-
-    const trigger = ScrollTrigger.create({
-      id: sectionID,
-      trigger: "#section2",
-      start: "top bottom",
-      end: "center+=100 top",
-      scrub: true,
-      markers: false,
-      onUpdate: ({ progress }) => {
-        killTween();
-        currentTween.current = gsap.to(camAct, {
-          time: progress * clipDur,
-          duration: 0.1,
-          ease: "sine.out",
-          overwrite: true,
-        });
-      },
-      onToggle: ({ isActive }) => {
-        if (isActive) {
-          setCurrentModel(sectionID);
-          disableOtherSections();
-          gsap.to(sceneGroup.position, {
-            y: defaultPosition.y,
-            duration: 0.3,
-            ease: "circ.out",
-          });
-        }
-      },
-      onLeave: ({ getVelocity }) => {
-        if (Math.abs(getVelocity()) <= 2000) {
-          gsap.to(sceneGroup.position, {
-            y: defaultPosition.y + 50,
-            duration: 0.3,
-            ease: "sine.inOut",
-            onComplete: () => nextScrollTrigger?.enable(),
-          });
-        } else {
-          gsap.to(sceneGroup.position, {
-            y: defaultPosition.y + 50,
-            duration: 0.3,
-            ease: "sine.inOut",
-          });
-          enableOtherSections();
-        }
-      },
+          if (Math.abs(getVelocity()) <= 2000) {
+            gsap.to(sceneGroup.position, {
+              y: sceneDefaultPos + 50,
+              duration: 0.3,
+              ease: "sine.inOut",
+              onComplete: () => nextScrollTrigger?.enable(),
+            });
+          } else {
+            enableOtherSections();
+          }
+        },
+      });
+      return () => trigger.kill();
     });
 
-    return () => trigger.kill();
-  });
+    // DESKTOP
+    mm.add("(min-width: 768px)", () => {
+      sceneGroup.position.set(defaultPosition.x, defaultPosition.y, defaultPosition.z);
+      const trigger = ScrollTrigger.create({
+        id: sectionID,
+        trigger: "#section2",
+        start: "top bottom",
+        end: "center+=100 top",
+        scrub: true,
+        markers: false,
+        onUpdate: ({ progress }) => {
+          killTween();
+          currentTween.current = gsap.to(camAct, {
+            time: progress * clipDur,
+            duration: 0.1,
+            ease: "sine.out",
+            overwrite: true,
+          });
+        },
+        onToggle: ({ isActive }) => {
+          if (isActive) {
+            setCurrentModel(sectionID);
+            disableOtherSections();
+            gsap.to(sceneGroup.position, {
+              y: defaultPosition.y,
+              duration: 0.3,
+              ease: "circ.out",
+            });
+          }
+        },
+        onLeave: ({ getVelocity }) => {
+          if (Math.abs(getVelocity()) <= 2000) {
+            gsap.to(sceneGroup.position, {
+              y: defaultPosition.y + 50,
+              duration: 0.3,
+              ease: "sine.inOut",
+              onComplete: () => nextScrollTrigger?.enable(),
+            });
+          } else {
+            gsap.to(sceneGroup.position, {
+              y: defaultPosition.y + 50,
+              duration: 0.3,
+              ease: "sine.inOut",
+            });
+            enableOtherSections();
+          }
+        },
+      });
 
-  return () => {
-    mm.revert(); // clean all triggers
-    timelineMain.current?.kill();
-    mixer.stopAllAction();
-  };
-}, []);
+      return () => trigger.kill();
+    });
+
+    return () => {
+      mm.revert(); // clean all triggers
+      timelineMain.current?.kill();
+      mixer.stopAllAction();
+    };
+  }, []);
 
 
   // Créez un matériau de test
   const testMaterial = useMemo(() => new THREE.MeshStandardMaterial({
-    color: 0xebe890,
+    color: 0xa1a323,
     roughness: 0.5,
     metalness: 0.1
   }), []);
+
+  
+  
+  const createConfetti = () => {
+    const newConfettis = [];
+    const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#f0932b', '#eb4d4b', '#6c5ce7'];
+    
+    // create the particules
+    for (let i = 0; i < 25; i++) {
+      const angle = (Math.PI * 2 * i) / 20;
+      const speed = 2 + Math.random() * 3;
+      
+      newConfettis.push({
+        id: Date.now() + i,
+        position: new THREE.Vector3(-0.569, 2.089 + 0.1, 0.83), 
+        color: colors[Math.floor(Math.random() * colors.length)],
+        velocity: new THREE.Vector3(
+          Math.cos(angle) * speed,
+          Math.random() * 3 + 3, // Speed ​​up
+          Math.sin(angle) * speed
+        ),
+      });
+    }
+    
+    setConfettis(newConfettis);
+    
+    // Nettoyer les confettis après 3 secondes
+    setTimeout(() => {
+      setConfettis([]);
+    }, 3000);
+  };
+
+  const handleClick = () => {
+    if (!champignonRef.current) return;
+
+    // Annuler animation précédente si en cours
+    gsap.killTweensOf(champignonRef.current.scale);
+
+    // Animation type bouton cliqué
+    gsap.fromTo(
+      champignonRef.current.scale,
+      { x: 0.342, y: 0.342, z: 0.342 }, // taille normale
+      {
+        x: 0.3,
+        y: 0.3,
+        z: 0.3,
+        duration: 0.1,
+        ease: 'power1.in',
+        yoyo: true,
+        repeat: 1,
+        onComplete: () => {
+          // Créer les confettis à la fin de l'animation
+          createConfetti();
+        }
+      }
+    );
+  };
+   // Animation de clignotement pour attirer l'attention
+const colors = useMemo(() => [
+  0xff6b6b, 0x4ecdc4, 0x45b7d1,
+  0xf9ca24, 0xf0932b, 0xeb4d4b, 0x6c5ce7
+], []);
+
+useFrame((state) => {
+  const mesh = glowMeshRef.current;
+  const light = directionalLightRef.current;
+  if (!mesh || !mesh.material) return;
+
+  const { elapsedTime } = state.clock;
+  const intensity = Math.sin(elapsedTime * 4) * 0.5 + 0.5;
+
+  // Optimisation : changer la couleur seulement si l'index change
+  const colorIndex = Math.floor(elapsedTime * 2) % colors.length;
+  const currentColor = colors[colorIndex];
+
+  // Update material
+  const mat = mesh.material;
+  mat.emissive.setHex(currentColor);
+  mat.emissiveIntensity = intensity * 0.5;
+  mat.color.setHex(currentColor);
+  mat.opacity = 0.9 + intensity * 0.1;
+
+  // Update light
+  if (light) {
+    light.color.setHex(currentColor);
+    light.intensity = 2 + intensity * 3;
+    const angle = elapsedTime * 0.5;
+    light.position.set(Math.cos(angle) * 2, light.position.y, Math.sin(angle) * 2);
+  }
+});
 
   return (
     <group ref={group} {...props} dispose={null} visible={isActive}  >
@@ -312,7 +388,7 @@ useLayoutEffect(() => {
               />
             </group>
           </group>
-          <group name="Empty004" position={[-0.569, 2.089, 0.83]} scale={0.342}>
+          <group name="Empty004" position={[-0.569, 2.089, 0.83]} scale={0.342}   ref={champignonRef}   onClick={handleClick}>
             <group name="Cube004" scale={[3.169, 3.251, 3.169]}>
               <mesh
                 name="Cube004_primitive0"
@@ -329,14 +405,26 @@ useLayoutEffect(() => {
                 material={materials['Material.017']}
               />
               <mesh
-                name="Cube004_primitive2"
-                castShadow
-                receiveShadow
-                geometry={nodes.Cube004_primitive2.geometry}
-                material={materials['Material.010']}
-              />
+            name="Cube004_primitive2"
+            ref={glowMeshRef}
+            castShadow
+            receiveShadow
+            geometry={nodes.Cube004_primitive2.geometry}
+            material={materials['Material.010'].clone()} // Clone pour éviter de modifier l'original
+          />
             </group>
           </group>
+          {/* Confettis simples (cubes colorés) */}
+        
+      {/* Rendu des confettis */}
+      {confettis.map((confetti) => (
+        <ConfettiParticle
+          key={confetti.id}
+          position={confetti.position}
+          color={confetti.color}
+          velocity={confetti.velocity}
+        />
+      ))}
           <mesh
             name="Cube005"
             castShadow

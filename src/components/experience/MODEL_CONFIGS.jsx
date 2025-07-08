@@ -24,4 +24,22 @@ const MODEL_CONFIGS = {
   },
 };
 
+export const WEB1_CONFIGS={
+ANIMATIONS_TO_PLAY: [
+  "Armature.001Action",
+  "Armature.003Action.003",
+  "Armature.004Action.002",
+  "Cube.032Action",
+  "Empty.001Action.001",
+  "Empty.003Action.001",
+  "Empty.005Action",
+  "Empty.006Action",
+  "Empty.009Action.002",
+  "Empty.010Action.002",
+  "Empty.010Action.004",
+  "Sphere.010Action",
+  "Sphere.011Action",
+],
+}
+
 export default MODEL_CONFIGS;

@@ -1,5 +1,5 @@
 import { useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { useGLTF, PerspectiveCamera, useAnimations } from "@react-three/drei";
+import { useGLTF, PerspectiveCamera, useAnimations, Html } from "@react-three/drei";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { AnimationContext } from "./AnimationContext";
@@ -15,7 +15,10 @@ export default function Web1({ sectionID, isActive, lenis, ...props }) {
   const gl = useThree((state) => state.gl);
   const group = useRef();
   const glowMeshRef = useRef();
-    const directionalLightRef = useRef();
+  const directionalLightRef = useRef();
+  const dinoRef = useRef();
+    const bubbleRef = useRef();
+
 
 
   const currentTween = useRef(null);
@@ -182,8 +185,8 @@ export default function Web1({ sectionID, isActive, lenis, ...props }) {
             disableOtherSections();
             gsap.to(sceneGroup.position, {
               y: defaultPosition.y,
-              duration: 0.3,
-              ease: "circ.out",
+              duration: 0.8,
+              ease: "expo.inOut",
             });
           }
         },
@@ -191,15 +194,15 @@ export default function Web1({ sectionID, isActive, lenis, ...props }) {
           if (Math.abs(getVelocity()) <= 2000) {
             gsap.to(sceneGroup.position, {
               y: defaultPosition.y + 50,
-              duration: 0.3,
-              ease: "sine.inOut",
+              duration: 0.8,
+              ease: "expo.inOut",
               onComplete: () => nextScrollTrigger?.enable(),
             });
           } else {
             gsap.to(sceneGroup.position, {
               y: defaultPosition.y + 50,
-              duration: 0.3,
-              ease: "sine.inOut",
+              duration:0.8,
+              ease: "expo.inOut",
             });
             enableOtherSections();
           }
@@ -280,6 +283,59 @@ export default function Web1({ sectionID, isActive, lenis, ...props }) {
       }
     );
   };
+
+ const handleDinoClick = () => {
+  if (bubbleRef.current && dinoRef.current) {
+    // 🔊 Jouer le son du dino
+    const audio = new Audio('/sounds/dinosaur-roar-with-screams-and-growls-193210.mp3');
+    audio.play();
+
+    // 🗨️ Apparition bulle
+    gsap.fromTo(
+      bubbleRef.current,
+      { autoAlpha: 0, y: -10, scale: 0.5 },
+      { autoAlpha: 1, y: 0, scale: 1, duration: 0.6, ease: 'back.out(1.7)' }
+    );
+
+    // ❌ Disparition bulle après 2 secondes
+    gsap.to(bubbleRef.current, {
+      autoAlpha: 0,
+      duration: 0.5,
+      delay: 2,
+      ease: 'power1.inOut',
+    });
+
+    // 🦕 Rebond du dino
+    gsap.fromTo(
+      dinoRef.current.scale,
+      { x: 0.29, y: 0.29, z: 0.29 },
+      {
+        x: 0.34,
+        y: 0.34,
+        z: 0.34,
+        duration: 0.2,
+        yoyo: true,
+        repeat: 1,
+        ease: 'power1.out',
+      }
+    );
+
+    // ↪️ Rotation légère
+    gsap.fromTo(
+      dinoRef.current.rotation,
+      { y: dinoRef.current.rotation.y },
+      {
+        y: dinoRef.current.rotation.y + 0.3,
+        duration: 0.2,
+        yoyo: true,
+        repeat: 1,
+        ease: 'power1.inOut',
+      }
+    );
+  }
+};
+
+
    // Animation de clignotement pour attirer l'attention
 const colors = useMemo(() => [
   0xff6b6b, 0x4ecdc4, 0x45b7d1,
@@ -340,31 +396,22 @@ useFrame((state) => {
             position={[0.033, -0.966, -0.183]}
             scale={[1.223, 0.997, 1.039]}
           />
-          <group name="Empty002" position={[-0.228, 2.14, 0.512]}>
-            <group name="Retopo_Cube" rotation={[0, 1.005, 0]} scale={0.29}>
-              <mesh
-                name="Retopo_Cube_primitive0"
-                castShadow
-                receiveShadow
-                geometry={nodes.Retopo_Cube_primitive0.geometry}
-                material={materials['spike.001']}
-              />
-              <mesh
-                name="Retopo_Cube_primitive1"
-                castShadow
-                receiveShadow
-                geometry={nodes.Retopo_Cube_primitive1.geometry}
-                material={materials['Material.022']}
-              />
-              <mesh
-                name="Retopo_Cube_primitive2"
-                castShadow
-                receiveShadow
-                geometry={nodes.Retopo_Cube_primitive2.geometry}
-                material={materials.Blackk}
-              />
-            </group>
-            <group name="Retopo_Cube001" rotation={[0, 1.005, 0]} scale={0.29}>
+          <group name="Empty002" position={[-0.228, 2.14, 0.512]}  >
+      
+
+            <group name="Retopo_Cube001" rotation={[0, 1.005, 0]} scale={0.29} ref={dinoRef}       onClick={handleDinoClick}
+>
+         <mesh position={[0, 1.8, 0]}>
+        <Html>
+          <div
+            ref={bubbleRef}
+            className="speech-bubble"
+            style={{ opacity: 0, pointerEvents: 'none',minWidth:"214px" }} // start hidden
+          >
+            Hey there! I'm a dino!
+          </div>
+        </Html>
+      </mesh>
               <mesh
                 name="Retopo_Cube001_primitive0"
                 castShadow

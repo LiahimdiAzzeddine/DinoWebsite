@@ -184,6 +184,25 @@ div.block2::before {
   top: calc(var(--offset)*-1);
   width: calc(100% + var(--offset)*2);
 }
+.speech-bubble {
+  background: rgba(255,255,255,0.9);
+  border-radius: 20px;
+  padding: 0.5rem 1rem;
+  position: relative;
+  font-size: 1.2rem;
+}
+.speech-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 20px;
+  border-width: 10px 10px 0;
+  border-style: solid;
+  border-color: rgba(255,255,255,0.9) transparent;
+  display: block;
+  width: 0;
+}
+
 
 
 .wrapper {

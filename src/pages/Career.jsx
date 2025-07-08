@@ -1,6 +1,6 @@
 // pages/Career.jsx
 import { useContext, useEffect, useRef, useState } from "react";
-import { Plus, Minus, ChevronDown, MapPin, Clock, Users, Gamepad2, Code, Palette } from "lucide-react";
+import { Plus, Minus, ChevronDown, MapPin, Clock, Users, Gamepad2, Code, Palette, Smile, Lightbulb, TrendingUp } from "lucide-react";
 import Block from "../components/ui/Block";
 import { Canvas } from '@react-three/fiber';
 import GradientSkybox from "../components/experience/SceneColor";
@@ -12,57 +12,64 @@ import { useInView } from "react-intersection-observer";
 const jobOpenings = [
   {
     id: 1,
-    title: "Senior Unity Developer",
-    department: "Game Development",
-    location: "Remote / San Francisco",
-    type: "Full-time",
-    experience: "4-6 years",
-    description: "Lead the development of innovative mobile and PC games using Unity engine, creating immersive gameplay experiences that captivate millions of players worldwide.",
+    title: "3D Artist",
+    department: "Art & Design",
+    location: "Remote / Onsite",
+    type: "Full-time or Contract",
+    experience: "All levels",
+    description: "As a 3D Artist at Dinomite Studio, you'll help build the visual world of our hybrid casual games with eye-catching, stylized assets that run smoothly on mobile devices. From modeling to world-building, your work will directly shape how players experience our games.",
     requirements: [
-      "Expert proficiency in Unity 3D and C# programming",
-      "Strong understanding of game physics, AI, and optimization",
-      "Experience with mobile game development and platform-specific features",
-      "Knowledge of multiplayer networking and backend integration"
+      "Strong understanding of stylized visuals and hybrid casual game aesthetics",
+      "Skilled in 3D software like Blender, Cinema 4D, or equivalent",
+      "Comfortable working iteratively and redoing work when necessary",
+      "Ability to work as part of a team and communicate ideas visually",
+      "Bonus: Experience with Unity, simple animations, or VFX integration"
     ],
     responsibilities: [
-      "Design and implement core gameplay systems and mechanics",
-      "Optimize game performance across multiple platforms",
-      "Collaborate with artists and designers to bring creative visions to life",
-      "Mentor junior developers and establish coding standards"
+      "Model and texture low-to-mid poly stylized assets (props, environments, characters)",
+      "Assemble game scenes using modular assets within Unity",
+      "Focus on composition, lighting, and player feedback in level design",
+      "(Optional) Animate simple character and prop movements (e.g., idle, run cycles)",
+      "(Optional) Integrate basic VFX such as particle systems or visual feedback effects",
+      "Collaborate with designers and developers to support gameplay through visuals",
+      "Contribute to brainstorms on visual themes and artistic direction"
     ]
   },
   {
     id: 2,
-    title: "3D Game Artist",
-    department: "Art & Design",
-    location: "Hybrid / Los Angeles",
-    type: "Full-time",
-    experience: "3-5 years",
-    description: "Create stunning 3D environments, characters, and props that define the visual identity of our games and push the boundaries of artistic excellence.",
+    title: "Game Designer (Hybrid Casual Games)",
+    department: "Game Design",
+    location: "Remote / Onsite",
+    type: "Part-time / Internship",
+    experience: "Entry-level or experienced",
+    description: "Join Dinomite Studio as a Game Designer and be at the heart of developing and shaping new hybrid casual game experiences. You'll work closely with our team to create fun, engaging, and innovative gameplay loops, systems, and prototypes.",
     requirements: [
-      "Proficiency in Maya, Blender, or 3ds Max",
-      "Strong understanding of PBR texturing and Substance Suite",
-      "Experience with Unity's rendering pipeline and optimization",
-      "Excellent artistic skills in modeling, texturing, and lighting"
+      "Strong passion for games and understanding of what makes them fun",
+      "Creative mindset and initiative to propose and test new ideas",
+      "Interest in reverse-engineering game systems and player psychology",
+      "Comfortable working in a fast-paced, iterative development environment",
+      "A strong sense of ownership and a desire to contribute to a growing studio"
     ],
     responsibilities: [
-      "Create high-quality 3D assets for games and marketing materials",
-      "Develop and maintain art style guides and technical documentation",
-      "Collaborate with technical artists to ensure optimal asset pipeline",
-      "Participate in art reviews and provide creative feedback"
+      "Design core gameplay loops, controls, and progression systems",
+      "Create and test simple game prototypes",
+      "Collaborate with developers and 3D artists to align on vision and execution",
+      "Balance levels for optimal player engagement and retention",
+      "Stay updated on mobile game trends and successful game mechanics",
+      "Organize internal playtests, collect feedback, and refine ideas",
+      "Write clear and actionable game design documents"
     ]
-  },
+  }
 ];
 
 const benefits = [
-  "Competitive salary with performance bonuses and equity options",
-  "Comprehensive health, dental, and vision insurance",
-  "Flexible remote work with modern gaming setups provided",
-  "Annual learning budget for conferences, courses, and certifications",
-  "Regular team game jams and creative innovation days",
-  "Latest gaming hardware and development tools",
-  "Unlimited PTO with mandatory minimum vacation policy",
-  "On-site gaming lounge and recreational facilities"
+"Flexible part-time roles and internships based on your experience and availability",
+"Hands-on experience with real projects, your ideas matter here",
+"Creative freedom to test game mechanics, try new visuals, and learn by doing",
+"Remote-friendly setup with the option to work on-site in Tangier",
+"Learning-focused environment  we encourage self-growth through courses, tutorials, and experimentation",
+"Team game jams and creative days to brainstorm wild ideas and test new concepts",
+"Direct collaboration with game designers, developers, and artists  no endless hierarchies.",
 ];
 
 export default function Career() {
@@ -87,11 +94,13 @@ export default function Career() {
     setIsLoading(false);
   }, []);
 
-  const handleApply = (jobId) => {
-    // Handle job application logic here
-    console.log(`Applying for job ID: ${jobId}`);
-    // You could redirect to an application form or open a modal
-  };
+ const handleApply = (jobId) => {
+  console.log(`Applying for job ID: ${jobId}`);
+  window.open(
+    "https://docs.google.com/forms/d/e/1FAIpQLSePkM4vnmAj4Tc97VKGfixyHp4CcVvFvVSdTGLofvU_pweiFQ/viewform",
+    "_blank"
+  );
+};
 
   return (
     <>
@@ -295,13 +304,17 @@ export default function Career() {
                     }}
                   >
                     <h3 className="text-2xl font-bold text-white mb-6">
-                      Why Join Our Gaming Studio?
+                      Why Join Dinomite Studio?
                     </h3>
                     <p className="text-white/90 mb-8 text-lg leading-relaxed">
-                      We're more than just a game development company - we're a creative community 
-                      where innovation thrives, ideas are celebrated, and every team member plays 
-                      a crucial role in crafting unforgettable gaming experiences.
+                      At Dinomite Studio, we're more than just a game development team, we're a passionate creative community where bold ideas are encouraged, experimentation is part of the process, and every team member contributes meaningfully to crafting fun and impactful games.
                     </p>
+                      <p className="text-white/90 mb-8 text-lg leading-relaxed">
+Whether you're working on-site at our studio in Tangier or joining us remotely, you'll be part of a culture that values collaboration, curiosity, and rapid creation. We specialize in hybrid casual games and pride ourselves on fast prototyping, smart teamwork, and staying ahead of market trends.
+                    </p>
+                    <h3 className="text-2xl font-bold text-white mb-6">
+                      What You’ll Get
+                    </h3>
                     <div className="grid md:grid-cols-2 gap-6">
                       {benefits.map((benefit, idx) => (
                         <div key={idx} className="flex items-start gap-4">
@@ -333,11 +346,12 @@ export default function Career() {
                             border: '1px solid rgba(16, 185, 129, 0.3)'
                           }}
                         >
-                          <Gamepad2 className="h-8 w-8 text-emerald-400" />
+                          <Smile className="h-8 w-8 text-emerald-400" />
+
                         </div>
                         <h4 className="font-bold text-white mb-3 text-lg">Player First</h4>
                         <p className="text-white/80 leading-relaxed">
-                          Every decision we make is guided by creating the best possible experience for our players.
+                          We build for fun every game we design focuses on creating smooth, engaging, and satisfying experiences for players.
                         </p>
                       </div>
                       <div className="text-center">
@@ -348,11 +362,12 @@ export default function Career() {
                             border: '1px solid rgba(20, 184, 166, 0.3)'
                           }}
                         >
-                          <Code className="h-8 w-8 text-teal-400" />
+                          <Lightbulb className="h-8 w-8 text-teal-400" />
+
                         </div>
-                        <h4 className="font-bold text-white mb-3 text-lg">Technical Excellence</h4>
+                        <h4 className="font-bold text-white mb-3 text-lg">Creative Simplicity</h4>
                         <p className="text-white/80 leading-relaxed">
-                          We push the boundaries of what's possible with cutting-edge technology and innovative solutions.
+                         We believe the best way to improve is to build. Rapid testing and iteration help us discover what works and what doesn’t  quickly.
                         </p>
                       </div>
                       <div className="text-center">
@@ -363,11 +378,12 @@ export default function Career() {
                             border: '1px solid rgba(6, 182, 212, 0.3)'
                           }}
                         >
-                          <Palette className="h-8 w-8 text-cyan-400" />
+                        <TrendingUp className="h-8 w-8 text-cyan-400" />
+
                         </div>
-                        <h4 className="font-bold text-white mb-3 text-lg">Creative Vision</h4>
+                        <h4 className="font-bold text-white mb-3 text-lg">Shared Growth</h4>
                         <p className="text-white/80 leading-relaxed">
-                          We believe in the power of creativity to transform ideas into extraordinary gaming experiences.
+                         We grow as a team. Whether you’re just starting out or have years of experience, your growth helps us all move forward.
                         </p>
                       </div>
                     </div>
@@ -383,37 +399,28 @@ export default function Career() {
                     }}
                   >
                     <h3 className="text-2xl font-bold text-white mb-8">
-                      Our Game Development Philosophy
+                    How We Work
                     </h3>
                     <div className="grid md:grid-cols-2 gap-8">
                       <div>
-                        <h4 className="font-bold text-white mb-3 text-lg">Unity-Powered Innovation</h4>
+                        <h4 className="font-bold text-white mb-3 text-lg">Unity-Centered Workflow</h4>
                         <p className="text-white/80 leading-relaxed mb-6">
-                          We leverage Unity's powerful engine to create cross-platform experiences 
-                          that reach players on mobile, PC, and console platforms.
+                          We build all our games in Unity  focusing on performance, mobile optimization, and modular design that’s easy to test and scale.
                         </p>
                       </div>
                       <div>
-                        <h4 className="font-bold text-white mb-3 text-lg">Data-Driven Design</h4>
+                        <h4 className="font-bold text-white mb-3 text-lg">Agile & Fast</h4>
                         <p className="text-white/80 leading-relaxed mb-6">
-                          Our games are built on solid analytics foundations, ensuring we create 
-                          experiences that truly resonate with our audience.
+                          We don’t sit on ideas. We test quickly, throw away what doesn’t work, and improve what does all in a collaborative, feedback-driven process.
                         </p>
                       </div>
                       <div>
-                        <h4 className="font-bold text-white mb-3 text-lg">Agile Development</h4>
+                        <h4 className="font-bold text-white mb-3 text-lg">Remote & On-Site</h4>
                         <p className="text-white/80 leading-relaxed mb-6">
-                          We embrace iterative development cycles that allow for rapid prototyping 
-                          and continuous improvement of our games.
+                         Whether you’re in the office or working remotely, we prioritize clear communication and shared goals to keep everyone aligned and moving forward.
                         </p>
                       </div>
-                      <div>
-                        <h4 className="font-bold text-white mb-3 text-lg">Live Operations</h4>
-                        <p className="text-white/80 leading-relaxed mb-6">
-                          Our commitment extends beyond launch, with ongoing content updates 
-                          and community engagement that keeps games fresh and exciting.
-                        </p>
-                      </div>
+                   
                     </div>
                   </div>
                 </div>

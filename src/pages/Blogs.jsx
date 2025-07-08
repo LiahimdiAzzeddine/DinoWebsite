@@ -6,6 +6,8 @@ import { Canvas } from '@react-three/fiber';
 import GradientSkybox from "../components/experience/SceneColor";
 import { AnimationContext } from "../components/experience/AnimationContext";
 import { useNavigate } from "react-router-dom";
+import image1 from "/src/assets/blogs/Hybrid Casual Games in 2025.png";
+import image2 from "/src/assets/blogs/Hybrid Casual Games in 2025.png";
 
 const blogs = [
   {
@@ -40,7 +42,7 @@ Hybrid casual is a winning formula. Now’s the time to go hybrid.
     readTime: "6 min read",
     category: "Trends",
     tags: ["hybrid-casual", "mobile", "gaming"],
-    image: "/src/assets/blogs/Hybrid Casual Games in 2025.png",
+    image: "../assets/blogs/HybridCasualGamesin2025.png",
     featured: true
   },
   {
@@ -68,7 +70,7 @@ Don’t chase trends. Set them. In 2025 and beyond, originality wins.
     readTime: "5 min read",
     category: "Opinion",
     tags: ["cloning", "game-dev", "originality"],
-    image: "/src/assets/blogs/More Play, Less Download linkedin post.png",
+    image: "../assets/blogs/More Play, Less Download linkedin post.png",
     featured: false
   }
 ];

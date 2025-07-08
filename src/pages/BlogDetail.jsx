@@ -5,6 +5,8 @@ import GradientSkybox from "../components/experience/SceneColor";
 import { AnimationContext } from "../components/experience/AnimationContext";
 import Block from "../components/ui/Block";
 import { Calendar, Clock, User, Tag } from "lucide-react";
+import image1 from "../assets/blogs/Hybrid Casual Games in 2025.png";
+import image2 from "../assets/blogs/More Play, Less Download linkedin post.png";
 
 export default function BlogSingle() {
     const { id } = useParams();
@@ -62,7 +64,7 @@ export default function BlogSingle() {
                     {/* Image */}
                     <div className="mb-8 rounded-xl overflow-hidden aspect-video max-w-4xl mx-auto">
                         <img
-                            src="/src/assets/blogs/Hybrid Casual Games in 2025.png"
+                            src={image1}
                             alt="Hybrid Casual Games in 2025: The Future Is Already Here"
                             className="w-full h-full object-cover"
                         />
@@ -158,7 +160,7 @@ export default function BlogSingle() {
                     {/* Image */}
                     <div className="mb-8 overflow-hidden aspect-video max-w-4xl mx-auto rounded-xl">
                         <img
-                            src="/src/assets/blogs/More Play, Less Download linkedin post.png"
+                            src={image2}
                             alt="Hybrid Casual Games in 2025: The Future Is Already Here"
                             className="w-full h-full object-contain rounded-xl"
                         />

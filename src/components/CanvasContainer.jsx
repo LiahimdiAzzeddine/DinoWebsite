@@ -43,6 +43,8 @@ const SceneManager = ({ lenis }) => {
 
 // Updated CanvasContainer component with gradient background
 export const CanvasContainer = () => {
+    const { updateScrollDirection, lenisInstance } = useContext(AnimationContext);
+
   const lenisRef = useRef(null);
   const [dpr, setDpr] = useState(0.7);
   const isMobile = /Mobi|Android/i.test(navigator.userAgent);
@@ -60,6 +62,16 @@ export const CanvasContainer = () => {
       gestureOrientation: "vertical",
     });
     lenisRef.current = lenis;
+     lenisInstance.current = lenis;
+     // Écouter les événements de scroll de Lenis
+    lenis.on('scroll', (e) => {
+      // e.scroll = position actuelle du scroll
+      // e.velocity = vitesse du scroll
+      // e.direction = direction (1 pour down, -1 pour up)
+      
+      updateScrollDirection(e.scroll, e.velocity);
+
+    });
 
     function raf(time) {
       lenis.raf(time);

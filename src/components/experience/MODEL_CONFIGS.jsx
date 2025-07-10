@@ -39,6 +39,13 @@ ANIMATIONS_TO_PLAY: [
   "Empty.010Action.004",
   "Sphere.010Action",
   "Sphere.011Action",
+  "Ball1",
+  "Ball2",
+  "Ball4",
+  "Ball3",
+  "Ball5",
+  "Sphere.010Action",
+  "Sphere.011Action",
 ],
 }
 

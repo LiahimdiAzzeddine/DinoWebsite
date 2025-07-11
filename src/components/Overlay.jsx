@@ -1,11 +1,13 @@
 import { Typewriter } from "react-simple-typewriter";
 
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import LinkButton from "./ui/LinkButton";
 import NeddleButton from "./ui/NeddleButton";
 import { useNavigate } from "react-router-dom";
+import emailjs from '@emailjs/browser';
+
 
 const Card = ({
   title,
@@ -24,7 +26,7 @@ const Card = ({
 
   // Hook pour détecter la taille d'écran
   const [isDesktop, setIsDesktop] = useState(false);
-let navigate = useNavigate();
+  let navigate = useNavigate();
   useEffect(() => {
     const checkScreenSize = () => {
       setIsDesktop(window.innerWidth >= 1024);
@@ -35,6 +37,7 @@ let navigate = useNavigate();
 
     return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
+
 
   return (
     <motion.div
@@ -52,7 +55,7 @@ let navigate = useNavigate();
         marginLeft: isDesktop ? (right ? "auto" : "calc(100% - 440px - 12vw)") : "auto",
         marginRight: isDesktop ? (right ? "calc(100% - 440px - 12vw)" : "auto") : "auto",
       }}
-   
+
     >
       <div className="wrapper">
         <header>
@@ -63,15 +66,15 @@ let navigate = useNavigate();
         </header>
         <div className="content">
           {paragraphs.map((text, idx) => (
-  <motion.p
-    key={idx}
-    initial={{ opacity: 0, y: 20 }}
-    animate={inView ? { opacity: 1, y: 0 } : {}}
-    transition={{ delay: idx * 0.4, duration: 0.6 }}
-  >
-    {text}
-  </motion.p>
-))}
+            <motion.p
+              key={idx}
+              initial={{ opacity: 0, y: 20 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ delay: idx * 0.4, duration: 0.6 }}
+            >
+              {text}
+            </motion.p>
+          ))}
 
           <div data-v-7479a2c4="">
             {links.map((link, idx) => (
@@ -86,13 +89,13 @@ let navigate = useNavigate();
               />
             ))}
             {buttons.map((button, idx) => (
-              <NeddleButton key={idx}  method={() => {
-                      navigate("/"); // Navigue d'abord à la page d'accueil
-                      setTimeout(() => {
-                        const el = document.getElementById(button.href);
-                        if (el) el.scrollIntoView({ behavior: "smooth" });
-                      }, 200); // Petit délai pour laisser la page charger
-                    }}>
+              <NeddleButton key={idx} method={() => {
+                navigate("/"); // Navigue d'abord à la page d'accueil
+                setTimeout(() => {
+                  const el = document.getElementById(button.href);
+                  if (el) el.scrollIntoView({ behavior: "smooth" });
+                }, 200); // Petit délai pour laisser la page charger
+              }}>
                 {button.title}
               </NeddleButton>
             ))}
@@ -159,6 +162,29 @@ const CardForm = ({ title, subtitle, form, right = false, id }) => {
 };
 
 export const Overlay = () => {
+  const formRef = useRef();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    emailjs
+      .sendForm(
+        'your_service_id', // remplace par ton propre ID
+        'your_template_id', // remplace par ton propre ID
+        formRef.current,
+        'your_public_key' // remplace par ta clé publique
+      )
+      .then(
+        (result) => {
+          console.log('Email envoyé !', result.text);
+          alert('Message sent successfully!');
+        },
+        (error) => {
+          console.error('Erreur :', error.text);
+          alert('Failed to send message.');
+        }
+      );
+  };
 
   return (
     <>
@@ -261,83 +287,103 @@ export const Overlay = () => {
 
           className="section3"
           subtitle="What we can do"
-           right={true}
+          right={true}
           title={<>full game development and co-development</>}
           paragraphs={[
             "From concept to launch or alongside your team we build high performing hybrid casual games with a focus on quality, speed, and scalability",
           ]}
           links={[]}
           buttons={[
-           
+
           ]}
         />
       </div>
 
-      <CardForm
-        id="section6"
-        right={true}
-        title={"Contact Us"}
-        subtitle="Contact Dinomite"
-        form={
-          <>
-            <form className="space-y-6">
-              <div>
-                <label
-                  htmlFor="name"
-                  className="font-normal text-white text-[1.1em] leading-[1.35em] mt-[1.5em] mb-[1em] react-element-1"
-                >
-                  Your Name
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  className="w-full px-4 py-2 rounded-lg bg-[#ffffff18] border border-[#ffffff5e] placeholder-white focus:outline-none focus:ring-2 focus:ring-blue-300"
-                  placeholder="Enter your name"
-                />
-              </div>
+       <CardForm
+      id="section6"
+      right={true}
+      title="Contact Us"
+      subtitle="Contact Dinomite"
+      form={
+        <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label
+              htmlFor="name"
+              className="font-normal text-white text-[1.1em] leading-[1.35em] mt-[1.5em] mb-[1em] react-element-1"
+            >
+              Your Name
+            </label>
+            <input
+              type="text"
+              id="name"
+              name="user_name"
+              className="w-full px-4 py-2 rounded-lg bg-[#ffffff18] border border-[#ffffff5e] placeholder-white focus:outline-none focus:ring-2 focus:ring-blue-300"
+              placeholder="Enter your name"
+              required
+            />
+          </div>
 
-              <div>
-                <label
-                  htmlFor="email"
-                  className="font-normal text-white text-[1.1em] leading-[1.35em] mt-[1.5em] mb-[1em] react-element-1"
-                >
-                  Your Email
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  placeholder="Enter your email"
-                  className="w-full px-4 py-2 rounded-lg bg-[#ffffff18] border border-[#ffffff5e] placeholder-white focus:outline-none focus:ring-2 focus:ring-blue-300"
-                />
-              </div>
+          <div>
+            <label
+              htmlFor="email"
+              className="font-normal text-white text-[1.1em] leading-[1.35em] mt-[1.5em] mb-[1em] react-element-1"
+            >
+              Your Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="user_email"
+              placeholder="Enter your email"
+              className="w-full px-4 py-2 rounded-lg bg-[#ffffff18] border border-[#ffffff5e] placeholder-white focus:outline-none focus:ring-2 focus:ring-blue-300"
+              required
+            />
+          </div>
 
-              <div>
-                <label
-                  htmlFor="message"
-                  className="font-normal text-white text-[1.1em] leading-[1.35em] mt-[1.5em] mb-[1em] react-element-1"
-                >
-                  Your Message
-                </label>
-                <textarea
-                  id="message"
-                  rows="5"
-                  className="w-full px-4 py-2 rounded-lg bg-[#ffffff18] border border-[#ffffff5e] placeholder-white focus:outline-none focus:ring-2 focus:ring-blue-300"
-                  placeholder="Write your message here..."
-                ></textarea>
-              </div>
+          <div>
+            <label
+              htmlFor="business_name"
+              className="font-normal text-white text-[1.1em] leading-[1.35em] mt-[1.5em] mb-[1em] react-element-1"
+            >
+              Business Name <span className="text-white text-sm">(optional)</span>
+            </label>
+            <input
+              type="text"
+              id="business_name"
+              name="business_name"
+              placeholder="Enter your business name"
+              className="w-full px-4 py-2 rounded-lg bg-[#ffffff18] border border-[#ffffff5e] placeholder-white focus:outline-none focus:ring-2 focus:ring-blue-300"
+            />
+          </div>
 
-              <div className="text-center">
-                <button
-                  type="submit"
-                  className="inline-block transition duration-200 bg-[linear-gradient(69deg,_rgb(63,_189,_168),_rgb(63,_177,_39))] hover:bg-[linear-gradient(30deg,_rgb(63,_189,_118),_rgb(63,_167,_39))] text-white sm:rounded-2xl rounded-[10px] px-4 py-2 shadow-[rgba(0,0,0,0.05)_0px_0px_1.3rem_inset]"
-                >
-                  Submit
-                </button>
-              </div>
-            </form>
-          </>
-        }
-      />
+          <div>
+            <label
+              htmlFor="message"
+              className="font-normal text-white text-[1.1em] leading-[1.35em] mt-[1.5em] mb-[1em] react-element-1"
+            >
+              Your Message
+            </label>
+            <textarea
+              id="message"
+              name="message"
+              rows="5"
+              className="w-full px-4 py-2 rounded-lg bg-[#ffffff18] border border-[#ffffff5e] placeholder-white focus:outline-none focus:ring-2 focus:ring-blue-300"
+              placeholder="Write your message here..."
+              required
+            ></textarea>
+          </div>
+
+          <div className="text-center">
+            <button
+              type="submit"
+              className="inline-block transition duration-200 bg-[linear-gradient(69deg,_rgb(63,_189,_168),_rgb(63,_177,_39))] hover:bg-[linear-gradient(30deg,_rgb(63,_189,_118),_rgb(63,_167,_39))] text-white sm:rounded-2xl rounded-[10px] px-4 py-2 shadow-[rgba(0,0,0,0.05)_0px_0px_1.3rem_inset]"
+            >
+              Submit
+            </button>
+          </div>
+        </form>
+      }
+    />
 
     </>
   );

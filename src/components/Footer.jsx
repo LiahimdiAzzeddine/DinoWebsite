@@ -34,7 +34,7 @@ export default function Footer() {
               </div>
               <div className="max-w-[260px]">
                 <p className="text-gray-600 text-sm leading-relaxed">
-                  Powerful development tools to accelerate your workflow and bring your ideas to life.
+                 We build fast innovative and cost effective hybrid-casual games for publishers, investors, and studios worldwide.
                 </p>
               </div>
             </div>

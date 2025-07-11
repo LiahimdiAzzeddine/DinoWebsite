@@ -164,27 +164,29 @@ const CardForm = ({ title, subtitle, form, right = false, id }) => {
 export const Overlay = () => {
   const formRef = useRef();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+ const handleSubmit = (e) => {
+  e.preventDefault();
 
-    emailjs
-      .sendForm(
-        'your_service_id', // remplace par ton propre ID
-        'your_template_id', // remplace par ton propre ID
-        formRef.current,
-        'your_public_key' // remplace par ta clé publique
-      )
-      .then(
-        (result) => {
-          console.log('Email envoyé !', result.text);
-          alert('Message sent successfully!');
-        },
-        (error) => {
-          console.error('Erreur :', error.text);
-          alert('Failed to send message.');
-        }
-      );
-  };
+  emailjs
+    .sendForm(
+      'service_dda5ltk',
+      'template_yygda27',
+      formRef.current,
+      'fnzSxK-E0Bh6su-ER'
+    )
+    .then(
+      (result) => {
+        console.log('Email envoyé !', result.text);
+        alert('Message sent successfully!');
+        formRef.current.reset(); // ✅ vider les champs du formulaire
+      },
+      (error) => {
+        console.error('Erreur :', error.text);
+        alert('Failed to send message.');
+      }
+    );
+};
+
 
   return (
     <>
@@ -316,7 +318,7 @@ export const Overlay = () => {
             <input
               type="text"
               id="name"
-              name="user_name"
+              name="name"
               className="w-full px-4 py-2 rounded-lg bg-[#ffffff18] border border-[#ffffff5e] placeholder-white focus:outline-none focus:ring-2 focus:ring-blue-300"
               placeholder="Enter your name"
               required
@@ -333,7 +335,7 @@ export const Overlay = () => {
             <input
               type="email"
               id="email"
-              name="user_email"
+              name="email"
               placeholder="Enter your email"
               className="w-full px-4 py-2 rounded-lg bg-[#ffffff18] border border-[#ffffff5e] placeholder-white focus:outline-none focus:ring-2 focus:ring-blue-300"
               required

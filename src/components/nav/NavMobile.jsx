@@ -88,7 +88,7 @@ export default function NavMobile() {
              Career
             </Link>
             <a
-              href="https://calendar.app.google/3katng9rENsYB1mg8"
+              href="https://calendar.app.google/EfrYWkBJmL9PdhzP6"
               target="_blank"
               className="no-underline text-center font-bold  nunito bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 border-[1px] border-[rgba(255,255,255,0.1)] rounded-xl p-[0.4rem_1rem] whitespace-nowrap shadow-[rgba(0,0,0,0.03)_0px_7px_0.5rem,_rgba(0,0,0,0.05)_0px_0px_1.3rem_inset] text-white"
             >

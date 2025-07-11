@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import LinkButton from "./ui/LinkButton";
 import NeddleButton from "./ui/NeddleButton";
+import { useNavigate } from "react-router-dom";
 
 const Card = ({
   title,
@@ -23,7 +24,7 @@ const Card = ({
 
   // Hook pour détecter la taille d'écran
   const [isDesktop, setIsDesktop] = useState(false);
-
+let navigate = useNavigate();
   useEffect(() => {
     const checkScreenSize = () => {
       setIsDesktop(window.innerWidth >= 1024);
@@ -85,9 +86,14 @@ const Card = ({
               />
             ))}
             {buttons.map((button, idx) => (
-              <NeddleButton key={idx} href={button.href}>
+              <NeddleButton key={idx}  method={() => {
+                      navigate("/"); // Navigue d'abord à la page d'accueil
+                      setTimeout(() => {
+                        const el = document.getElementById(button.href);
+                        if (el) el.scrollIntoView({ behavior: "smooth" });
+                      }, 200); // Petit délai pour laisser la page charger
+                    }}>
                 {button.title}
-                
               </NeddleButton>
             ))}
           </div>
@@ -178,7 +184,7 @@ export const Overlay = () => {
         links={[]}
         buttons={[
           {
-            href: "#",
+            href: "section6",
             title: "Let’s launch The next hit, together",
           },
         ]}
@@ -203,18 +209,18 @@ export const Overlay = () => {
         className="second-section"
         title={<>40 Million downloads and counting</>}
         paragraphs={[
-          "Join us in celebrating a worldwide milestone: over 40 million downloads across our mobile games.",
+          "Join us in celebrating a worldwide milestone :\n over 40 million downloads across our mobile games.",
           "Our flagship hit, Money Bank 3D, has captivated players and set the bar high for mobile gaming creativity and fun.",
         ]}
         links={[
           {
-            href: "#",
+            href: "https://apps.apple.com/us/app/money-bank-3d/id1523673634",
             title: "App Store",
             imgSrc: "../assets/logos/appStore.webp",
             alt: "Logo ofApp Store",
           },
           {
-            href: "#",
+            href: "https://play.google.com/store/apps/details?id=com.tp.moneybank&hl=en&pli=1",
             title: "Play Store",
             imgSrc: "../assets/logos/play-store.webp",
             alt: "Logo of Play Store",
@@ -234,7 +240,7 @@ export const Overlay = () => {
         links={[]}
         buttons={[
           {
-            href: "#",
+            href: "section6",
             title: "Let discuss your project",
           },
         ]}
@@ -262,10 +268,7 @@ export const Overlay = () => {
           ]}
           links={[]}
           buttons={[
-            {
-              href: "#",
-              title: "Let’s launch The next hit, together",
-            },
+           
           ]}
         />
       </div>

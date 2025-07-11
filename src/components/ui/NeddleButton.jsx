@@ -1,7 +1,7 @@
-const NeddleButton = ({ href = "#", children = "No text" }) => {
+const NeddleButton = ({ children = "No text",method }) => {
   return (
     <a
-      href={href}
+      onClick={method}
        className="
         inline-flex items-center gap-2 
         px-4 py-2 

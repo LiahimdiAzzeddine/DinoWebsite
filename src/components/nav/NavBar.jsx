@@ -23,6 +23,10 @@ export default function NavBar() {
               aria-current="page"
               onClick={() => {
                 navigate("/");
+                 setTimeout(() => {
+                        window.scrollTo({ top: 0, behavior: "smooth" });
+
+                      }, 100);
               }}
               className="rounded-[1em] no-underline text-inherit font-[Nunito_Sans,sans-serif]"
             >
@@ -133,7 +137,7 @@ export default function NavBar() {
                   </Link>
                   <a
                     aria-label="Log in"
-                    href="https://calendar.app.google/3katng9rENsYB1mg8"
+                    href="https://calendar.app.google/EfrYWkBJmL9PdhzP6"
                     target="_blank"
                     className="no-underline font-bold  nunito bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 border-[1px] border-[rgba(255,255,255,0.1)] rounded-xl p-[0.4rem_1rem] whitespace-nowrap shadow-[rgba(0,0,0,0.03)_0px_7px_0.5rem,_rgba(0,0,0,0.05)_0px_0px_1.3rem_inset] text-white mr-[-12px]"
                   >

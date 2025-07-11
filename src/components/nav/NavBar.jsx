@@ -66,7 +66,7 @@ export default function NavBar() {
                       setTimeout(() => {
                         const el = document.getElementById("section2");
                         if (el) el.scrollIntoView({ behavior: "smooth" });
-                      }, 100); // Petit délai pour laisser la page charger
+                      }, 50); // Petit délai pour laisser la page charger
                     }}
                     aria-label="about us"
                     className="border-none cursor-pointer pointer-events-auto bg-none rounded-[1em] p-0 whitespace-nowrap text-teal-900 hover:text-teal-500 outline-offset-[4px] relative shadow-none font-bold"

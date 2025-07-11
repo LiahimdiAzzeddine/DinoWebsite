@@ -12,7 +12,6 @@ import { Observer } from "gsap/Observer";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import * as THREE from "three";
 import { AnimationContext } from "./AnimationContext";
-import { KTX2Loader } from "three/examples/jsm/Addons.js";
 
 gsap.registerPlugin(Observer);
 
@@ -80,7 +79,7 @@ export default function Web2({ sectionID, isActive, ...props }) {
     const target = document.documentElement;
     const observer = Observer.create({
       target,
-      type: "wheel,touch,pointer",
+      type: "wheel,touch,pointer,scroll",
       onChange: (obs) => {
         scrollDirection = obs.deltaY > 0 ? 1 : -1;
         velocityD = Math.abs(obs.velocityY);

@@ -30,7 +30,7 @@ export const ConfettiParticle = ({ position, color, velocity, gravity = -9.8 }) 
   
   return (
     <mesh ref={meshRef} position={position}>
-      <boxGeometry args={[0.02, 0.02, 0.02]} />
+      <boxGeometry args={[0.01, 0.01, 0.01]} />
       <meshBasicMaterial color={color} transparent opacity={life} />
     </mesh>
   );

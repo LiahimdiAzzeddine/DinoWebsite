@@ -18,7 +18,7 @@ import BlogSingle from "./pages/BlogDetail";
 function App() {
   return (
     <Router>
-      <ScrollToTop />
+      {/* <ScrollToTop /> */}
       <AnimationProvider>
         <div className="pages-gradient"></div>
         <main className="overflow-x-hidden">

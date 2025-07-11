@@ -46,6 +46,7 @@ ANIMATIONS_TO_PLAY: [
   "Ball5",
   "Sphere.010Action",
   "Sphere.011Action",
+  "Handanim"
 ],
 }
 

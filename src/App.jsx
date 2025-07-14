@@ -18,14 +18,14 @@ import BlogSingle from "./pages/BlogDetail";
 function App() {
   return (
     <Router>
-      {/* <ScrollToTop /> */}
+      <ScrollToTop />
       <AnimationProvider>
         <div className="pages-gradient"></div>
         <main className="overflow-x-hidden">
           <div className="w-full relative m-auto flex justify-center">
         <NavBar/>
       </div>
-          <Loader/>
+          {/* <Loader/> */}
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />

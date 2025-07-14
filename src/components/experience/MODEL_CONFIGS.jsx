@@ -4,9 +4,9 @@ const MODEL_CONFIGS = {
   web1: {
     url: "./models/web1.glb",
     triggerSection: "#section2",
-    sectioncolor: 0x10b981, // emerald-500 (#10b981)
-    colorA: '#4abeab',  
-    colorB: '#6ac0f1', 
+     sectioncolor: 0x14b8a6, // teal-500 (#14b8a6)
+    colorA: '#d7e0eb',
+    colorB: '#6ac0f1',
   },
   web2: {
     url: "./models/web2.glb",

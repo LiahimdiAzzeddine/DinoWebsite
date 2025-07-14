@@ -2,6 +2,10 @@ import dino from "/src/assets/logos/dinoBlack2.webp";
 import React, { useState } from "react";
 import NavMobile from "./NavMobile";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import gsap from "gsap";
+import { ScrollToPlugin } from "gsap/ScrollToPlugin";
+
+gsap.registerPlugin(ScrollToPlugin);
 
 export default function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -48,13 +52,10 @@ export default function NavBar() {
                   <button
                     aria-label="contact us"
                     className="border-none cursor-pointer pointer-events-auto bg-none rounded-[1em] p-0 whitespace-nowrap text-teal-900 hover:text-teal-500 outline-offset-[4px] relative shadow-none font-bold"
-                    onClick={() => {
-                      navigate("/"); // Navigue d'abord à la page d'accueil
-                      setTimeout(() => {
+                     onClick={()=>{navigate("/");setTimeout(() => {
                         const el = document.getElementById("section6");
                         if (el) el.scrollIntoView({ behavior: "smooth" });
-                      }, 200); // Petit délai pour laisser la page charger
-                    }}
+                      }, 200)}}
                   >
                     contact us
                   </button>

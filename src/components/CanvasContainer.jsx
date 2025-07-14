@@ -23,14 +23,14 @@ export function ModelContainer({ lenis }) {
         isActive={currentModel === "web1"}
         lenis={lenis}
       />
-      <Web2
+       <Web2
         sectionID={"web2"}
         isActive={currentModel === "web2"}
       />
-      <Web3
+      {/* <Web3
         sectionID={"web3"}
         isActive={currentModel === "web3"}
-      />
+      /> */}
     </>
   );
 }

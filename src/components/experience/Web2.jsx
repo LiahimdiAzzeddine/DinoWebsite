@@ -14,7 +14,7 @@ import { AnimationContext } from "./AnimationContext";
 import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 
 // Enregistrer les plugins
-gsap.registerPlugin(ScrollTrigger, ScrollToPlugin,Observer);
+gsap.registerPlugin(ScrollTrigger, ScrollToPlugin, Observer);
 
 
 export default function Web2({ sectionID, isActive, ...props }) {
@@ -44,7 +44,7 @@ export default function Web2({ sectionID, isActive, ...props }) {
   let isTransitioning = false;
   let nextScrollTrigger = null;
   let prevScrollTrigger = null;
-  let scrollDirection = 1;
+  let scrollDirection = -1;
   let velocityD = 0;
   const sceneContainerGroup = useRef();
 
@@ -167,15 +167,7 @@ export default function Web2({ sectionID, isActive, ...props }) {
 
     action.play();
   };
-  let enableWeb3Trigger = () => {
-    // use when scroll is too quick for transitions
-    // this way any section t the end of the scroll could take control and disable the others
-    ScrollTrigger.getAll().forEach((trigger) => {
-      if (trigger.vars.trigger == '#section4') {
-        trigger.enable();
-      }
-    })
-  }
+
   useLayoutEffect(() => {
     sceneDefaultPos = sceneContainerGroup.current.position.y;
     enterAnim = actions["UP"];
@@ -188,9 +180,9 @@ export default function Web2({ sectionID, isActive, ...props }) {
         trigger: "#section3",
         start: "center+=100 bottom",
         end: "center+=200 top",
+        scrub:true,
         markers: false,
         onToggle: ({ isActive }) => {
-           console.log("🚀 ~ mm.add ~ onLeave: onToggle",isActive,scrollDirection)
           if (isActive) {
             disableOtherSections();
             playStaticAnimations();
@@ -201,7 +193,7 @@ export default function Web2({ sectionID, isActive, ...props }) {
                 enableNextSection();
               });
             } else {
-              ScrollTrigger.getById('web2')?.enable();   
+              ScrollTrigger.getById('web2')?.enable();
               playActionOnce("Down2", sectionID, velocityD, () => {
                 enablePrevSection();
               });
@@ -209,7 +201,7 @@ export default function Web2({ sectionID, isActive, ...props }) {
           } else {
             if (scrollDirection === 1) {
               // Sortie vers le bas
-              
+
 
             } else {
               ScrollTrigger.getById('web1')?.disable();
@@ -221,29 +213,38 @@ export default function Web2({ sectionID, isActive, ...props }) {
             }
           }
         },
-        onLeaveBack:()=>{
-        ScrollTrigger.getById('web1')?.disable();
+        onLeaveBack: () => {
+          ScrollTrigger.getById('web1')?.disable();
         },
-        onEnterBack:()=>{
-        ScrollTrigger.getById('web2')?.enable();   
+        onEnterBack: () => {
+          ScrollTrigger.getById('web2')?.enable();
         },
-        onLeave:({ isActive })=>{
-          ScrollTrigger.getById('web3')?.disable();
-           console.log("🚀 ~ mm.add ~ onLeave:",scrollDirection,isActive)
-          if (scrollDirection === 1 && !isActive) {
-                 
-                  playActionOnce("UP2", sectionID, velocityD, () => {
+        onLeave: ({ isActive }) => {
+          console.log("🚀 ~ mm.add ~ onLeave:", scrollDirection, isActive, velocityD)
+          if (Math.abs(velocityD) > 3000) {
+            setCurrentModel("web3");
+            ScrollTrigger.getById('web3')?.enable();
+
+          } else {
+            if (scrollDirection === 1 && !isActive) {
+              playActionOnce("UP2", sectionID, velocityD, () => {
+                console.log("🚀 ~ mm.add ~ onLeave: 🚀 ~ playActionOnce ~ sectionID:", sectionID)
                 enableNextSection();
                 //ScrollTrigger.getById('web2')?.disable();
-                ScrollTrigger.getById('web3')?.enable();   
-                                setCurrentModel("web3");
+                //setCurrentModel("web3");
+                ScrollTrigger.getById('web3')?.enable();
+
               });
             }
+          }
+
+
 
         }
-       
+
 
       });
+
 
       return () => trigger.kill();
     });

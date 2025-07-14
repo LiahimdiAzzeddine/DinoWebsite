@@ -18,11 +18,13 @@ export function ModelContainer({ lenis }) {
   const { currentModel } = useContext(AnimationContext);
   return (
     <>
-      <Web1
+
+       <Web1
         sectionID={"web1"}
         isActive={currentModel === "web1"}
-        lenis={lenis}
       />
+
+     
        <Web2
         sectionID={"web2"}
         isActive={currentModel === "web2"}
@@ -36,9 +38,9 @@ export function ModelContainer({ lenis }) {
 }
 
 // Handles model switching and scene positioning based on scroll
-const SceneManager = ({ lenis }) => {
+const SceneManager = () => {
 
-  return <ModelContainer lenis={lenis} />;
+  return <ModelContainer />;
 };
 
 // Updated CanvasContainer component with gradient background
@@ -49,32 +51,32 @@ export const CanvasContainer = () => {
   const isMobile = /Mobi|Android/i.test(navigator.userAgent);
 
 
-  useEffect(() => {
-    const lenis = new Lenis({
-      duration: 1.5, // Increased for smoother, slower scrolling
-      smoothWheel: true,
-      wheelMultiplier: 0.7, // Reduce wheel speed
-      touchMultiplier: 0.7, // Reduce touch speed
-      infinite: false,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      direction: "vertical",
-      gestureOrientation: "vertical",
-    });
-    lenisRef.current = lenis;
+  // useEffect(() => {
+  //   const lenis = new Lenis({
+  //     duration: 1.5, // Increased for smoother, slower scrolling
+  //     smoothWheel: true,
+  //     wheelMultiplier: 0.7, // Reduce wheel speed
+  //     touchMultiplier: 0.7, // Reduce touch speed
+  //     infinite: false,
+  //     easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+  //     direction: "vertical",
+  //     gestureOrientation: "vertical",
+  //   });
+  //   lenisRef.current = lenis;
 
 
-    function raf(time) {
-      lenis.raf(time);
-      ScrollTrigger.update();
-      requestAnimationFrame(raf);
-    }
+  //   function raf(time) {
+  //     lenis.raf(time);
+  //     ScrollTrigger.update();
+  //     requestAnimationFrame(raf);
+  //   }
 
-    requestAnimationFrame(raf);
+  //   requestAnimationFrame(raf);
 
-    return () => {
-      lenis.destroy();
-    };
-  }, []);
+  //   return () => {
+  //     lenis.destroy();
+  //   };
+  // }, []);
 
   return (
     <div className="absolute top-0 left-0 w-full h-full z-10">
@@ -127,7 +129,7 @@ export const CanvasContainer = () => {
           </Html>
         }
       >
-        <SceneManager lenis={lenisRef.current} />
+        <SceneManager />
       </Suspense>
     </Canvas>
     </div>

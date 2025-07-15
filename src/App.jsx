@@ -25,7 +25,7 @@ function App() {
           <div className="w-full relative m-auto flex justify-center">
         <NavBar/>
       </div>
-          {/* <Loader/> */}
+          <Loader/>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />

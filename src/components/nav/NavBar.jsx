@@ -55,7 +55,7 @@ export default function NavBar() {
                      onClick={()=>{navigate("/");setTimeout(() => {
                         const el = document.getElementById("section6");
                         if (el) el.scrollIntoView({ behavior: "smooth" });
-                      }, 200)}}
+                      }, 500)}}
                   >
                     contact us
                   </button>

@@ -155,7 +155,7 @@ export default function Faqs() {
             onClick={()=>{navigate("/");setTimeout(() => {
                         const el = document.getElementById("section6");
                         if (el) el.scrollIntoView({ behavior: "smooth" });
-                      }, 200)}}
+                      }, 500)}}
               className="no-underline group  px-4 py-2 font-[Nunito_Sans,sans-serif] bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 border-[1px] border-[rgba(255,255,255,0.1)] rounded-xl p-[0.4rem_1rem] whitespace-nowrap shadow-[rgba(0,0,0,0.03)_0px_7px_0.5rem,_rgba(0,0,0,0.05)_0px_0px_1.3rem_inset] text-white mr-[-12px]"
             >
               <span className="flex items-center gap-2">

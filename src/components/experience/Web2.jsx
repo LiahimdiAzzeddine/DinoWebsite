@@ -21,6 +21,7 @@ export default function Web2({ sectionID, isActive, ...props }) {
   const group = useRef()
   const { nodes, materials, animations } = useGLTF('./models/Model2.glb')
   const { actions, mixer } = useAnimations(animations, group)
+  console.log("🚀 ~ Web2 ~ actions:", actions)
   const { setCurrentModel } = useContext(AnimationContext);
   const currentTween = useRef(null);
   // handling screen width change
@@ -73,7 +74,7 @@ export default function Web2({ sectionID, isActive, ...props }) {
   }
 
   let enterAnim = actions["UP"];
-  let leaveAnim = actions["Down"];
+  let leaveAnim = actions["DOWN"];
   let sceneDefaultPos = 0;
 
 
@@ -124,84 +125,111 @@ export default function Web2({ sectionID, isActive, ...props }) {
       prevScrollTrigger.enable();
     }
   };
-  const playActionOnce = (actionName, sectionID, scrollSpeed = 1, onFinishCallback = () => { }) => {
-    if (isTransitioning) return;
+const playActionOnce = (actionName, sectionID, scrollSpeed = 1, onFinishCallback = () => {}) => {
+  if (isTransitioning) return;
 
-    const action = actions[actionName];
-    if (!action) return;
+  const action = actions[actionName];
+  if (!action) return;
 
-    // Liste des animations concernées
-    const animationNames = ["UP", "UP2", "Down", "Down2"];
+  // Animation des nuages liée
+  const cloudActionName = `Clouds_${actionName}`;
+  const cloudAction = actions[cloudActionName];
 
-    // Stopper uniquement les animations opposées
-    animationNames.forEach((name) => {
-      if (name !== actionName && actions[name]) {
-        actions[name].stop();
-      }
-    });
+  // Liste des animations concernées
+  const animationNames = ["UP", "UP2", "DOWN", "DOWN2"];
 
-    isTransitioning = true;
+  // Stopper uniquement les animations opposées
+  animationNames.forEach((name) => {
+    if (name !== actionName && actions[name]) {
+      actions[name].stop();
+    }
+    const cloudName = `Clouds_${name}`;
+    if (cloudName !== cloudActionName && actions[cloudName]) {
+      actions[cloudName].stop();
+    }
+  });
 
-    action.reset().setLoop(THREE.LoopOnce, 1);
-    action.clampWhenFinished = true;
-    action.time = 0;
+  isTransitioning = true;
 
-    const minSpeed = 3;
-    const maxSpeed = 5;
-    const scale = Math.min(Math.max(scrollSpeed / 1000, minSpeed), maxSpeed);
-    console.log("🚀 ~ playActionOnce ~ scale:", scale)
-    //action.timeScale = scale;
-     //Ease timeScale from 0.01 ➝ scale
-  action.timeScale = 0.5;
+  // Préparation de l'action principale
+  action.reset().setLoop(THREE.LoopOnce, 1);
+  action.clampWhenFinished = true;
+  action.time = 0;
+
+  // Préparation de l'action de nuages si elle existe
+  if (cloudAction) {
+    cloudAction.reset().setLoop(THREE.LoopOnce, 1);
+    cloudAction.clampWhenFinished = true;
+    cloudAction.time = 0;
+  }
+
+  const minSpeed =2;
+  const maxSpeed = 5;
+  const scale = Math.min(Math.max(scrollSpeed / 1000, minSpeed), maxSpeed);
+  console.log("🚀 ~ playActionOnce ~ scale:", scale);
+
+  // Appliquer easing à l'action principale
+  action.timeScale = 0.01;
   gsap.to(action, {
     timeScale: scale,
     duration: 0.1,
     ease: "slow(0.7,0.7,false)",
   });
 
-    // ⚠️ Supprime tous les anciens listeners sur "finished"
-    if (mixer && mixer._listeners && mixer._listeners.finished) {
-      mixer._listeners.finished = [];
+  // Appliquer easing à l'action de nuages si elle existe
+  if (cloudAction) {
+    cloudAction.timeScale = 0.5;
+    gsap.to(cloudAction, {
+      timeScale: scale,
+      duration: 0.1,
+      ease: "slow(0.7,0.7,false)",
+    });
+  }
+
+  // Supprimer tous les anciens listeners
+  if (mixer && mixer._listeners && mixer._listeners.finished) {
+    mixer._listeners.finished = [];
+  }
+
+  const onMixerFinished = (e) => {
+    if (e.action === action) {
+      mixer.removeEventListener('finished', onMixerFinished);
+      isTransitioning = false;
+      onFinishCallback();
     }
-    // Déclarer le handler séparément
-    const onMixerFinished = (e) => {
-      if (e.action === action) {
-        mixer.removeEventListener('finished', onMixerFinished); // supprime ce listener
-        //action.fadeOut(0.01);
-        isTransitioning = false;
-        onFinishCallback();
-      }
-    };
-
-    mixer.addEventListener('finished', onMixerFinished); // bon ajout
-
-
-    action.play();
   };
- const detectFastScroll = useCallback((velocity, observerVelocity) => {
+
+  mixer.addEventListener('finished', onMixerFinished);
+
+  // Lancer les deux actions
+  action.play();
+  if (cloudAction) cloudAction.play();
+};
+
+  const detectFastScroll = useCallback((velocity, observerVelocity) => {
     const currentTime = Date.now();
     const timeDiff = currentTime - lastScrollTime;
     lastScrollTime = currentTime;
-    
+
     // Considérer comme rapide si vélocité ScrollTrigger > 2000 OU vélocité Observer > 10000
-    const isFastByVelocity = Math.abs(velocity) > 2000 || Math.abs(observerVelocity) > 10000 || velocity==0 || observerVelocity==0;
+    const isFastByVelocity = Math.abs(velocity) > 2000 || Math.abs(observerVelocity) > 10000 || velocity == 0 || observerVelocity == 0;
     const isFastByTime = timeDiff < 16;
-    
-    console.log('DetectFastScroll:', { 
-      velocity, 
-      observerVelocity, 
-      timeDiff, 
-      isFastByVelocity, 
-      isFastByTime 
+
+    console.log('DetectFastScroll:', {
+      velocity,
+      observerVelocity,
+      timeDiff,
+      isFastByVelocity,
+      isFastByTime
     });
-    
+
     return isFastByVelocity || isFastByTime;
   }, []);
 
   useLayoutEffect(() => {
     sceneDefaultPos = sceneContainerGroup.current.position.y;
     enterAnim = actions["UP"];
-    leaveAnim = actions["Down"];
+    leaveAnim = actions["DOWN"];
     const mm = gsap.matchMedia();
 
     mm.add("(min-width: 768px)", () => {
@@ -210,7 +238,7 @@ export default function Web2({ sectionID, isActive, ...props }) {
         trigger: "#section3",
         start: "center+=100 bottom",
         end: "center+=200 top",
-        scrub:true,
+        scrub: true,
         markers: false,
         onToggle: ({ isActive }) => {
           if (isActive) {
@@ -224,7 +252,7 @@ export default function Web2({ sectionID, isActive, ...props }) {
               });
             } else {
               ScrollTrigger.getById('web2')?.enable();
-              playActionOnce("Down2", sectionID, velocityD, () => {
+              playActionOnce("DOWN2", sectionID, velocityD, () => {
                 enablePrevSection();
               });
             }
@@ -236,16 +264,16 @@ export default function Web2({ sectionID, isActive, ...props }) {
             } else {
               ScrollTrigger.getById('web1')?.disable();
               // Sortie vers le haut
-              playActionOnce("Down", sectionID, velocityD, () => {
+              playActionOnce("DOWN", sectionID, velocityD, () => {
                 enablePrevSection();
               });
 
             }
           }
         },
-   
-    
-    
+
+
+
         onLeaveBack: () => {
           console.log(`${sectionID} onLeaveBack`);
           const web1Trigger = ScrollTrigger.getById('web1');
@@ -258,16 +286,16 @@ export default function Web2({ sectionID, isActive, ...props }) {
           if (web2Trigger) web2Trigger.enable();
         },
 
-         onLeave: ({ isActive, getVelocity }) => {
+        onLeave: ({ isActive, getVelocity }) => {
           const currentVelocity = getVelocity();
           const isFastScroll = detectFastScroll(currentVelocity, velocityD);
-          
-          console.log("onLeave:", { 
-            scrollDirection, 
-            velocityD, 
+
+          console.log("onLeave:", {
+            scrollDirection,
+            velocityD,
             currentVelocity,
             isFastScroll,
-            isActive 
+            isActive
           });
 
           // Conditions pour activer web3
@@ -279,7 +307,7 @@ export default function Web2({ sectionID, isActive, ...props }) {
             setCurrentModel("web3");
             const web3Trigger = ScrollTrigger.getById('web3');
             if (web3Trigger) web3Trigger.enable();
-            
+
             // Forcer l'activation si on est en direction descendante
             if (scrollDirection === 1) {
               playActionOnce("UP2", scrollDirection, velocityD, () => {
@@ -291,7 +319,7 @@ export default function Web2({ sectionID, isActive, ...props }) {
             console.log("🚀 Scroll normal - gestion standard");
             const web3Trigger = ScrollTrigger.getById('web3');
             if (web3Trigger) web3Trigger.disable();
-            
+
             if (scrollDirection === 1 && !isActive) {
               playActionOnce("UP2", scrollDirection, velocityD, () => {
                 enableNextSection();
@@ -358,8 +386,8 @@ export default function Web2({ sectionID, isActive, ...props }) {
                 enableNextSection();
               });
             } else {
-              // playActionOnce("Down2", sectionID, velocityD);
-              playActionOnce("Down2", sectionID, velocityD, () => {
+              // playActionOnce("DOWN2", sectionID, velocityD);
+              playActionOnce("DOWN2", sectionID, velocityD, () => {
                 enablePrevSection();
               });
             }
@@ -371,7 +399,7 @@ export default function Web2({ sectionID, isActive, ...props }) {
               });
             } else {
               // Sortie vers le haut
-              playActionOnce("Down", sectionID, velocityD, () => {
+              playActionOnce("DOWN", sectionID, velocityD, () => {
                 enablePrevSection();
               });
 
@@ -410,34 +438,34 @@ export default function Web2({ sectionID, isActive, ...props }) {
             position-y={viewport.width < 5 ? -0.19 : 0}
           >
             <group
-              name="Armature001"
-              position={[-0.014, 0.129, -0.036]}
-              rotation={[0.077, 1.536, -0.317]}
-              scale={0.051}>
-              <group name="Retopo_Sphere001">
-                <skinnedMesh
-                  name="mesh001"
-                  geometry={nodes.mesh001.geometry}
-                  material={materials['Material.016']}
-                  skeleton={nodes.mesh001.skeleton}
-                />
-                <skinnedMesh
-                  name="mesh001_1"
-                  geometry={nodes.mesh001_1.geometry}
-                  material={materials.pants}
-                  skeleton={nodes.mesh001_1.skeleton}
-                />
-                <skinnedMesh
-                  name="mesh001_2"
-                  geometry={nodes.mesh001_2.geometry}
-                  material={materials.skin}
-                  skeleton={nodes.mesh001_2.skeleton}
-                />
-              </group>
-              <primitive object={nodes.Bone} />
-              <primitive object={nodes.Bone007} />
-              <primitive object={nodes.Bone008} />
+            name="Armature001"
+            position={[-0.014, 0.129, -0.036]}
+            rotation={[0.077, 1.536, -0.317]}
+            scale={0.051}>
+            <group name="Retopo_Sphere001">
+              <skinnedMesh
+                name="mesh001"
+                geometry={nodes.mesh001.geometry}
+                material={materials['Material.016']}
+                skeleton={nodes.mesh001.skeleton}
+              />
+              <skinnedMesh
+                name="mesh001_1"
+                geometry={nodes.mesh001_1.geometry}
+                material={materials.pants}
+                skeleton={nodes.mesh001_1.skeleton}
+              />
+              <skinnedMesh
+                name="mesh001_2"
+                geometry={nodes.mesh001_2.geometry}
+                material={materials.skin}
+                skeleton={nodes.mesh001_2.skeleton}
+              />
             </group>
+            <primitive object={nodes.Bone} />
+            <primitive object={nodes.Bone007} />
+            <primitive object={nodes.Bone008} />
+          </group>
             <group
               name="BallonHotAir"
               position={[-2.232, 0.699, 0.379]}
@@ -591,19 +619,19 @@ export default function Web2({ sectionID, isActive, ...props }) {
               position={[-0.011, 0.279, 0.028]}
               rotation={[0.831, 1.513, -0.007]}
               scale={0.041}>
-              <group
-                name="Armature"
-                position={[0.239, 0.054, 0.33]}
-                rotation={[1.601, 0.618, 1.507]}
-                scale={3.568}>
-                <skinnedMesh
-                  name="Cube"
-                  geometry={nodes.Cube.geometry}
-                  material={materials.Blackk}
-                  skeleton={nodes.Cube.skeleton}
-                />
-                <primitive object={nodes.Bone_1} />
-              </group>
+                 <group
+              name="Armature"
+              position={[0.239, 0.054, 0.33]}
+              rotation={[1.601, 0.618, 1.507]}
+              scale={3.568}>
+              <skinnedMesh
+                name="Cube"
+                geometry={nodes.Cube.geometry}
+                material={materials.Blackk}
+                skeleton={nodes.Cube.skeleton}
+              />
+              <primitive object={nodes.Bone_1} />
+            </group>
               <mesh
                 name="Cube001"
                 castShadow
@@ -644,17 +672,9 @@ export default function Web2({ sectionID, isActive, ...props }) {
                   material={materials['Material.008']}
                 />
               </group>
+             
             </group>
-            <mesh
-              name="Sphere001"
-              castShadow
-              receiveShadow
-              geometry={nodes.Sphere001.geometry}
-              material={nodes.Sphere001.material}
-              position={[-0.561, 1.904, 0.309]}
-              rotation={[Math.PI, 0, Math.PI]}
-              scale={[0.069, 0.117, 0.117]}
-            />
+           
             <mesh
               name="Sphere002"
               castShadow
@@ -695,15 +715,8 @@ export default function Web2({ sectionID, isActive, ...props }) {
                 scale={0.43}
               />
             </mesh>
-            <mesh
-              name="Sphere014"
-              castShadow
-              receiveShadow
-              geometry={nodes.Sphere014.geometry}
-              material={nodes.Sphere014.material}
-              position={[-0.561, 0.624, -0.44]}
-              scale={[0.069, 0.117, 0.117]}
-            />
+           
+          
           </group>
         </group>
         <PerspectiveCamera
@@ -715,6 +728,27 @@ export default function Web2({ sectionID, isActive, ...props }) {
           position={[23.089, 1.705, 1.436]}
           rotation={[0, 1.571, 0]}
         />
+         <group name="Cloudes" position={[0, 16.072, 0]} scale={6.534}>
+          <mesh
+            name="Sphere001"
+            castShadow
+            receiveShadow
+            geometry={nodes.Sphere001.geometry}
+            material={nodes.Sphere001.material}
+            position={[-0.267, 0.905, 0.147]}
+            rotation={[Math.PI, 0, Math.PI]}
+            scale={[0.033, 0.056, 0.056]}
+          />
+          <mesh
+            name="Sphere014"
+            castShadow
+            receiveShadow
+            geometry={nodes.Sphere014.geometry}
+            material={nodes.Sphere014.material}
+            position={[-0.267, 0.297, -0.209]}
+            scale={[0.033, 0.056, 0.056]}
+          />
+        </group>
       </group>
     </group>
   )

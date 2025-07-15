@@ -58,7 +58,7 @@ useEffect(() => {
     infinite: false,
     easing: (t) => {
       const friction = 1;
-      return 	1 - Math.pow(1 - t, 1.6) * friction;
+      return 	1 - Math.pow(1 - t, 1.8) * friction;
     },
     direction: "vertical",
     gestureOrientation: "vertical",

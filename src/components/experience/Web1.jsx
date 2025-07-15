@@ -264,7 +264,7 @@ export default function Web1({ sectionID, isActive, ...props }) {
         trigger: "#section1",
         start: "top bottom",            // quand la base de section1 atteint le bas du viewport
         endTrigger: "#section3",           // noued de fin placé sur section2
-        end: "center+=90 bottom",           // quand le centre de section2 atteint 100px sous le haut du viewport
+        end: "center+=95 bottom",           // quand le centre de section2 atteint 100px sous le haut du viewport
         scrub: true,
         onToggle: ({ isActive }) => {
           if (isActive) {

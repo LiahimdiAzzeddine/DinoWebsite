@@ -116,25 +116,33 @@ export default function Web1({ sectionID, isActive, ...props }) {
       const minSpeed = 2;
       const maxSpeed = 5;
       const scale = Math.min(Math.max(Math.abs(scrollSpeed / 1000), minSpeed), maxSpeed);
-      action.timeScale = scale;
 
-      // ⚠️ Supprime tous les anciens listeners sur "finished"
+      // Démarrage doux
+      action.timeScale = 0.5;
+      gsap.to(action, {
+        timeScale: scale,
+        duration:0.1,
+        ease: "slow(0.7,0.7,false)",
+            overwrite: true,
+      });
+
       if (mixer && mixer._listeners && mixer._listeners.finished) {
         mixer._listeners.finished = [];
       }
-      // Déclarer le handler séparément
+
       const onMixerFinished = (e) => {
         if (e.action === action) {
-          mixer.removeEventListener('finished', onMixerFinished); // supprime ce listener
+          mixer.removeEventListener('finished', onMixerFinished);
           isTransitioning = false;
           onFinishCallback();
         }
       };
 
-      mixer.addEventListener('finished', onMixerFinished); // bon ajout
+      mixer.addEventListener('finished', onMixerFinished);
 
       action.play();
     };
+
 
     // MOBILE
     mm.add("(max-width: 767px)", () => {
@@ -257,7 +265,7 @@ export default function Web1({ sectionID, isActive, ...props }) {
         start: "top bottom",            // quand la base de section1 atteint le bas du viewport
         endTrigger: "#section3",           // noued de fin placé sur section2
         end: "center+=90 bottom",           // quand le centre de section2 atteint 100px sous le haut du viewport
-        scrub:true,
+        scrub: true,
         onToggle: ({ isActive }) => {
           if (isActive) {
             setCurrentModel(sectionID);

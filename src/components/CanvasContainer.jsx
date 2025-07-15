@@ -29,10 +29,10 @@ export function ModelContainer({ lenis }) {
         sectionID={"web2"}
         isActive={currentModel === "web2"}
       />
-      {/* <Web3
+      <Web3
         sectionID={"web3"}
         isActive={currentModel === "web3"}
-      /> */}
+      />
     </>
   );
 }
@@ -49,34 +49,36 @@ export const CanvasContainer = () => {
   const lenisRef = useRef(null);
   const [dpr, setDpr] = useState(0.7);
   const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+useEffect(() => {
+  const lenis = new Lenis({
+    duration: 1,
+    smoothWheel: true,
+    wheelMultiplier: 0.75, // Reduce mouse wheel scroll speed
+    touchMultiplier: 0.75,
+    infinite: false,
+    easing: (t) => {
+      const friction = 1;
+      return 	1 - Math.pow(1 - t, 1.6) * friction;
+    },
+    direction: "vertical",
+    gestureOrientation: "vertical",
+  });
 
+  lenisRef.current = lenis;
 
-  // useEffect(() => {
-  //   const lenis = new Lenis({
-  //     duration: 1.5, // Increased for smoother, slower scrolling
-  //     smoothWheel: true,
-  //     wheelMultiplier: 0.7, // Reduce wheel speed
-  //     touchMultiplier: 0.7, // Reduce touch speed
-  //     infinite: false,
-  //     easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-  //     direction: "vertical",
-  //     gestureOrientation: "vertical",
-  //   });
-  //   lenisRef.current = lenis;
+  function raf(time) {
+    lenis.raf(time);
+    ScrollTrigger.update();
+    requestAnimationFrame(raf);
+  }
 
+  requestAnimationFrame(raf);
 
-  //   function raf(time) {
-  //     lenis.raf(time);
-  //     ScrollTrigger.update();
-  //     requestAnimationFrame(raf);
-  //   }
+  return () => {
+    lenis.destroy();
+  };
+}, []);
 
-  //   requestAnimationFrame(raf);
-
-  //   return () => {
-  //     lenis.destroy();
-  //   };
-  // }, []);
 
   return (
     <div className="absolute top-0 left-0 w-full h-full z-10">

@@ -100,7 +100,6 @@ export default function Web3({ sectionID, isActive, ...props }) {
   const group = useRef();
   const ManRef = useRef();
   const rocketRef = useRef();
-  const emitterRef = useRef();
   const currentTween = useRef(null);
   const sceneContainerGroup = useRef();
   const armatureRef = useRef();
@@ -111,6 +110,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
   let scrollDirection = 'Up';
   let velocityD = 0;
   let isTransitioning = false;
+    let lastScrollTime = 0;
 
 
   // GLTF loading and setup
@@ -176,12 +176,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
     });
   }, []);
 
-  const killTween = () => {
-    if (currentTween.current) {
-      currentTween.current.kill();
-      currentTween.current = null;
-    }
-  };
+
 
   const playIntroAnimations = useCallback((reversed = false) => {
     scaleManToOriginalSize();
@@ -190,6 +185,26 @@ export default function Web3({ sectionID, isActive, ...props }) {
       ANIMATION_GROUPS.FIRST.forEach((name) => actions[name]?.reset().play());
       actions["Armature.001Action"]?.reset().play();
     }
+  }, []);
+
+   const detectFastScroll = useCallback((velocity, observerVelocity) => {
+    const currentTime = Date.now();
+    const timeDiff = currentTime - lastScrollTime;
+    lastScrollTime = currentTime;
+    
+    // Considérer comme rapide si vélocité ScrollTrigger > 2000 OU vélocité Observer > 10000
+    const isFastByVelocity = Math.abs(velocity) > 2000 || Math.abs(observerVelocity) > 10000 || velocity==0 || observerVelocity==0;
+    const isFastByTime = timeDiff < 16;
+    
+    console.log('DetectFastScroll:', { 
+      velocity, 
+      observerVelocity, 
+      timeDiff, 
+      isFastByVelocity, 
+      isFastByTime 
+    });
+    
+    return isFastByVelocity || isFastByTime;
   }, []);
 
   // Scroll trigger management
@@ -340,7 +355,15 @@ export default function Web3({ sectionID, isActive, ...props }) {
     const minSpeed = 2;
     const maxSpeed = 5;
     const scale = Math.min(Math.max(Math.abs(scrollSpeed / 1000), minSpeed), maxSpeed);
-    action.timeScale = scale;
+    //action.timeScale = scale;
+
+    action.timeScale = 0.5;
+      gsap.to(action, {
+        timeScale: scale,
+        duration:0.1,
+        ease: "slow(0.7,0.7,false)",
+            overwrite: true,
+      });
 
     // ⚠️ Supprime tous les anciens listeners sur "finished"
     if (mixer && mixer._listeners && mixer._listeners.finished) {
@@ -371,10 +394,13 @@ export default function Web3({ sectionID, isActive, ...props }) {
     let armatureTrigger = null;
 
     mm.add("(min-width: 768px)", () => {
+        setTimeout(() => {
+      ScrollTrigger.getById('web3')?.refresh();
+    }, 100);
       mainTrigger = ScrollTrigger.create({
         id: sectionID,
         trigger: "#section3",
-        start: "center+=250 top",
+        start: "center+=220 top",
         endTrigger: "#section5",
         end: "center bottom",
         //preventClicks: true,
@@ -394,45 +420,27 @@ export default function Web3({ sectionID, isActive, ...props }) {
               playIntroAnimations();
 
             } else {
-              //setCurrentModel(sectionID);
-              // disableOtherSections();
             }
 
           } else {
             if (actionName == "Down") {
-              // playIntroAnimations(true);
-              //           const enterAnimation = actions["Up"];
-              //           if (Math.abs(getVelocity()) <= 2000 && enterAnimation) {
-              //             setTimeout(() => {
-              //               if (prevScrollTrigger.current) {
-              //                 prevScrollTrigger.current.enable();
-              //               }
-              //             }, enterAnimation.getClip().duration * 1000);
-              //           } else {
-              //             enableOtherSections();
-              //           }
+
             }
 
           }
           const onFinishCallback = () => {
-            console.log("🚀 ~ playActionOnce ~ action:", velocityD)
 
             if (actionName == "Down") {
               if (prevScrollTrigger.current) {
                 prevScrollTrigger.current.enable();
 
               }
-              if (Math.abs(velocityD) > 5000) {
-                ScrollTrigger.getById('web1')?.enable();
-              }
+             
 
             }
           };
 
           if (!(scrollDirection == "Down" && isActive) && !(scrollDirection == "Up" && !isActive)) {
-            //   if(Math.abs(velocityD)> 8000){
-            //   ScrollTrigger.getById('web2')?.refresh(); 
-            //   }
             playActionOnce(actionName, sectionID, velocityD, onFinishCallback);
           }
 
@@ -440,38 +448,22 @@ export default function Web3({ sectionID, isActive, ...props }) {
 
 
         },
-        onEnter: ({ isActive }) => {
-          // setCurrentModel(sectionID);
-          // disableOtherSections();
-          // resetAllActions();
-          // playIntroAnimations();
-          // ScrollTrigger.getById('web3_secondary')?.refresh();
-        },
-        onEnterBack: () => {
-          // setCurrentModel(sectionID);
-          // disableOtherSections();
-          //resetAllActions();
-          // playIntroAnimations(true);
-        },
-        onLeaveBack: (self) => {
-          // playIntroAnimations(true);
-          // const enterAnimation = actions["Up"];
-          // if (Math.abs(self.getVelocity()) <= 2000 && enterAnimation) {
-          //   setTimeout(() => {
-          //     if (prevScrollTrigger.current) {
-          //       prevScrollTrigger.current.enable();
-          //     }
-          //   }, enterAnimation.getClip().duration * 1000);
-          // } else {
-          //   enableOtherSections();
-          // }
-        },
+        onLeave:()=>{
+          console.log("🚀 ~ mm.add ~ onLeave:")
+          if(velocityD==0 && scrollDirection=="Up"){
+           playActionOnce("Up", sectionID, 200000, ()=>{console.log("worked"),playIntroAnimations();}); 
+           
+          }
+        }
 
       });
       return () => mainTrigger.kill();
     });
     // Secondary scroll trigger
     mm.add("(min-width: 767px)", () => {
+        setTimeout(() => {
+      ScrollTrigger.getById('web3_secondary')?.refresh();
+    }, 100);
       secondaryTrigger = ScrollTrigger.create({
         id: sectionID + "_secondary",
         trigger: "#section5",
@@ -509,9 +501,14 @@ export default function Web3({ sectionID, isActive, ...props }) {
         //   }
         // },
         onEnter: (self) => {
+          const currentVelocity = self.getVelocity();
+          const isFastScroll = detectFastScroll(currentVelocity, velocityD);
+        
+          const shouldActivate = isFastScroll || Math.abs(currentVelocity) > 2000 || velocityD > 10000;
+
           setCurrentModel(sectionID);
           disableOtherSections();
-          if (Math.abs(self.getVelocity()) > 1000) {
+          if (shouldActivate) {
             setTimeout(() => {
               handleScrollAnimations();
             }, 100);
@@ -521,8 +518,12 @@ export default function Web3({ sectionID, isActive, ...props }) {
 
         },
         onLeaveBack: (self) => {
+          const currentVelocity = self.getVelocity();
+          const isFastScroll = detectFastScroll(currentVelocity, velocityD);
+        
+          const shouldActivate = isFastScroll || Math.abs(currentVelocity) > 2000 || velocityD > 10000;
           handleScrollAnimationsReverse();
-          if (Math.abs(self.getVelocity()) > 2000) {
+          if (shouldActivate) {
             enableOtherSections();
           }
         },
@@ -530,9 +531,71 @@ export default function Web3({ sectionID, isActive, ...props }) {
           handleProgressUpdate(self.progress);
         },
         onLeave: () => {
+          ScrollTrigger.getById('web3_armatureMove')?.enable()
         }
       });
       return () => secondaryTrigger.kill();
+    });
+     mm.add("(min-width: 768px)", () => {
+
+      const startY = armatureRef.current.position.y;
+      const adjustedStartY = startY - 0.06;
+      const endY = adjustedStartY + 0.2;
+
+   // Vérifier si c'est un refresh en utilisant sessionStorage
+
+    setTimeout(() => {
+      ScrollTrigger.getById('web3_armatureMove')?.refresh();
+    }, 100);
+  
+
+      //Armature movement trigger
+      armatureTrigger = ScrollTrigger.create({
+        id: sectionID + "_armatureMove",
+        trigger: SCROLL_TRIGGERS.ARMATURE.trigger,
+        start: SCROLL_TRIGGERS.ARMATURE.start,
+        end: SCROLL_TRIGGERS.ARMATURE.end,
+        scrub: true,
+        markers: false,
+
+        onEnter: () => {
+          console.log("🚀 ~ mm.add ~ onEnter:")
+          setCurrentModel(sectionID);
+          disableOtherSections();
+          armatureRef.current.position.y = adjustedStartY;
+          if (armatureRef.current) {
+            gsap.to(armatureRef.current.scale, {
+              x: 0.03,
+              y: 0.03,
+              z: 0.03,
+              duration: 1,
+              ease: "back.out",
+            });
+          }
+        },
+
+        onUpdate: (self) => {
+          console.log("🚀 ~ mm.add ~ onEnter:",armatureRef.current)
+          if (armatureRef.current) {
+            // Interpolation selon le scroll progress
+            armatureRef.current.position.y = gsap.utils.interpolate(adjustedStartY, endY, self.progress);
+
+          }
+        },
+        onLeaveBack: () => {
+          if (armatureRef.current) {
+            armatureRef.current.position.y = startY;
+            gsap.to(armatureRef.current.scale, {
+              x: 0,
+              y: 0,
+              z: 0,
+              duration: 0.1,
+              ease: "power2.inOut",
+            });
+          }
+        },
+      });
+      return () => armatureTrigger.kill();
     });
 
     // Cleanup function
@@ -557,9 +620,6 @@ export default function Web3({ sectionID, isActive, ...props }) {
 
   return (
     <group ref={group} {...props} dispose={null} visible={isActive}>
-
-
-
       <group
         name="Scene"
         ref={sceneContainerGroup}
@@ -621,7 +681,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
             ref={armatureRef}
             position={[2.076, -0.648, -0.278]}
             rotation={[0, 1.107, 0]}
-            scale={0.036}>
+            scale={0.03}>
             <group name="Retopo_Sphere002">
               <skinnedMesh
                 name="mesh003"

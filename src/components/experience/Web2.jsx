@@ -178,9 +178,10 @@ const playActionOnce = (actionName, sectionID, scrollSpeed = 1, onFinishCallback
 
   // Appliquer easing à l'action de nuages si elle existe
   if (cloudAction) {
-    cloudAction.timeScale = 0.5;
+    cloudAction.timeScale = 2;
+    console.log("🚀 ~ playActionOnce ~ cloudAction:", cloudAction.time)
     gsap.to(cloudAction, {
-      timeScale: scale,
+      timeScale: scale+(scale/10),
       duration: 0.1,
       ease: "slow(0.7,0.7,false)",
     });
@@ -271,8 +272,6 @@ const playActionOnce = (actionName, sectionID, scrollSpeed = 1, onFinishCallback
             }
           }
         },
-
-
 
         onLeaveBack: () => {
           console.log(`${sectionID} onLeaveBack`);
@@ -728,16 +727,16 @@ const playActionOnce = (actionName, sectionID, scrollSpeed = 1, onFinishCallback
           position={[23.089, 1.705, 1.436]}
           rotation={[0, 1.571, 0]}
         />
-         <group name="Cloudes" position={[0, 16.072, 0]} scale={6.534}>
+         <group name="Cloudes" position={[0, -23.006, 0]} scale={6.534}>
           <mesh
             name="Sphere001"
             castShadow
             receiveShadow
             geometry={nodes.Sphere001.geometry}
             material={nodes.Sphere001.material}
-            position={[-0.267, 0.905, 0.147]}
+           position={[-0.561, 1.941, 0.309]}
             rotation={[Math.PI, 0, Math.PI]}
-            scale={[0.033, 0.056, 0.056]}
+            scale={[0.069, 0.117, 0.117]}
           />
           <mesh
             name="Sphere014"
@@ -745,8 +744,8 @@ const playActionOnce = (actionName, sectionID, scrollSpeed = 1, onFinishCallback
             receiveShadow
             geometry={nodes.Sphere014.geometry}
             material={nodes.Sphere014.material}
-            position={[-0.267, 0.297, -0.209]}
-            scale={[0.033, 0.056, 0.056]}
+            position={[-0.561, -1.054, -0.44]}
+            scale={[0.069, 0.117, 0.117]}
           />
         </group>
       </group>

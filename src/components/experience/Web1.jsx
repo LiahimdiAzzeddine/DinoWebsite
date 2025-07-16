@@ -294,6 +294,8 @@ export default function Web1({ sectionID, isActive, ...props }) {
               }, 500);
             }
             if (actionName === "UP") {
+              const web2Trigger = ScrollTrigger.getById('web2');
+          if (web2Trigger) web2Trigger.enable();
               setCurrentModel("web2");
               if (nextScrollTrigger) {
                 nextScrollTrigger?.enable();
@@ -301,6 +303,11 @@ export default function Web1({ sectionID, isActive, ...props }) {
             }
 
           };
+          if(actionName=="UP"){
+            const web2Trigger = ScrollTrigger.getById('web2');
+          if (web2Trigger) web2Trigger.disable();
+          }
+          
 
           playActionOnce(actionName, sectionID, velocityD, onFinishCallback);
 

@@ -539,8 +539,8 @@ export default function Web3({ sectionID, isActive, ...props }) {
      mm.add("(min-width: 768px)", () => {
 
       const startY = armatureRef.current.position.y;
-      const adjustedStartY = startY - 0.06;
-      const endY = adjustedStartY + 0.2;
+      const adjustedStartY = startY + 0.01;
+      const endY = adjustedStartY+0.05;
 
    // Vérifier si c'est un refresh en utilisant sessionStorage
 

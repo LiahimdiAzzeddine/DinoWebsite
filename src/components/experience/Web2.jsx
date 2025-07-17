@@ -21,7 +21,6 @@ export default function Web2({ sectionID, isActive, ...props }) {
   const group = useRef()
   const { nodes, materials, animations } = useGLTF('./models/Model2.glb')
   const { actions, mixer } = useAnimations(animations, group)
-  console.log("🚀 ~ Web2 ~ actions:", actions)
   const { setCurrentModel } = useContext(AnimationContext);
   const currentTween = useRef(null);
   // handling screen width change
@@ -102,9 +101,7 @@ export default function Web2({ sectionID, isActive, ...props }) {
       actions[name]?.reset().play();
     });
 
-    smoothAnimations.forEach((name) => {
-      actions[name]?.reset().setEffectiveTimeScale(0.2).play();
-    });
+   
   }
   useEffect(() => {
     const mediaQuery = window.matchMedia("(max-width: 767px)");
@@ -127,6 +124,9 @@ export default function Web2({ sectionID, isActive, ...props }) {
   };
 const playActionOnce = (actionName, sectionID, scrollSpeed = 1, onFinishCallback = () => {}) => {
   if (isTransitioning) return;
+   smoothAnimations.forEach((name) => {
+      actions[name]?.stop();
+    });
 
   const action = actions[actionName];
   if (!action) return;
@@ -136,7 +136,7 @@ const playActionOnce = (actionName, sectionID, scrollSpeed = 1, onFinishCallback
   const cloudAction = actions[cloudActionName];
 
   // Liste des animations concernées
-  const animationNames = ["UP", "UP2", "DOWN", "DOWN2"];
+  const animationNames = ["UP", "UP_2", "DOWN", "DOWN_2"];
 
   // Stopper uniquement les animations opposées
   animationNames.forEach((name) => {
@@ -166,7 +166,6 @@ const playActionOnce = (actionName, sectionID, scrollSpeed = 1, onFinishCallback
   const minSpeed =2;
   const maxSpeed = 5;
   const scale = Math.min(Math.max(scrollSpeed / 1000, minSpeed), maxSpeed);
-  console.log("🚀 ~ playActionOnce ~ scale:", scale);
 
   // Appliquer easing à l'action principale
   action.timeScale = 0.01;
@@ -177,15 +176,15 @@ const playActionOnce = (actionName, sectionID, scrollSpeed = 1, onFinishCallback
   });
 
   // Appliquer easing à l'action de nuages si elle existe
-  if (cloudAction) {
-    cloudAction.timeScale = 2;
-    console.log("🚀 ~ playActionOnce ~ cloudAction:", cloudAction.time)
-    gsap.to(cloudAction, {
-      timeScale: scale+(scale/10),
-      duration: 0.1,
-      ease: "slow(0.7,0.7,false)",
-    });
-  }
+  // if (cloudAction) {
+  //   cloudAction.timeScale =2;
+  //   console.log("🚀 ~ playActionOnce ~ cloudAction:", cloudAction.time)
+  //   gsap.to(cloudAction, {
+  //     timeScale: scale,
+  //     duration: 0.1,
+  //     ease: "slow(0.7,0.7,false)",
+  //   });
+  // }
 
   // Supprimer tous les anciens listeners
   if (mixer && mixer._listeners && mixer._listeners.finished) {
@@ -198,13 +197,22 @@ const playActionOnce = (actionName, sectionID, scrollSpeed = 1, onFinishCallback
       isTransitioning = false;
       onFinishCallback();
     }
+    if(actionName=="DOWN_2" || actionName=="UP"){
+     smoothAnimations.forEach((name) => {
+      actions[name]?.reset().setEffectiveTimeScale(0.2).play();
+    }); 
+    }
+     
   };
 
   mixer.addEventListener('finished', onMixerFinished);
 
   // Lancer les deux actions
   action.play();
-  if (cloudAction) cloudAction.play();
+  // if (cloudAction){
+  //   cloudAction.play()
+  
+  // };
 };
 
   const detectFastScroll = useCallback((velocity, observerVelocity) => {
@@ -242,6 +250,7 @@ const playActionOnce = (actionName, sectionID, scrollSpeed = 1, onFinishCallback
         scrub: true,
         markers: false,
         onToggle: ({ isActive }) => {
+          
           if (isActive) {
             disableOtherSections();
             playStaticAnimations();
@@ -253,7 +262,7 @@ const playActionOnce = (actionName, sectionID, scrollSpeed = 1, onFinishCallback
               });
             } else {
               ScrollTrigger.getById('web2')?.enable();
-              playActionOnce("DOWN2", sectionID, velocityD, () => {
+              playActionOnce("DOWN_2", sectionID, velocityD, () => {
                 enablePrevSection();
               });
             }
@@ -261,8 +270,9 @@ const playActionOnce = (actionName, sectionID, scrollSpeed = 1, onFinishCallback
             if (scrollDirection === 1) {
               // Sortie vers le bas
 
-
             } else {
+                            
+
               ScrollTrigger.getById('web1')?.disable();
               // Sortie vers le haut
               playActionOnce("DOWN", sectionID, velocityD, () => {
@@ -302,14 +312,13 @@ const playActionOnce = (actionName, sectionID, scrollSpeed = 1, onFinishCallback
 
           if (shouldActivateWeb3) {
             // Scroll rapide ou clic sur bouton - transition directe vers web3
-            console.log("🚀 Activation directe de web3");
             setCurrentModel("web3");
             const web3Trigger = ScrollTrigger.getById('web3');
             if (web3Trigger) web3Trigger.enable();
 
             // Forcer l'activation si on est en direction descendante
             if (scrollDirection === 1) {
-              playActionOnce("UP2", scrollDirection, velocityD, () => {
+              playActionOnce("UP_2", scrollDirection, velocityD, () => {
                 enableNextSection();
               });
             }
@@ -320,7 +329,7 @@ const playActionOnce = (actionName, sectionID, scrollSpeed = 1, onFinishCallback
             if (web3Trigger) web3Trigger.disable();
 
             if (scrollDirection === 1 && !isActive) {
-              playActionOnce("UP2", scrollDirection, velocityD, () => {
+              playActionOnce("UP_2", scrollDirection, velocityD, () => {
                 enableNextSection();
                 setCurrentModel("web3");
                 const web3TriggerAfter = ScrollTrigger.getById('web3');
@@ -417,10 +426,29 @@ const playActionOnce = (actionName, sectionID, scrollSpeed = 1, onFinishCallback
   return (
     <group ref={group} {...props} dispose={null} visible={isActive}>
       <group name="Scene">
-        <group name="CamMove" position={[23.142, 20.042, 1.408]} scale={0.15}>
+        <mesh
+          name="Sphere014"
+          castShadow
+          receiveShadow
+          geometry={nodes.Sphere014.geometry}
+          material={nodes.Sphere014.material}
+          position={[-3.668, 13.833, -2.876]}
+          scale={[0.45, 0.767, 0.767]}
+        />
+        <mesh
+          name="Sphere001"
+          castShadow
+          receiveShadow
+          geometry={nodes.Sphere001.geometry}
+          material={nodes.Sphere001.material}
+          position={[-3.668, 12.438, 2.018]}
+          rotation={[Math.PI, 0, Math.PI]}
+          scale={[0.45, 0.767, 0.767]}
+        />
+         <group name="Empty001" position={[23.142, 20.042, 1.408]} scale={0.15}>
           <PerspectiveCamera
             name="Camera"
-            makeDefault={false}
+            makeDefault={isActive}
             far={1000}
             near={0.1}
             fov={16.696}
@@ -429,18 +457,20 @@ const playActionOnce = (actionName, sectionID, scrollSpeed = 1, onFinishCallback
             scale={6.678}
           />
         </group>
-        <group name="All" position={[0, 10.276, 0]} scale={6.534} >
+        <group name="All" scale={8.225}>
+          
           <group ref={sceneContainerGroup} name="scene_container"
             scale={viewport.width < 5 ? 0.7 : 1}
             // position-x={viewport.width < 5 ? 2.5 : 0}
             position-z={viewport.width < 5 ? 0.23 : 0}
             position-y={viewport.width < 5 ? -0.19 : 0}
           >
+            
             <group
             name="Armature001"
-            position={[-0.014, 0.129, -0.036]}
+            position={[-0.011, 0.102, -0.029]}
             rotation={[0.077, 1.536, -0.317]}
-            scale={0.051}>
+             scale={0.041}>
             <group name="Retopo_Sphere001">
               <skinnedMesh
                 name="mesh001"
@@ -467,9 +497,9 @@ const playActionOnce = (actionName, sectionID, scrollSpeed = 1, onFinishCallback
           </group>
             <group
               name="BallonHotAir"
-              position={[-2.232, 0.699, 0.379]}
-              rotation={[0.007, -0.012, -0.001]}
-              scale={0.106}>
+              position={[-1.773, 0.555, 0.301]}
+            rotation={[0.007, -0.012, -0.001]}
+            scale={0.084}>
               <mesh
                 name="Sphere010"
                 castShadow
@@ -522,9 +552,9 @@ const playActionOnce = (actionName, sectionID, scrollSpeed = 1, onFinishCallback
             </group>
             <group
               name="Cube043_Cube001"
-              position={[0.321, -1.207, 0.607]}
-              rotation={[Math.PI / 2, 0, 0]}
-              scale={0.153}>
+             position={[0.255, -0.959, 0.482]}
+            rotation={[Math.PI / 2, 0, 0]}
+            scale={0.122}>
               <mesh
                 name="Cube043_Cube001_1"
                 castShadow
@@ -542,9 +572,9 @@ const playActionOnce = (actionName, sectionID, scrollSpeed = 1, onFinishCallback
             </group>
             <group
               name="Cube043_Cube053"
-              position={[0.352, -0.883, -0.3]}
-              rotation={[Math.PI / 2, 0, 0]}
-              scale={0.153}>
+               position={[0.279, -0.701, -0.238]}
+            rotation={[Math.PI / 2, 0, 0]}
+            scale={0.122}>
               <mesh
                 name="Cube043_Cube053_1"
                 castShadow
@@ -562,9 +592,9 @@ const playActionOnce = (actionName, sectionID, scrollSpeed = 1, onFinishCallback
             </group>
             <group
               name="Cube044_Cube054"
-              position={[-1.019, -0.625, 0.125]}
-              rotation={[Math.PI / 2, 0, -1.594]}
-              scale={0.153}>
+              position={[-0.809, -0.496, 0.1]}
+            rotation={[Math.PI / 2, 0, -1.594]}
+            scale={0.122}>
               <mesh
                 name="Cube044_Cube054_1"
                 castShadow
@@ -582,9 +612,9 @@ const playActionOnce = (actionName, sectionID, scrollSpeed = 1, onFinishCallback
             </group>
             <group
               name="Empty005"
-              position={[0.001, 0.259, -0.089]}
-              rotation={[1.528, 1.519, -0.667]}
-              scale={0.16}>
+              position={[0, 0.206, -0.071]}
+            rotation={[1.528, 1.519, -0.667]}
+            scale={0.127}>
               <group
                 name="Trophy"
                 position={[0.357, -0.012, 0.013]}
@@ -615,20 +645,15 @@ const playActionOnce = (actionName, sectionID, scrollSpeed = 1, onFinishCallback
             </group>
             <group
               name="Empty006"
-              position={[-0.011, 0.279, 0.028]}
-              rotation={[0.831, 1.513, -0.007]}
-              scale={0.041}>
+             position={[-0.009, 0.221, 0.022]}
+            rotation={[0.831, 1.513, -0.007]}
+            scale={0.033}>
                  <group
               name="Armature"
               position={[0.239, 0.054, 0.33]}
               rotation={[1.601, 0.618, 1.507]}
               scale={3.568}>
-              <skinnedMesh
-                name="Cube"
-                geometry={nodes.Cube.geometry}
-                material={materials.Blackk}
-                skeleton={nodes.Cube.skeleton}
-              />
+           
               <primitive object={nodes.Bone_1} />
             </group>
               <mesh
@@ -680,9 +705,9 @@ const playActionOnce = (actionName, sectionID, scrollSpeed = 1, onFinishCallback
               receiveShadow
               geometry={nodes.Sphere002.geometry}
               material={materials['Material.001']}
-              position={[-0.033, -0.041, -0.554]}
-              rotation={[-0.413, 0.743, 0.652]}
-              scale={0.104}>
+                position={[-0.026, -0.032, -0.44]}
+            rotation={[-0.413, 0.743, 0.652]}
+            scale={0.083}>
               <group
                 name="glasss2"
                 position={[0.003, 0.084, 1.035]}
@@ -725,29 +750,9 @@ const playActionOnce = (actionName, sectionID, scrollSpeed = 1, onFinishCallback
           near={0.1}
           fov={16.696}
           position={[23.089, 1.705, 1.436]}
-          rotation={[0, 1.571, 0]}
+                    rotation={[0, 1.571, 0]}
         />
-         <group name="Cloudes" position={[0, -23.006, 0]} scale={6.534}>
-          <mesh
-            name="Sphere001"
-            castShadow
-            receiveShadow
-            geometry={nodes.Sphere001.geometry}
-            material={nodes.Sphere001.material}
-           position={[-0.561, 1.941, 0.309]}
-            rotation={[Math.PI, 0, Math.PI]}
-            scale={[0.069, 0.117, 0.117]}
-          />
-          <mesh
-            name="Sphere014"
-            castShadow
-            receiveShadow
-            geometry={nodes.Sphere014.geometry}
-            material={nodes.Sphere014.material}
-            position={[-0.561, -1.054, -0.44]}
-            scale={[0.069, 0.117, 0.117]}
-          />
-        </group>
+     
       </group>
     </group>
   )

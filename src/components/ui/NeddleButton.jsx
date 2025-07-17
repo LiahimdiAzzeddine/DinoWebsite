@@ -5,7 +5,7 @@ const NeddleButton = ({ children = "No text",method }) => {
        className="
         inline-flex items-center gap-2 
         px-4 py-2 
-        font-bold text-white text-[1em] sm:text-[1.3em] 
+        font-bold text-white text-[1em] sm:text-[1em] 
         rounded-[1rem]
         sm:rounded-full 
         border border-white/30 

@@ -14,7 +14,7 @@ const LinkButton = ({
         target="_blank"                // ✅ Ouvre dans un nouvel onglet
   rel="noopener noreferrer"     // ✅ Sécurité (évite les vulnérabilités)
       className={`
-        inline-block font-bold text-[1em] sm:text-[1.3em] pointer-events-auto no-underline transition-all ease-out duration-100 
+        inline-block font-bold text-[1em] sm:text-[1em] pointer-events-auto no-underline transition-all ease-out duration-100 
          rounded-[1rem] sm:rounded-full  border shadow-[0_0_2px_rgba(0,0,0,0.5)] hover:shadow-[0_5px_20px_rgba(0,0,0,0.2)] hover:-translate-y-[1px]
         ${inverted 
           ? "bg-white text-black px-3 py-1 border-white border text-sm" 

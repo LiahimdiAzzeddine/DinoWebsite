@@ -87,7 +87,7 @@ export default function Web1({ sectionID, isActive, ...props }) {
     const clipDur = camAct.getClip().duration;
 
     const defaultPosition = { ...sceneGroup.position };
-    const minY = 0;
+    const minY = 3;
     const maxY = 6;
 
     const killTween = () => {
@@ -121,9 +121,9 @@ export default function Web1({ sectionID, isActive, ...props }) {
       action.timeScale = 0.5;
       gsap.to(action, {
         timeScale: scale,
-        duration:0.1,
+        duration: 0.1,
         ease: "slow(0.7,0.7,false)",
-            overwrite: true,
+        overwrite: true,
       });
 
       if (mixer && mixer._listeners && mixer._listeners.finished) {
@@ -146,10 +146,8 @@ export default function Web1({ sectionID, isActive, ...props }) {
 
     // MOBILE
     mm.add("(max-width: 767px)", () => {
-      sceneGroup.position.y += 0.3;
-      sceneGroup.position.z -= 0.5;
-      sceneGroup.position.x += 0.15;
       const sceneDefaultPos = sceneGroup.position.y;
+      console.log("🚀 ~ mm.add ~ sceneDefaultPos:", sceneDefaultPos)
       const startZ = sceneGroup.position.z;
       const endZ = startZ - 0.5;
       const startX = sceneGroup.position.x;
@@ -157,8 +155,8 @@ export default function Web1({ sectionID, isActive, ...props }) {
 
       const trigger1 = ScrollTrigger.create({
         trigger: "#section2",
-        start: "top bottom",
-        end: "top center-=270",
+        start: "top center+=100",
+        end: "top top",
         scrub: true,
         markers: false,
         onUpdate: ({ progress }) => {
@@ -173,12 +171,26 @@ export default function Web1({ sectionID, isActive, ...props }) {
             ease: "sine.out",
             overwrite: true,
             onUpdate: () => {
-              sceneGroup.position.set(newX, newY, newZ);
+             sceneGroup.position.set(newX, newY, newZ);
               sceneGroup.rotation.set(rotX, rotY, sceneGroup.rotation.z);
             },
           });
         },
       });
+ const trigger2 = ScrollTrigger.create({
+  trigger: "#section1",
+  start: "top center+=50",
+  endTrigger: "#section2",
+  end: "top center+=100",
+  scrub: true,
+  markers: true,
+  onUpdate: ({ progress }) => {
+    const rotY = THREE.MathUtils.lerp(0, Math.PI * 2, progress); // 0 → 360
+    sceneGroup.rotation.y = -rotY; 
+  },
+});
+
+
       //Mobile
       const trigger = ScrollTrigger.create({
         id: sectionID,
@@ -189,7 +201,7 @@ export default function Web1({ sectionID, isActive, ...props }) {
         scrub: true,
         markers: false,
         onToggle: ({ isActive }) => {
-
+const actionName = scrollDirection;
           if (isActive) {
             setCurrentModel(sectionID);
             disableOtherSections();
@@ -218,17 +230,22 @@ export default function Web1({ sectionID, isActive, ...props }) {
               }, 200);
 
             }
-            if (actionName === "UP") {
+       
+              if (actionName === "UP") {
+              const web2Trigger = ScrollTrigger.getById('web2');
+              if (web2Trigger) web2Trigger.enable();
+              setCurrentModel("web2");
               if (nextScrollTrigger) {
                 nextScrollTrigger?.enable();
               }
-
             }
 
           };
+          if (actionName == "UP") {
+            const web2Trigger = ScrollTrigger.getById('web2');
+            if (web2Trigger) web2Trigger.disable();
+          }
 
-
-          const actionName = scrollDirection;
           playActionOnce(actionName, sectionID, velocityD, onFinishCallback);
 
         },
@@ -295,7 +312,7 @@ export default function Web1({ sectionID, isActive, ...props }) {
             }
             if (actionName === "UP") {
               const web2Trigger = ScrollTrigger.getById('web2');
-          if (web2Trigger) web2Trigger.enable();
+              if (web2Trigger) web2Trigger.enable();
               setCurrentModel("web2");
               if (nextScrollTrigger) {
                 nextScrollTrigger?.enable();
@@ -303,11 +320,11 @@ export default function Web1({ sectionID, isActive, ...props }) {
             }
 
           };
-          if(actionName=="UP"){
+          if (actionName == "UP") {
             const web2Trigger = ScrollTrigger.getById('web2');
-          if (web2Trigger) web2Trigger.disable();
+            if (web2Trigger) web2Trigger.disable();
           }
-          
+
 
           playActionOnce(actionName, sectionID, velocityD, onFinishCallback);
 
@@ -662,7 +679,9 @@ export default function Web1({ sectionID, isActive, ...props }) {
         />
         <group ref={sceneContainerGroup} name="scene_container"
           scale={viewport.width < 5 ? 0.5 : 1}
-          position-x={viewport.width < 5 ? 2.5 : 0}
+          position-x={viewport.width < 5 ? 2.72 : 0}
+            position-y={viewport.width < 5 ? 3 : 0}
+              position-z={viewport.width < 5 ? -0.5: 0}
         >
           <group
             name="Sketchfab_model"

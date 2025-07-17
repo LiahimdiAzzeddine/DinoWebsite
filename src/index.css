@@ -29,7 +29,7 @@ p {
 
 #section2,
 #section6 {
-  scroll-margin-top: 30vh;
+  scroll-margin-top: 30dvh;
 }
 
 
@@ -83,7 +83,7 @@ body {
   top: 0;
   left: 0;
   width: 100%;
-  height: 100vh;
+  height: 100dvh;
 }
 
 .blog-card {
@@ -128,11 +128,11 @@ body {
 /* Main block styling */
 div.block {
   color: #fff;
-  margin: 7em 40vw 50vh calc(100% - 440px - 12vw);
+  margin: 7em 40vw 50dvh calc(100% - 440px - 12vw);
   pointer-events: none;
   position: relative;
   right: 0;
-  top: 12vh;
+  top: 12dvh;
   width: 500px;
   z-index: 25;
 }
@@ -162,7 +162,7 @@ div.block2 {
   position: relative;
   margin: 7em auto 35vh auto;
   /* Centré horizontalement */
-  top: 12vh;
+  top: 12dvh;
   width: 90vw;
   /* 90% de la largeur de la fenêtre */
   max-width: 1200px;
@@ -308,7 +308,7 @@ div[data-v-7479a2c4] {
 @media screen and (max-height: 1200px) {
   .block {
     margin-left: auto;
-    top: 7vh;
+    top: 7dvh;
   }
 }
 
@@ -330,7 +330,7 @@ div[data-v-7479a2c4] {
 @media screen and (max-width: 900px) {
   .block {
     min-width: auto;
-    top: 5.5vh;
+    top: 5.5dvh;
   }
 
   .block h1,
@@ -353,11 +353,11 @@ div[data-v-7479a2c4] {
 
 @media screen and (max-aspect-ratio: 1/1) {
   div.block {
-    margin-bottom: 60vh;
+    margin-bottom: 60dvh;
     margin-left: auto;
     max-width: min(600px, calc(100vw - 45px));
     padding: 0;
-    top: 0em;
+    top: 46dvh;
   }
       div.block::before {
         border-radius: 0;

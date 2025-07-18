@@ -288,7 +288,7 @@ a:hover {
 div[data-v-7479a2c4] {
   align-items: center;
   display: flex;
-  gap: .5em;
+  gap: 1.9em;
 }
 
 /* Typography */
@@ -321,7 +321,7 @@ div[data-v-7479a2c4] {
 
   .block h1,
   .block2 h1 {
-    font-size: 3.3em;
+    font-size: 3.1em;
     line-height: 1em;
 
   }

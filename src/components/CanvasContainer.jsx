@@ -18,13 +18,10 @@ export function ModelContainer({ lenis }) {
   const { currentModel } = useContext(AnimationContext);
   return (
     <>
-
        <Web1
         sectionID={"web1"}
         isActive={currentModel === "web1"}
       />
-
-     
        <Web2
         sectionID={"web2"}
         isActive={currentModel === "web2"}

@@ -7,6 +7,7 @@ import LinkButton from "./ui/LinkButton";
 import NeddleButton from "./ui/NeddleButton";
 import { useNavigate } from "react-router-dom";
 import emailjs from '@emailjs/browser';
+import DownloadAppAlert from "./DownloadAppAlertCard";
 
 
 const Card = ({
@@ -59,7 +60,7 @@ const Card = ({
     >
       <div className="wrapper">
         <header>
-          <h1 className="sm:min-h-[2em] min-h-[2.2em]  flex items-center">
+          <h1 className="sm:min-h-[2em] min-h-[2.1em]  flex items-center">
             {title}
           </h1>
           <p className="category">{subtitle}</p>
@@ -86,6 +87,8 @@ const Card = ({
                 imgSrc={link.imgSrc}
                 text={link.text}
                 inverted={link.inverted}
+                subtitle={link.subtitle}
+                opacity={link.opacity}
               />
             ))}
             {buttons.map((button, idx) => (
@@ -164,28 +167,76 @@ const CardForm = ({ title, subtitle, form, right = false, id }) => {
 export const Overlay = () => {
   const formRef = useRef();
 
- const handleSubmit = (e) => {
-  e.preventDefault();
+  const handleSubmit = (e) => {
+    e.preventDefault();
 
-  emailjs
-    .sendForm(
-      'service_dda5ltk',
-      'template_yygda27',
-      formRef.current,
-      'fnzSxK-E0Bh6su-ER'
-    )
-    .then(
-      (result) => {
-        console.log('Email envoyé !', result.text);
-        alert('Message sent successfully!');
-        formRef.current.reset(); // ✅ vider les champs du formulaire
-      },
-      (error) => {
-        console.error('Erreur :', error.text);
-        alert('Failed to send message.');
-      }
-    );
-};
+    emailjs
+      .sendForm(
+        'service_dda5ltk',
+        'template_yygda27',
+        formRef.current,
+        'fnzSxK-E0Bh6su-ER'
+      )
+      .then(
+        (result) => {
+          console.log('Email envoyé !', result.text);
+          alert('Message sent successfully!');
+          formRef.current.reset(); // ✅ vider les champs du formulaire
+        },
+        (error) => {
+          console.error('Erreur :', error.text);
+          alert('Failed to send message.');
+        }
+      );
+  };
+
+  const Games=[
+          {
+            href: "https://snowcrestpeak.com/",
+            title: "App Store",
+            imgSrc: "../assets/logos/SnowcrestPeak.webp",
+            alt: "Logo ofApp Store",
+            subtitle: "Snowcrest Peak",
+              opacity:1,
+            mobile:true
+          },
+          {
+            href: "https://play.google.com/store/apps/details?id=com.tp.moneybank&hl=en&pli=1",
+            title: "Play Store",
+            imgSrc: "../assets/logos/bottlefactory.webp",
+            alt: "Logo of Play Store",
+            subtitle: "Bottle Factory",
+              opacity:1,
+            mobile:true
+          },
+          {
+            href: "https://play.google.com/store/apps/details?id=com.tp.moneybank&hl=en&pli=1",
+            title: "Play Store",
+            imgSrc: "../assets/logos/MoneyBank.webp",
+            alt: "Logo of Play Store",
+            subtitle: "Money Bank",
+             opacity:1,
+            mobile:true
+          },
+           {
+            href: "",
+            title: "Play Store",
+            imgSrc: "../assets/logos/comingsoon.webp",
+            alt: "Logo of Play Store",
+            subtitle: "Coming soon",
+             opacity:0,
+            mobile:true
+          },
+          {
+            href: "",
+            title: "Play Store",
+            imgSrc: "../assets/logos/tyjtrhth.webp",
+            alt: "Logo of Play Store",
+            subtitle: "Coming soon",
+            opacity:0,
+            mobile:false
+          },
+        ]
 
 
   return (
@@ -242,20 +293,7 @@ export const Overlay = () => {
           "We’re currently working on our next exciting mobile title, Bottle Factory, a hybrid casual game designed to deliver satisfying gameplay and fresh mechanics",
           "At Dinomite Studio, we’re just getting started let’s grow together and build the next global hit."
         ]}
-        links={[
-          {
-            href: "https://apps.apple.com/us/app/money-bank-3d/id1523673634",
-            title: "App Store",
-            imgSrc: "../assets/logos/appStore.webp",
-            alt: "Logo ofApp Store",
-          },
-          {
-            href: "https://play.google.com/store/apps/details?id=com.tp.moneybank&hl=en&pli=1",
-            title: "Play Store",
-            imgSrc: "../assets/logos/play-store.webp",
-            alt: "Logo of Play Store",
-          },
-        ]}
+        links={Games}
         buttons={[]}
       />
       <Card
@@ -303,91 +341,92 @@ export const Overlay = () => {
         />
       </div>
 
-       <CardForm
-      id="section6"
-      right={true}
-      title="Contact Us"
-      subtitle="Contact Dinomite"
-      form={
-        <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label
-              htmlFor="name"
-              className="font-normal text-white text-[1.1em] leading-[1.35em] mt-[1.5em] mb-[1em] react-element-1"
-            >
-              Your Name
-            </label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              className="w-full px-4 py-2 rounded-lg bg-[#ffffff18] border border-[#ffffff5e] placeholder-white focus:outline-none focus:ring-2 focus:ring-blue-300"
-              placeholder="Enter your name"
-              required
-            />
-          </div>
+      <CardForm
+        id="section6"
+        right={true}
+        title="Contact Us"
+        subtitle="Contact Dinomite"
+        form={
+          <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label
+                htmlFor="name"
+                className="font-normal text-white text-[1.1em] leading-[1.35em] mt-[1.5em] mb-[1em] react-element-1"
+              >
+                Your Name
+              </label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                className="w-full px-4 py-2 rounded-lg bg-[#ffffff18] border border-[#ffffff5e] placeholder-white focus:outline-none focus:ring-2 focus:ring-blue-300"
+                placeholder="Enter your name"
+                required
+              />
+            </div>
 
-          <div>
-            <label
-              htmlFor="email"
-              className="font-normal text-white text-[1.1em] leading-[1.35em] mt-[1.5em] mb-[1em] react-element-1"
-            >
-              Your Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              placeholder="Enter your email"
-              className="w-full px-4 py-2 rounded-lg bg-[#ffffff18] border border-[#ffffff5e] placeholder-white focus:outline-none focus:ring-2 focus:ring-blue-300"
-              required
-            />
-          </div>
+            <div>
+              <label
+                htmlFor="email"
+                className="font-normal text-white text-[1.1em] leading-[1.35em] mt-[1.5em] mb-[1em] react-element-1"
+              >
+                Your Email
+              </label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="Enter your email"
+                className="w-full px-4 py-2 rounded-lg bg-[#ffffff18] border border-[#ffffff5e] placeholder-white focus:outline-none focus:ring-2 focus:ring-blue-300"
+                required
+              />
+            </div>
 
-          <div>
-            <label
-              htmlFor="business_name"
-              className="font-normal text-white text-[1.1em] leading-[1.35em] mt-[1.5em] mb-[1em] react-element-1"
-            >
-              Business Name <span className="text-white text-sm">(optional)</span>
-            </label>
-            <input
-              type="text"
-              id="business_name"
-              name="business_name"
-              placeholder="Enter your business name"
-              className="w-full px-4 py-2 rounded-lg bg-[#ffffff18] border border-[#ffffff5e] placeholder-white focus:outline-none focus:ring-2 focus:ring-blue-300"
-            />
-          </div>
+            <div>
+              <label
+                htmlFor="business_name"
+                className="font-normal text-white text-[1.1em] leading-[1.35em] mt-[1.5em] mb-[1em] react-element-1"
+              >
+                Business Name <span className="text-white text-sm">(optional)</span>
+              </label>
+              <input
+                type="text"
+                id="business_name"
+                name="business_name"
+                placeholder="Enter your business name"
+                className="w-full px-4 py-2 rounded-lg bg-[#ffffff18] border border-[#ffffff5e] placeholder-white focus:outline-none focus:ring-2 focus:ring-blue-300"
+              />
+            </div>
 
-          <div>
-            <label
-              htmlFor="message"
-              className="font-normal text-white text-[1.1em] leading-[1.35em] mt-[1.5em] mb-[1em] react-element-1"
-            >
-              Your Message
-            </label>
-            <textarea
-              id="message"
-              name="message"
-              rows="5"
-              className="w-full px-4 py-2 rounded-lg bg-[#ffffff18] border border-[#ffffff5e] placeholder-white focus:outline-none focus:ring-2 focus:ring-blue-300"
-              placeholder="Write your message here..."
-              required
-            ></textarea>
-          </div>
+            <div>
+              <label
+                htmlFor="message"
+                className="font-normal text-white text-[1.1em] leading-[1.35em] mt-[1.5em] mb-[1em] react-element-1"
+              >
+                Your Message
+              </label>
+              <textarea
+                id="message"
+                name="message"
+                rows="5"
+                className="w-full px-4 py-2 rounded-lg bg-[#ffffff18] border border-[#ffffff5e] placeholder-white focus:outline-none focus:ring-2 focus:ring-blue-300"
+                placeholder="Write your message here..."
+                required
+              ></textarea>
+            </div>
 
-          <div className="text-center">
-            <button
-              type="submit"
-              className="inline-block transition duration-200 bg-[linear-gradient(69deg,_rgb(63,_189,_168),_rgb(63,_177,_39))] hover:bg-[linear-gradient(30deg,_rgb(63,_189,_118),_rgb(63,_167,_39))] text-white sm:rounded-2xl rounded-[10px] px-4 py-2 shadow-[rgba(0,0,0,0.05)_0px_0px_1.3rem_inset]"
-            >
-              Submit
-            </button>
-          </div>
-        </form>
-      }
-    />
+            <div className="text-center">
+              <button
+                type="submit"
+                className="inline-block transition duration-200 bg-[linear-gradient(69deg,_rgb(63,_189,_168),_rgb(63,_177,_39))] hover:bg-[linear-gradient(30deg,_rgb(63,_189,_118),_rgb(63,_167,_39))] text-white sm:rounded-2xl rounded-[10px] px-4 py-2 shadow-[rgba(0,0,0,0.05)_0px_0px_1.3rem_inset]"
+              >
+                Submit
+              </button>
+            </div>
+          </form>
+        }
+      />
+      {/* <DownloadAppAlert visible={true} onClose={() => console.log()} /> */}
 
     </>
   );

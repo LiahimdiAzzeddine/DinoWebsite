@@ -27,7 +27,7 @@ export default function Home() {
 
       {/* Particles au-dessus du canvas */}
           <div className="fixed top-0 left-0 w-full h-full z-20 pointer-events-none">
-            {currentModel=="web2"&&<Confetti/>}
+            {/* {currentModel=="web2"&&<Confetti/>} */}
       
       </div>
 

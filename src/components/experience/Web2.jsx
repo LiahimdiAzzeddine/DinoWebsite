@@ -132,8 +132,8 @@ const playActionOnce = (actionName, sectionID, scrollSpeed = 1, onFinishCallback
   if (!action) return;
 
   // Animation des nuages liée
-  const cloudActionName = `Clouds_${actionName}`;
-  const cloudAction = actions[cloudActionName];
+  // const cloudActionName = `Clouds_${actionName}`;
+  // const cloudAction = actions[cloudActionName];
 
   // Liste des animations concernées
   const animationNames = ["UP", "UP_2", "DOWN", "DOWN_2"];
@@ -143,10 +143,10 @@ const playActionOnce = (actionName, sectionID, scrollSpeed = 1, onFinishCallback
     if (name !== actionName && actions[name]) {
       actions[name].stop();
     }
-    const cloudName = `Clouds_${name}`;
-    if (cloudName !== cloudActionName && actions[cloudName]) {
-      actions[cloudName].stop();
-    }
+    // const cloudName = `Clouds_${name}`;
+    // if (cloudName !== cloudActionName && actions[cloudName]) {
+    //   actions[cloudName].stop();
+    // }
   });
 
   isTransitioning = true;
@@ -157,11 +157,11 @@ const playActionOnce = (actionName, sectionID, scrollSpeed = 1, onFinishCallback
   action.time = 0;
 
   // Préparation de l'action de nuages si elle existe
-  if (cloudAction) {
-    cloudAction.reset().setLoop(THREE.LoopOnce, 1);
-    cloudAction.clampWhenFinished = true;
-    cloudAction.time = 0;
-  }
+  // if (cloudAction) {
+  //   cloudAction.reset().setLoop(THREE.LoopOnce, 1);
+  //   cloudAction.clampWhenFinished = true;
+  //   cloudAction.time = 0;
+  // }
 
   const minSpeed =2;
   const maxSpeed = 5;
@@ -173,6 +173,13 @@ const playActionOnce = (actionName, sectionID, scrollSpeed = 1, onFinishCallback
     timeScale: scale,
     duration: 0.1,
     ease: "slow(0.7,0.7,false)",
+    onComplete: () => {
+       if(actionName=="DOWN_2" || actionName=="UP"){
+     smoothAnimations.forEach((name) => {
+      actions[name]?.reset().setEffectiveTimeScale(0.2).play();
+    }); 
+    }
+    }
   });
 
   // Appliquer easing à l'action de nuages si elle existe
@@ -198,9 +205,15 @@ const playActionOnce = (actionName, sectionID, scrollSpeed = 1, onFinishCallback
       onFinishCallback();
     }
     if(actionName=="DOWN_2" || actionName=="UP"){
-     smoothAnimations.forEach((name) => {
-      actions[name]?.reset().setEffectiveTimeScale(0.2).play();
-    }); 
+    //  smoothAnimations.forEach((name) => {
+    //   actions[name]?.reset().setEffectiveTimeScale(0.2).play();
+    // }); 
+    // actions["Clouds1"]?.reset();
+    // actions["Clouds1"].timeScale=0.7;
+    // actions["Clouds1"].play();
+    //  actions["Clouds2"]?.reset();
+    // actions["Clouds2"].timeScale=0.9;
+    // actions["Clouds2"].play();
     }
      
   };
@@ -426,13 +439,20 @@ const playActionOnce = (actionName, sectionID, scrollSpeed = 1, onFinishCallback
   return (
     <group ref={group} {...props} dispose={null} visible={isActive}>
       <group name="Scene">
+        <group
+          scale={viewport.width < 5 ? 0.5: 1}
+            // position-x={viewport.width < 5 ? 2.5 : 0}
+            position-z={viewport.width < 5 ? 0.23 : 0}
+            position-y={viewport.width < 5 ? -0.19 : 0}
+        >
+        
         <mesh
           name="Sphere014"
           castShadow
           receiveShadow
           geometry={nodes.Sphere014.geometry}
           material={nodes.Sphere014.material}
-          position={[-3.668, 13.833, -2.876]}
+          position={[-3.668, -7.463, -2.876]}
           scale={[0.45, 0.767, 0.767]}
         />
         <mesh
@@ -444,7 +464,7 @@ const playActionOnce = (actionName, sectionID, scrollSpeed = 1, onFinishCallback
           position={[-3.668, 12.438, 2.018]}
           rotation={[Math.PI, 0, Math.PI]}
           scale={[0.45, 0.767, 0.767]}
-        />
+        /></group>
          <group name="Empty001" position={[23.142, 20.042, 1.408]} scale={0.15}>
           <PerspectiveCamera
             name="Camera"

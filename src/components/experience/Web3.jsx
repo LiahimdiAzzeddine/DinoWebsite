@@ -110,7 +110,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
   let scrollDirection = 'Up';
   let velocityD = 0;
   let isTransitioning = false;
-    let lastScrollTime = 0;
+  let lastScrollTime = 0;
 
 
   // GLTF loading and setup
@@ -120,7 +120,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
   const { actions, mixer } = useAnimations(animations, group);
   // Responsive positioning
   const scenePositioning = useMemo(() => ({
-    positionZ: viewport.width < 1 ? -0.3 : 0.0,
+    positionZ: viewport.width < 1 ? -0.3 :10,
     wavingManPositionX: viewport.width < 1 ? -1 : 0,
     wavingManPositionZ: viewport.width < 1 ? 0.48 : 0,
   }), [viewport.width]);
@@ -404,7 +404,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
         endTrigger: "#section5",
         end: "center bottom",
         //preventClicks: true,
-        markers: true,
+        markers: false,
         onToggle: ({ isActive }) => {
           console.log("🚀 ~ mm.add ~ isActive:", isActive, scrollDirection)
 
@@ -598,6 +598,172 @@ export default function Web3({ sectionID, isActive, ...props }) {
       return () => armatureTrigger.kill();
     });
 
+    //Mobile
+    mm.add("(max-width: 767px)", () => {
+      const startY = armatureRef.current.position.y;
+      const adjustedStartY = startY - 0.58;
+      const endY = adjustedStartY + 5;
+      mainTrigger = ScrollTrigger.create({
+        id: sectionID,
+        trigger: SCROLL_TRIGGERS.MAIN.trigger,
+        start: "top bottom",
+        end: "top top",
+        preventClicks: true,
+        scrub: true,
+        markers: false,
+       onToggle: ({ isActive }) => {
+          console.log("🚀 ~ mm.add ~ isActive:", isActive, scrollDirection)
+
+          if (isActive) {
+            setCurrentModel(sectionID);
+            disableOtherSections();
+          }
+
+          const actionName = scrollDirection;
+          if (isActive) {
+            if (actionName == "Up") {
+              resetAllActionsExceptUpDown();
+              playIntroAnimations();
+
+            } else {
+            }
+
+          } else {
+            if (actionName == "Down") {
+
+            }
+
+          }
+          const onFinishCallback = () => {
+
+            if (actionName == "Down") {
+              if (prevScrollTrigger.current) {
+                prevScrollTrigger.current.enable();
+
+              }
+             
+
+            }
+          };
+
+          if (!(scrollDirection == "Down" && isActive) && !(scrollDirection == "Up" && !isActive)) {
+            playActionOnce(actionName, sectionID, velocityD, onFinishCallback);
+          }
+
+
+
+
+        },
+        onLeave:()=>{
+          console.log("🚀 ~ mm.add ~ onLeave:")
+          if(velocityD==0 && scrollDirection=="Up"){
+           playActionOnce("Up", sectionID, 200000, ()=>{console.log("worked"),playIntroAnimations();}); 
+           
+          }
+        },
+        onUpdate: ({ progress }) => {
+          if (sceneContainerGroup.current) {
+            sceneContainerGroup.current.position.y = THREE.MathUtils.lerp(minY, maxY, progress);
+          }
+        },
+
+      });
+      const minsY = 0.3;
+      const maxsY = 0.4;
+      secondaryTrigger = ScrollTrigger.create({
+        id: sectionID + "_secondary",
+        trigger: SCROLL_TRIGGERS.SECONDARY.trigger,
+        start: () => mainTrigger.end, // Synchronise le start ici
+        end: "bottom+=20% top",
+        scrub: SCROLL_TRIGGERS.SECONDARY.scrub,
+        markers: false,
+        onEnter: (self) => {
+          setCurrentModel(sectionID);
+          disableOtherSections();
+          if (Math.abs(self.getVelocity()) > 1000) {
+            setTimeout(() => {
+              handleScrollAnimations();
+            }, 50);
+          } else {
+            handleScrollAnimations();
+
+          }
+          if (sceneContainerGroup.current) {
+            //sceneContainerGroup.current.position.y = adjustedStartY;
+            gsap.to(sceneContainerGroup.current.position, {
+              y: 0.6,
+              duration: 0,
+              ease: "power3.inOut",
+            });
+          }
+
+        },
+        onLeaveBack: (self) => {
+          handleScrollAnimationsReverse();
+          if (Math.abs(self.getVelocity()) > 2000) {
+            enableOtherSections();
+          }
+        },
+        onUpdate: (self) => {
+          if (sceneContainerGroup.current) {
+            sceneContainerGroup.current.position.y = THREE.MathUtils.lerp(minsY, maxsY, self.progress);
+          }
+          handleProgressUpdate(self.progress);
+
+        },
+        onLeave: () => {
+        }
+      });
+
+      //Armature movement trigger
+      armatureTrigger = ScrollTrigger.create({
+        id: sectionID + "_armatureMove",
+        trigger: "#section6",
+        start: "top bottom",
+        end: () => document.body.scrollHeight + "px",
+        scrub: true,
+        markers: false,
+
+        onEnter: () => {
+          setCurrentModel(sectionID);
+          disableOtherSections();
+
+          if (armatureRef.current) {
+            //armatureRef.current.position.y = adjustedStartY;
+            gsap.to(armatureRef.current.scale, {
+              x: 0.1,
+              y: 0.1,
+              z: 0.1,
+              duration: 1,
+              ease: "back.out",
+            });
+          }
+        },
+
+        onUpdate: (self) => {
+          if (armatureRef.current) {
+            // Interpolation selon le scroll progress
+            armatureRef.current.position.y = gsap.utils.interpolate(adjustedStartY, endY, self.progress);
+
+          }
+        },
+        onLeaveBack: () => {
+          if (armatureRef.current) {
+            //armatureRef.current.position.y = startY;
+            gsap.to(armatureRef.current.scale, {
+              x: 0,
+              y: 0,
+              z: 0,
+              duration: 0.1,
+              ease: "power2.inOut",
+            });
+          }
+        },
+      });
+
+      return () => { secondaryTrigger.kill(), mainTrigger.kill(), armatureTrigger.kill() };
+    });
+
     // Cleanup function
     return () => {
       mixer.stopAllAction();
@@ -643,7 +809,8 @@ export default function Web3({ sectionID, isActive, ...props }) {
             scale={0.217}
           />
         </group>
-        <group name="All" position={[0.003, -1.635, -0.002]} scale={1.78}>
+
+        <group name="All" position={[0.003, -2.534, -0.002]} scale={1.78}>
           <group
             name="Armature001"
             ref={ManRef}

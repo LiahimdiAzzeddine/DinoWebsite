@@ -4,7 +4,6 @@ import { AnimationProvider } from "./components/experience/AnimationContext";
 import Footer from "./components/Footer";
 import Loader from "./components/Loader";
 import NavBar from "./components/nav/NavBar";
-import { ScrollRestoration } from 'react-router-dom';
 
 // Import de tes pages
 import Home from "./pages/Home";

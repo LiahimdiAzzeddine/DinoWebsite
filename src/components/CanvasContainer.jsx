@@ -79,6 +79,21 @@ useEffect(() => {
   };
 }, []);
 
+const test = ScrollTrigger.create({
+        trigger: "#section2",
+        start: "center center",
+        end: "center center+=50",
+        markers: true,
+        onEnter:()=>{
+          lenisRef.current.stop()
+          setTimeout(() => {
+            lenisRef.current.start()
+          }, 500);
+        }
+       
+      });
+      
+
 
   return (
     <div className="absolute top-0 left-0 w-full h-full z-10">
@@ -122,6 +137,7 @@ useEffect(() => {
         castShadow
       />
       <Environment files="https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/potsdamer_platz_1k.hdr" />
+     
       <Suspense
         fallback={
           <Html center>

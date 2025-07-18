@@ -37,6 +37,7 @@ export default function Web1({ sectionID, isActive, ...props }) {
   const [activeSketch, setActiveSketch] = useState("Sketch01");
   const { nodes, materials, animations } = useGLTF('./models/cleanmodef2.glb')
   const { actions, mixer } = useAnimations(animations, group)
+  console.log("🚀 ~ Web1 ~ actions:", actions)
 
   const { setCurrentModel } = useContext(AnimationContext);
 
@@ -147,7 +148,6 @@ export default function Web1({ sectionID, isActive, ...props }) {
     // MOBILE
     mm.add("(max-width: 767px)", () => {
       const sceneDefaultPos = sceneGroup.position.y;
-      console.log("🚀 ~ mm.add ~ sceneDefaultPos:", sceneDefaultPos)
       const startZ = sceneGroup.position.z;
       const endZ = startZ - 0.5;
       const startX = sceneGroup.position.x;
@@ -171,24 +171,24 @@ export default function Web1({ sectionID, isActive, ...props }) {
             ease: "sine.out",
             overwrite: true,
             onUpdate: () => {
-             sceneGroup.position.set(newX, newY, newZ);
+              sceneGroup.position.set(newX, newY, newZ);
               sceneGroup.rotation.set(rotX, rotY, sceneGroup.rotation.z);
             },
           });
         },
       });
- const trigger2 = ScrollTrigger.create({
-  trigger: "#section1",
-  start: "top center+=50",
-  endTrigger: "#section2",
-  end: "top center+=100",
-  scrub: true,
-  markers: true,
-  onUpdate: ({ progress }) => {
-    const rotY = THREE.MathUtils.lerp(0, Math.PI * 2, progress); // 0 → 360
-    sceneGroup.rotation.y = -rotY; 
-  },
-});
+      const trigger2 = ScrollTrigger.create({
+        trigger: "#section1",
+        start: "top center+=50",
+        endTrigger: "#section2",
+        end: "top center+=100",
+        scrub: true,
+        markers: false,
+        onUpdate: ({ progress }) => {
+          const rotY = THREE.MathUtils.lerp(0, Math.PI * 2, progress); // 0 → 360
+          sceneGroup.rotation.y = -rotY;
+        },
+      });
 
 
       //Mobile
@@ -196,12 +196,12 @@ export default function Web1({ sectionID, isActive, ...props }) {
         id: sectionID,
         trigger: "#section1",
         start: "top bottom",
-        endTrigger: "#section2",
-        end: "top center-=270",
+        endTrigger: "#section3",
+        end: "top bottom+=260",
         scrub: true,
         markers: false,
         onToggle: ({ isActive }) => {
-const actionName = scrollDirection;
+          const actionName = scrollDirection;
           if (isActive) {
             setCurrentModel(sectionID);
             disableOtherSections();
@@ -230,8 +230,8 @@ const actionName = scrollDirection;
               }, 200);
 
             }
-       
-              if (actionName === "UP") {
+
+            if (actionName === "UP") {
               const web2Trigger = ScrollTrigger.getById('web2');
               if (web2Trigger) web2Trigger.enable();
               setCurrentModel("web2");
@@ -400,69 +400,81 @@ const actionName = scrollDirection;
       }
     );
   };
+const [transitionState, setTransitionState] = useState('idle'); // 'idle', 'closing', 'opening'
 
-  const handleSwitchSketch = () => {
-    if (isSwitching.current) return;
-    isSwitching.current = true;
+const handleSwitchSketch = () => {
+  if (transitionState !== 'idle') return;
+  setTransitionState('closing');
 
-    const currentRef = activeSketch === "Sketch01" ? sketch01Ref : sketch02Ref;
-    const nextRef = activeSketch === "Sketch01" ? sketch02Ref : sketch01Ref;
-    const nextSketch = activeSketch === "Sketch01" ? "Sketch02" : "Sketch01";
+  const currentRef = activeSketch === "Sketch01" ? sketch01Ref : sketch02Ref;
+  const nextRef = activeSketch === "Sketch01" ? sketch02Ref : sketch01Ref;
+  const nextSketch = activeSketch === "Sketch01" ? "Sketch02" : "Sketch01";
 
-    const closeTl = gsap.timeline({
-      onComplete: () => {
-        // Après fermeture, on change la sketch et on déclenche l’ouverture
-        setActiveSketch(nextSketch);
-        setTimeout(() => {
-          animateOpen(nextRef);
-        }, 50); // petit délai pour forcer le re-render
-      },
-    });
+  // Préparer le prochain sketch
+  if (nextRef.current) {
+    gsap.set(nextRef.current.scale, { x: 0, y: 0, z: 0 });
+    gsap.set(nextRef.current.material, { opacity: 0 });
+  }
 
-    // Animer la fermeture du mesh courant
-    if (currentRef.current) {
-      closeTl.to(currentRef.current.scale, {
-        x: 0,
-        y: 0,
-        z: 0,
-        duration: 0.4,
-        ease: "power2.inOut",
-      });
-      closeTl.to(currentRef.current.material, {
-        opacity: 0,
-        duration: 0.3,
-        ease: "sine.in",
-      }, "<");
-    } else {
+  const closeTl = gsap.timeline({
+    onComplete: () => {
       setActiveSketch(nextSketch);
+      setTransitionState('opening');
+      
+      // Pas de délai, utiliser directement l'animation
       animateOpen(nextRef);
+    },
+  });
+
+  if (currentRef.current) {
+    closeTl.to(currentRef.current.scale, {
+      x: 0,
+      y: 0,
+      z: 0,
+      duration: 0.4,
+      ease: "power2.inOut",
+    });
+    closeTl.to(currentRef.current.material, {
+      opacity: 0,
+      duration: 0.3,
+      ease: "sine.in",
+    }, "<");
+  } else {
+    setActiveSketch(nextSketch);
+    setTransitionState('opening');
+    animateOpen(nextRef);
+  }
+};
+
+const animateOpen = (ref) => {
+  if (!ref.current) {
+    setTransitionState('idle');
+    return;
+  }
+
+  // S'assurer que l'état initial est correct
+  gsap.set(ref.current.scale, { x: 0, y: 0, z: 0 });
+  gsap.set(ref.current.material, { opacity: 0 });
+
+  gsap.timeline({
+    onComplete: () => {
+      setTransitionState('idle');
     }
-  };
-
-  const animateOpen = (ref) => {
-    if (!ref.current) return;
-    // Préparer état initial avant animation
-    ref.current.scale.set(0, 0, 0);
-    ref.current.material.opacity = 0;
-
-    gsap.timeline({
-      onComplete: () => {
-        isSwitching.current = false;
-      }
+  })
+    .to(ref.current.material, {
+      opacity: 1,
+      duration: 0.4,
+      ease: "sine.out",
     })
-      .to(ref.current.material, {
-        opacity: 1,
-        duration: 0.4,
-        ease: "sine.out",
-      })
-      .to(ref.current.scale, {
-        x: 0.18,
-        y: 0.18,
-        z: 0.18,
-        duration: 0.4,
-        ease: "sine.in",
-      }, "<");
-  };
+    .to(ref.current.scale, {
+      x: 0.18,
+      y: 0.18,
+      z: 0.18,
+      duration: 0.4,
+      ease: "sine.in",
+    }, "<");
+};
+
   const playOneShotAnimations = (actionNames = [], totalDuration = 1000, callback = () => { }) => {
     if (!Array.isArray(actionNames) || actionNames.length === 0) return;
 
@@ -619,7 +631,7 @@ const actionName = scrollDirection;
   }
   const handleManClick = () => {
     if (!girlRef.current) return;
-    playOneShotAnimations(["ThinkingNotif", "ThinkingTex"], 4000);
+    playOneShotAnimations(["ThinkingNotif", "ThinkingTex", "ThinkingTex.001"], 4000);
   }
 
 
@@ -680,8 +692,8 @@ const actionName = scrollDirection;
         <group ref={sceneContainerGroup} name="scene_container"
           scale={viewport.width < 5 ? 0.5 : 1}
           position-x={viewport.width < 5 ? 2.72 : 0}
-            position-y={viewport.width < 5 ? 3 : 0}
-              position-z={viewport.width < 5 ? -0.5: 0}
+          position-y={viewport.width < 5 ? 3 : 0}
+          position-z={viewport.width < 5 ? -0.5 : 0}
         >
           <group
             name="Sketchfab_model"
@@ -1268,16 +1280,18 @@ const actionName = scrollDirection;
                 />
               )}
               {activeSketch === "Sketch02" && (
+
                 <mesh
+                  name="Skecht02"
                   ref={sketch02Ref}
-                  name="Sketch02"
+
                   castShadow
                   receiveShadow
                   geometry={nodes.Skecht02.geometry}
-                  material={materials["Material.019"]}
+                  material={materials['Material.019']}
                   position={[-0.294, 0.263, 0.254]}
                   rotation={[3.14, 0.051, 2.935]}
-                  scale={[0.167, 0.167, 0.167]}
+                  scale={0.167}
                 />
               )}
             </group>

@@ -237,8 +237,10 @@ export const Overlay = () => {
         className="second-section"
         title={<>40 Million downloads and counting</>}
         paragraphs={[
-          "Join us in celebrating a worldwide milestone :\n over 40 million downloads across our mobile games.",
-          "Our flagship hit, Money Bank 3D, has captivated players and set the bar high for mobile gaming creativity and fun.",
+          "We’re proud to announce that our games have surpassed 40 million downloads worldwide!",
+          "Our flagship hit, Money Bank 3D, has captured the attention of mobile gamers with its unique blend of creativity and fun, setting a new standard for hybrid casual gaming.",
+          "We’re currently working on our next exciting mobile title, Bottle Factory, a hybrid casual game designed to deliver satisfying gameplay and fresh mechanics",
+          "At Dinomite Studio, we’re just getting started let’s grow together and build the next global hit."
         ]}
         links={[
           {

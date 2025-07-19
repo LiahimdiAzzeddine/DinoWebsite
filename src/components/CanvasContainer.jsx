@@ -76,19 +76,7 @@ useEffect(() => {
   };
 }, []);
 
-const test = ScrollTrigger.create({
-        trigger: "#section2",
-        start: "center center",
-        end: "center center+=50",
-        markers: true,
-        onEnter:()=>{
-          lenisRef.current.stop()
-          setTimeout(() => {
-            lenisRef.current.start()
-          }, 500);
-        }
-       
-      });
+
       
 
 

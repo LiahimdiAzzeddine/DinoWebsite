@@ -37,7 +37,6 @@ export default function Web1({ sectionID, isActive, ...props }) {
   const [activeSketch, setActiveSketch] = useState("Sketch01");
   const { nodes, materials, animations } = useGLTF('./models/cleanmodef2.glb')
   const { actions, mixer } = useAnimations(animations, group)
-  console.log("🚀 ~ Web1 ~ actions:", actions)
 
   const { setCurrentModel } = useContext(AnimationContext);
 

@@ -92,10 +92,10 @@ useEffect(() => {
           setDpr(dpr);
         }}
       />
-      {!isMobile? (
+      {/* {!isMobile? (
         <GradientSkybox />
       ):(
-          <>
+          <> */}
       <ambientLight color={0xffffff} intensity={0.6} />
 
       <directionalLight
@@ -108,8 +108,8 @@ useEffect(() => {
         shadow-camera-near={0.5}
         shadow-camera-far={500}
       />
-    </>
-      )}
+    {/* </>
+      )} */}
 
       <ambientLight intensity={0.03} />
       <spotLight

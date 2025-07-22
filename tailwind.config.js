@@ -8,6 +8,10 @@ module.exports = {
     extend: {
       serif: ["Playfair Display", ...defaultTheme.fontFamily.sans],
       sans: ["Poppins", ...defaultTheme.fontFamily.sans],
+      animation: {
+    gradient: "moveGradient 15s linear infinite",
+  },
+
     },
   },
   plugins: [],

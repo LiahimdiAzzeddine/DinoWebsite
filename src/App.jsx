@@ -1,4 +1,5 @@
 import "./App.css";
+import "./App.scss";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AnimationProvider } from "./components/experience/AnimationContext";
 import Footer from "./components/Footer";
@@ -13,18 +14,22 @@ import Blogs from "./pages/Blogs";
 import Career from "./pages/Career";
 import ScrollToTop from "./components/ScrollToTop";
 import BlogSingle from "./pages/BlogDetail";
+import GradientBackground from "./components/experience/GradientBackground";
 
 function App() {
+
   return (
     <Router>
       <ScrollToTop />
+      
       <AnimationProvider>
-        <div className="pages-gradient"></div>
+              <GradientBackground />
+
         <main className="overflow-x-hidden">
           <div className="w-full relative m-auto flex justify-center">
         <NavBar/>
       </div>
-          <Loader/>
+          {/* <Loader/> */}
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />

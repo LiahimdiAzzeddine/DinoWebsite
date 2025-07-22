@@ -196,13 +196,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
     const isFastByVelocity = Math.abs(velocity) > 2000 || Math.abs(observerVelocity) > 10000 || velocity==0 || observerVelocity==0;
     const isFastByTime = timeDiff < 16;
     
-    console.log('DetectFastScroll:', { 
-      velocity, 
-      observerVelocity, 
-      timeDiff, 
-      isFastByVelocity, 
-      isFastByTime 
-    });
+
     
     return isFastByVelocity || isFastByTime;
   }, []);
@@ -394,9 +388,9 @@ export default function Web3({ sectionID, isActive, ...props }) {
     let armatureTrigger = null;
 
     mm.add("(min-width: 768px)", () => {
-        setTimeout(() => {
-      ScrollTrigger.getById('web3')?.refresh();
-    }, 100);
+    //     setTimeout(() => {
+    //   ScrollTrigger.getById('web3')?.refresh();
+    // }, 100);
       mainTrigger = ScrollTrigger.create({
         id: sectionID,
         trigger: "#section3",
@@ -406,7 +400,6 @@ export default function Web3({ sectionID, isActive, ...props }) {
         //preventClicks: true,
         markers: false,
         onToggle: ({ isActive }) => {
-          console.log("🚀 ~ mm.add ~ isActive:", isActive, scrollDirection)
 
           if (isActive) {
             setCurrentModel(sectionID);
@@ -449,7 +442,6 @@ export default function Web3({ sectionID, isActive, ...props }) {
 
         },
         onLeave:()=>{
-          console.log("🚀 ~ mm.add ~ onLeave:")
           if(velocityD==0 && scrollDirection=="Up"){
            playActionOnce("Up", sectionID, 200000, ()=>{console.log("worked"),playIntroAnimations();}); 
            
@@ -461,9 +453,9 @@ export default function Web3({ sectionID, isActive, ...props }) {
     });
     // Secondary scroll trigger
     mm.add("(min-width: 767px)", () => {
-        setTimeout(() => {
-      ScrollTrigger.getById('web3_secondary')?.refresh();
-    }, 100);
+    //     setTimeout(() => {
+    //   ScrollTrigger.getById('web3_secondary')?.refresh();
+    // }, 100);
       secondaryTrigger = ScrollTrigger.create({
         id: sectionID + "_secondary",
         trigger: "#section5",
@@ -544,9 +536,9 @@ export default function Web3({ sectionID, isActive, ...props }) {
 
    // Vérifier si c'est un refresh en utilisant sessionStorage
 
-    setTimeout(() => {
-      ScrollTrigger.getById('web3_armatureMove')?.refresh();
-    }, 100);
+    // setTimeout(() => {
+    //   ScrollTrigger.getById('web3_armatureMove')?.refresh();
+    // }, 100);
   
 
       //Armature movement trigger
@@ -559,7 +551,6 @@ export default function Web3({ sectionID, isActive, ...props }) {
         markers: false,
 
         onEnter: () => {
-          console.log("🚀 ~ mm.add ~ onEnter:")
           setCurrentModel(sectionID);
           disableOtherSections();
           armatureRef.current.position.y = adjustedStartY;
@@ -575,7 +566,6 @@ export default function Web3({ sectionID, isActive, ...props }) {
         },
 
         onUpdate: (self) => {
-          console.log("🚀 ~ mm.add ~ onEnter:",armatureRef.current)
           if (armatureRef.current) {
             // Interpolation selon le scroll progress
             armatureRef.current.position.y = gsap.utils.interpolate(adjustedStartY, endY, self.progress);
@@ -612,7 +602,6 @@ export default function Web3({ sectionID, isActive, ...props }) {
         scrub: true,
         markers: false,
        onToggle: ({ isActive }) => {
-          console.log("🚀 ~ mm.add ~ isActive:", isActive, scrollDirection)
 
           if (isActive) {
             setCurrentModel(sectionID);
@@ -655,7 +644,6 @@ export default function Web3({ sectionID, isActive, ...props }) {
 
         },
         onLeave:()=>{
-          console.log("🚀 ~ mm.add ~ onLeave:")
           if(velocityD==0 && scrollDirection=="Up"){
            playActionOnce("Up", sectionID, 200000, ()=>{console.log("worked"),playIntroAnimations();}); 
            

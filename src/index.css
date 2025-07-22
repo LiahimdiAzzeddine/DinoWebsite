@@ -27,6 +27,29 @@
   --gradient-top-end: rgba(70, 30, 150, .5);
   --box-gradient: linear-gradient(90deg, #fff, hsla(0, 0%, 100%, .95))
 }
+html {
+  height: -webkit-fill-available;
+}
+
+body {
+  margin: 0px;
+  padding: 0px;
+  min-height: -webkit-fill-available;
+  overflow-x: hidden;
+  /*overflow-y: hidden;*/
+  width: 100%;
+  -webkit-font-smoothing: antialiased;
+  font-family: "RocGrotesk", sans-serif;
+  scrollbar-width: thin;
+}
+.pages-gradient {
+  bottom: 0;
+  height: 100%;
+  left: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
 
 @tailwind base;
 @tailwind components;
@@ -53,23 +76,22 @@ p {
   opacity: 1;
   animation: none;
 }
-
-html {
-  height: -webkit-fill-available;
+@keyframes gradientAnimation {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
-body {
-  background: linear-gradient(90deg, rgb(153, 213, 255) 30%, rgb(99, 194, 253));
-  margin: 0px;
-  padding: 0px;
-  min-height: -webkit-fill-available;
-  overflow-x: hidden;
-  /*overflow-y: hidden;*/
-  width: 100%;
-  -webkit-font-smoothing: antialiased;
-  font-family: "RocGrotesk", sans-serif;
-  scrollbar-width: thin;
+.gradient-background {
+  background: linear-gradient(270deg, var(--start), var(--end));
+  background-size: 800% 800%;
+  animation: gradientAnimation 15s ease infinite;
+  transition: --start 1s ease-in-out, --end 1s ease-in-out;
 }
+
+
+
+
 
 .nunito {
   font-family: "RocGrotesk", sans-serif;
@@ -83,15 +105,6 @@ body {
 }
 
 
-.pages-gradient {
-  background: linear-gradient(90deg, #99d5ff 30%, rgb(99, 194, 253));
-  bottom: 0;
-  height: 100%;
-  left: 0;
-  position: fixed;
-  top: 0;
-  width: 100%;
-}
 
 .canvas-container {
   position: fixed;

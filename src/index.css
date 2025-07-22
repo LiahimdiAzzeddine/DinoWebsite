@@ -79,21 +79,54 @@ p {
   opacity: 1;
   animation: none;
 }
-@keyframes gradientAnimation {
-  0% { background-position: 0% 25%; }
-  25% { background-position: 100% 25%; }
-  50% { background-position: 100% 50%; }
-  75% { background-position: 100% 75%; }
-  100% { background-position: 0% 50%; }
+@keyframes gradientFlow {
+  0% { 
+    background-position: 0% 50%;
+  }
+  25% { 
+    background-position: 100% 50%;
+  }
+  50% { 
+    background-position: 100% 100%;
+  }
+  75% { 
+    background-position: 0% 100%;
+  }
+  100% { 
+    background-position: 0% 50%;
+  }
 }
 
-.gradient-background {
-  background: linear-gradient(270deg, var(--start), var(--end));
-  background-size: 800% 800%;
-  animation: gradientAnimation 10s ease infinite;
-  transition: --start 5s ease-in-out, --end 5s ease-in-out;
+.gradient-background-fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -10;
+  background: linear-gradient(135deg, var(--start), var(--end));
+  background-size: 300% 300%;
+  animation: gradientFlow 12s ease-in-out infinite;
+  /* Pas de transition CSS pour éviter les conflits */
+  transition: none;
+  /* Assurer qu'il n'y ait pas de débordement */
+  overflow: hidden;
+  /* Forcer l'accélération matérielle */
+  will-change: background;
+  transform: translateZ(0);
 }
 
+/* Assurer que le body et html n'ont pas de marges/padding */
+body, html {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* Éviter tout espace blanc autour */
+* {
+  box-sizing: border-box;
+}
 
 
 

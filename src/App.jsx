@@ -1,5 +1,4 @@
 import "./App.css";
-import "./App.scss";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AnimationProvider } from "./components/experience/AnimationContext";
 import Footer from "./components/Footer";

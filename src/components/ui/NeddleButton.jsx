@@ -21,9 +21,10 @@ const NeddleButton = ({ children = "No text",method }) => {
         m-2
         pointer-events-auto
         text-center
+        min-w-max
       "
       style={{
-        fontFamily: '"Nunito Sans", sans-serif',
+        fontFamily: '"RocGrotesk", sans-serif',
       }}
     >
       {children}

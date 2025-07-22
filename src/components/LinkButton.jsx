@@ -21,7 +21,7 @@ const LinkButton = ({
           : "bg-white/20 text-white px-4 py-2 border-white/30"}
       `}
       style={{
-        fontFamily: '"Nunito Sans", sans-serif',
+        fontFamily: '"RocGrotesk", sans-serif',
         margin: "0.5em 0.5em 0.5em 0",
       }}
     >

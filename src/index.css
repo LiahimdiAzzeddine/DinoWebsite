@@ -7,10 +7,13 @@
 }
 @font-face {
   font-family: 'RocGrotesk';
-  src: url('fonts/fonnts.com-Roc_Grotesk_Light.otf') format('opentype');
+  src: url('fonts/fonnts.com-Roc_Grotesk_Medium.otf') format('opentype');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
+}
+.RocGroteskBold{
+  font-family: "RocGroteskBold";
 }
 
 :root {
@@ -77,16 +80,18 @@ p {
   animation: none;
 }
 @keyframes gradientAnimation {
-  0% { background-position: 0% 50%; }
+  0% { background-position: 0% 25%; }
+  25% { background-position: 100% 25%; }
   50% { background-position: 100% 50%; }
+  75% { background-position: 100% 75%; }
   100% { background-position: 0% 50%; }
 }
 
 .gradient-background {
   background: linear-gradient(270deg, var(--start), var(--end));
   background-size: 800% 800%;
-  animation: gradientAnimation 15s ease infinite;
-  transition: --start 1s ease-in-out, --end 1s ease-in-out;
+  animation: gradientAnimation 10s ease infinite;
+  transition: --start 5s ease-in-out, --end 5s ease-in-out;
 }
 
 
@@ -156,18 +161,18 @@ p {
 /* Main block styling */
 div.block {
   color: #fff;
-  margin: 7em 40vw 50dvh calc(100% - 440px - 12vw);
+  margin: 7em 40vw 55dvh calc(100% - 450px - 12vw);
   pointer-events: none;
   position: relative;
   right: 0;
   top: 12dvh;
-  width: 500px;
+  width: 460px;
   z-index: 25;
 }
 
 /* Glassmorphism effect */
 div.block:before {
-  --offset: 30px;
+  --offset: 2.5rem;
   backdrop-filter: blur(40px) saturate(1.4);
   background-color: #66666648;
   border-radius: 40px;
@@ -243,7 +248,6 @@ div.block2::before {
   font-size: 1.2em;
   line-height: 1.2em;
   color: white;
-  margin: 0.5em 0 .49em;
 }
 
 

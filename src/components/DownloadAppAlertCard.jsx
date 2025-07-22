@@ -89,7 +89,7 @@ const DownloadAppAlert = ({ visible, onClose }) => {
                                          rounded-2xl border shadow-sm hover:shadow-lg hover:-translate-y-px bg-gray-100 hover:bg-gray-200 px-4 ml-2
                                          sm:rounded-full"
                                 style={{
-                                    fontFamily: '"Nunito Sans", sans-serif',
+                                    fontFamily: '"RocGrotesk", sans-serif',
                                     margin: "0.5em 0.5em 0.5em 0",
                                 }}
                             >

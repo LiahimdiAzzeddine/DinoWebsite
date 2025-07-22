@@ -27,8 +27,8 @@ const LinkButton = ({
         rel="noopener noreferrer"
         className={`
           inline-block font-bold  no-underline 
-          lg:w-[4.1rem] lg:h-[4.1rem] lg:text-sm w-12 h-12 text-xs
-          ${rounded ? 'rounded-2xl' : 'rounded-lg'}
+          lg:w-[5.5rem] lg:h-[5.5rem] lg:text-sm w-32 h-32 text-xs
+          ${rounded ? 'rounded-[1.2rem]' : 'rounded-[1.2rem]'}
           border shadow-lg
           ${inverted
             ? "bg-white text-black border-white border text-sm"
@@ -39,7 +39,7 @@ const LinkButton = ({
             
         `}
         style={{
-          fontFamily: '"Nunito Sans", sans-serif',
+          fontFamily: '"RocGrotesk", sans-serif',
           margin: "0.5em 0.5em 0.2em 0",
         }}
       >
@@ -62,7 +62,7 @@ const LinkButton = ({
           )}
         </div>
         {subtitle && (
-          <div className="text-xs mt-1 text-center text-white max-w-20 mx-auto opacity-100 leading-none ">
+          <div className="md:text-[0.79rem] text-sm mt-2 text-center text-white mx-auto opacity-100 leading-none ">
             {subtitle}
           </div>
         )}

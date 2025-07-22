@@ -51,7 +51,7 @@ export default function NavBar() {
                 <li className="select-none p-2 md:p-[10px] md:inline-block group relative">
                   <button
                     aria-label="contact us"
-                    className="border-none cursor-pointer pointer-events-auto bg-none rounded-[1em] p-0 whitespace-nowrap text-teal-900 hover:text-teal-500 outline-offset-[4px] relative shadow-none font-bold"
+                    className="border-none cursor-pointer pointer-events-auto bg-none rounded-[1em] p-0 whitespace-nowrap text-teal-900 hover:text-teal-500 outline-offset-[4px] relative shadow-none "
                      onClick={()=>{navigate("/");setTimeout(() => {
                         const el = document.getElementById("section6");
                         if (el) el.scrollIntoView({ behavior: "smooth" });
@@ -70,7 +70,7 @@ export default function NavBar() {
                       }, 50); // Petit délai pour laisser la page charger
                     }}
                     aria-label="about us"
-                    className="border-none cursor-pointer pointer-events-auto bg-none rounded-[1em] p-0 whitespace-nowrap text-teal-900 hover:text-teal-500 outline-offset-[4px] relative shadow-none font-bold"
+                    className="border-none cursor-pointer pointer-events-auto bg-none rounded-[1em] p-0 whitespace-nowrap text-teal-900 hover:text-teal-500 outline-offset-[4px] relative shadow-none "
                   >
                     about us
                   </button>
@@ -79,7 +79,7 @@ export default function NavBar() {
                   <Link
                     to={"/blogs"}
                     aria-label="Blogs"
-                    className={`border-none cursor-pointer pointer-events-auto bg-none rounded-[1em] p-0 whitespace-nowrap outline-offset-[4px] relative shadow-none font-bold ${location.pathname === "/blogs"
+                    className={`border-none cursor-pointer pointer-events-auto bg-none rounded-[1em] p-0 whitespace-nowrap outline-offset-[4px] relative shadow-none  ${location.pathname === "/blogs"
                         ? "text-teal-500"
                         : "text-teal-900 hover:text-teal-500"
                       }`}
@@ -120,7 +120,7 @@ export default function NavBar() {
                   <Link
                     to="/faqs"
                     aria-label="Blogs"
-                    className={`border-none cursor-pointer pointer-events-auto bg-none rounded-[1em] p-0 whitespace-nowrap outline-offset-[4px] relative shadow-none font-bold ${isActive
+                    className={`border-none cursor-pointer pointer-events-auto bg-none rounded-[1em] p-0 whitespace-nowrap outline-offset-[4px] relative shadow-none  ${isActive
                         ? "text-teal-500"
                         : "text-teal-900 hover:text-teal-500"
                       }`}
@@ -132,7 +132,7 @@ export default function NavBar() {
                   <Link
                     to="/career"
                     aria-label="career"
-                    className="hover:bg-emerald-100 no-underline  font-bold  nunito border border-teal-200 rounded-xl px-4 py-[0.4rem] whitespace-nowrap shadow-[rgba(0,0,0,0.03)_0px_7px_0.5rem,_rgba(0,0,0,0.05)_0px_0px_1.3rem_inset] mr-4 bg-white text-teal-800 cursor-pointer list-none text-left"
+                    className="hover:bg-emerald-100 no-underline    nunito border border-teal-200 rounded-xl px-4 py-[0.4rem] whitespace-nowrap shadow-[rgba(0,0,0,0.03)_0px_7px_0.5rem,_rgba(0,0,0,0.05)_0px_0px_1.3rem_inset] mr-4 bg-white text-teal-800 cursor-pointer list-none text-left"
                   >
                     career
                   </Link>
@@ -140,7 +140,7 @@ export default function NavBar() {
                     aria-label="Log in"
                     href="https://calendar.app.google/EfrYWkBJmL9PdhzP6"
                     target="_blank"
-                    className="no-underline font-bold  nunito bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 border-[1px] border-[rgba(255,255,255,0.1)] rounded-xl p-[0.4rem_1rem] whitespace-nowrap shadow-[rgba(0,0,0,0.03)_0px_7px_0.5rem,_rgba(0,0,0,0.05)_0px_0px_1.3rem_inset] text-white mr-[-12px]"
+                    className="no-underline   nunito bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 border-[1px] border-[rgba(255,255,255,0.1)] rounded-xl p-[0.4rem_1rem] whitespace-nowrap shadow-[rgba(0,0,0,0.03)_0px_7px_0.5rem,_rgba(0,0,0,0.05)_0px_0px_1.3rem_inset] text-white mr-[-12px]"
                   >
                     Book a Call
                   </a>

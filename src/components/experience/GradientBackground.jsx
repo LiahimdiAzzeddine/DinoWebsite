@@ -7,14 +7,17 @@ gsap.registerPlugin(ScrollTrigger);
 const GradientBackground = () => {
   const gradientRef = useRef();
 
-  const colorsMap = {
-    section1: ["#3f7ab1", "#5e32a8"],
-    section2: ["#3f7ab1", "#5e32a8"],
-    section3: ["#7f2926", "#7f2926"],
-    section4: ["#118ab2", "#06d6a0"],
-    section5: ["#29a2ca", "#2cb08e"],
-    section6: ["#61b3cf", "#3cb371"],
-  };
+const colorsMap = {
+  section1: ["#48A6A7", "#006A71"],
+  section2: ["#48A6A7", "#006A71"],
+  section3: ["#03A6A1", "#77BEF0"],
+  section4: ["#3D74B6", "#EAC8A6"],
+  section5: ["#d5e1ea", "#c5d4e3"],
+  section6: ["#c5d4e3", "#dceef2"],
+};
+
+
+
 
   useLayoutEffect(() => {
     const gradient = gradientRef.current;
@@ -29,7 +32,7 @@ const GradientBackground = () => {
             gsap.to(gradient, {
               "--start": startColor,
               "--end": endColor,
-              duration: 1,
+              duration: 2,
               ease: "power2.inOut",
             });
           }
@@ -45,8 +48,8 @@ const GradientBackground = () => {
       ref={gradientRef}
       className="fixed inset-0 -z-10 gradient-background"
       style={{
-        "--start": "#3f7ab1",
-        "--end": "#5e32a8",
+        "--start": "#48A6A7",
+        "--end": "#006A71",
       }}
     />
   );

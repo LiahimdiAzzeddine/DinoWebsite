@@ -1,4 +1,4 @@
-import { Typewriter } from "react-simple-typewriter";
+import Typewriter from "typewriter-effect";
 
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
@@ -7,107 +7,119 @@ import LinkButton from "./ui/LinkButton";
 import NeddleButton from "./ui/NeddleButton";
 import { useNavigate } from "react-router-dom";
 import emailjs from '@emailjs/browser';
-import DownloadAppAlert from "./DownloadAppAlertCard";
 
 
 const Card = ({
   title,
   subtitle,
   paragraphs,
-  links,
-  buttons,
+  links = [],
+  buttons = [],
   right = false,
   id,
   className = "",
 }) => {
   const { ref, inView } = useInView({
-    triggerOnce: false, // pour l'animer une seule fois true
-    threshold: 0.2, // déclenchement à 20% visible
+    triggerOnce: false,
+    threshold: 0.2,
   });
 
-  // Hook pour détecter la taille d'écran
   const [isDesktop, setIsDesktop] = useState(false);
-  let navigate = useNavigate();
+  const navigate = useNavigate();
+
   useEffect(() => {
     const checkScreenSize = () => {
       setIsDesktop(window.innerWidth >= 1024);
     };
 
     checkScreenSize();
-    window.addEventListener('resize', checkScreenSize);
-
-    return () => window.removeEventListener('resize', checkScreenSize);
+    window.addEventListener("resize", checkScreenSize);
+    return () => window.removeEventListener("resize", checkScreenSize);
   }, []);
-
 
   return (
     <motion.div
       id={id}
       ref={ref}
       className={`
-        block relative w-[440px] mx-auto
-        ${right
-          ? 'lg:ml-auto lg:mr-0 lg:right-0'
-          : 'lg:mr-auto lg:ml-0 lg:left-0'
-        }
+        relative block w-full max-w-[440px] px-4 sm:px-6
+        ${right ? "lg:ml-auto lg:mr-0" : "lg:mr-auto lg:ml-0"}
         ${className}
       `}
       style={{
         marginLeft: isDesktop ? (right ? "auto" : "calc(100% - 440px - 12vw)") : "auto",
         marginRight: isDesktop ? (right ? "calc(100% - 440px - 12vw)" : "auto") : "auto",
       }}
-
     >
-      <div className="wrapper">
-        <header>
-          <h1 className="sm:min-h-[2em] min-h-[2.1em]  flex items-center">
+      <div className="wrapper flex flex-col gap-7">
+        <div>
+          <div
+            className={`font-bold RocGroteskBold flex items-center text-4xl leading-9 ${
+              id === "section1" ? "sm:min-h-[2em] min-h-[2.2em]" : ""
+            }`}
+          >
             {title}
-          </h1>
-          <p className="category">{subtitle}</p>
-        </header>
-        <div className="content">
+          </div>
+          {subtitle && (
+            <div
+              className="pt-2 text-2xl uppercase"
+            >
+              {subtitle}
+            </div>
+          )}
+        </div>
+
+        <div className="content flex flex-col gap-4 text-xl leading-6">
           {paragraphs.map((text, idx) => (
-            <motion.p
+            <motion.div
               key={idx}
               initial={{ opacity: 0, y: 20 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: idx * 0.4, duration: 0.6 }}
             >
               {text}
-            </motion.p>
+            </motion.div>
           ))}
-
-          <div data-v-7479a2c4="">
-            {links.map((link, idx) => (
-              <LinkButton
-                key={idx}
-                href={link.href}
-                title={link.title}
-                alt={link.alt}
-                imgSrc={link.imgSrc}
-                text={link.text}
-                inverted={link.inverted}
-                subtitle={link.subtitle}
-                opacity={link.opacity}
-              />
-            ))}
-            {buttons.map((button, idx) => (
-              <NeddleButton key={idx} method={() => {
-                navigate("/"); // Navigue d'abord à la page d'accueil
-                setTimeout(() => {
-                  const el = document.getElementById(button.href);
-                  if (el) el.scrollIntoView({ behavior: "smooth" });
-                }, 200); // Petit délai pour laisser la page charger
-              }}>
-                {button.title}
-              </NeddleButton>
-            ))}
-          </div>
         </div>
+
+        {(links.length > 0 || buttons.length > 0) && (
+  <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-start justify-start max-w-full md:max-w-[80%]" style={{ justifyItems: "start" }}>
+    {links.map((link, idx) => (
+      <LinkButton
+        key={idx}
+        href={link.href}
+        title={link.title}
+        alt={link.alt}
+        imgSrc={link.imgSrc}
+        text={link.text}
+        inverted={link.inverted}
+        subtitle={link.subtitle}
+        opacity={link.opacity}
+      />
+    ))}
+
+    {buttons.map((button, idx) => (
+      <NeddleButton
+        key={idx}
+        method={() => {
+          navigate("/");
+          setTimeout(() => {
+            const el = document.getElementById(button.href);
+            if (el) el.scrollIntoView({ behavior: "smooth" });
+          }, 200);
+        }}
+      >
+        {button.title}
+      </NeddleButton>
+    ))}
+  </div>
+)}
+
       </div>
     </motion.div>
   );
 };
+
 const CardForm = ({ title, subtitle, form, right = false, id }) => {
   const { ref, inView } = useInView({
     triggerOnce: false, // pour l'animer une seule fois true
@@ -153,11 +165,23 @@ const CardForm = ({ title, subtitle, form, right = false, id }) => {
       animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
     >
-      <div className="wrapper">
-        <header>
-          <h1>{title}</h1>
-          <p className="category">{subtitle}</p>
-        </header>
+     <div className="wrapper flex flex-col gap-7">
+        <div>
+           <div
+            className={`font-bold RocGroteskBold flex items-center text-4xl leading-9 ${
+              id === "section1" ? "sm:min-h-[2em] min-h-[2.2em]" : ""
+            }`}
+          >
+            {title}
+          </div>
+          {subtitle && (
+            <div
+              className="pt-2 text-2xl uppercase"
+            >
+              {subtitle}
+            </div>
+          )}
+        </div>
         <div className="content">{form}</div>
       </div>
     </motion.div>
@@ -191,16 +215,15 @@ export const Overlay = () => {
   };
 
   const Games=[
-          {
-            href: "https://snowcrestpeak.com/",
-            title: "App Store",
-            imgSrc: "../assets/logos/SnowcrestPeak.webp",
-            alt: "Logo ofApp Store",
-            subtitle: "Snowcrest Peak",
-              opacity:1,
+    {
+            href: "https://play.google.com/store/apps/details?id=com.tp.moneybank&hl=en&pli=1",
+            title: "Play Store",
+            imgSrc: "../assets/logos/MoneyBank.webp",
+            alt: "Logo of Play Store",
+            subtitle: "Money Bank",
+             opacity:1,
             mobile:true
-          },
-          {
+          },{
             href: "https://play.google.com/store/apps/details?id=com.tp.moneybank&hl=en&pli=1",
             title: "Play Store",
             imgSrc: "../assets/logos/bottlefactory.webp",
@@ -210,14 +233,16 @@ export const Overlay = () => {
             mobile:true
           },
           {
-            href: "https://play.google.com/store/apps/details?id=com.tp.moneybank&hl=en&pli=1",
-            title: "Play Store",
-            imgSrc: "../assets/logos/MoneyBank.webp",
-            alt: "Logo of Play Store",
-            subtitle: "Money Bank",
-             opacity:1,
+            href: "https://snowcrestpeak.com/",
+            title: "App Store",
+            imgSrc: "../assets/logos/SnowcrestPeak.webp",
+            alt: "Logo ofApp Store",
+            subtitle: "Snowcrest Peak",
+              opacity:1,
             mobile:true
           },
+          
+          
            {
             href: "",
             title: "Play Store",
@@ -245,15 +270,17 @@ export const Overlay = () => {
         id="section1"
         title={
           <>
-            <Typewriter
-              words={["Dinomite studio", "Where Ideas Become Hits"]}
-              loop={0} // 0 = infini
-              cursor
-              cursorStyle="_"
-              typeSpeed={70}
-              deleteSpeed={50}
-              delaySpeed={1500}
-            />
+           <Typewriter
+  options={{
+    strings: ["Dinomite studio", "Where Ideas Become Hits"],
+    autoStart: true,
+    loop: true, // met `false` si tu veux que ça ne boucle qu’une fois
+    delay: 70, // vitesse de frappe
+    deleteSpeed: 50,
+    pauseFor: 1500, // pause avant suppression
+    cursor: "_",
+  }}
+/>
           </>
         }
         subtitle="Dinomite studios"
@@ -286,12 +313,10 @@ export const Overlay = () => {
         right={true}
         id="section3"
         className="second-section"
-        title={<>40 Million downloads and counting</>}
+        title={<>40 Million downloads <br></br>and counting</>}
         paragraphs={[
           "We’re proud to announce that our games have surpassed 40 million downloads worldwide!",
           "Our flagship hit, Money Bank 3D, has captured the attention of mobile gamers with its unique blend of creativity and fun, setting a new standard for hybrid casual gaming.",
-          "We’re currently working on our next exciting mobile title, Bottle Factory, a hybrid casual game designed to deliver satisfying gameplay and fresh mechanics",
-          "At Dinomite Studio, we’re just getting started let’s grow together and build the next global hit."
         ]}
         links={Games}
         buttons={[]}
@@ -330,7 +355,7 @@ export const Overlay = () => {
           className="section3"
           subtitle="What we can do"
           right={true}
-          title={<>full game development and co-development</>}
+          title={<>full game development and codevelopment</>}
           paragraphs={[
             "From concept to launch or alongside your team we build high performing hybrid casual games with a focus on quality, speed, and scalability",
           ]}

@@ -12,6 +12,8 @@ const GradientBackground = () => {
     section2: ["#3f7ab1", "#5e32a8"],
     section3: ["#7f2926", "#7f2926"],
     section4: ["#118ab2", "#06d6a0"],
+    section5: ["#29a2ca", "#2cb08e"],
+    section6: ["#61b3cf", "#3cb371"],
   };
 
   useLayoutEffect(() => {

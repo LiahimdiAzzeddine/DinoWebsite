@@ -32,13 +32,17 @@ export default function Web2({ sectionID, isActive, ...props }) {
     "40MRope",
     "ArmatureMan",
     "BallonHotAirAction",
-    "Balloon",
-    "Balloon.001",
-    "Balloon.002",
+    
+
     "Emoji",
     "LeftHand",
     "RightHand",
   ];
+  /**
+   * "Balloon",
+   *     "Balloon.001",
+    "Balloon.002",
+   */
   const smoothAnimations = ["Clouds1", "Clouds2"];
 
   let isTransitioning = false;

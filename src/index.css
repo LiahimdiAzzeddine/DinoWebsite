@@ -376,7 +376,9 @@ div[data-v-7479a2c4] {
     top: 7dvh;
   }
 }
-
+.cursor-pointer {
+  cursor: url("/cursors/explosion_imresizer.png"), pointer;
+}
 @media screen and (min-width: 1900px) {
   .block {
     max-width: 520px;

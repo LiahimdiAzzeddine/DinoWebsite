@@ -42,7 +42,7 @@ const Card = ({
       id={id}
       ref={ref}
       className={`
-        relative block w-full max-w-[440px] px-4 sm:px-6
+        relative block w-full max-w-[440px] px-4 sm:px-6 z-[200]
         ${right ? "lg:ml-auto lg:mr-0" : "lg:mr-auto lg:ml-0"}
         ${className}
       `}

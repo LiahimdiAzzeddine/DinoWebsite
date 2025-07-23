@@ -8,12 +8,12 @@ const GradientBackground = () => {
   const gradientRef = useRef();
 
   const colorsMap = {
-    section1: ["#b0cff5", "#6ac0f1"],
-    section2: ["#b0cff5", "#6ac0f1"],
-    section3: ["#03A6A1", "#77BEF0"],
-    section4: ["#3D74B6", "#EAC8A6"],
+    section1: ["#47beab21", "#47beab"],
+    section2: ["#47beab21", "#47beab"],
+    section3: ["#a19e77", "#feffe5"],
+    section4: ["#cfe5ff", "#3D74B6"],
     section5: ["#3D74B6", "#77BEF0"],
-    section6: ["#c5d4e3", "#48A6A7"],
+    section6: ["#64a5d3", "#d8ffff"],
   };
 
   useLayoutEffect(() => {
@@ -31,8 +31,8 @@ const GradientBackground = () => {
     Object.entries(colorsMap).forEach(([sectionId, [startColor, endColor]]) => {
       ScrollTrigger.create({
         trigger: `#${sectionId}`,
-        start: "top 75%",
-        end: "bottom 25%",
+        start: "center+=100 bottom",
+        end: "center+=200 top",
         onEnter: () => {
           disableCSSTransitions();
           gsap.to(gradient, {
@@ -64,8 +64,9 @@ const GradientBackground = () => {
       ref={gradientRef}
       className="gradient-background-fixed"
       style={{
-        "--start": "#b0cff5",
-        "--end": "#6ac0f1",
+        "--start": "#47beab21",
+        "--end": "#47beab",
+        "--deg":'135'
       }}
     />
   );

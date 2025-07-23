@@ -79,24 +79,24 @@ p {
   opacity: 1;
   animation: none;
 }
-@keyframes gradientFlow {
+/* @keyframes gradientFlow {
   0% { 
-    background-position: 0% 50%;
+    background-position: 10% 20%;
   }
   25% { 
-    background-position: 100% 50%;
+    background-position: 30% 50%;
   }
   50% { 
-    background-position: 100% 100%;
+    background-position:50% 55%;
   }
   75% { 
-    background-position: 0% 100%;
+    background-position: 60% 65%;
   }
   100% { 
-    background-position: 0% 50%;
+    background-position: 65% 50%;
   }
-}
-
+} */
+/**70deg**/
 .gradient-background-fixed {
   position: fixed;
   top: 0;
@@ -104,9 +104,9 @@ p {
   width: 100vw;
   height: 100vh;
   z-index: -10;
-  background: linear-gradient(135deg, var(--start), var(--end));
-  background-size: 300% 300%;
-  animation: gradientFlow 12s ease-in-out infinite;
+  background: linear-gradient(70deg,var(--start) 0%, var(--end) 100%);
+  /*background-size: 250% 250%;
+  animation: gradientFlow 5s ease-in-out infinite;*/
   /* Pas de transition CSS pour éviter les conflits */
   transition: none;
   /* Assurer qu'il n'y ait pas de débordement */

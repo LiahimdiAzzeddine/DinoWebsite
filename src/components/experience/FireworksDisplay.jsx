@@ -381,7 +381,7 @@ const FireworksDisplay = () => {
       <canvas
         ref={canvasRef}
         onClick={handleClick}
-        className="absolute inset-0 cursor-pointer pointer-events-auto w-full h-full"
+        className="absolute inset-0 cursorpointer pointer-events-auto w-full h-full"
         style={{ mixBlendMode: 'screen' }}
       />
 

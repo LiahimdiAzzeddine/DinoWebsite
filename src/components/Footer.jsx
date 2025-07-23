@@ -6,7 +6,7 @@ export default function Footer() {
   let navigate = useNavigate();
   return (
     <nav className="flex justify-center relative w-full">
-      <div className="flex justify-around w-full py-12 relative z-[100] bg-gradient-to-br bg-white/70 backdrop-blur-[30px] shadow-[0_2px_15px_rgba(2,2,43,0.2)]   border-t border-gray-100">
+      <div className="flex justify-around w-full py-8 relative z-[100] bg-gradient-to-br bg-white/70 backdrop-blur-[30px] shadow-[0_2px_15px_rgba(2,2,43,0.2)]   border-t border-gray-100">
         <div style={{ display: "block", maxWidth: "1400px", width: "100%" }}>
           <div className="flex sm:flex-row flex-col justify-between gap-8 px-8">
             {/* Logo Section */}
@@ -42,7 +42,7 @@ export default function Footer() {
             {/* Resources */}
             <div className="flex flex-col space-y-4">
               <h4 className="text-gray-900 font-semibold text-base">Pages</h4>
-              <div className="flex flex-col space-y-3">
+              <div className="flex flex-col space-y-2">
                 <a
                   href="/faqs"
                   className="text-gray-600 hover:text-blue-600 transition-colors duration-200 text-sm font-medium"
@@ -86,7 +86,7 @@ export default function Footer() {
             {/* Community */}
             <div className="flex flex-col space-y-4">
               <h4 className="text-gray-900 font-semibold text-base">Community</h4>
-              <div className="flex flex-col space-y-3">
+              <div className="flex flex-col space-y-2">
                 {[
                   { name: "X", href: "https://x.com/dinomitestudios" },
                   { name: "Instagram", href: "https://www.instagram.com/dinomitestudio/" },
@@ -114,7 +114,7 @@ export default function Footer() {
             {/* Company */}
             <div className="flex flex-col space-y-4">
               <h4 className="text-gray-900 font-semibold text-base">Company</h4>
-              <div className="flex flex-col space-y-3">
+              <div className="flex flex-col space-y-2">
                 {["contact@dinomite.org"].map((item) => (
                   <a
                     key={item}
@@ -160,7 +160,7 @@ export default function Footer() {
             {/* Location */}
             <div className="flex flex-col space-y-4 min-w-[300px]">
               <h4 className="text-gray-900 font-semibold text-base">Location</h4>
-              <div className="space-y-3">
+              <div className="space-y-2">
                 <div className="flex items-start space-x-2">
                   <svg className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
@@ -196,7 +196,7 @@ export default function Footer() {
             </div>
           </div>
 
-          <div className="flex justify-center items-center pt-8 mt-8 border-t border-gray-200">
+          <div className="flex justify-center items-center pt-4 border-t border-gray-200">
             <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-6 text-center">
               <span className="text-gray-500 text-sm">
                 © 2025 <span className="notranslate font-medium text-gray-700">Dinomite</span>

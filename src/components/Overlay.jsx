@@ -54,9 +54,8 @@ const Card = ({
       <div className="wrapper flex flex-col gap-7">
         <div>
           <div
-            className={`font-bold RocGroteskBold flex items-center text-4xl leading-9 ${
-              id === "section1" ? "sm:min-h-[2em] min-h-[2.2em]" : ""
-            }`}
+            className={`font-bold RocGroteskBold flex items-center text-4xl leading-9 ${id === "section1" ? "sm:min-h-[2em] min-h-[2.2em]" : ""
+              }`}
           >
             {title}
           </div>
@@ -83,37 +82,37 @@ const Card = ({
         </div>
 
         {(links.length > 0 || buttons.length > 0) && (
-  <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-start justify-start max-w-full md:max-w-[80%]" style={{ justifyItems: "start" }}>
-    {links.map((link, idx) => (
-      <LinkButton
-        key={idx}
-        href={link.href}
-        title={link.title}
-        alt={link.alt}
-        imgSrc={link.imgSrc}
-        text={link.text}
-        inverted={link.inverted}
-        subtitle={link.subtitle}
-        opacity={link.opacity}
-      />
-    ))}
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-start justify-start max-w-full md:max-w-[80%]" style={{ justifyItems: "start" }}>
+            {links.map((link, idx) => (
+              <LinkButton
+                key={idx}
+                href={link.href}
+                title={link.title}
+                alt={link.alt}
+                imgSrc={link.imgSrc}
+                text={link.text}
+                inverted={link.inverted}
+                subtitle={link.subtitle}
+                opacity={link.opacity}
+              />
+            ))}
 
-    {buttons.map((button, idx) => (
-      <NeddleButton
-        key={idx}
-        method={() => {
-          navigate("/");
-          setTimeout(() => {
-            const el = document.getElementById(button.href);
-            if (el) el.scrollIntoView({ behavior: "smooth" });
-          }, 200);
-        }}
-      >
-        {button.title}
-      </NeddleButton>
-    ))}
-  </div>
-)}
+            {buttons.map((button, idx) => (
+              <NeddleButton
+                key={idx}
+                method={() => {
+                  navigate("/");
+                  setTimeout(() => {
+                    const el = document.getElementById(button.href);
+                    if (el) el.scrollIntoView({ behavior: "smooth" });
+                  }, 200);
+                }}
+              >
+                {button.title}
+              </NeddleButton>
+            ))}
+          </div>
+        )}
 
       </div>
     </motion.div>
@@ -165,12 +164,11 @@ const CardForm = ({ title, subtitle, form, right = false, id }) => {
       animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
     >
-     <div className="wrapper flex flex-col gap-7">
+      <div className="wrapper flex flex-col gap-7">
         <div>
-           <div
-            className={`font-bold RocGroteskBold flex items-center text-4xl leading-9 ${
-              id === "section1" ? "sm:min-h-[2em] min-h-[2.2em]" : ""
-            }`}
+          <div
+            className={`font-bold RocGroteskBold flex items-center text-4xl leading-9 ${id === "section1" ? "sm:min-h-[2em] min-h-[2.2em]" : ""
+              }`}
           >
             {title}
           </div>
@@ -214,54 +212,54 @@ export const Overlay = () => {
       );
   };
 
-  const Games=[
+  const Games = [
     {
-            href: "https://play.google.com/store/apps/details?id=com.tp.moneybank&hl=en&pli=1",
-            title: "Play Store",
-            imgSrc: "../assets/logos/MoneyBank.webp",
-            alt: "Logo of Play Store",
-            subtitle: "Money Bank",
-             opacity:1,
-            mobile:true
-          },{
-            href: "https://play.google.com/store/apps/details?id=com.tp.moneybank&hl=en&pli=1",
-            title: "Play Store",
-            imgSrc: "../assets/logos/bottlefactory.webp",
-            alt: "Logo of Play Store",
-            subtitle: "Bottle Factory",
-              opacity:1,
-            mobile:true
-          },
-          {
-            href: "https://snowcrestpeak.com/",
-            title: "App Store",
-            imgSrc: "../assets/logos/SnowcrestPeak.webp",
-            alt: "Logo ofApp Store",
-            subtitle: "Snowcrest Peak",
-              opacity:1,
-            mobile:true
-          },
-          
-          
-           {
-            href: "",
-            title: "Play Store",
-            imgSrc: "../assets/logos/comingsoon.webp",
-            alt: "Logo of Play Store",
-            subtitle: "Coming soon",
-             opacity:0,
-            mobile:true
-          },
-          {
-            href: "",
-            title: "Play Store",
-            imgSrc: "../assets/logos/tyjtrhth.webp",
-            alt: "Logo of Play Store",
-            subtitle: "Coming soon",
-            opacity:0,
-            mobile:false
-          },
-        ]
+      href: "https://play.google.com/store/apps/details?id=com.tp.moneybank&hl=en&pli=1",
+      title: "Play Store",
+      imgSrc: "../assets/logos/MoneyBank.webp",
+      alt: "Logo of Play Store",
+      subtitle: "Money Bank",
+      opacity: 1,
+      mobile: true
+    }, {
+      href: "https://play.google.com/store/apps/details?id=com.tp.moneybank&hl=en&pli=1",
+      title: "Play Store",
+      imgSrc: "../assets/logos/bottlefactory.webp",
+      alt: "Logo of Play Store",
+      subtitle: "Bottle Factory",
+      opacity: 1,
+      mobile: true
+    },
+    {
+      href: "https://snowcrestpeak.com/",
+      title: "App Store",
+      imgSrc: "../assets/logos/SnowcrestPeak.webp",
+      alt: "Logo ofApp Store",
+      subtitle: "Snowcrest Peak",
+      opacity: 1,
+      mobile: true
+    },
+
+
+    {
+      href: "",
+      title: "Play Store",
+      imgSrc: "../assets/logos/comingsoon.webp",
+      alt: "Logo of Play Store",
+      subtitle: "Coming soon",
+      opacity: 0,
+      mobile: true
+    },
+    {
+      href: "",
+      title: "Play Store",
+      imgSrc: "../assets/logos/tyjtrhth.webp",
+      alt: "Logo of Play Store",
+      subtitle: "Coming soon",
+      opacity: 0,
+      mobile: false
+    },
+  ]
 
 
   return (
@@ -270,17 +268,17 @@ export const Overlay = () => {
         id="section1"
         title={
           <>
-           <Typewriter
-  options={{
-    strings: ["Dinomite studio", "Where Ideas Become Hits"],
-    autoStart: true,
-    loop: true, // met `false` si tu veux que ça ne boucle qu’une fois
-    delay: 70, // vitesse de frappe
-    deleteSpeed: 50,
-    pauseFor: 1500, // pause avant suppression
-    cursor: "_",
-  }}
-/>
+            <Typewriter
+              options={{
+                strings: ["Dinomite studio", "Where Ideas Become Hits"],
+                autoStart: true,
+                loop: true, // met `false` si tu veux que ça ne boucle qu’une fois
+                delay: 70, // vitesse de frappe
+                deleteSpeed: 50,
+                pauseFor: 1500, // pause avant suppression
+                cursor: "_",
+              }}
+            />
           </>
         }
         subtitle="Dinomite studios"

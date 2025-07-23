@@ -8,8 +8,8 @@ const GradientBackground = () => {
   const gradientRef = useRef();
 
   const colorsMap = {
-    section1: ["#48A6A7", "#006A71"],
-    section2: ["#48A6A7", "#006A71"],
+    section1: ["#b0cff5", "#6ac0f1"],
+    section2: ["#b0cff5", "#6ac0f1"],
     section3: ["#03A6A1", "#77BEF0"],
     section4: ["#3D74B6", "#EAC8A6"],
     section5: ["#3D74B6", "#77BEF0"],
@@ -64,8 +64,8 @@ const GradientBackground = () => {
       ref={gradientRef}
       className="gradient-background-fixed"
       style={{
-        "--start": "#48A6A7",
-        "--end": "#006A71",
+        "--start": "#b0cff5",
+        "--end": "#6ac0f1",
       }}
     />
   );

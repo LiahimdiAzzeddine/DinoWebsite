@@ -132,7 +132,7 @@ export default function NavBar() {
                   <Link
                     to="/career"
                     aria-label="career"
-                    className="hover:bg-emerald-100 no-underline    nunito border border-teal-200 rounded-xl px-4 py-[0.4rem] whitespace-nowrap shadow-[rgba(0,0,0,0.03)_0px_7px_0.5rem,_rgba(0,0,0,0.05)_0px_0px_1.3rem_inset] mr-4 bg-white text-teal-800 cursor-pointer list-none text-left"
+                    className="hover:bg-emerald-100 no-underline    nunito border border-teal-200 rounded-xl px-4 py-2 whitespace-nowrap shadow-[rgba(0,0,0,0.03)_0px_7px_0.5rem,_rgba(0,0,0,0.05)_0px_0px_1.3rem_inset] mr-4 bg-white text-teal-800 cursor-pointer list-none text-left"
                   >
                     career
                   </Link>
@@ -140,7 +140,7 @@ export default function NavBar() {
                     aria-label="Log in"
                     href="https://calendar.app.google/EfrYWkBJmL9PdhzP6"
                     target="_blank"
-                    className="no-underline   nunito bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 border-[1px] border-[rgba(255,255,255,0.1)] rounded-xl p-[0.4rem_1rem] whitespace-nowrap shadow-[rgba(0,0,0,0.03)_0px_7px_0.5rem,_rgba(0,0,0,0.05)_0px_0px_1.3rem_inset] text-white mr-[-12px]"
+                    className="no-underline   nunito bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 border-[1px] border-[rgba(255,255,255,0.1)] rounded-xl p-2 whitespace-nowrap shadow-[rgba(0,0,0,0.03)_0px_7px_0.5rem,_rgba(0,0,0,0.05)_0px_0px_1.3rem_inset] text-white mr-[-12px]"
                   >
                     Book a Call
                   </a>

@@ -15,6 +15,7 @@ const GradientBackground = () => {
     section5: ["#3D74B6", "#77BEF0"],
     section6: ["#64a5d3", "#d8ffff"],
   };
+  
 
   useLayoutEffect(() => {
     const gradient = gradientRef.current;
@@ -66,7 +67,6 @@ const GradientBackground = () => {
       style={{
         "--start": "#47beab21",
         "--end": "#47beab",
-        "--deg":'135'
       }}
     />
   );

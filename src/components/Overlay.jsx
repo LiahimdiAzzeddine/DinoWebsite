@@ -51,24 +51,25 @@ const Card = ({
         marginRight: isDesktop ? (right ? "calc(100% - 440px - 12vw)" : "auto") : "auto",
       }}
     >
-      <div className="wrapper flex flex-col gap-7">
+      <div className="wrapper flex flex-col gap-6">
         <div>
+           {subtitle && (
+            <div
+              className="pb-2 text-2xl uppercase"
+            >
+              {subtitle}
+            </div>
+          )}
           <div
             className={`font-bold RocGroteskBold flex items-center text-4xl leading-9 ${id === "section1" ? "sm:min-h-[2em] min-h-[2.2em]" : ""
               }`}
           >
             {title}
           </div>
-          {subtitle && (
-            <div
-              className="pt-2 text-2xl uppercase"
-            >
-              {subtitle}
-            </div>
-          )}
+         
         </div>
 
-        <div className="content flex flex-col gap-4 text-xl leading-6">
+        <div className="content flex flex-col gap-4 text-lg xl:text-xl leading-5">
           {paragraphs.map((text, idx) => (
             <motion.div
               key={idx}

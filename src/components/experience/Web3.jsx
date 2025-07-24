@@ -5,9 +5,10 @@ import {
   useMemo,
   useRef,
   useCallback,
+  useState,
 } from "react";
-import { useGraph, useThree } from "@react-three/fiber";
-import { useGLTF, PerspectiveCamera, useAnimations } from "@react-three/drei";
+import { useFrame, useGraph, useThree } from "@react-three/fiber";
+import { useGLTF, PerspectiveCamera, useAnimations, Trail } from "@react-three/drei";
 import { SkeletonUtils } from "three-stdlib";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -108,6 +109,8 @@ export default function Web3({ sectionID, isActive, ...props }) {
   const prevScrollTrigger = useRef(null);
   const location = useLocation();
   let scrollDirection = 'Up';
+  const [scrollDirec, setScrollDirec] = useState('Up');
+
   let velocityD = 0;
   let isTransitioning = false;
   let lastScrollTime = 0;
@@ -132,6 +135,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
       type: "wheel,touch,pointer,scroll",
       onChange: (obs) => {
         scrollDirection = obs.deltaY >= 0 ? "Up" : "Down";
+        setScrollDirec(scrollDirection);
         velocityD = obs.velocityY;
       },
       //preventDefault: true,
@@ -140,8 +144,9 @@ export default function Web3({ sectionID, isActive, ...props }) {
   }, []);
 
   useEffect(() => {
+  console.log('Scroll direction changed to', scrollDirection);
+}, [scrollDirection]);
 
-  }, [])
 
   // Animation control functions
   const resetAllActions = useCallback(() => {
@@ -769,7 +774,22 @@ export default function Web3({ sectionID, isActive, ...props }) {
     };
   }, [location.pathname]);
 
+const [distance, setDistance] = useState(0)
+  const prevPosition = useRef(new THREE.Vector3())
 
+  useFrame(() => {
+    if (!rocketRef.current) return
+
+    const currentPos = rocketRef.current.getWorldPosition(new THREE.Vector3())
+    const dist = prevPosition.current.distanceTo(currentPos)
+
+    if (dist > 0.001) {
+      setDistance((prev) => prev + dist)
+        console.log("🚀 ~ Web3 ~ distance:", distance)
+
+      prevPosition.current.copy(currentPos)
+    }
+  })
 
 
   return (
@@ -1252,12 +1272,12 @@ export default function Web3({ sectionID, isActive, ...props }) {
             <group name="Cylinder019" position={[-3.488, 1.291, 0.785]} scale={0}>
               <mesh
                 name="Cylinder007"
-                ref={rocketRef}
                 castShadow
                 receiveShadow
                 geometry={nodes.Cylinder007.geometry}
                 material={materials['Material.003']}
               />
+               
               <mesh
                 name="Cylinder007_1"
                 castShadow
@@ -1281,6 +1301,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
               />
               <mesh
                 name="Cylinder007_4"
+                ref={rocketRef}
                 castShadow
                 receiveShadow
                 geometry={nodes.Cylinder007_4.geometry}
@@ -1293,6 +1314,20 @@ export default function Web3({ sectionID, isActive, ...props }) {
                 geometry={nodes.Cylinder007_5.geometry}
                 material={materials['Material.012']}
               />
+        <Trail
+       key="trail-up" 
+      width={scrollDirec=="Up"?35:10}
+      length={8}
+      color={'orange'}
+      decay={scrollDirec=="Up"?1:3}
+      target={rocketRef}
+      stride={0}
+      interval={1}
+      attenuation={(width) => width*width*2}
+    />
+
+       
+        
             </group>
           </group>
           <mesh

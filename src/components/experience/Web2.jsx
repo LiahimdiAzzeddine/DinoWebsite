@@ -19,9 +19,8 @@ gsap.registerPlugin(ScrollTrigger, ScrollToPlugin, Observer);
 
 export default function Web2({ sectionID, isActive, ...props }) {
   const group = useRef()
-  const { nodes, materials, animations } = useGLTF('./models/Model2n.glb')
+  const { nodes, materials, animations } = useGLTF('./models/Model2.glb')
   const { actions, mixer } = useAnimations(animations, group)
-  console.log("🚀 ~ Web2 ~ actions:", actions)
   const { setCurrentModel } = useContext(AnimationContext);
   const currentTween = useRef(null);
   // handling screen width change
@@ -34,11 +33,6 @@ export default function Web2({ sectionID, isActive, ...props }) {
     "ArmatureMan",
     "BallonHotAirAction",
     
-    "FloatignClouds.001",
-    "FloatignClouds.003",
-    "FloatignClouds.002",
-    "FloatignClouds.004",
-    "FloatignClouds.005",
 
     "Emoji",
     "LeftHand",
@@ -450,7 +444,31 @@ export default function Web2({ sectionID, isActive, ...props }) {
   return (
     <group ref={group} {...props} dispose={null} visible={isActive}>
       <group name="Scene">
-       
+        <group
+          // position-x={viewport.width < 5 ? 2.5 : 0}
+          position-z={viewport.width < 5 ? 0.10 : 0}
+          position-y={viewport.width < 5 ? -1 : 0}
+        >
+
+          <mesh
+            name="Sphere014"
+            castShadow
+            receiveShadow
+            geometry={nodes.Sphere014.geometry}
+            material={nodes.Sphere014.material}
+            position={[-3.668, -7.463, -2.876]}
+            scale={[0.45, 0.767, 0.767]}
+          />
+          <mesh
+            name="Sphere001"
+            castShadow
+            receiveShadow
+            geometry={nodes.Sphere001.geometry}
+            material={nodes.Sphere001.material}
+            position={[-3.668, 12.438, 2.018]}
+            rotation={[Math.PI, 0, Math.PI]}
+            scale={[0.45, 0.767, 0.767]}
+          /></group>
         <group name="Empty001" position={[23.142, 20.042, 1.408]} scale={0.15}>
           <PerspectiveCamera
             name="Camera"
@@ -506,131 +524,56 @@ export default function Web2({ sectionID, isActive, ...props }) {
               position={[-1.773, 0.555, 0.301]}
               rotation={[0.007, -0.012, -0.001]}
               scale={0.084}>
-             
+              <mesh
+                name="Sphere010"
+                castShadow
+                receiveShadow
+                geometry={nodes.Sphere010.geometry}
+                material={materials['Material.007']}
+              />
               <mesh
                 name="Sphere010_1"
                 castShadow
                 receiveShadow
                 geometry={nodes.Sphere010_1.geometry}
-                 material={materials['Material.007']}
+                material={materials['Material.005']}
               />
               <mesh
                 name="Sphere010_2"
                 castShadow
                 receiveShadow
                 geometry={nodes.Sphere010_2.geometry}
-                material={materials['Material.005']}
+                material={materials['Material.010']}
               />
               <mesh
                 name="Sphere010_3"
                 castShadow
                 receiveShadow
                 geometry={nodes.Sphere010_3.geometry}
-                material={materials['Material.010']}
+                material={materials['Material.009']}
               />
               <mesh
                 name="Sphere010_4"
                 castShadow
                 receiveShadow
                 geometry={nodes.Sphere010_4.geometry}
-                material={materials['Material.009']}
+                material={materials['Material.011']}
               />
               <mesh
                 name="Sphere010_5"
                 castShadow
                 receiveShadow
                 geometry={nodes.Sphere010_5.geometry}
-                material={materials['Material.011']}
+                material={materials['Material.013']}
               />
               <mesh
                 name="Sphere010_6"
                 castShadow
                 receiveShadow
                 geometry={nodes.Sphere010_6.geometry}
-                material={materials['Material.013']}
-              />
-              <mesh
-              name="Sphere010_7"
-              castShadow
-              receiveShadow
-              geometry={nodes.Sphere010_7.geometry}
-              material={materials['Material.012']}
-            />
-            </group>
-            <group name="Clouds" position={[0.172, 0, 0]} scale={0.122}>
-            <group name="Sphere1" position={[-2.455, 2.427, 3.204]}>
-              <mesh
-                name="Sphere001"
-                castShadow
-                receiveShadow
-                geometry={nodes.Sphere001.geometry}
-                material={nodes.Sphere001.material}
-                position={[-1.416, 0, 0.147]}
-                rotation={[Math.PI, 0, Math.PI]}
-                scale={[0.216, 0.368, 0.368]}
+                material={materials['Material.012']}
               />
             </group>
-            <group name="Sphere10" position={[-3.668, 3.42, -2.895]}>
-              <mesh
-                name="Sphere010"
-                castShadow
-                receiveShadow
-                geometry={nodes.Sphere010.geometry}
-                material={nodes.Sphere010.material}
-                position={[-1.416, 0, 0.106]}
-                rotation={[Math.PI, 0, Math.PI]}
-                scale={[0.427, 0.729, 0.729]}
-              />
-            </group>
-            <group name="Sphere3" position={[-3.668, 0.866, -2.424]}>
-              <mesh
-                name="Sphere003"
-                castShadow
-                receiveShadow
-                geometry={nodes.Sphere003.geometry}
-                material={nodes.Sphere003.material}
-                position={[-1.416, 0, -0.118]}
-                rotation={[Math.PI, 0, Math.PI]}
-                scale={[0.45, 0.767, 0.767]}
-              />
-            </group>
-            <group name="Sphere4" position={[-2.205, 2.231, -1.29]} scale={0.811}>
-              <mesh
-                name="Sphere004"
-                castShadow
-                receiveShadow
-                geometry={nodes.Sphere004.geometry}
-                material={nodes.Sphere004.material}
-                position={[-1.416, 0.035, 0.093]}
-                rotation={[Math.PI, 0, Math.PI]}
-                scale={[0.478, 0.815, 0.815]}
-              />
-            </group>
-            <group name="Sphere8" position={[-3.527, 1.198, 2.303]}>
-              <mesh
-                name="Sphere008"
-                castShadow
-                receiveShadow
-                geometry={nodes.Sphere008.geometry}
-                material={nodes.Sphere008.material}
-                position={[-1.558, 0, 0.08]}
-                rotation={[Math.PI, 0, Math.PI]}
-                scale={[0.478, 0.815, 0.815]}
-              />
-            </group>
-            <group name="Sphere9" position={[-12.137, 3.43, 2.853]} scale={0.827}>
-              <mesh
-                name="Sphere009"
-                castShadow
-                receiveShadow
-                geometry={nodes.Sphere009.geometry}
-                material={nodes.Sphere009.material}
-                position={[-1.713, 0, -0.065]}
-                rotation={[Math.PI, 0, Math.PI]}
-                scale={[0.798, 1.361, 1.361]}
-              />
-            </group>
-          </group>
             <group
               name="Cube043_Cube001"
               position={[0.255, -0.959, 0.482]}
@@ -839,4 +782,4 @@ export default function Web2({ sectionID, isActive, ...props }) {
   )
 }
 
-useGLTF.preload('./models/Model2n.glb')
+useGLTF.preload('./models/Model2.glb')

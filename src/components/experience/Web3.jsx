@@ -18,6 +18,34 @@ import { useLocation } from "react-router-dom";
 import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 import { Observer } from "gsap/Observer";
 //import SmokeParticles from "../SmokeParticles";
+import { extend } from '@react-three/fiber'
+import { shaderMaterial } from '@react-three/drei'
+
+const TrailMaterial = shaderMaterial(
+  { time: 0 },
+  // vertex shader
+  `
+    varying vec2 vUv;
+    void main() {
+      vUv = uv;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+  `,
+  // fragment shader
+  `
+    uniform float time;
+    varying vec2 vUv;
+    void main() {
+      float life = vUv.x; // varie de 0 à 1 le long du trail
+      vec3 color1 = vec3(1.0, 1.0, 1.0); // blanc (nouveau)
+      vec3 color2 = vec3(1.0, 0.5, 0.0); // orange (ancien)
+      vec3 finalColor = mix(color1, color2, life);
+      gl_FragColor = vec4(finalColor, 1.0 - life);
+    }
+  `
+)
+
+extend({ TrailMaterial })
 
 // Register GSAP plugin
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin, Observer);
@@ -778,19 +806,26 @@ const [distance, setDistance] = useState(0)
   const prevPosition = useRef(new THREE.Vector3())
 
   useFrame(() => {
-    if (!rocketRef.current) return
+    // if (!rocketRef.current) return
 
-    const currentPos = rocketRef.current.getWorldPosition(new THREE.Vector3())
-    const dist = prevPosition.current.distanceTo(currentPos)
+    // const currentPos = rocketRef.current.getWorldPosition(new THREE.Vector3())
+    // const dist = prevPosition.current.distanceTo(currentPos)
 
-    if (dist > 0.001) {
-      setDistance((prev) => prev + dist)
-        console.log("🚀 ~ Web3 ~ distance:", distance)
+    // if (dist > 0.001) {
+    //   setDistance((prev) => prev + dist)
+    //     console.log("🚀 ~ Web3 ~ distance:", distance)
 
-      prevPosition.current.copy(currentPos)
-    }
+    //   prevPosition.current.copy(currentPos)
+    // }
   })
+  const [trailColor, setTrailColor] = useState('orange')
+const timeRef = useRef(0)
 
+useFrame((state) => {
+  timeRef.current += 0.016
+  const hue = (Math.sin(timeRef.current) + 1) * 180 // 0-360°
+  setTrailColor(`hsl(${hue}, 100%, 50%)`)
+})
 
   return (
     <group ref={group} {...props} dispose={null} visible={isActive}>
@@ -1314,19 +1349,18 @@ const [distance, setDistance] = useState(0)
                 geometry={nodes.Cylinder007_5.geometry}
                 material={materials['Material.012']}
               />
-        <Trail
-       key="trail-up" 
-      width={scrollDirec=="Up"?35:10}
-      length={8}
-      color={'orange'}
-      decay={scrollDirec=="Up"?1:3}
-      target={rocketRef}
-      stride={0}
-      interval={1}
-      attenuation={(width) => width*width*2}
-    />
 
-       
+<Trail
+  key="trail-up" 
+  width={scrollDirec=="Up"?35:10}
+  length={6}
+  color={trailColor}
+  decay={scrollDirec=="Up"?1.8:3}
+  target={rocketRef}
+  stride={0}
+  interval={1}
+  attenuation={(w) => Math.sqrt(w)}
+/>
         
             </group>
           </group>

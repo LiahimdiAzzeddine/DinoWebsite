@@ -18,35 +18,7 @@ import { useLocation } from "react-router-dom";
 import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 import { Observer } from "gsap/Observer";
 //import SmokeParticles from "../SmokeParticles";
-import { extend } from '@react-three/fiber'
-import { shaderMaterial } from '@react-three/drei'
 
-
-const TrailMaterial = shaderMaterial(
-  { time: 0 },
-  // vertex shader
-  `
-    varying vec2 vUv;
-    void main() {
-      vUv = uv;
-      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-    }
-  `,
-  // fragment shader
-  `
-    uniform float time;
-    varying vec2 vUv;
-    void main() {
-      float life = vUv.x; // varie de 0 à 1 le long du trail
-      vec3 color1 = vec3(1.0, 1.0, 1.0); // blanc (nouveau)
-      vec3 color2 = vec3(1.0, 0.5, 0.0); // orange (ancien)
-      vec3 finalColor = mix(color1, color2, life);
-      gl_FragColor = vec4(finalColor, 1.0 - life);
-    }
-  `
-)
-
-extend({ TrailMaterial })
 
 // Register GSAP plugin
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin, Observer);
@@ -1367,7 +1339,20 @@ useFrame(() => {
 
 
  {/* Trail permanent (suit l'objet qui bouge légèrement) */}
-     
+  {scrollDirec && [...Array(3)].map((_, i) => (
+      <Trail
+        key={`trail-dynamic-${i}`}
+        width={(scrollDirec=="Up"?40:10) * (1 - i * 0.3)}
+        length={10}
+        color={['white', 'orange', 'red'][i]}
+        decay={(scrollDirec=="Up"?2:3) + i}
+        target={dummyRef}
+        stride={0}
+        interval={1}
+        attenuation={(w) => Math.sqrt(w)}
+      />
+    ))}
+
     {/* Trails dynamiques (seulement quand scrollDirec existe) */}
     {scrollDirec && [...Array(3)].map((_, i) => (
       <Trail

@@ -21,6 +21,7 @@ import { Observer } from "gsap/Observer";
 import { extend } from '@react-three/fiber'
 import { shaderMaterial } from '@react-three/drei'
 
+
 const TrailMaterial = shaderMaterial(
   { time: 0 },
   // vertex shader
@@ -818,13 +819,16 @@ const [distance, setDistance] = useState(0)
     //   prevPosition.current.copy(currentPos)
     // }
   })
-  const [trailColor, setTrailColor] = useState('orange')
-const timeRef = useRef(0)
+const dummyRef = useRef()
 
-useFrame((state) => {
-  timeRef.current += 0.016
-  const hue = (Math.sin(timeRef.current) + 1) * 180 // 0-360°
-  setTrailColor(`hsl(${hue}, 100%, 50%)`)
+// Créer un objet invisible qui bouge légèrement en permanence
+useFrame(() => {
+  if (dummyRef.current) {
+    // Mouvement très subtil pour maintenir le trail
+    dummyRef.current.position.x = rocketRef.current.position.x + Math.sin(Date.now() *2) *2
+    dummyRef.current.position.y = rocketRef.current.position.y + Math.cos(Date.now()*2) * 2
+    dummyRef.current.position.z = rocketRef.current.position.z
+  }
 })
 
   return (
@@ -1336,7 +1340,6 @@ useFrame((state) => {
               />
               <mesh
                 name="Cylinder007_4"
-                ref={rocketRef}
                 castShadow
                 receiveShadow
                 geometry={nodes.Cylinder007_4.geometry}
@@ -1349,18 +1352,36 @@ useFrame((state) => {
                 geometry={nodes.Cylinder007_5.geometry}
                 material={materials['Material.012']}
               />
+              <group position-y={-3}>
+                 <mesh ref={rocketRef} visible={false}>
+      <boxGeometry args={[0.1, 0.1, 0.1]} />
+    </mesh>
+               </group>
+               {/* Objet invisible pour le trail permanent */}
+               <group position-y={-5}>
+                 <mesh ref={dummyRef} visible={false}>
+      <boxGeometry args={[0.1, 0.1, 0.1]} />
+    </mesh>
+               </group>
+   
 
-<Trail
-  key="trail-up" 
-  width={scrollDirec=="Up"?35:10}
-  length={6}
-  color={trailColor}
-  decay={scrollDirec=="Up"?1.8:3}
-  target={rocketRef}
-  stride={0}
-  interval={1}
-  attenuation={(w) => Math.sqrt(w)}
-/>
+
+ {/* Trail permanent (suit l'objet qui bouge légèrement) */}
+     
+    {/* Trails dynamiques (seulement quand scrollDirec existe) */}
+    {scrollDirec && [...Array(3)].map((_, i) => (
+      <Trail
+        key={`trail-dynamic-${i}`}
+        width={(scrollDirec=="Up"?40:10) * (1 - i * 0.3)}
+        length={10}
+        color={['white', 'orange', 'red'][i]}
+        decay={(scrollDirec=="Up"?2:3) + i}
+        target={rocketRef}
+        stride={0}
+        interval={1}
+        attenuation={(w) => Math.sqrt(w)}
+      />
+    ))}
         
             </group>
           </group>

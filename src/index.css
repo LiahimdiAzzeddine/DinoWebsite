@@ -79,35 +79,29 @@ p {
   opacity: 1;
   animation: none;
 }
-/* @keyframes gradientFlow {
-  0% { 
-    background-position: 10% 20%;
+@keyframes gradientFlow {
+  0% {
+    background-position: 50% 50%;
+    filter: brightness(1) hue-rotate(0deg) saturate(1) contrast(1);
   }
-  25% { 
-    background-position: 30% 50%;
-  }
-  50% { 
-    background-position:50% 55%;
-  }
-  75% { 
-    background-position: 60% 65%;
-  }
-  100% { 
-    background-position: 65% 50%;
-  }
-} */
-/**70deg**/
-@keyframes saturationPulse {
-  /* 0% {
-    filter: hue-rotate(0deg) saturate(1) brightness(1);
+  25% {
+    background-position: 48% 52%;
+    filter: brightness(1.05) hue-rotate(5deg) saturate(1.2) contrast(1.05);
   }
   50% {
-    filter: hue-rotate(12deg) saturate(2) brightness(1.1);
+    background-position: 51% 53%;
+    filter: brightness(1.1) hue-rotate(10deg) saturate(1.4) contrast(1.1);
+  }
+  75% {
+    background-position: 49% 51%;
+    filter: brightness(1.05) hue-rotate(5deg) saturate(1.2) contrast(1.05);
   }
   100% {
-    filter: hue-rotate(0deg) saturate(1) brightness(1);
-  } */
+    background-position: 50% 50%;
+    filter: brightness(1) hue-rotate(0deg) saturate(1) contrast(1);
+  }
 }
+
 
 .gradient-background-fixed {
   position: fixed;
@@ -116,17 +110,18 @@ p {
   width: 100vw;
   height: 100vh;
   z-index: -10;
-  background: linear-gradient(70deg,var(--start) 0%, var(--end) 100%);
-  /*background-size: 250% 250%;
-  animation: gradientFlow 5s ease-in-out infinite;*/
-  /* Pas de transition CSS pour éviter les conflits */
-  transition: none;
-  /* Assurer qu'il n'y ait pas de débordement */
+  background: linear-gradient(70deg, var(--start) 0%, var(--end) 100%);
+  background-size: 150% 300%;
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+  background-color: var(--start);
+  animation: gradientFlow 10s ease-in-out infinite;
   overflow: hidden;
-  /* Forcer l'accélération matérielle */
-  will-change: background;
+  will-change: background-position, filter;
   transform: translateZ(0);
 }
+
+
 
 /* Assurer que le body et html n'ont pas de marges/padding */
 body, html {
@@ -141,7 +136,18 @@ body, html {
 }
 
 
-
+/**70deg**/
+@keyframes saturationPulse {
+  /* 0% {
+    filter: hue-rotate(0deg) saturate(1) brightness(1);
+  }
+  50% {
+    filter: hue-rotate(12deg) saturate(2) brightness(1.1);
+  }
+  100% {
+    filter: hue-rotate(0deg) saturate(1) brightness(1);
+  } */
+}
 
 .nunito {
   font-family: "RocGrotesk", sans-serif;

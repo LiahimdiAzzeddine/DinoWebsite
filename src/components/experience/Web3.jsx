@@ -1330,37 +1330,15 @@ useFrame(() => {
     </mesh>
                </group>
                {/* Objet invisible pour le trail permanent */}
-               <group position-y={-5}>
-                 <mesh ref={dummyRef} visible={false}>
-      <boxGeometry args={[0.1, 0.1, 0.1]} />
-    </mesh>
-               </group>
-   
-
-
- {/* Trail permanent (suit l'objet qui bouge légèrement) */}
-  {scrollDirec && [...Array(3)].map((_, i) => (
-      <Trail
-        key={`trail-dynamic-${i}`}
-        width={(scrollDirec=="Up"?40:10) * (1 - i * 0.3)}
-        length={10}
-        color={['white', 'orange', 'red'][i]}
-        decay={(scrollDirec=="Up"?2:3) + i}
-        target={dummyRef}
-        stride={0}
-        interval={1}
-        attenuation={(w) => Math.sqrt(w)}
-      />
-    ))}
-
+              
     {/* Trails dynamiques (seulement quand scrollDirec existe) */}
     {scrollDirec && [...Array(3)].map((_, i) => (
       <Trail
         key={`trail-dynamic-${i}`}
-        width={(scrollDirec=="Up"?40:10) * (1 - i * 0.3)}
+        width={(scrollDirec=="Up"?40:0) * (1 - i * 0.3)}
         length={10}
         color={['white', 'orange', 'red'][i]}
-        decay={(scrollDirec=="Up"?2:3) + i}
+        decay={(scrollDirec=="Up"?1.5:300) + i}
         target={rocketRef}
         stride={0}
         interval={1}

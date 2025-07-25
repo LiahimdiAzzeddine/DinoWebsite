@@ -84,6 +84,7 @@ useEffect(() => {
     <div className="absolute top-0 left-0 w-full h-full z-10">
 
     <Canvas dpr={dpr} shadows={false} gl={{ antialias: false, powerPreference: "low-power" }}>
+      
       <PerformanceMonitor
         bounds={() => [30, 60]}
         flipflops={2}

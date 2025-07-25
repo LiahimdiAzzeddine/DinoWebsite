@@ -6,7 +6,6 @@ const FireworksDisplay = () => {
   const animationRef = useRef();
   const fireworksRef = useRef([]);
   const lastFireworkTime = useRef(0);
-  const messageRef = useRef(null);
 
   const colors = [
     ['#FFD700', '#FFA500', '#FF8C00'], // Gold gradient
@@ -344,37 +343,6 @@ const FireworksDisplay = () => {
     fireworksRef.current.push(firework);
   };
 
-  useEffect(() => {
-    // Animate the message when component mounts
-    if (messageRef.current) {
-      // Set initial state
-      gsap.set(messageRef.current, {
-        opacity: 0,
-        scale: 0.8,
-        y: 20
-      });
-
-      // Animate in
-      gsap.to(messageRef.current, {
-        opacity: 1,
-        scale: 1,
-        y: 0,
-        duration: 0.6,
-        ease: "back.out(1.7)",
-        delay: 0.2
-      });
-
-      // Animate out after 3.5 seconds
-      gsap.to(messageRef.current, {
-        opacity: 0,
-        scale: 0.9,
-        y: -10,
-        duration: 0.4,
-        ease: "power2.in",
-        delay: 3.5
-      });
-    }
-  }, []);
 
   return (
     <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none">
@@ -385,25 +353,7 @@ const FireworksDisplay = () => {
         style={{ mixBlendMode: 'screen' }}
       />
 
-      {/* Centered welcome message */}
-      <div
-        ref={messageRef}
-        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none"
-      >
-        <div
-          className="rounded-2xl px-8 py-4"
-          style={{
-            backdropFilter: 'blur(40px) saturate(1.4)',
-            backgroundColor: "#66666648",
-            boxShadow: '0 0 10px #5e5e5e1c',
-            outline: '1px solid #ffffff2b',
-          }}
-        >
-          <div className="text-white text-xl tracking-wide whitespace-nowrap">
-            Cliquez n'importe où pour créer des feux d'artifice !
-          </div>
-        </div>
-      </div>
+
     </div>
   );
 };

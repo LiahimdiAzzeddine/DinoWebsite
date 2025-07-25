@@ -111,7 +111,7 @@ p {
   height: 100vh;
   z-index: -10;
   background: linear-gradient(70deg, var(--start) 0%, var(--end) 100%);
-  background-size: 150% 300%;
+  background-size: 200% 300%;
   background-position: 50% 50%;
   background-repeat: no-repeat;
   background-color: var(--start);

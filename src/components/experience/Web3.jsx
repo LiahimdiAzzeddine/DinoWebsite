@@ -19,6 +19,162 @@ import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 import { Observer } from "gsap/Observer";
 //import SmokeParticles from "../SmokeParticles";
 
+export function FireParticles({ count = 500 }) {
+  const pointsRef = useRef()
+
+  const { positions, colors } = useMemo(() => {
+    const positions = new Float32Array(count * 3)
+    const colors = new Float32Array(count * 3)
+    const color = new THREE.Color()
+
+    for (let i = 0; i < count; i++) {
+      const y = Math.random() * 1.5
+      const r = (1.5 - y) * 0.2
+      const angle = Math.random() * Math.PI * 2
+      const x = Math.cos(angle) * r
+      const z = Math.sin(angle) * r
+
+      positions.set([x, y, z], i * 3)
+      color.setHSL(0.05 + 0.1 * (1 - y / 1.5), 1, 0.5 + 0.2 * (y / 1.5))
+      colors.set([color.r, color.g, color.b], i * 3)
+    }
+
+    return { positions, colors }
+  }, [count])
+
+  useFrame(() => {
+    if (pointsRef.current) {
+      pointsRef.current.rotation.y += 0.002
+    }
+  })
+
+  return (
+    <points ref={pointsRef}>
+      <bufferGeometry>
+        <bufferAttribute
+          attach="attributes-position"
+          array={positions}
+          count={positions.length / 3}
+          itemSize={3}
+        />
+        <bufferAttribute
+          attach="attributes-color"
+          array={colors}
+          count={colors.length / 3}
+          itemSize={3}
+        />
+      </bufferGeometry>
+      <pointsMaterial
+        size={0.1}
+        vertexColors
+        transparent
+        opacity={0.9}
+        depthWrite={false}
+        sizeAttenuation
+      />
+    </points>
+  )
+}
+export  function SmokeTrail({ count = 100, spread = 0.2 }) {
+  const pointsRef = useRef()
+  const particles = useMemo(() => {
+    const temp = []
+    for (let i = 0; i < count; i++) {
+      temp.push({
+        position: new THREE.Vector3(
+          (Math.random() - 0.5) * spread,
+          0,
+          (Math.random() - 0.5) * spread
+        ),
+        velocity: new THREE.Vector3(
+          (Math.random() - 0.5) * 0.01,
+          0.01 + Math.random() * 0.015,
+          (Math.random() - 0.5) * 0.01
+        ),
+        life: Math.random() * 100,
+        age: 0,
+      })
+    }
+    return temp
+  }, [count])
+
+  const positions = useMemo(() => new Float32Array(count * 3), [count])
+  const alphas = useMemo(() => new Float32Array(count), [count])
+
+  useFrame(() => {
+    for (let i = 0; i < count; i++) {
+      const p = particles[i]
+      p.position.add(p.velocity)
+      p.age++
+      if (p.age > 100) {
+        // Reset the particle
+        p.position.set(
+          (Math.random() - 0.5) * spread,
+          0,
+          (Math.random() - 0.5) * spread
+        )
+        p.age = 0
+      }
+
+      positions.set([p.position.x, p.position.y, p.position.z], i * 3)
+      alphas[i] = 1 - p.age / 100 // Fade out
+    }
+
+    if (pointsRef.current) {
+      pointsRef.current.geometry.attributes.position.needsUpdate = true
+      pointsRef.current.geometry.attributes.alpha.needsUpdate = true
+    }
+  })
+
+  return (
+    <points ref={pointsRef}>
+      <bufferGeometry>
+        <bufferAttribute
+          attach="attributes-position"
+          array={positions}
+          itemSize={3}
+          count={count}
+        />
+        <bufferAttribute
+          attach="attributes-alpha"
+          array={alphas}
+          itemSize={1}
+          count={count}
+        />
+      </bufferGeometry>
+      <pointsMaterial
+        color="#aaaaaa"
+        size={0.1}
+        transparent
+        opacity={1}
+        sizeAttenuation
+        depthWrite={false}
+        onBeforeCompile={(shader) => {
+          shader.vertexShader = shader.vertexShader.replace(
+            'void main() {',
+            `
+            attribute float alpha;
+            varying float vAlpha;
+            void main() {
+              vAlpha = alpha;
+            }
+          `
+          )
+          shader.fragmentShader = shader.fragmentShader.replace(
+            'void main() {',
+            `
+            varying float vAlpha;
+            void main() {
+            `
+          ).replace(
+            'gl_FragColor = vec4( outgoingLight, diffuseColor.a );',
+            'gl_FragColor = vec4( outgoingLight, vAlpha );'
+          )
+        }}
+      />
+    </points>
+  )
+}
 
 // Register GSAP plugin
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin, Observer);
@@ -102,6 +258,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
   const group = useRef();
   const ManRef = useRef();
   const rocketRef = useRef();
+  const emitterRef =useRef();
   const currentTween = useRef(null);
   const sceneContainerGroup = useRef();
   const armatureRef = useRef();
@@ -1329,23 +1486,11 @@ useFrame(() => {
       <boxGeometry args={[0.1, 0.1, 0.1]} />
     </mesh>
                </group>
-               {/* Objet invisible pour le trail permanent */}
-              
-    {/* Trails dynamiques (seulement quand scrollDirec existe) */}
-    {scrollDirec && [...Array(3)].map((_, i) => (
-      <Trail
-        key={`trail-dynamic-${i}`}
-        width={(scrollDirec=="Up"?40:0) * (1 - i * 0.3)}
-        length={10}
-        color={['white', 'orange', 'red'][i]}
-        decay={(scrollDirec=="Up"?1.5:300) + i}
-        target={rocketRef}
-        stride={0}
-        interval={1}
-        attenuation={(w) => Math.sqrt(w)}
-      />
-    ))}
-        
+                        <group position={[0, -4.5, 0]} ref={emitterRef}>
+      <FireParticles />
+      <SmokeTrail/>
+    </group>
+
             </group>
           </group>
           <mesh

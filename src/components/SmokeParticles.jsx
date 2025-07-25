@@ -6,7 +6,7 @@ const PARTICLE_CONFIG = {
   position: [0, -3.5, 0],
   velocityRange: 0.02,
   lifeRange: [100, 200],
-  scaleRange: [0.2, 0.7],
+  scaleRange: [0.01, 0.1],
   deltaMultiplier: 30,
   colors: {
     birth: 0xbdbbbb,

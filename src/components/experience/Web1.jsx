@@ -629,7 +629,7 @@ const animateOpen = (ref) => {
     playOneShotAnimations(["FamelNotif", "FamelText"], 4000);
   }
   const handleManClick = () => {
-    if (!girlRef.current) return;
+    if (!manRef.current) return;
     playOneShotAnimations(["ThinkingNotif", "ThinkingTex", "ThinkingTex.001"], 4000);
   }
 
@@ -676,7 +676,7 @@ const animateOpen = (ref) => {
 
 
   return (
-    <group ref={group} {...props} dispose={null} visible={isActive} >
+    <group ref={group} {...props} dispose={null} visible={isActive}>
       <group name="Scene">
 
         <PerspectiveCamera
@@ -689,6 +689,17 @@ const animateOpen = (ref) => {
           rotation={[-0.417, 0.041, -0.022]}
         />
         <group ref={sceneContainerGroup} name="scene_container"
+        onPointerEnter={() => {
+        document.body.style.cursor = 'url(/cursors/pngegg_imresizer.png), grab';
+  }}
+  onPointerLeave={() => {
+    document.body.style.cursor = 'default';
+  }}
+
+  onPointerUp={() => {
+        document.body.style.cursor = 'url(/cursors/pngegg_imresizer.png), grab';
+
+  }}
           scale={viewport.width < 5 ? 0.5 : 1}
           position-x={viewport.width < 5 ? 2.72 : 0}
           position-y={viewport.width < 5 ? 3 : 0}
@@ -804,6 +815,16 @@ const animateOpen = (ref) => {
           </group>
           <group name="All" position={[0.273, 1.626, -0.266]} scale={4.808}>
             <group
+            onPointerEnter={() => {
+        document.body.style.cursor = 'url(/cursors/icons8-google-chat-1_imresizer.png), grab';
+  }}
+  onPointerLeave={() => {
+    document.body.style.cursor = 'url(/cursors/pngegg_imresizer.png), grab';
+  }}
+
+  onPointerUp={() => {
+        document.body.style.cursor = 'url(/cursors/icons8-google-chat-1_imresizer.png), grab';
+  }}
               name="Armature001"
               ref={manRef}
               onClick={handleManClick}
@@ -891,6 +912,16 @@ const animateOpen = (ref) => {
               />
               <group
                 name="Armature004"
+                 onPointerEnter={() => {
+        document.body.style.cursor = 'url(/cursors/icons8-google-chat-1_imresizer.png), grab';
+  }}
+  onPointerLeave={() => {
+    document.body.style.cursor = 'url(/cursors/pngegg_imresizer.png), grab';
+  }}
+
+  onPointerUp={() => {
+        document.body.style.cursor = 'url(/cursors/icons8-google-chat-1_imresizer.png), grab';
+  }}
                 ref={workerRef}
                 onClick={handleWorkerClick}
                 position={[-0.046, -0.107, -0.705]}
@@ -1067,7 +1098,18 @@ const animateOpen = (ref) => {
               scale={0.01}
             />
             <group name="Empty002" position={[-0.103, 0.108, 0.162]} scale={0.208}>
-              <group name="Retopo_Cube001" rotation={[0, 1.005, 0]} scale={0.29} ref={dinoRef} onClick={handleDinoClick}>
+              <group name="Retopo_Cube001" rotation={[0, 1.005, 0]} scale={0.29} ref={dinoRef} onClick={handleDinoClick}
+              onPointerEnter={() => {
+        document.body.style.cursor = 'url(/cursors/icons8-google-chat-1_imresizer.png), grab';
+  }}
+  onPointerLeave={() => {
+    document.body.style.cursor = 'url(/cursors/pngegg_imresizer.png), grab';
+  }}
+
+  onPointerUp={() => {
+        document.body.style.cursor = 'url(/cursors/icons8-google-chat-1_imresizer.png), grab';
+  }}
+              >
                 <mesh
                   name="mesh003"
                   castShadow
@@ -1155,12 +1197,24 @@ const animateOpen = (ref) => {
               rotation={[0, 0.616, 0]}
               scale={0.208}>
               <group
+             
                 name="Armature003"
                 ref={girlRef}
                 onClick={handleGirlClick}
                 position={[0.077, 0.087, -0.463]}
                 rotation={[0, 0.014, 0]}
-                scale={0.202}>
+                scale={0.202}
+                 onPointerEnter={() => {
+        document.body.style.cursor = 'url(/cursors/icons8-google-chat-1_imresizer.png), grab';
+  }}
+  onPointerLeave={() => {
+    document.body.style.cursor = 'url(/cursors/pngegg_imresizer.png), grab';
+  }}
+
+  onPointerUp={() => {
+        document.body.style.cursor = 'url(/cursors/icons8-google-chat-1_imresizer.png), grab';
+  }}
+                >
                 <group name="Retopo_Sphere009">
                   <skinnedMesh
                     name="mesh013"

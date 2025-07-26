@@ -142,16 +142,16 @@ export function FlameBlob({ position = [0, -3.5, 0], scale = 1.1 }) {
   )
 }
 // Un composant simple pour un système de particules de fumée
-const SmokeParticles = ({ rocketRef }) => {
+const SmokeParticles = ({ rocketRef,isActive }) => {
   const groupRef = useRef()
-  const maxParticles = 50
+  const maxParticles = 200
 
   const particles = useMemo(() => {
     return new Array(maxParticles).fill().map(() => {
-      const scale = 0.1 + Math.random() * 0.3
+      const scale = 0.1 + Math.random() * 0.8
       const geometry = new THREE.SphereGeometry(scale, 6 + Math.floor(Math.random() * 6), 6)
       const material = new THREE.MeshLambertMaterial({
-        color: 0xe3e3e3,
+        color: 0xffffff,
         transparent: true,
         opacity: 1,
         depthWrite: false,
@@ -162,9 +162,10 @@ const SmokeParticles = ({ rocketRef }) => {
         life: 0,
         maxLife: 60 + Math.random() * 40,
         expansion: 1 + Math.random() * 0.5,
-        // Position fixe dans l'espace monde - ne bouge plus après création !
         fixedWorldPosition: new THREE.Vector3(),
-        initialScale: 0.8 + Math.random() * 0.4
+        initialScale: 0.8 + Math.random() * 0.4,
+        // Ajout d'un flag pour savoir si la particule est active
+        isActive: false
       }
       return mesh
     })
@@ -174,36 +175,58 @@ const SmokeParticles = ({ rocketRef }) => {
     particles.forEach(p => groupRef.current.add(p))
   }, [particles])
 
-  let index = 0
   useFrame(() => {
-    if (!groupRef.current) return
+     if (!groupRef.current || !rocketRef.current) return
 
-    // Spawn new smoke particles
-    if (Math.random() < 0.7) {
-      const p = particles[index]
-      p.visible = true
-      
-      // Position initiale avec petit offset aléatoire
-      const initialPos = new THREE.Vector3(
-        (Math.random() - 0.5) * 0.5,
-        0,
-        (Math.random() - 0.5) * 0.5
-      )
-      
-      // Convertir en position mondiale et la FIXER pour toujours
-      groupRef.current.localToWorld(initialPos)
-      p.userData.fixedWorldPosition.copy(initialPos)
-      
-      p.material.opacity = 0.8 + Math.random() * 0.2
-      p.userData.life = 0
-      p.scale.setScalar(p.userData.initialScale)
+  // Vitesse de la fusée (différence de position entre frames)
+  const rocket = rocketRef.current
+  const prevPos = rocket.userData.prevPos || new THREE.Vector3()
+  const currentPos = rocket.getWorldPosition(new THREE.Vector3())
+  const velocity = currentPos.clone().sub(prevPos)
+  rocket.userData.prevPos = currentPos.clone()
 
-      index = (index + 1) % maxParticles
+  const speed = velocity.length()
+  console.log("🚀 ~ SmokeParticles ~ speed:", speed)
+
+  // Ne pas générer de fumée si la vitesse est faible
+  if (speed > 0 && isActive){
+    // Spawn plusieurs nouvelles particules par frame (3-5 particules)
+    const particlesToSpawn = Math.floor(Math.random() * 3) + 8
+    
+    for (let i = 0; i < particlesToSpawn; i++) {
+      if (Math.random() < 0.8) {
+        // Trouver une particule inactive au lieu d'utiliser un index fixe
+        const availableParticle = particles.find(p => !p.userData.isActive)
+        
+        if (availableParticle) {
+          const p = availableParticle
+          p.visible = true
+          p.userData.isActive = true
+          
+          // Position initiale avec plus de variation pour créer plusieurs nuages
+          const initialPos = new THREE.Vector3(
+            (Math.random() - 0.5) * 1.5, // Plus de spread horizontal
+            (Math.random() - 0.5) * 0.3, // Petit spread vertical
+            (Math.random() - 0.5) * 1.5  // Plus de spread en profondeur
+          )
+          
+          // Convertir en position mondiale et la FIXER pour toujours
+          groupRef.current.localToWorld(initialPos)
+          p.userData.fixedWorldPosition.copy(initialPos)
+          
+          p.material.opacity = 0.8 + Math.random() * 0.2
+          p.userData.life = 0
+          p.scale.setScalar(p.userData.initialScale)
+        }
+      }
     }
 
+  }
+
+    
     // Update active particles
     particles.forEach(p => {
-      if (!p.visible) return
+      if (!p.userData.isActive) return
 
       p.userData.life += 1
       const lifeRatio = p.userData.life / p.userData.maxLife
@@ -218,19 +241,20 @@ const SmokeParticles = ({ rocketRef }) => {
       p.scale.setScalar(p.userData.initialScale * scaleMultiplier)
 
       // Opacity fade
-      p.material.opacity = (1 - Math.pow(lifeRatio, 2)) * (0.6 + Math.random() * 0.3)
+      //p.material.opacity = (1 - Math.pow(lifeRatio, 2)) * (0.6 + Math.random() * 0.3)
 
       // Color change (fumée qui se refroidit)
       const grayValue = 0.9 - lifeRatio * 0.2
-      p.material.color.setRGB(grayValue, grayValue, grayValue)
+      //p.material.color.setRGB(grayValue, grayValue, grayValue)
 
       if (p.userData.life >= p.userData.maxLife) {
         p.visible = false
+        p.userData.isActive = false // Marquer comme inactive pour pouvoir être réutilisée
       }
     })
   })
 
-  return <group ref={groupRef} />
+  return <group position-y={-3.5} ref={groupRef} />
 }
 // Register GSAP plugin
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin, Observer);
@@ -1544,7 +1568,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
               </group>
               <group position-y={-0.3} ref={emitterRef}>
                 {/* <FireParticles /> */}
-                <SmokeParticles rocketRef={rocketRef} />
+                <SmokeParticles rocketRef={rocketRef} isActive={scrollDirec=='Up'} />
                 <FlameBlob />
               </group>
 

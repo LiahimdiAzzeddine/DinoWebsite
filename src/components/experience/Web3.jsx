@@ -8,7 +8,7 @@ import {
   useState,
 } from "react";
 import { useFrame, useGraph, useThree } from "@react-three/fiber";
-import { useGLTF, PerspectiveCamera, useAnimations, Trail } from "@react-three/drei";
+import { useGLTF, PerspectiveCamera, useAnimations, Trail, useTrail, Box } from "@react-three/drei";
 import { SkeletonUtils } from "three-stdlib";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -19,7 +19,8 @@ import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 import { Observer } from "gsap/Observer";
 //import SmokeParticles from "../SmokeParticles";
 
-export function FireParticles({ count = 500 }) {
+
+export function FireParticles({ count = 1000 }) {
   const pointsRef = useRef()
 
   const { positions, colors } = useMemo(() => {
@@ -44,7 +45,7 @@ export function FireParticles({ count = 500 }) {
 
   useFrame(() => {
     if (pointsRef.current) {
-      pointsRef.current.rotation.y += 0.002
+      //pointsRef.current.rotation.y += 0.002
     }
   })
 
@@ -65,7 +66,7 @@ export function FireParticles({ count = 500 }) {
         />
       </bufferGeometry>
       <pointsMaterial
-        size={0.1}
+        size={0.4}
         vertexColors
         transparent
         opacity={0.9}
@@ -75,107 +76,162 @@ export function FireParticles({ count = 500 }) {
     </points>
   )
 }
-export  function SmokeTrail({ count = 100, spread = 0.2 }) {
-  const pointsRef = useRef()
-  const particles = useMemo(() => {
-    const temp = []
-    for (let i = 0; i < count; i++) {
-      temp.push({
-        position: new THREE.Vector3(
-          (Math.random() - 0.5) * spread,
-          0,
-          (Math.random() - 0.5) * spread
-        ),
-        velocity: new THREE.Vector3(
-          (Math.random() - 0.5) * 0.01,
-          0.01 + Math.random() * 0.015,
-          (Math.random() - 0.5) * 0.01
-        ),
-        life: Math.random() * 100,
-        age: 0,
-      })
-    }
-    return temp
-  }, [count])
 
-  const positions = useMemo(() => new Float32Array(count * 3), [count])
-  const alphas = useMemo(() => new Float32Array(count), [count])
 
-  useFrame(() => {
-    for (let i = 0; i < count; i++) {
-      const p = particles[i]
-      p.position.add(p.velocity)
-      p.age++
-      if (p.age > 100) {
-        // Reset the particle
-        p.position.set(
-          (Math.random() - 0.5) * spread,
-          0,
-          (Math.random() - 0.5) * spread
-        )
-        p.age = 0
-      }
+export function FlameBlob({ position = [0, -3.5, 0], scale = 1.1 }) {
+  const meshRef = useRef()
 
-      positions.set([p.position.x, p.position.y, p.position.z], i * 3)
-      alphas[i] = 1 - p.age / 100 // Fade out
+  const geometry = useMemo(() => {
+    const baseGeo = new THREE.SphereGeometry(1, 64, 64)
+    const positionAttr = baseGeo.attributes.position
+    const vertex = new THREE.Vector3()
+
+    for (let i = 0; i < positionAttr.count; i++) {
+      vertex.fromBufferAttribute(positionAttr, i)
+
+      // Remap Y from [-1, 1] to [0, 1]
+      const y = (vertex.y + 1) / 2
+
+      // Apply scale to X and Z to make bottom thin, top wide
+      const scaleXZ = 0.3 + y * 0.7 // from 0.3 to 1
+      vertex.x *= scaleXZ
+      vertex.z *= scaleXZ
+
+      // Update geometry
+      positionAttr.setXYZ(i, vertex.x, vertex.y, vertex.z)
     }
 
-    if (pointsRef.current) {
-      pointsRef.current.geometry.attributes.position.needsUpdate = true
-      pointsRef.current.geometry.attributes.alpha.needsUpdate = true
+    positionAttr.needsUpdate = true
+    baseGeo.computeVertexNormals()
+
+    return baseGeo
+  }, [])
+
+  // Optional animation (pulse)
+  useFrame((state) => {
+    if (meshRef.current) {
+      const t = state.clock.getElapsedTime()
+
+      // Animation de pulsation verticale (comme tu avais)
+      meshRef.current.scale.y = 1 + Math.sin(t * 3) * 0.1
+
+      // Variation dynamique de couleur et de lumière
+      const mat = meshRef.current.material
+
+      // Légère variation de la teinte (HSL)
+      const hue = 0.08 + Math.sin(t * 0.5) * 0.02 // entre ~0.06 et 0.1
+      mat.color.setHSL(hue, 1, 0.5)
+
+      // Variation de l'intensité lumineuse (emissive)
+      mat.emissiveIntensity = 0.5 + Math.sin(t * 4) * 0.2
     }
   })
 
+
   return (
-    <points ref={pointsRef}>
-      <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          array={positions}
-          itemSize={3}
-          count={count}
-        />
-        <bufferAttribute
-          attach="attributes-alpha"
-          array={alphas}
-          itemSize={1}
-          count={count}
-        />
-      </bufferGeometry>
-      <pointsMaterial
-        color="#aaaaaa"
-        size={0.1}
-        transparent
-        opacity={1}
-        sizeAttenuation
-        depthWrite={false}
-        onBeforeCompile={(shader) => {
-          shader.vertexShader = shader.vertexShader.replace(
-            'void main() {',
-            `
-            attribute float alpha;
-            varying float vAlpha;
-            void main() {
-              vAlpha = alpha;
-            }
-          `
-          )
-          shader.fragmentShader = shader.fragmentShader.replace(
-            'void main() {',
-            `
-            varying float vAlpha;
-            void main() {
-            `
-          ).replace(
-            'gl_FragColor = vec4( outgoingLight, diffuseColor.a );',
-            'gl_FragColor = vec4( outgoingLight, vAlpha );'
-          )
-        }}
+    <mesh ref={meshRef} position={position} scale={scale}>
+      <primitive object={geometry} attach="geometry" />
+      <meshStandardMaterial
+        color="orange"
+        emissive="yellow"
+        emissiveIntensity={0.6}
+        roughness={0.3}
+        metalness={0.2}
       />
-    </points>
+    </mesh>
   )
 }
+// Un composant simple pour un système de particules de fumée
+const SmokeParticles = ({ rocketRef }) => {
+  const groupRef = useRef()
+  const maxParticles = 50
 
+  const particles = useMemo(() => {
+    return new Array(maxParticles).fill().map(() => {
+      const scale = 0.1 + Math.random() * 0.3
+      const geometry = new THREE.SphereGeometry(scale, 6 + Math.floor(Math.random() * 6), 6)
+      const material = new THREE.MeshLambertMaterial({
+        color: 0xe3e3e3,
+        transparent: true,
+        opacity: 1,
+        depthWrite: false,
+      })
+      const mesh = new THREE.Mesh(geometry, material)
+      mesh.visible = false
+      mesh.userData = {
+        life: 0,
+        maxLife: 60 + Math.random() * 40,
+        expansion: 1 + Math.random() * 0.5,
+        // Position fixe dans l'espace monde - ne bouge plus après création !
+        fixedWorldPosition: new THREE.Vector3(),
+        initialScale: 0.8 + Math.random() * 0.4
+      }
+      return mesh
+    })
+  }, [])
+
+  useEffect(() => {
+    particles.forEach(p => groupRef.current.add(p))
+  }, [particles])
+
+  let index = 0
+  useFrame(() => {
+    if (!groupRef.current) return
+
+    // Spawn new smoke particles
+    if (Math.random() < 0.7) {
+      const p = particles[index]
+      p.visible = true
+      
+      // Position initiale avec petit offset aléatoire
+      const initialPos = new THREE.Vector3(
+        (Math.random() - 0.5) * 0.5,
+        0,
+        (Math.random() - 0.5) * 0.5
+      )
+      
+      // Convertir en position mondiale et la FIXER pour toujours
+      groupRef.current.localToWorld(initialPos)
+      p.userData.fixedWorldPosition.copy(initialPos)
+      
+      p.material.opacity = 0.8 + Math.random() * 0.2
+      p.userData.life = 0
+      p.scale.setScalar(p.userData.initialScale)
+
+      index = (index + 1) % maxParticles
+    }
+
+    // Update active particles
+    particles.forEach(p => {
+      if (!p.visible) return
+
+      p.userData.life += 1
+      const lifeRatio = p.userData.life / p.userData.maxLife
+
+      // Convertir la position mondiale FIXE en position locale pour l'affichage
+      const localPos = p.userData.fixedWorldPosition.clone()
+      groupRef.current.worldToLocal(localPos)
+      p.position.copy(localPos)
+
+      // Scale expansion (fumée qui s'étale)
+      const scaleMultiplier = 1 + (lifeRatio * p.userData.expansion)
+      p.scale.setScalar(p.userData.initialScale * scaleMultiplier)
+
+      // Opacity fade
+      p.material.opacity = (1 - Math.pow(lifeRatio, 2)) * (0.6 + Math.random() * 0.3)
+
+      // Color change (fumée qui se refroidit)
+      const grayValue = 0.9 - lifeRatio * 0.2
+      p.material.color.setRGB(grayValue, grayValue, grayValue)
+
+      if (p.userData.life >= p.userData.maxLife) {
+        p.visible = false
+      }
+    })
+  })
+
+  return <group ref={groupRef} />
+}
 // Register GSAP plugin
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin, Observer);
 
@@ -258,7 +314,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
   const group = useRef();
   const ManRef = useRef();
   const rocketRef = useRef();
-  const emitterRef =useRef();
+  const emitterRef = useRef();
   const currentTween = useRef(null);
   const sceneContainerGroup = useRef();
   const armatureRef = useRef();
@@ -281,7 +337,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
   const { actions, mixer } = useAnimations(animations, group);
   // Responsive positioning
   const scenePositioning = useMemo(() => ({
-    positionZ: viewport.width < 1 ? -0.3 :10,
+    positionZ: viewport.width < 1 ? -0.3 : 10,
     wavingManPositionX: viewport.width < 1 ? -1 : 0,
     wavingManPositionZ: viewport.width < 1 ? 0.48 : 0,
   }), [viewport.width]);
@@ -302,8 +358,8 @@ export default function Web3({ sectionID, isActive, ...props }) {
   }, []);
 
   useEffect(() => {
-  console.log('Scroll direction changed to', scrollDirection);
-}, [scrollDirection]);
+    console.log('Scroll direction changed to', scrollDirection);
+  }, [scrollDirection]);
 
 
   // Animation control functions
@@ -350,17 +406,17 @@ export default function Web3({ sectionID, isActive, ...props }) {
     }
   }, []);
 
-   const detectFastScroll = useCallback((velocity, observerVelocity) => {
+  const detectFastScroll = useCallback((velocity, observerVelocity) => {
     const currentTime = Date.now();
     const timeDiff = currentTime - lastScrollTime;
     lastScrollTime = currentTime;
-    
-    // Considérer comme rapide si vélocité ScrollTrigger > 2000 OU vélocité Observer > 10000
-    const isFastByVelocity = Math.abs(velocity) > 2000 || Math.abs(observerVelocity) > 10000 || velocity==0 || observerVelocity==0;
-    const isFastByTime = timeDiff < 16;
-    
 
-    
+    // Considérer comme rapide si vélocité ScrollTrigger > 2000 OU vélocité Observer > 10000
+    const isFastByVelocity = Math.abs(velocity) > 2000 || Math.abs(observerVelocity) > 10000 || velocity == 0 || observerVelocity == 0;
+    const isFastByTime = timeDiff < 16;
+
+
+
     return isFastByVelocity || isFastByTime;
   }, []);
 
@@ -515,12 +571,12 @@ export default function Web3({ sectionID, isActive, ...props }) {
     //action.timeScale = scale;
 
     action.timeScale = 0.5;
-      gsap.to(action, {
-        timeScale: scale,
-        duration:0.1,
-        ease: "slow(0.7,0.7,false)",
-            overwrite: true,
-      });
+    gsap.to(action, {
+      timeScale: scale,
+      duration: 0.1,
+      ease: "slow(0.7,0.7,false)",
+      overwrite: true,
+    });
 
     // ⚠️ Supprime tous les anciens listeners sur "finished"
     if (mixer && mixer._listeners && mixer._listeners.finished) {
@@ -551,9 +607,9 @@ export default function Web3({ sectionID, isActive, ...props }) {
     let armatureTrigger = null;
 
     mm.add("(min-width: 768px)", () => {
-    //     setTimeout(() => {
-    //   ScrollTrigger.getById('web3')?.refresh();
-    // }, 100);
+      //     setTimeout(() => {
+      //   ScrollTrigger.getById('web3')?.refresh();
+      // }, 100);
       mainTrigger = ScrollTrigger.create({
         id: sectionID,
         trigger: "#section3",
@@ -591,7 +647,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
                 prevScrollTrigger.current.enable();
 
               }
-             
+
 
             }
           };
@@ -604,10 +660,10 @@ export default function Web3({ sectionID, isActive, ...props }) {
 
 
         },
-        onLeave:()=>{
-          if(velocityD==0 && scrollDirection=="Up"){
-           playActionOnce("Up", sectionID, 200000, ()=>{console.log("worked"),playIntroAnimations();}); 
-           
+        onLeave: () => {
+          if (velocityD == 0 && scrollDirection == "Up") {
+            playActionOnce("Up", sectionID, 200000, () => { console.log("worked"), playIntroAnimations(); });
+
           }
         }
 
@@ -616,9 +672,9 @@ export default function Web3({ sectionID, isActive, ...props }) {
     });
     // Secondary scroll trigger
     mm.add("(min-width: 767px)", () => {
-    //     setTimeout(() => {
-    //   ScrollTrigger.getById('web3_secondary')?.refresh();
-    // }, 100);
+      //     setTimeout(() => {
+      //   ScrollTrigger.getById('web3_secondary')?.refresh();
+      // }, 100);
       secondaryTrigger = ScrollTrigger.create({
         id: sectionID + "_secondary",
         trigger: "#section5",
@@ -658,7 +714,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
         onEnter: (self) => {
           const currentVelocity = self.getVelocity();
           const isFastScroll = detectFastScroll(currentVelocity, velocityD);
-        
+
           const shouldActivate = isFastScroll || Math.abs(currentVelocity) > 2000 || velocityD > 10000;
 
           setCurrentModel(sectionID);
@@ -675,7 +731,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
         onLeaveBack: (self) => {
           const currentVelocity = self.getVelocity();
           const isFastScroll = detectFastScroll(currentVelocity, velocityD);
-        
+
           const shouldActivate = isFastScroll || Math.abs(currentVelocity) > 2000 || velocityD > 10000;
           handleScrollAnimationsReverse();
           if (shouldActivate) {
@@ -691,18 +747,18 @@ export default function Web3({ sectionID, isActive, ...props }) {
       });
       return () => secondaryTrigger.kill();
     });
-     mm.add("(min-width: 768px)", () => {
+    mm.add("(min-width: 768px)", () => {
 
       const startY = armatureRef.current.position.y;
       const adjustedStartY = startY + 0.01;
-      const endY = adjustedStartY+0.05;
+      const endY = adjustedStartY + 0.05;
 
-   // Vérifier si c'est un refresh en utilisant sessionStorage
+      // Vérifier si c'est un refresh en utilisant sessionStorage
 
-    // setTimeout(() => {
-    //   ScrollTrigger.getById('web3_armatureMove')?.refresh();
-    // }, 100);
-  
+      // setTimeout(() => {
+      //   ScrollTrigger.getById('web3_armatureMove')?.refresh();
+      // }, 100);
+
 
       //Armature movement trigger
       armatureTrigger = ScrollTrigger.create({
@@ -764,7 +820,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
         preventClicks: true,
         scrub: true,
         markers: false,
-       onToggle: ({ isActive }) => {
+        onToggle: ({ isActive }) => {
 
           if (isActive) {
             setCurrentModel(sectionID);
@@ -793,7 +849,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
                 prevScrollTrigger.current.enable();
 
               }
-             
+
 
             }
           };
@@ -806,10 +862,10 @@ export default function Web3({ sectionID, isActive, ...props }) {
 
 
         },
-        onLeave:()=>{
-          if(velocityD==0 && scrollDirection=="Up"){
-           playActionOnce("Up", sectionID, 200000, ()=>{console.log("worked"),playIntroAnimations();}); 
-           
+        onLeave: () => {
+          if (velocityD == 0 && scrollDirection == "Up") {
+            playActionOnce("Up", sectionID, 200000, () => { console.log("worked"), playIntroAnimations(); });
+
           }
         },
         onUpdate: ({ progress }) => {
@@ -932,7 +988,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
     };
   }, [location.pathname]);
 
-const [distance, setDistance] = useState(0)
+  const [distance, setDistance] = useState(0)
   const prevPosition = useRef(new THREE.Vector3())
 
   useFrame(() => {
@@ -948,17 +1004,17 @@ const [distance, setDistance] = useState(0)
     //   prevPosition.current.copy(currentPos)
     // }
   })
-const dummyRef = useRef()
+  const dummyRef = useRef()
 
-// Créer un objet invisible qui bouge légèrement en permanence
-useFrame(() => {
-  if (dummyRef.current) {
-    // Mouvement très subtil pour maintenir le trail
-    dummyRef.current.position.x = rocketRef.current.position.x + Math.sin(Date.now() *2) *2
-    dummyRef.current.position.y = rocketRef.current.position.y + Math.cos(Date.now()*2) * 2
-    dummyRef.current.position.z = rocketRef.current.position.z
-  }
-})
+  // Créer un objet invisible qui bouge légèrement en permanence
+  useFrame(() => {
+    if (dummyRef.current) {
+      // Mouvement très subtil pour maintenir le trail
+      dummyRef.current.position.x = rocketRef.current.position.x + Math.sin(Date.now() * 2) * 2
+      dummyRef.current.position.y = rocketRef.current.position.y + Math.cos(Date.now() * 2) * 2
+      dummyRef.current.position.z = rocketRef.current.position.z
+    }
+  })
 
   return (
     <group ref={group} {...props} dispose={null} visible={isActive}>
@@ -1445,7 +1501,7 @@ useFrame(() => {
                 geometry={nodes.Cylinder007.geometry}
                 material={materials['Material.003']}
               />
-               
+
               <mesh
                 name="Cylinder007_1"
                 castShadow
@@ -1482,14 +1538,15 @@ useFrame(() => {
                 material={materials['Material.012']}
               />
               <group position-y={-3}>
-                 <mesh ref={rocketRef} visible={false}>
-      <boxGeometry args={[0.1, 0.1, 0.1]} />
-    </mesh>
-               </group>
-                        <group position={[0, -4.5, 0]} ref={emitterRef}>
-      <FireParticles />
-      <SmokeTrail/>
-    </group>
+                <mesh ref={rocketRef} visible={false}>
+                  <boxGeometry args={[0.1, 0.1, 0.1]} />
+                </mesh>
+              </group>
+              <group position-y={-0.3} ref={emitterRef}>
+                {/* <FireParticles /> */}
+                <SmokeParticles rocketRef={rocketRef} />
+                <FlameBlob />
+              </group>
 
             </group>
           </group>

@@ -79,7 +79,7 @@ p {
   opacity: 1;
   animation: none;
 }
-@keyframes gradientFlow {
+/* @keyframes gradientFlow {
   0% {
     background-position: 50% 50%;
     filter: brightness(1) hue-rotate(0deg) saturate(1) contrast(1);
@@ -100,7 +100,7 @@ p {
     background-position: 50% 50%;
     filter: brightness(1) hue-rotate(0deg) saturate(1) contrast(1);
   }
-}
+} */
 
 
 .gradient-background-fixed {

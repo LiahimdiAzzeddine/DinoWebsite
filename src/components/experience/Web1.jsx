@@ -35,7 +35,7 @@ export default function Web1({ sectionID, isActive, ...props }) {
   const sketch02Ref = useRef();
   const isSwitching = useRef(false);
   const [activeSketch, setActiveSketch] = useState("Sketch01");
-  const { nodes, materials, animations } = useGLTF('./models/cleanmodef2.glb')
+  const { nodes, materials, animations } = useGLTF('./models/model1-opt.glb')
   const { actions, mixer } = useAnimations(animations, group)
 
   const { setCurrentModel } = useContext(AnimationContext);
@@ -705,22 +705,7 @@ const animateOpen = (ref) => {
           position-y={viewport.width < 5 ? 3 : 0}
           position-z={viewport.width < 5 ? -0.5 : 0}
         >
-          <group
-            name="Sketchfab_model"
-            position={[-2.761, 3.549, 0]}
-            rotation={[-Math.PI, 0, Math.PI / 2]}
-            scale={0.245}>
-            <group name="root">
-              <group name="GLTF_SceneRootNode" rotation={[Math.PI / 2, 0, 0]}>
-                <group
-                  name="Text1025_1025"
-                  position={[0.635, 0, -0.342]}
-                  rotation={[Math.PI / 2, 0, 0]}
-                />
-              </group>
-            </group>
-          </group>
-          <group name="BézierCurve001" position={[-1.151, 1.699, 1.75]} scale={[1.104, 1, 1.104]} />
+ 
           <group ref={ball4Ref} visible={true} name="Empty" position={[1.106, 1.058, -0.662]} scale={0.256}>
             <mesh
               name="Sphere"
@@ -732,7 +717,6 @@ const animateOpen = (ref) => {
               scale={[0.385, 0.379, 0.379]}
             />
           </group>
-          <group name="BézierCurve002" position={[-1.017, 10.239, 1.56]} />
           <group ref={ball1Ref} visible={true} name="Empty007" position={[1.114, 1.058, -0.982]} scale={0.256}>
             <mesh
               name="Sphere004"
@@ -1477,4 +1461,4 @@ const animateOpen = (ref) => {
   )
 }
 
-useGLTF.preload('./models/cleanmodef2.glb')
+useGLTF.preload('./models/model1-opt.glb')

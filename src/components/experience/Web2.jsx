@@ -19,7 +19,7 @@ gsap.registerPlugin(ScrollTrigger, ScrollToPlugin, Observer);
 
 export default function Web2({ sectionID, isActive, ...props }) {
   const group = useRef()
-  const { nodes, materials, animations } = useGLTF('./models/Model2.glb')
+  const { nodes, materials, animations } = useGLTF('./models/model2-opt.glb')
   const { actions, mixer } = useAnimations(animations, group)
   const { setCurrentModel } = useContext(AnimationContext);
   const currentTween = useRef(null);
@@ -32,8 +32,6 @@ export default function Web2({ sectionID, isActive, ...props }) {
     "40MRope",
     "ArmatureMan",
     "BallonHotAirAction",
-    
-
     "Emoji",
     "LeftHand",
     "RightHand",
@@ -487,7 +485,7 @@ export default function Web2({ sectionID, isActive, ...props }) {
             scale={viewport.width < 5 ? 0.7 : 1}
             // position-x={viewport.width < 5 ? 2.5 : 0}
             position-z={viewport.width < 5 ? 0.19 : 0}
-            position-y={viewport.width < 5 ? -0.17 : 0}
+            position-y={viewport.width < 5 ? -0.265 : 0}
           >
 
             <group
@@ -575,66 +573,6 @@ export default function Web2({ sectionID, isActive, ...props }) {
               />
             </group>
             <group
-              name="Cube043_Cube001"
-              position={[0.255, -0.959, 0.482]}
-              rotation={[Math.PI / 2, 0, 0]}
-              scale={0.122}>
-              <mesh
-                name="Cube043_Cube001_1"
-                castShadow
-                receiveShadow
-                geometry={nodes.Cube043_Cube001_1.geometry}
-                material={materials['Orange.001']}
-              />
-              <mesh
-                name="Cube043_Cube001_2"
-                castShadow
-                receiveShadow
-                geometry={nodes.Cube043_Cube001_2.geometry}
-                material={materials['Material.006']}
-              />
-            </group>
-            <group
-              name="Cube043_Cube053"
-              position={[0.279, -0.701, -0.238]}
-              rotation={[Math.PI / 2, 0, 0]}
-              scale={0.122}>
-              <mesh
-                name="Cube043_Cube053_1"
-                castShadow
-                receiveShadow
-                geometry={nodes.Cube043_Cube053_1.geometry}
-                material={materials.Orange}
-              />
-              <mesh
-                name="Cube043_Cube053_2"
-                castShadow
-                receiveShadow
-                geometry={nodes.Cube043_Cube053_2.geometry}
-                material={materials['Material.006']}
-              />
-            </group>
-            <group
-              name="Cube044_Cube054"
-              position={[-0.809, -0.496, 0.1]}
-              rotation={[Math.PI / 2, 0, -1.594]}
-              scale={0.122}>
-              <mesh
-                name="Cube044_Cube054_1"
-                castShadow
-                receiveShadow
-                geometry={nodes.Cube044_Cube054_1.geometry}
-                material={materials.blue}
-              />
-              <mesh
-                name="Cube044_Cube054_2"
-                castShadow
-                receiveShadow
-                geometry={nodes.Cube044_Cube054_2.geometry}
-                material={materials['Material.006']}
-              />
-            </group>
-            <group
               name="Empty005"
               position={[0, 0.206, -0.071]}
               rotation={[1.528, 1.519, -0.667]}
@@ -678,7 +616,13 @@ export default function Web2({ sectionID, isActive, ...props }) {
                 rotation={[1.601, 0.618, 1.507]}
                 scale={3.568}>
 
-                <primitive object={nodes.Bone_1} />
+                 <group name="Bone_1">
+                <group name="Bone002_1" position={[0, 0.268, 0]}>
+                  <group name="Bone001_1" position={[0, 0.268, 0]}>
+                    <group name="Bone003_1" position={[0, 0.268, 0]} />
+                  </group>
+                </group>
+              </group>
               </group>
               <mesh
                 name="Cube001"
@@ -782,4 +726,4 @@ export default function Web2({ sectionID, isActive, ...props }) {
   )
 }
 
-useGLTF.preload('./models/Model2.glb')
+useGLTF.preload('./models/model2-opt.glb')

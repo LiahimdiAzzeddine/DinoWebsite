@@ -355,7 +355,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
 
 
   // GLTF loading and setup
-  const { scene, animations } = useGLTF("./models/LastRocket.glb");
+  const { scene, animations } = useGLTF("./models/model3-opt.glb");
   const clone = useMemo(() => SkeletonUtils.clone(scene), [scene]);
   const { nodes, materials } = useGraph(clone);
   const { actions, mixer } = useAnimations(animations, group);
@@ -1048,11 +1048,6 @@ export default function Web3({ sectionID, isActive, ...props }) {
         position-z={scenePositioning.positionZ}
       >
 
-        <group
-          name="BézierCurve"
-          position={[0.003, -0.116, -0.002]}
-          rotation={[Math.PI / 2, -Math.PI / 2, 0]}
-        />
         <group name="Empty" position={[4.089, 2.103, -0.346]}>
           <PerspectiveCamera
             name="Camera"
@@ -1598,4 +1593,4 @@ export default function Web3({ sectionID, isActive, ...props }) {
   );
 }
 
-useGLTF.preload("./models/LastRocket.glb");
+useGLTF.preload("./models/model3-opt.glb");

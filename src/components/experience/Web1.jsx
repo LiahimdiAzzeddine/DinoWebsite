@@ -154,7 +154,7 @@ export default function Web1({ sectionID, isActive, ...props }) {
 
       const trigger1 = ScrollTrigger.create({
         trigger: "#section2",
-        start: "top center+=100",
+        start: "top center+=230",
         end: "top top",
         scrub: true,
         markers: false,
@@ -180,7 +180,7 @@ export default function Web1({ sectionID, isActive, ...props }) {
         trigger: "#section1",
         start: "top center+=50",
         endTrigger: "#section2",
-        end: "top center+=100",
+        end: "top center+=230",
         scrub: true,
         markers: false,
         onUpdate: ({ progress }) => {

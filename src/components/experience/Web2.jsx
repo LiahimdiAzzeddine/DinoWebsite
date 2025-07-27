@@ -361,10 +361,7 @@ export default function Web2({ sectionID, isActive, ...props }) {
 
     // ✅ Mobile only (tu peux mettre autre comportement ici si besoin)
     mm.add("(max-width: 767px)", () => {
-      // Ajustement mobile initial (si nécessaire)
-      //sceneContainerGroup.current.position.y -= 0.4;
-      // Valeurs de référence pour animation
-      let sceneDefaultPos =  -0.07;
+      let sceneDefaultPos =  -0.43;
       let minY =sceneDefaultPos;
       let maxY = sceneDefaultPos + 1.2; // ajuste selon la distance souhaitée
       let initialProgress = 0;
@@ -377,27 +374,15 @@ export default function Web2({ sectionID, isActive, ...props }) {
         markers: false,
         preventClicks: true,
         onEnter: (self) => {
-          if (initialProgress == 0) {
-            initialProgress = self.progress;
-          }
+         
         },
-           onUpdate: (self) => {
-          if (initialProgress === 0) {
-            initialProgress = self.progress;
-          }
-          const progress = self.progress - initialProgress;
-          const newY = THREE.MathUtils.lerp(minY, maxY, progress);
-
-          // Tuer l'ancien tween pour éviter les conflits
-          if (currentTween.current) currentTween.current.kill();
-
-          currentTween.current = gsap.to(sceneContainerGroup.current.position, {
-            y: newY,
-            duration: 0.01,
-            ease: "sine.out",
-            overwrite: true
-          });
-        },
+        onUpdate: (self) => {
+      const progress = self.progress; // Valeur entre 0 et 1
+      if (sceneContainerGroup.current) {
+        // Interpolation entre minY et maxY
+        sceneContainerGroup.current.position.y = minY + (maxY - minY) * progress;
+      }
+    },
         onToggle: ({ isActive }) => {
           if (isActive) {
             disableOtherSections();
@@ -485,7 +470,7 @@ export default function Web2({ sectionID, isActive, ...props }) {
             scale={viewport.width < 5 ? 0.7 : 1}
             // position-x={viewport.width < 5 ? 2.5 : 0}
             position-z={viewport.width < 5 ? 0.19 : 0}
-            position-y={viewport.width < 5 ? -0.265 : 0}
+            position-y={viewport.width < 5 ? -0.17 : 0}
           >
 
             <group

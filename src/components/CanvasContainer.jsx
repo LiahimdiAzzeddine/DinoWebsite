@@ -51,7 +51,6 @@ useEffect(() => {
     duration: 1,
     smoothWheel: true,
     wheelMultiplier: 0.75, // Reduce mouse wheel scroll speed
-    touchMultiplier: 0.75,
     infinite: false,
     easing: (t) => {
       const friction = 1;

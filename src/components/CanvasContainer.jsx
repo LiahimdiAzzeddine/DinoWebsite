@@ -26,7 +26,7 @@ export function ModelContainer({ lenis }) {
         sectionID={"web2"}
         isActive={currentModel === "web2"}
       />
-      <Web3
+       <Web3
         sectionID={"web3"}
         isActive={currentModel === "web3"}
       />
@@ -45,12 +45,52 @@ export const CanvasContainer = () => {
 
   const lenisRef = useRef(null);
   const [dpr, setDpr] = useState(0.7);
-  const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+  // Fonction utilitaire pour détecter si on est sur mobile
+const isMobile = () => {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+         (navigator.maxTouchPoints && navigator.maxTouchPoints > 2);
+};
+// Configuration globale pour réduire les conflits
+ScrollTrigger.config({
+  autoRefreshEvents: "visibilitychange,DOMContentLoaded,load",
+  ignoreMobileResize: true
+});
+// Optimisations conditionnelles pour mobile
+if (isMobile()) {
+  // Désactiver les animations coûteuses
+  ScrollTrigger.defaults({
+    ease: "none", // Pas d'easing complexe
+    duration: 0.1, // Animations plus rapides
+     refreshPriority: -1,
+  });
+  
+  // Réduire la fréquence de rafraîchissement
+  ScrollTrigger.normalizeScroll({
+    allowNestedScroll: true,
+    lockAxis: true,
+    momentum: self.momentum,
+    type: "touch,wheel,pointer"
+  });
+  // Configuration globale mobile pour ScrollTrigger
+ScrollTrigger.config({
+  // Limiter le nombre de triggers actifs simultanément sur mobile
+  limitCallbacks: true,
+  // Optimiser pour le touch
+  // Réduire la sensibilité sur mobile
+  snap: {
+    snapTo: "labels",
+    duration: { min: 0.2, max: 0.6 },
+    delay: 0.1,
+    ease: "power2.inOut"
+  }
+});
+}
 useEffect(() => {
   const lenis = new Lenis({
     duration: 1,
     smoothWheel: true,
     wheelMultiplier: 0.75, // Reduce mouse wheel scroll speed
+     touchMultiplier: 0.1, 
     infinite: false,
     easing: (t) => {
       const friction = 1;
@@ -74,7 +114,6 @@ useEffect(() => {
     lenis.destroy();
   };
 }, []);
-
 
       
 

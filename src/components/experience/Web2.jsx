@@ -52,6 +52,8 @@ export default function Web2({ sectionID, isActive, ...props }) {
 
   const sceneContainerGroup = useRef();
 
+
+
   let disableOtherSections = () => {
     if (!prevScrollTrigger) {
       let currentScrollTrigger = ScrollTrigger.getById(sectionID);
@@ -344,26 +346,38 @@ export default function Web2({ sectionID, isActive, ...props }) {
 
     // ✅ Mobile only (tu peux mettre autre comportement ici si besoin)
     mm.add("(max-width: 767px)", () => {
-      let sceneDefaultPos =  -0.43;
-      let minY =sceneDefaultPos;
+      let sceneDefaultPos = -0.465;
+      let minY = sceneDefaultPos;
       let maxY = sceneDefaultPos + 1.2; // ajuste selon la distance souhaitée
       let initialProgress = 0;
       const trigger = ScrollTrigger.create({
         id: sectionID,
         trigger: "#section3",
-        start: "top bottom+=275",
+        start: "top bottom+=260",
         end: "top top",
         markers: false,
         anticipatePin: 1,
-     
+// Réduire la fréquence de mise à jour pour les performances
+    refreshPriority: -1,
+    // Désactiver le smooth scrolling sur mobile pour éviter les conflits
+    normalizeScroll: false,
+    // Optimiser pour le touch
+    touchAction: "pan-y",
+
         onUpdate: (self) => {
-      const progress = self.progress; // Valeur entre 0 et 1
-      if (sceneContainerGroup.current) {
-        // Interpolation entre minY et maxY
-        sceneContainerGroup.current.position.y = minY + (maxY - minY) * progress;
-      }
-    },
-          onToggle: ({ isActive }) => {
+          const progress = self.progress; // Valeur entre 0 et 1
+          const targetY = minY + (maxY - minY) * progress;
+
+          if (sceneContainerGroup.current) {
+            gsap.to(sceneContainerGroup.current.position, {
+              y: targetY,
+              duration: 0.3, // Durée d'interpolation (plus grande = plus fluide)
+              ease: "power2.out",
+              overwrite: "auto"
+            });
+          }
+        },
+        onToggle: ({ isActive }) => {
 
           if (isActive) {
             disableOtherSections();
@@ -385,8 +399,6 @@ export default function Web2({ sectionID, isActive, ...props }) {
               // Sortie vers le bas
 
             } else {
-
-
               ScrollTrigger.getById('web1')?.disable();
               // Sortie vers le haut
               playActionOnce("DOWN", sectionID, velocityD, () => {
@@ -399,7 +411,7 @@ export default function Web2({ sectionID, isActive, ...props }) {
 
         onLeaveBack: () => {
           const web1Trigger = ScrollTrigger.getById('web1');
-          if (web1Trigger) web1Trigger.disable();
+          if (web1Trigger) web1Trigger.enable();
         },
 
         onEnterBack: () => {
@@ -408,40 +420,10 @@ export default function Web2({ sectionID, isActive, ...props }) {
         },
 
         onLeave: ({ isActive, getVelocity }) => {
-          const currentVelocity = getVelocity();
-          const isFastScroll = detectFastScroll(currentVelocity, velocityD);
-
-          // Conditions pour activer web3
-          const shouldActivateWeb3 = isFastScroll || Math.abs(currentVelocity) > 2000 || velocityD > 10000;
-
-          if (shouldActivateWeb3) {
-            // Scroll rapide ou clic sur bouton - transition directe vers web3
-            setCurrentModel("web3");
-            const web3Trigger = ScrollTrigger.getById('web3');
-            if (web3Trigger) web3Trigger.enable();
-
-            // Forcer l'activation si on est en direction descendante
-            if (scrollDirection === 1) {
-              playActionOnce("UP_2", scrollDirection, velocityD, () => {
-                enableNextSection();
-              });
-            }
-          } else {
-            // Scroll normal
-            const web3Trigger = ScrollTrigger.getById('web3');
-            if (web3Trigger) web3Trigger.disable();
-
-            if (scrollDirection === 1 && !isActive) {
-              playActionOnce("UP_2", scrollDirection, velocityD, () => {
-                enableNextSection();
-                setCurrentModel("web3");
-                const web3TriggerAfter = ScrollTrigger.getById('web3');
-                if (web3TriggerAfter) web3TriggerAfter.enable();
-              });
-            }
-          }
+          const web3TriggerAfter = ScrollTrigger.getById('web3');
+          if (web3TriggerAfter) web3TriggerAfter.enable();
         }
-        
+
 
       });
 
@@ -628,13 +610,13 @@ export default function Web2({ sectionID, isActive, ...props }) {
                 rotation={[1.601, 0.618, 1.507]}
                 scale={3.568}>
 
-                 <group name="Bone_1">
-                <group name="Bone002_1" position={[0, 0.268, 0]}>
-                  <group name="Bone001_1" position={[0, 0.268, 0]}>
-                    <group name="Bone003_1" position={[0, 0.268, 0]} />
+                <group name="Bone_1">
+                  <group name="Bone002_1" position={[0, 0.268, 0]}>
+                    <group name="Bone001_1" position={[0, 0.268, 0]}>
+                      <group name="Bone003_1" position={[0, 0.268, 0]} />
+                    </group>
                   </group>
                 </group>
-              </group>
               </group>
               <mesh
                 name="Cube001"

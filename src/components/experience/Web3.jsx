@@ -352,9 +352,6 @@ export default function Web3({ sectionID, isActive, ...props }) {
     let armatureTrigger = null;
 
     mm.add("(min-width: 768px)", () => {
-      //     setTimeout(() => {
-      //   ScrollTrigger.getById('web3')?.refresh();
-      // }, 100);
       mainTrigger = ScrollTrigger.create({
         id: sectionID,
         trigger: "#section3",
@@ -362,6 +359,12 @@ export default function Web3({ sectionID, isActive, ...props }) {
         endTrigger: "#section5",
         end: "center bottom",
         anticipatePin: 1,
+        // Réduire la fréquence de mise à jour pour les performances
+        refreshPriority: -1,
+        // Désactiver le smooth scrolling sur mobile pour éviter les conflits
+        normalizeScroll: false,
+        // Optimiser pour le touch
+        touchAction: "pan-y",
         //preventClicks: true,
         markers: false,
         onToggle: ({ isActive }) => {
@@ -414,6 +417,12 @@ export default function Web3({ sectionID, isActive, ...props }) {
         start: "center bottom",
         end: "bottom+=30% top",
         anticipatePin: 1,
+        // Réduire la fréquence de mise à jour pour les performances
+        refreshPriority: -1,
+        // Désactiver le smooth scrolling sur mobile pour éviter les conflits
+        normalizeScroll: false,
+        // Optimiser pour le touch
+        touchAction: "pan-y",
         onEnter: (self) => {
           setActiveSmoke(true)
           const currentVelocity = self.getVelocity();
@@ -464,6 +473,12 @@ export default function Web3({ sectionID, isActive, ...props }) {
         start: "top-=40% center",
         end: "top top",
         anticipatePin: 1,
+        // Réduire la fréquence de mise à jour pour les performances
+        refreshPriority: -1,
+        // Désactiver le smooth scrolling sur mobile pour éviter les conflits
+        normalizeScroll: false,
+        // Optimiser pour le touch
+        touchAction: "pan-y",
 
         onEnter: () => {
           setCurrentModel(sectionID);
@@ -516,6 +531,12 @@ export default function Web3({ sectionID, isActive, ...props }) {
         end: "top center",
         markers: false,
         anticipatePin: 1,
+        // Réduire la fréquence de mise à jour pour les performances
+        refreshPriority: -1,
+        // Désactiver le smooth scrolling sur mobile pour éviter les conflits
+        normalizeScroll: false,
+        // Optimiser pour le touch
+        touchAction: "pan-y",
         onToggle: ({ isActive }) => {
 
           if (isActive) {
@@ -546,12 +567,15 @@ export default function Web3({ sectionID, isActive, ...props }) {
           };
 
           if (!(scrollDirection == "Down" && isActive) && !(scrollDirection == "Up" && !isActive)) {
-            playActionOnce(actionName, sectionID, velocityD, onFinishCallback);
+            playActionOnce('Up', sectionID, velocityD, onFinishCallback);
           }
         },
         onLeave: () => {
           if (velocityD == 0 && scrollDirection == "Up") {
-            playActionOnce("Up", sectionID, 200000, () => { playIntroAnimations(); });
+            playActionOnce("Up", sectionID, 200000, () => {
+              playIntroAnimations(); const web33Trigger = ScrollTrigger.getById('web3_secondary');
+              if (web33Trigger) web33Trigger.enable();
+            });
 
           }
         },
@@ -561,6 +585,15 @@ export default function Web3({ sectionID, isActive, ...props }) {
           }
         },
 
+        onLeaveBack: () => {
+          const web2Trigger = ScrollTrigger.getById('web2');
+          if (web2Trigger) web2Trigger.enable();
+        },
+
+        onEnterBack: () => {
+          const web3Trigger = ScrollTrigger.getById('web3');
+          if (web3Trigger) web3Trigger.enable();
+        },
       });
       const minsY = 0;
       const maxsY = 0.4;
@@ -570,8 +603,14 @@ export default function Web3({ sectionID, isActive, ...props }) {
         start: "top center",
         endTrigger: "#section6",
         end: "top bottom",
-        markers:false,
+        markers: false,
         anticipatePin: 1,
+        // Réduire la fréquence de mise à jour pour les performances
+        refreshPriority: -1,
+        // Désactiver le smooth scrolling sur mobile pour éviter les conflits
+        normalizeScroll: false,
+        // Optimiser pour le touch
+        touchAction: "pan-y",
         onEnter: (self) => {
           setActiveSmoke(true)
           setCurrentModel(sectionID);
@@ -585,12 +624,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
 
           }
           if (sceneContainerGroup.current) {
-           // sceneContainerGroup.current.position.y = adjustedStartY-0.5;
-            // gsap.to(sceneContainerGroup.current.position, {
-            //   y: -1,
-            //   duration: 0,
-            //   ease: "power3.inOut",
-            // });
+
           }
 
         },
@@ -608,10 +642,13 @@ export default function Web3({ sectionID, isActive, ...props }) {
           handleProgressUpdate(self.progress);
 
         },
+        onLeave: () => {
+          const web33Trigger = ScrollTrigger.getById('web3_armatureMove');
+          if (web33Trigger) web33Trigger.enable();
+        }
 
       });
 
-      //Armature movement trigger
       armatureTrigger = ScrollTrigger.create({
         id: sectionID + "_armatureMove",
         trigger: "#section6",
@@ -636,14 +673,12 @@ export default function Web3({ sectionID, isActive, ...props }) {
 
         onUpdate: (self) => {
           if (armatureRef.current) {
-            // Interpolation selon le scroll progress
             armatureRef.current.position.y = gsap.utils.interpolate(adjustedStartY, endY, self.progress);
 
           }
         },
         onLeaveBack: () => {
           if (armatureRef.current) {
-            //armatureRef.current.position.y = startY;
             gsap.to(armatureRef.current.scale, {
               x: 0,
               y: 0,

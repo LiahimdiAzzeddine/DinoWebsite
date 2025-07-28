@@ -13,7 +13,6 @@ import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin, Observer);
 
 export default function Web1({ sectionID, isActive, ...props }) {
-  const gl = useThree((state) => state.gl);
   const group = useRef();
   const glowMeshRef = useRef();
   const directionalLightRef = useRef();
@@ -27,27 +26,49 @@ export default function Web1({ sectionID, isActive, ...props }) {
   const handRef = useRef();
   const workerRef = useRef();
   const girlRef = useRef();
+  const timelineMain = useRef();
   const currentTween = useRef(null);
   const sceneContainerGroup = useRef();
   const champignonRef = useRef();
   const [confettis, setConfettis] = useState([]);
   const sketch01Ref = useRef();
   const sketch02Ref = useRef();
-  const isSwitching = useRef(false);
   const [activeSketch, setActiveSketch] = useState("Sketch01");
   const { nodes, materials, animations } = useGLTF('./models/model1-opt.glb')
   const { actions, mixer } = useAnimations(animations, group)
-
+  const [transitionState, setTransitionState] = useState('idle');
   const { setCurrentModel } = useContext(AnimationContext);
 
-  const timelineMain = useRef();
   const { viewport } = useThree()
+
   let scrollDirection = 'Down';
   let velocityD = 0;
   let isTransitioning = false;
 
   // track scrolling status
   let nextScrollTrigger = null;
+
+  let scrollPauseTimeout;
+  let lastPlayedAction = null;
+
+
+  const waitUntilScrollStops = (callback, trigger, actionName, delay = 1000) => {
+    clearTimeout(scrollPauseTimeout);
+    scrollPauseTimeout = setTimeout(() => {
+      // Vérifier si le trigger est actif
+      if (trigger?.isActive && actionName !== lastPlayedAction) {
+        lastPlayedAction = actionName;
+        callback(); // Lancer l'animation
+      } else if (actionName !== lastPlayedAction && actionName == "UP") {
+        lastPlayedAction = actionName;
+        callback(); // Lancer l'animation
+      } else {
+        console.log("⛔ Animation ignored (already played or trigger inactive)");
+      }
+    }, delay);
+  };
+
+
 
   let disableOtherSections = () => {
     if (!nextScrollTrigger) {
@@ -70,7 +91,6 @@ export default function Web1({ sectionID, isActive, ...props }) {
         scrollDirection = obs.deltaY > 0 ? "UP" : "Down";
         velocityD = obs.velocityY;
       },
-      //preventDefault: true,
     });
     return () => observer.kill();
   }, []);
@@ -86,7 +106,6 @@ export default function Web1({ sectionID, isActive, ...props }) {
     camAct.reset().play().paused = true;
     const clipDur = camAct.getClip().duration;
 
-    const defaultPosition = { ...sceneGroup.position };
     const minY = 3;
     const maxY = 6;
 
@@ -97,7 +116,7 @@ export default function Web1({ sectionID, isActive, ...props }) {
       }
     };
     const mm = gsap.matchMedia();
-    const playActionOnce = (actionName, sectionID, scrollSpeed = 1, onFinishCallback = () => { }) => {
+    const playActionOnce = (actionName, scrollSpeed = 1, onFinishCallback = () => { }) => {
       if (isTransitioning) return;
 
       const action = actions[actionName];
@@ -114,8 +133,9 @@ export default function Web1({ sectionID, isActive, ...props }) {
       action.time = 0;
 
       const minSpeed = 2;
-      const maxSpeed = 5;
+      const maxSpeed = 100;
       const scale = Math.min(Math.max(Math.abs(scrollSpeed / 1000), minSpeed), maxSpeed);
+      console.log("🚀 ~ playActionOnce ~ scale:", scale)
 
       // Démarrage doux
       action.timeScale = 0.5;
@@ -142,6 +162,83 @@ export default function Web1({ sectionID, isActive, ...props }) {
 
       action.play();
     };
+    const playActionImmediately = (actionName, onFinishCallback = () => { }) => {
+      const action = actions[actionName];
+      if (!action) return;
+
+      const oppositeName = actionName === "UP" ? "Down" : "UP";
+      const oppositeAction = actions[oppositeName];
+      if (oppositeAction) oppositeAction.stop();
+
+      isTransitioning = false; // On ne bloque pas
+
+      action.reset().setLoop(THREE.LoopOnce, 1);
+      action.clampWhenFinished = true;
+      action.time = action.getClip().duration; // Direct to end
+      action.timeScale = 1000; // Optional for fallback
+      action.play();
+
+      onFinishCallback(); // Appelé immédiatement
+    };
+
+const handleSectionToggle = ({
+  isActive,
+  sectionID,
+  scrollDirection,
+  velocityD,
+  pacmanRef,
+  ball1Ref,
+  ball2Ref,
+  ball3Ref,
+  ball4Ref,
+  handRef,
+  nextScrollTrigger
+}) => {
+  const actionName = scrollDirection;
+  console.log("🚀 ~ handleSectionToggle ~ actionName:", actionName, isActive, velocityD);
+
+  if (isActive) {
+    setCurrentModel(sectionID);
+    disableOtherSections();
+  }
+
+  // 🔻 Masquer les éléments (Pacman + balls + hand)
+  [pacmanRef, ball1Ref, ball2Ref, ball3Ref, ball4Ref, handRef].forEach(ref => {
+    if (ref?.current) ref.current.visible = false;
+  });
+
+  const onFinishCallback = () => {
+    // 🔼 Réafficher les éléments après une courte pause
+    setTimeout(() => {
+      [pacmanRef, ball1Ref, ball2Ref, ball3Ref, ball4Ref, handRef].forEach(ref => {
+        if (ref?.current) ref.current.visible = true;
+      });
+    }, 100);
+
+    if (actionName === "UP") {
+      const web2Trigger = ScrollTrigger.getById('web2');
+      if (web2Trigger) web2Trigger.enable();
+      setCurrentModel("web2");
+      if (nextScrollTrigger) {
+        nextScrollTrigger.enable();
+      }
+    }
+  };
+
+  // Si on scroll vers le haut, on désactive temporairement web2
+  if (actionName === "UP") {
+    const web2Trigger = ScrollTrigger.getById('web2');
+    if (web2Trigger) web2Trigger.disable();
+  }
+
+  // Choix de la méthode d’animation selon la vitesse
+  if (velocityD === 0 || Math.abs(velocityD) > 20000) {
+    playActionImmediately(actionName, onFinishCallback);
+  } else {
+    playActionOnce(actionName, velocityD, onFinishCallback);
+  }
+};
+
 
 
     // MOBILE
@@ -201,6 +298,10 @@ export default function Web1({ sectionID, isActive, ...props }) {
         end: "top bottom+=260",
         markers: false,
         anticipatePin: 1,
+        refreshPriority: -1,
+        normalizeScroll: false,
+        touchAction: "pan-y",
+
         onToggle: ({ isActive }) => {
           const actionName = scrollDirection;
           if (isActive) {
@@ -208,48 +309,55 @@ export default function Web1({ sectionID, isActive, ...props }) {
             disableOtherSections();
           }
           // Cacher Pacman avant transition
-          if (pacmanRef.current && ball1Ref.current && ball2Ref.current && ball3Ref.current && ball4Ref.current && handRef.current) {
-            pacmanRef.current.visible = false;
-            ball1Ref.current.visible = false;
-            ball2Ref.current.visible = false;
-            ball3Ref.current.visible = false;
-            ball4Ref.current.visible = false;
-            handRef.current.visible = false;
-          }
+          pacmanRef.current && (pacmanRef.current.visible = false);
+          ball1Ref.current && (ball1Ref.current.visible = false);
+          ball2Ref.current && (ball2Ref.current.visible = false);
+          ball3Ref.current && (ball3Ref.current.visible = false);
+          ball4Ref.current && (ball4Ref.current.visible = false);
+          handRef.current && (handRef.current.visible = false);
 
           const onFinishCallback = () => {
 
             // Réactiver Pacman une fois l'action terminée
-            if (pacmanRef.current && ball1Ref.current && ball2Ref.current && ball3Ref.current && ball4Ref.current && handRef.current) {
-              setTimeout(() => {
-                pacmanRef.current.visible = true;
-                ball1Ref.current.visible = true;
-                ball2Ref.current.visible = true;
-                ball3Ref.current.visible = true;
-                ball4Ref.current.visible = true;
-                handRef.current.visible = true;
-              }, 200);
+            setTimeout(() => {
+              pacmanRef.current && (pacmanRef.current.visible = true);
+              ball1Ref.current && (ball1Ref.current.visible = true);
+              ball2Ref.current && (ball2Ref.current.visible = true);
+              ball3Ref.current && (ball3Ref.current.visible = true);
+              ball4Ref.current && (ball4Ref.current.visible = true);
+              handRef.current && (handRef.current.visible = true);
+            }, 200);
 
-            }
+
 
             if (actionName === "UP") {
-              const web2Trigger = ScrollTrigger.getById('web2');
-              if (web2Trigger) web2Trigger.enable();
-              setCurrentModel("web2");
-              if (nextScrollTrigger) {
-                nextScrollTrigger?.enable();
-              }
+              //const web2Trigger = ScrollTrigger.getById('web2');
+              //if (web2Trigger) web2Trigger.enable();
+              // setCurrentModel("web2");
+              // if (nextScrollTrigger) {
+              //   nextScrollTrigger?.enable();
+              // }
             }
 
           };
           if (actionName == "UP") {
-            const web2Trigger = ScrollTrigger.getById('web2');
-            if (web2Trigger) web2Trigger.disable();
+            //const web2Trigger = ScrollTrigger.getById('web2');
+            //if (web2Trigger) web2Trigger.disable();
           }
 
-          playActionOnce(actionName, sectionID, velocityD, onFinishCallback);
+          playActionOnce("Down", velocityD, onFinishCallback);
 
         },
+        onLeave: () => {
+
+          const web2Trigger = ScrollTrigger.getById('web2');
+          if (web2Trigger) web2Trigger.enable();
+        },
+        onEnterBack: () => {
+          setCurrentModel("web1");
+          const web1Trigger = ScrollTrigger.getById('web1');
+          if (web1Trigger) web1Trigger.enable();
+        }
 
       });
       return () => { trigger.kill(); trigger1.kill() };
@@ -266,6 +374,7 @@ export default function Web1({ sectionID, isActive, ...props }) {
         scrub: 0.25,
         anticipatePin: 1,
         markers: false,
+
         onUpdate: ({ progress }) => {
           killTween();
           currentTween.current = gsap.to(camAct, {
@@ -277,61 +386,44 @@ export default function Web1({ sectionID, isActive, ...props }) {
         },
       });
 
-
       const trigger = ScrollTrigger.create({
         id: sectionID,
         trigger: "#section1",
         start: "top bottom",            // quand la base de section1 atteint le bas du viewport
         endTrigger: "#section3",           // noued de fin placé sur section2
         end: "center+=95 bottom",           // quand le centre de section2 atteint 100px sous le haut du viewport
-        anticipatePin: 1 ,
+        anticipatePin: 1,
         scrub: true,
-        onToggle: ({ isActive }) => {
-          if (isActive) {
-            setCurrentModel(sectionID);
-            disableOtherSections();
-          }
-          // Cacher Pacman avant transition
-          if (pacmanRef.current && ball1Ref.current && ball2Ref.current && ball3Ref.current && ball4Ref.current && handRef.current) {
-            pacmanRef.current.visible = false;
-            ball1Ref.current.visible = false;
-            ball2Ref.current.visible = false;
-            ball3Ref.current.visible = false;
-            ball4Ref.current.visible = false;
-            handRef.current.visible = false;
-          }
-          const actionName = scrollDirection === 1 ? "Down" : scrollDirection;
-          const onFinishCallback = () => {
-            // Réactiver Pacman une fois l'action terminée
-            if (pacmanRef.current && ball1Ref.current && ball2Ref.current && ball3Ref.current && ball4Ref.current && handRef.current) {
-              setTimeout(() => {
-                pacmanRef.current.visible = true;
-                ball1Ref.current.visible = true;
-                ball2Ref.current.visible = true;
-                ball3Ref.current.visible = true;
-                ball4Ref.current.visible = true;
-                handRef.current.visible = true;
-              }, 500);
-            }
-            if (actionName === "UP") {
-              const web2Trigger = ScrollTrigger.getById('web2');
-              if (web2Trigger) web2Trigger.enable();
-              setCurrentModel("web2");
-              if (nextScrollTrigger) {
-                nextScrollTrigger?.enable();
-              }
-            }
-
-          };
-          if (actionName == "UP") {
-            const web2Trigger = ScrollTrigger.getById('web2');
-            if (web2Trigger) web2Trigger.disable();
-          }
-
-
-          playActionOnce(actionName, sectionID, velocityD, onFinishCallback);
-
+        onLeave:()=>{
+          handleSectionToggle({
+    isActive,
+    sectionID,
+    scrollDirection,
+    velocityD,
+    pacmanRef,
+    ball1Ref,
+    ball2Ref,
+    ball3Ref,
+    ball4Ref,
+    handRef,
+    nextScrollTrigger
+  });
         },
+        onEnterBack: () => {
+   handleSectionToggle({
+    isActive,
+    sectionID,
+    scrollDirection,
+    velocityD,
+    pacmanRef,
+    ball1Ref,
+    ball2Ref,
+    ball3Ref,
+    ball4Ref,
+    handRef,
+    nextScrollTrigger
+  });
+}
 
       });
 
@@ -344,14 +436,9 @@ export default function Web1({ sectionID, isActive, ...props }) {
       mixer.stopAllAction();
     };
   }, []);
-
-
-
-
   const createConfetti = () => {
     const newConfettis = [];
     const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#f0932b', '#eb4d4b', '#6c5ce7'];
-
     // Utiliser la position du champignon
     const champignonPosition = [-0.175, 0.096, 0.228];
 
@@ -377,7 +464,6 @@ export default function Web1({ sectionID, isActive, ...props }) {
 
     setConfettis(newConfettis);
   };
-
   const handleClick = () => {
     if (!champignonRef.current) return;
 
@@ -403,81 +489,77 @@ export default function Web1({ sectionID, isActive, ...props }) {
       }
     );
   };
-const [transitionState, setTransitionState] = useState('idle'); // 'idle', 'closing', 'opening'
+  const handleSwitchSketch = () => {
+    if (transitionState !== 'idle') return;
+    setTransitionState('closing');
 
-const handleSwitchSketch = () => {
-  if (transitionState !== 'idle') return;
-  setTransitionState('closing');
+    const currentRef = activeSketch === "Sketch01" ? sketch01Ref : sketch02Ref;
+    const nextRef = activeSketch === "Sketch01" ? sketch02Ref : sketch01Ref;
+    const nextSketch = activeSketch === "Sketch01" ? "Sketch02" : "Sketch01";
 
-  const currentRef = activeSketch === "Sketch01" ? sketch01Ref : sketch02Ref;
-  const nextRef = activeSketch === "Sketch01" ? sketch02Ref : sketch01Ref;
-  const nextSketch = activeSketch === "Sketch01" ? "Sketch02" : "Sketch01";
+    // Préparer le prochain sketch
+    if (nextRef.current) {
+      gsap.set(nextRef.current.scale, { x: 0, y: 0, z: 0 });
+      gsap.set(nextRef.current.material, { opacity: 0 });
+    }
 
-  // Préparer le prochain sketch
-  if (nextRef.current) {
-    gsap.set(nextRef.current.scale, { x: 0, y: 0, z: 0 });
-    gsap.set(nextRef.current.material, { opacity: 0 });
-  }
+    const closeTl = gsap.timeline({
+      onComplete: () => {
+        setActiveSketch(nextSketch);
+        setTransitionState('opening');
 
-  const closeTl = gsap.timeline({
-    onComplete: () => {
+        // Pas de délai, utiliser directement l'animation
+        animateOpen(nextRef);
+      },
+    });
+
+    if (currentRef.current) {
+      closeTl.to(currentRef.current.scale, {
+        x: 0,
+        y: 0,
+        z: 0,
+        duration: 0.4,
+        ease: "power2.inOut",
+      });
+      closeTl.to(currentRef.current.material, {
+        opacity: 0,
+        duration: 0.3,
+        ease: "sine.in",
+      }, "<");
+    } else {
       setActiveSketch(nextSketch);
       setTransitionState('opening');
-      
-      // Pas de délai, utiliser directement l'animation
       animateOpen(nextRef);
-    },
-  });
-
-  if (currentRef.current) {
-    closeTl.to(currentRef.current.scale, {
-      x: 0,
-      y: 0,
-      z: 0,
-      duration: 0.4,
-      ease: "power2.inOut",
-    });
-    closeTl.to(currentRef.current.material, {
-      opacity: 0,
-      duration: 0.3,
-      ease: "sine.in",
-    }, "<");
-  } else {
-    setActiveSketch(nextSketch);
-    setTransitionState('opening');
-    animateOpen(nextRef);
-  }
-};
-
-const animateOpen = (ref) => {
-  if (!ref.current) {
-    setTransitionState('idle');
-    return;
-  }
-
-  // S'assurer que l'état initial est correct
-  gsap.set(ref.current.scale, { x: 0, y: 0, z: 0 });
-  gsap.set(ref.current.material, { opacity: 0 });
-
-  gsap.timeline({
-    onComplete: () => {
-      setTransitionState('idle');
     }
-  })
-    .to(ref.current.material, {
-      opacity: 1,
-      duration: 0.4,
-      ease: "sine.out",
-    })
-    .to(ref.current.scale, {
-      x: 0.18,
-      y: 0.18,
-      z: 0.18,
-      duration: 0.4,
-      ease: "sine.in",
-    }, "<");
-};
+  };
+  const animateOpen = (ref) => {
+    if (!ref.current) {
+      setTransitionState('idle');
+      return;
+    }
 
+    // S'assurer que l'état initial est correct
+    gsap.set(ref.current.scale, { x: 0, y: 0, z: 0 });
+    gsap.set(ref.current.material, { opacity: 0 });
+
+    gsap.timeline({
+      onComplete: () => {
+        setTransitionState('idle');
+      }
+    })
+      .to(ref.current.material, {
+        opacity: 1,
+        duration: 0.4,
+        ease: "sine.out",
+      })
+      .to(ref.current.scale, {
+        x: 0.18,
+        y: 0.18,
+        z: 0.18,
+        duration: 0.4,
+        ease: "sine.in",
+      }, "<");
+  };
   const playOneShotAnimations = (actionNames = [], totalDuration = 1000, callback = () => { }) => {
     if (!Array.isArray(actionNames) || actionNames.length === 0) return;
 
@@ -534,8 +616,6 @@ const animateOpen = (ref) => {
       mixer.addEventListener('finished', onFinished);
     });
   };
-
-
   const handleDinoClick = () => {
     if (!dinoRef.current) return;
     playOneShotAnimations(["DinoNotif", "DinoText"], 2000);
@@ -636,20 +716,14 @@ const animateOpen = (ref) => {
     if (!manRef.current) return;
     playOneShotAnimations(["ThinkingNotif", "ThinkingTex", "ThinkingTex.001"], 4000);
   }
-
-
   // Animation de clignotement pour attirer l'attention
   const colors = useMemo(() => [
     0xff6b6b, 0x4ecdc4, 0x45b7d1,
     0xf9ca24, 0xf0932b, 0xeb4d4b, 0x6c5ce7
   ], []);
-
   useFrame((state, clock) => {
     const mesh = glowMeshRef.current;
     const light = directionalLightRef.current;
-
-
-
     if (!mesh || !mesh.material) return;
 
     const { elapsedTime } = state.clock;
@@ -674,9 +748,7 @@ const animateOpen = (ref) => {
       light.position.set(Math.cos(angle) * 2, light.position.y, Math.sin(angle) * 2);
     }
   });
-  const rocketTexture = useLoader(THREE.TextureLoader, '/textures/rocket.png');
-  rocketTexture.wrapS = THREE.RepeatWrapping;
-  rocketTexture.wrapT = THREE.RepeatWrapping;
+
 
 
   return (
@@ -693,23 +765,23 @@ const animateOpen = (ref) => {
           rotation={[-0.417, 0.041, -0.022]}
         />
         <group ref={sceneContainerGroup} name="scene_container"
-        onPointerEnter={() => {
-        document.body.style.cursor = 'url(/cursors/pngegg_imresizer.png), grab';
-  }}
-  onPointerLeave={() => {
-    document.body.style.cursor = 'default';
-  }}
+          onPointerEnter={() => {
+            document.body.style.cursor = 'url(/cursors/pngegg_imresizer.png), grab';
+          }}
+          onPointerLeave={() => {
+            document.body.style.cursor = 'default';
+          }}
 
-  onPointerUp={() => {
-        document.body.style.cursor = 'url(/cursors/pngegg_imresizer.png), grab';
+          onPointerUp={() => {
+            document.body.style.cursor = 'url(/cursors/pngegg_imresizer.png), grab';
 
-  }}
+          }}
           scale={viewport.width < 5 ? 0.5 : 1}
           position-x={viewport.width < 5 ? 2.72 : 0}
           position-y={viewport.width < 5 ? 3 : 0}
           position-z={viewport.width < 5 ? -0.5 : 0}
         >
- 
+
           <group ref={ball4Ref} visible={true} name="Empty" position={[1.106, 1.058, -0.662]} scale={0.256}>
             <mesh
               name="Sphere"
@@ -803,16 +875,16 @@ const animateOpen = (ref) => {
           </group>
           <group name="All" position={[0.273, 1.626, -0.266]} scale={4.808}>
             <group
-            onPointerEnter={() => {
-        document.body.style.cursor = 'url(/cursors/icons8-google-chat-1_imresizer.png), grab';
-  }}
-  onPointerLeave={() => {
-    document.body.style.cursor = 'url(/cursors/pngegg_imresizer.png), grab';
-  }}
+              onPointerEnter={() => {
+                document.body.style.cursor = 'url(/cursors/icons8-google-chat-1_imresizer.png), grab';
+              }}
+              onPointerLeave={() => {
+                document.body.style.cursor = 'url(/cursors/pngegg_imresizer.png), grab';
+              }}
 
-  onPointerUp={() => {
-        document.body.style.cursor = 'url(/cursors/icons8-google-chat-1_imresizer.png), grab';
-  }}
+              onPointerUp={() => {
+                document.body.style.cursor = 'url(/cursors/icons8-google-chat-1_imresizer.png), grab';
+              }}
               name="Armature001"
               ref={manRef}
               onClick={handleManClick}
@@ -900,16 +972,16 @@ const animateOpen = (ref) => {
               />
               <group
                 name="Armature004"
-                 onPointerEnter={() => {
-        document.body.style.cursor = 'url(/cursors/icons8-google-chat-1_imresizer.png), grab';
-  }}
-  onPointerLeave={() => {
-    document.body.style.cursor = 'url(/cursors/pngegg_imresizer.png), grab';
-  }}
+                onPointerEnter={() => {
+                  document.body.style.cursor = 'url(/cursors/icons8-google-chat-1_imresizer.png), grab';
+                }}
+                onPointerLeave={() => {
+                  document.body.style.cursor = 'url(/cursors/pngegg_imresizer.png), grab';
+                }}
 
-  onPointerUp={() => {
-        document.body.style.cursor = 'url(/cursors/icons8-google-chat-1_imresizer.png), grab';
-  }}
+                onPointerUp={() => {
+                  document.body.style.cursor = 'url(/cursors/icons8-google-chat-1_imresizer.png), grab';
+                }}
                 ref={workerRef}
                 onClick={handleWorkerClick}
                 position={[-0.046, -0.107, -0.705]}
@@ -1087,16 +1159,16 @@ const animateOpen = (ref) => {
             />
             <group name="Empty002" position={[-0.103, 0.108, 0.162]} scale={0.208}>
               <group name="Retopo_Cube001" rotation={[0, 1.005, 0]} scale={0.29} ref={dinoRef} onClick={handleDinoClick}
-              onPointerEnter={() => {
-        document.body.style.cursor = 'url(/cursors/icons8-google-chat-1_imresizer.png), grab';
-  }}
-  onPointerLeave={() => {
-    document.body.style.cursor = 'url(/cursors/pngegg_imresizer.png), grab';
-  }}
+                onPointerEnter={() => {
+                  document.body.style.cursor = 'url(/cursors/icons8-google-chat-1_imresizer.png), grab';
+                }}
+                onPointerLeave={() => {
+                  document.body.style.cursor = 'url(/cursors/pngegg_imresizer.png), grab';
+                }}
 
-  onPointerUp={() => {
-        document.body.style.cursor = 'url(/cursors/icons8-google-chat-1_imresizer.png), grab';
-  }}
+                onPointerUp={() => {
+                  document.body.style.cursor = 'url(/cursors/icons8-google-chat-1_imresizer.png), grab';
+                }}
               >
                 <mesh
                   name="mesh003"
@@ -1185,24 +1257,24 @@ const animateOpen = (ref) => {
               rotation={[0, 0.616, 0]}
               scale={0.208}>
               <group
-             
+
                 name="Armature003"
                 ref={girlRef}
                 onClick={handleGirlClick}
                 position={[0.077, 0.087, -0.463]}
                 rotation={[0, 0.014, 0]}
                 scale={0.202}
-                 onPointerEnter={() => {
-        document.body.style.cursor = 'url(/cursors/icons8-google-chat-1_imresizer.png), grab';
-  }}
-  onPointerLeave={() => {
-    document.body.style.cursor = 'url(/cursors/pngegg_imresizer.png), grab';
-  }}
+                onPointerEnter={() => {
+                  document.body.style.cursor = 'url(/cursors/icons8-google-chat-1_imresizer.png), grab';
+                }}
+                onPointerLeave={() => {
+                  document.body.style.cursor = 'url(/cursors/pngegg_imresizer.png), grab';
+                }}
 
-  onPointerUp={() => {
-        document.body.style.cursor = 'url(/cursors/icons8-google-chat-1_imresizer.png), grab';
-  }}
-                >
+                onPointerUp={() => {
+                  document.body.style.cursor = 'url(/cursors/icons8-google-chat-1_imresizer.png), grab';
+                }}
+              >
                 <group name="Retopo_Sphere009">
                   <skinnedMesh
                     name="mesh013"

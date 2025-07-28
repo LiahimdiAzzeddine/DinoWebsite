@@ -20,63 +20,6 @@ import { Observer } from "gsap/Observer";
 //import SmokeParticles from "../SmokeParticles";
 
 
-export function FireParticles({ count = 1000 }) {
-  const pointsRef = useRef()
-
-  const { positions, colors } = useMemo(() => {
-    const positions = new Float32Array(count * 3)
-    const colors = new Float32Array(count * 3)
-    const color = new THREE.Color()
-
-    for (let i = 0; i < count; i++) {
-      const y = Math.random() * 1.5
-      const r = (1.5 - y) * 0.2
-      const angle = Math.random() * Math.PI * 2
-      const x = Math.cos(angle) * r
-      const z = Math.sin(angle) * r
-
-      positions.set([x, y, z], i * 3)
-      color.setHSL(0.05 + 0.1 * (1 - y / 1.5), 1, 0.5 + 0.2 * (y / 1.5))
-      colors.set([color.r, color.g, color.b], i * 3)
-    }
-
-    return { positions, colors }
-  }, [count])
-
-  useFrame(() => {
-    if (pointsRef.current) {
-      //pointsRef.current.rotation.y += 0.002
-    }
-  })
-
-  return (
-    <points ref={pointsRef}>
-      <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          array={positions}
-          count={positions.length / 3}
-          itemSize={3}
-        />
-        <bufferAttribute
-          attach="attributes-color"
-          array={colors}
-          count={colors.length / 3}
-          itemSize={3}
-        />
-      </bufferGeometry>
-      <pointsMaterial
-        size={0.4}
-        vertexColors
-        transparent
-        opacity={0.9}
-        depthWrite={false}
-        sizeAttenuation
-      />
-    </points>
-  )
-}
-
 
 export function FlameBlob({ position = [0, -3.5, 0], scale = 1.1 }) {
   const meshRef = useRef()
@@ -144,18 +87,36 @@ export function FlameBlob({ position = [0, -3.5, 0], scale = 1.1 }) {
 // Un composant simple pour un système de particules de fumée
 const SmokeParticles = ({ rocketRef,isActive }) => {
   const groupRef = useRef()
-  const maxParticles = 200
+  const maxParticles = 300
+ let scrollVelocity = 0;
+
+Observer.create({
+  type: "wheel,touch,scroll",
+  target: window,
+  onChangeY: (self) => {
+    scrollVelocity = self.velocityY;
+  },
+  // Optional: reset to 0 after a delay to avoid stale velocity
+  onStop: () => {
+    scrollVelocity = 0;
+  }
+});
+
 
   const particles = useMemo(() => {
     return new Array(maxParticles).fill().map(() => {
       const scale = 0.1 + Math.random() * 0.8
       const geometry = new THREE.SphereGeometry(scale, 6 + Math.floor(Math.random() * 6), 6)
-      const material = new THREE.MeshLambertMaterial({
-        color: 0xffffff,
-        transparent: true,
-        opacity: 1,
-        depthWrite: false,
-      })
+    const material = new THREE.MeshStandardMaterial({
+  color: 0xffffff,
+  roughness: 1, // Sans reflets
+  metalness: 0,
+  transparent: true,
+  opacity: 1,
+  depthWrite: false
+})
+
+
       const mesh = new THREE.Mesh(geometry, material)
       mesh.visible = false
       mesh.userData = {
@@ -176,23 +137,16 @@ const SmokeParticles = ({ rocketRef,isActive }) => {
   }, [particles])
 
   useFrame(() => {
+
      if (!groupRef.current || !rocketRef.current) return
 
-  // Vitesse de la fusée (différence de position entre frames)
-  const rocket = rocketRef.current
-  const prevPos = rocket.userData.prevPos || new THREE.Vector3()
-  const currentPos = rocket.getWorldPosition(new THREE.Vector3())
-  const velocity = currentPos.clone().sub(prevPos)
-  rocket.userData.prevPos = currentPos.clone()
 
-  const speed = velocity.length()
+  // Ne pas générer de fumée si on scrollbacke
 
-  // Ne pas générer de fumée si la vitesse est faible
-  if (speed > 0 && isActive){
     // Spawn plusieurs nouvelles particules par frame (3-5 particules)
-    const particlesToSpawn = Math.floor(Math.random() * 3) + 8
-    
-    for (let i = 0; i < particlesToSpawn; i++) {
+    const particlesToSpawn = Math.floor(Math.random() * 3) + 10
+          if (scrollVelocity > 0){
+            for (let i = 0; i < particlesToSpawn; i++) {
       if (Math.random() < 0.8) {
         // Trouver une particule inactive au lieu d'utiliser un index fixe
         const availableParticle = particles.find(p => !p.userData.isActive)
@@ -218,9 +172,12 @@ const SmokeParticles = ({ rocketRef,isActive }) => {
           p.scale.setScalar(p.userData.initialScale)
         }
       }
-    }
+    } 
+          }
 
-  }
+   
+
+  
 
     
     // Update active particles
@@ -236,15 +193,15 @@ const SmokeParticles = ({ rocketRef,isActive }) => {
       p.position.copy(localPos)
 
       // Scale expansion (fumée qui s'étale)
-      const scaleMultiplier = 1 + (lifeRatio * p.userData.expansion)
+      const scaleMultiplier = 1.8 + (lifeRatio * p.userData.expansion)
       p.scale.setScalar(p.userData.initialScale * scaleMultiplier)
 
       // Opacity fade
-      //p.material.opacity = (1 - Math.pow(lifeRatio, 2)) * (0.6 + Math.random() * 0.3)
+      p.material.opacity = (1 - Math.pow(lifeRatio, 2)) 
 
       // Color change (fumée qui se refroidit)
       const grayValue = 0.9 - lifeRatio * 0.2
-      //p.material.color.setRGB(grayValue, grayValue, grayValue)
+     // p.material.color.setRGB(grayValue, grayValue, grayValue)
 
       if (p.userData.life >= p.userData.maxLife) {
         p.visible = false
@@ -363,7 +320,6 @@ export default function Web3({ sectionID, isActive, ...props }) {
   // Responsive positioning
  useEffect(() => {
     viewportRef.current = viewport;
-    console.log(' view ',viewport.width)
   }, [viewport]);
 
   useLayoutEffect(() => {

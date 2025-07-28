@@ -26,10 +26,10 @@ export function ModelContainer({ lenis }) {
         sectionID={"web2"}
         isActive={currentModel === "web2"}
       />
-      {/* <Web3
+      <Web3
         sectionID={"web3"}
         isActive={currentModel === "web3"}
-      /> */}
+      />
     </>
   );
 }

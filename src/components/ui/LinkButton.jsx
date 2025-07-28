@@ -27,8 +27,8 @@ const LinkButton = ({
         rel="noopener noreferrer"
         className={`
           inline-block font-bold  no-underline 
-          lg:w-[5.5rem] lg:h-[5.5rem] lg:text-sm w-32 h-32 text-xs
-          ${rounded ? 'rounded-[1.2rem]' : 'rounded-[1.2rem]'}
+          lg:w-[5rem] lg:h-[5rem] lg:text-sm w-28 h-28 text-xs
+          ${rounded ? 'rounded-[1.3rem]' : 'rounded-[1.3rem]'}
           border shadow-lg
           ${inverted
             ? "bg-white text-black border-white border text-sm"

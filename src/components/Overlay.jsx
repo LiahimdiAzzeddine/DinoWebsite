@@ -83,7 +83,7 @@ const Card = ({
         </div>
 
         {(links.length > 0 || buttons.length > 0) && (
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-start justify-start max-w-full md:max-w-[80%]" style={{ justifyItems: "start" }}>
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-start justify-start max-w-full md:max-w-[70%]" style={{ justifyItems: "start" }}>
             {links.map((link, idx) => (
               <LinkButton
                 key={idx}

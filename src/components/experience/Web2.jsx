@@ -373,9 +373,7 @@ export default function Web2({ sectionID, isActive, ...props }) {
         scrub: true,
         markers: false,
         preventClicks: true,
-        onEnter: (self) => {
-         
-        },
+     
         onUpdate: (self) => {
       const progress = self.progress; // Valeur entre 0 et 1
       if (sceneContainerGroup.current) {
@@ -383,30 +381,31 @@ export default function Web2({ sectionID, isActive, ...props }) {
         sceneContainerGroup.current.position.y = minY + (maxY - minY) * progress;
       }
     },
-        onToggle: ({ isActive }) => {
+          onToggle: ({ isActive }) => {
+
           if (isActive) {
             disableOtherSections();
             playStaticAnimations();
             setCurrentModel(sectionID);
 
             if (scrollDirection === 1) {
-              //playActionOnce("UP", sectionID, velocityD);
               playActionOnce("UP", sectionID, velocityD, () => {
                 enableNextSection();
               });
             } else {
-              // playActionOnce("DOWN2", sectionID, velocityD);
-              playActionOnce("DOWN2", sectionID, velocityD, () => {
+              ScrollTrigger.getById('web2')?.enable();
+              playActionOnce("DOWN_2", sectionID, velocityD, () => {
                 enablePrevSection();
               });
             }
           } else {
             if (scrollDirection === 1) {
               // Sortie vers le bas
-              playActionOnce("UP2", sectionID, velocityD, () => {
-                enableNextSection();
-              });
+
             } else {
+
+
+              ScrollTrigger.getById('web1')?.disable();
               // Sortie vers le haut
               playActionOnce("DOWN", sectionID, velocityD, () => {
                 enablePrevSection();
@@ -415,6 +414,63 @@ export default function Web2({ sectionID, isActive, ...props }) {
             }
           }
         },
+
+        onLeaveBack: () => {
+          console.log(`${sectionID} onLeaveBack`);
+          const web1Trigger = ScrollTrigger.getById('web1');
+          if (web1Trigger) web1Trigger.disable();
+        },
+
+        onEnterBack: () => {
+          console.log(`${sectionID} onEnterBack`);
+          const web2Trigger = ScrollTrigger.getById('web2');
+          if (web2Trigger) web2Trigger.enable();
+        },
+
+        onLeave: ({ isActive, getVelocity }) => {
+          const currentVelocity = getVelocity();
+          const isFastScroll = detectFastScroll(currentVelocity, velocityD);
+
+          console.log("onLeave:", {
+            scrollDirection,
+            velocityD,
+            currentVelocity,
+            isFastScroll,
+            isActive
+          });
+
+          // Conditions pour activer web3
+          const shouldActivateWeb3 = isFastScroll || Math.abs(currentVelocity) > 2000 || velocityD > 10000;
+
+          if (shouldActivateWeb3) {
+            // Scroll rapide ou clic sur bouton - transition directe vers web3
+            setCurrentModel("web3");
+            const web3Trigger = ScrollTrigger.getById('web3');
+            if (web3Trigger) web3Trigger.enable();
+
+            // Forcer l'activation si on est en direction descendante
+            if (scrollDirection === 1) {
+              playActionOnce("UP_2", scrollDirection, velocityD, () => {
+                enableNextSection();
+              });
+            }
+          } else {
+            // Scroll normal
+            console.log("🚀 Scroll normal - gestion standard");
+            const web3Trigger = ScrollTrigger.getById('web3');
+            if (web3Trigger) web3Trigger.disable();
+
+            if (scrollDirection === 1 && !isActive) {
+              playActionOnce("UP_2", scrollDirection, velocityD, () => {
+                enableNextSection();
+                setCurrentModel("web3");
+                const web3TriggerAfter = ScrollTrigger.getById('web3');
+                if (web3TriggerAfter) web3TriggerAfter.enable();
+              });
+            }
+          }
+        }
+        
 
       });
 

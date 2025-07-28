@@ -15,7 +15,6 @@ export function DinoOffice(props) {
   const clone = React.useMemo(() => SkeletonUtils.clone(scene), [scene])
   const { nodes, materials } = useGraph(clone)
   const { actions, mixer } = useAnimations(animations, group)
-  console.log("🚀 ~ DinoOffice ~ actions:", actions)
   const scroll = useScroll();
         const tl = useRef();
         const excludedAnimations = [
@@ -25,8 +24,6 @@ export function DinoOffice(props) {
           "empty.008Action"
         ];
         
-      
-
         useEffect(() => {
           if (actions) {
           

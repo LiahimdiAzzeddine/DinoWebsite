@@ -186,7 +186,6 @@ const SmokeParticles = ({ rocketRef,isActive }) => {
   rocket.userData.prevPos = currentPos.clone()
 
   const speed = velocity.length()
-  console.log("🚀 ~ SmokeParticles ~ speed:", speed)
 
   // Ne pas générer de fumée si la vitesse est faible
   if (speed > 0 && isActive){
@@ -335,6 +334,8 @@ export default function Web3({ sectionID, isActive, ...props }) {
   const { viewport } = useThree();
 
   // Refs
+    const viewportRef = useRef(viewport);
+  
   const group = useRef();
   const ManRef = useRef();
   const rocketRef = useRef();
@@ -360,11 +361,10 @@ export default function Web3({ sectionID, isActive, ...props }) {
   const { nodes, materials } = useGraph(clone);
   const { actions, mixer } = useAnimations(animations, group);
   // Responsive positioning
-  const scenePositioning = useMemo(() => ({
-    positionZ: viewport.width < 1 ? -0.3 : 10,
-    wavingManPositionX: viewport.width < 1 ? -1 : 0,
-    wavingManPositionZ: viewport.width < 1 ? 0.48 : 0,
-  }), [viewport.width]);
+ useEffect(() => {
+    viewportRef.current = viewport;
+    console.log(' view ',viewport.width)
+  }, [viewport]);
 
   useLayoutEffect(() => {
     const target = document.documentElement;
@@ -381,9 +381,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
     return () => observer.kill();
   }, []);
 
-  useEffect(() => {
-    console.log('Scroll direction changed to', scrollDirection);
-  }, [scrollDirection]);
+
 
 
   // Animation control functions
@@ -838,8 +836,9 @@ export default function Web3({ sectionID, isActive, ...props }) {
       const endY = adjustedStartY + 5;
       mainTrigger = ScrollTrigger.create({
         id: sectionID,
-        trigger: SCROLL_TRIGGERS.MAIN.trigger,
-        start: "top bottom",
+        trigger:"#section3",
+        start: "top top",
+        endTrigger:"#section4",
         end: "top top",
         preventClicks: true,
         scrub: true,
@@ -894,7 +893,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
         },
         onUpdate: ({ progress }) => {
           if (sceneContainerGroup.current) {
-            sceneContainerGroup.current.position.y = THREE.MathUtils.lerp(minY, maxY, progress);
+            // sceneContainerGroup.current.position.y = THREE.MathUtils.lerp(minY, maxY, progress);
           }
         },
 
@@ -903,10 +902,11 @@ export default function Web3({ sectionID, isActive, ...props }) {
       const maxsY = 0.4;
       secondaryTrigger = ScrollTrigger.create({
         id: sectionID + "_secondary",
-        trigger: SCROLL_TRIGGERS.SECONDARY.trigger,
-        start: () => mainTrigger.end, // Synchronise le start ici
-        end: "bottom+=20% top",
-        scrub: SCROLL_TRIGGERS.SECONDARY.scrub,
+        trigger: "#section4",
+        end: "top top",
+       endTrigger:"#section6",
+        end: "top bottom",
+        scrub: true,
         markers: false,
         onEnter: (self) => {
           setCurrentModel(sectionID);
@@ -921,11 +921,11 @@ export default function Web3({ sectionID, isActive, ...props }) {
           }
           if (sceneContainerGroup.current) {
             //sceneContainerGroup.current.position.y = adjustedStartY;
-            gsap.to(sceneContainerGroup.current.position, {
-              y: 0.6,
-              duration: 0,
-              ease: "power3.inOut",
-            });
+            // gsap.to(sceneContainerGroup.current.position, {
+            //   y: 0.6,
+            //   duration: 0,
+            //   ease: "power3.inOut",
+            // });
           }
 
         },
@@ -937,7 +937,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
         },
         onUpdate: (self) => {
           if (sceneContainerGroup.current) {
-            sceneContainerGroup.current.position.y = THREE.MathUtils.lerp(minsY, maxsY, self.progress);
+            // sceneContainerGroup.current.position.y = THREE.MathUtils.lerp(minsY, maxsY, self.progress);
           }
           handleProgressUpdate(self.progress);
 
@@ -951,6 +951,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
         id: sectionID + "_armatureMove",
         trigger: "#section6",
         start: "top bottom",
+        markers:true,
         end: () => document.body.scrollHeight + "px",
         scrub: true,
         markers: false,
@@ -962,9 +963,9 @@ export default function Web3({ sectionID, isActive, ...props }) {
           if (armatureRef.current) {
             //armatureRef.current.position.y = adjustedStartY;
             gsap.to(armatureRef.current.scale, {
-              x: 0.1,
-              y: 0.1,
-              z: 0.1,
+              x: 0.035,
+              y: 0.035,
+              z: 0.035,
               duration: 1,
               ease: "back.out",
             });
@@ -974,7 +975,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
         onUpdate: (self) => {
           if (armatureRef.current) {
             // Interpolation selon le scroll progress
-            armatureRef.current.position.y = gsap.utils.interpolate(adjustedStartY, endY, self.progress);
+           //armatureRef.current.position.y = gsap.utils.interpolate(adjustedStartY, endY, self.progress);
 
           }
         },
@@ -1044,8 +1045,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
     <group ref={group} {...props} dispose={null} visible={isActive}>
       <group
         name="Scene"
-        ref={sceneContainerGroup}
-        position-z={scenePositioning.positionZ}
+        
       >
 
         <group name="Empty" position={[4.089, 2.103, -0.346]}>
@@ -1061,7 +1061,8 @@ export default function Web3({ sectionID, isActive, ...props }) {
           />
         </group>
 
-        <group name="All" position={[0.003, -2.534, -0.002]} scale={1.78}>
+        <group name="All" position={[3, -2.534, -0.002]} scale={1.78}>
+          <group position-z={viewport.width > 1 ?0 : -0.195} ref={sceneContainerGroup}>
           <group
             name="Armature001"
             ref={ManRef}
@@ -1097,9 +1098,9 @@ export default function Web3({ sectionID, isActive, ...props }) {
           <group
             name="Armature002"
             ref={armatureRef}
-            position={[2.076, -0.648, -0.278]}
+            position={[2.076, viewport.width > 1 ?-0.648:-0.648,viewport.width > 1 ?-0.278 : 0]}
             rotation={[0, 1.107, 0]}
-            scale={0.03}>
+            scale={0}>
             <group name="Retopo_Sphere002">
               <skinnedMesh
                 name="mesh003"
@@ -1587,6 +1588,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
             position={[-0.116, 0.244, -0.117]}
             scale={0}
           />
+        </group>
         </group>
       </group>
     </group>

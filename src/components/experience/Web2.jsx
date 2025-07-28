@@ -370,9 +370,7 @@ export default function Web2({ sectionID, isActive, ...props }) {
         trigger: "#section3",
         start: "top bottom+=275",
         end: "top top",
-        scrub: true,
         markers: false,
-        preventClicks: true,
      
         onUpdate: (self) => {
       const progress = self.progress; // Valeur entre 0 et 1

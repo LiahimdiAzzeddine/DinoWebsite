@@ -197,7 +197,6 @@ export default function Web1({ sectionID, isActive, ...props }) {
         start: "top bottom",
         endTrigger: "#section3",
         end: "top bottom+=260",
-        scrub: true,
         markers: false,
         onToggle: ({ isActive }) => {
           const actionName = scrollDirection;

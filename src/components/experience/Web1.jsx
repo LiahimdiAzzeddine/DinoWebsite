@@ -158,6 +158,7 @@ export default function Web1({ sectionID, isActive, ...props }) {
         end: "top top",
         scrub: true,
         markers: false,
+        anticipatePin: 1,
         onUpdate: ({ progress }) => {
           killTween();
           const newY = THREE.MathUtils.lerp(minY, maxY, progress);
@@ -183,6 +184,7 @@ export default function Web1({ sectionID, isActive, ...props }) {
         end: "top center+=230",
         scrub: true,
         markers: false,
+        anticipatePin: 1,
         onUpdate: ({ progress }) => {
           const rotY = THREE.MathUtils.lerp(0, Math.PI * 2, progress); // 0 → 360
           sceneGroup.rotation.y = -rotY;
@@ -198,6 +200,7 @@ export default function Web1({ sectionID, isActive, ...props }) {
         endTrigger: "#section3",
         end: "top bottom+=260",
         markers: false,
+        anticipatePin: 1,
         onToggle: ({ isActive }) => {
           const actionName = scrollDirection;
           if (isActive) {
@@ -261,6 +264,7 @@ export default function Web1({ sectionID, isActive, ...props }) {
         start: "top bottom",
         end: "top top",
         scrub: 0.25,
+        anticipatePin: 1,
         markers: false,
         onUpdate: ({ progress }) => {
           killTween();
@@ -280,6 +284,7 @@ export default function Web1({ sectionID, isActive, ...props }) {
         start: "top bottom",            // quand la base de section1 atteint le bas du viewport
         endTrigger: "#section3",           // noued de fin placé sur section2
         end: "center+=95 bottom",           // quand le centre de section2 atteint 100px sous le haut du viewport
+        anticipatePin: 1 ,
         scrub: true,
         onToggle: ({ isActive }) => {
           if (isActive) {

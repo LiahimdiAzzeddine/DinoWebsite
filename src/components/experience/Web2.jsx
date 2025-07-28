@@ -239,13 +239,6 @@ export default function Web2({ sectionID, isActive, ...props }) {
     const isFastByVelocity = Math.abs(velocity) > 2000 || Math.abs(observerVelocity) > 10000 || velocity == 0 || observerVelocity == 0;
     const isFastByTime = timeDiff < 16;
 
-    console.log('DetectFastScroll:', {
-      velocity,
-      observerVelocity,
-      timeDiff,
-      isFastByVelocity,
-      isFastByTime
-    });
 
     return isFastByVelocity || isFastByTime;
   }, []);
@@ -264,6 +257,7 @@ export default function Web2({ sectionID, isActive, ...props }) {
         end: "center+=200 top",
         scrub: true,
         markers: false,
+        anticipatePin: 1,
         onToggle: ({ isActive }) => {
 
           if (isActive) {
@@ -299,13 +293,11 @@ export default function Web2({ sectionID, isActive, ...props }) {
         },
 
         onLeaveBack: () => {
-          console.log(`${sectionID} onLeaveBack`);
           const web1Trigger = ScrollTrigger.getById('web1');
           if (web1Trigger) web1Trigger.disable();
         },
 
         onEnterBack: () => {
-          console.log(`${sectionID} onEnterBack`);
           const web2Trigger = ScrollTrigger.getById('web2');
           if (web2Trigger) web2Trigger.enable();
         },
@@ -313,14 +305,6 @@ export default function Web2({ sectionID, isActive, ...props }) {
         onLeave: ({ isActive, getVelocity }) => {
           const currentVelocity = getVelocity();
           const isFastScroll = detectFastScroll(currentVelocity, velocityD);
-
-          console.log("onLeave:", {
-            scrollDirection,
-            velocityD,
-            currentVelocity,
-            isFastScroll,
-            isActive
-          });
 
           // Conditions pour activer web3
           const shouldActivateWeb3 = isFastScroll || Math.abs(currentVelocity) > 2000 || velocityD > 10000;
@@ -339,7 +323,6 @@ export default function Web2({ sectionID, isActive, ...props }) {
             }
           } else {
             // Scroll normal
-            console.log("🚀 Scroll normal - gestion standard");
             const web3Trigger = ScrollTrigger.getById('web3');
             if (web3Trigger) web3Trigger.disable();
 
@@ -371,6 +354,7 @@ export default function Web2({ sectionID, isActive, ...props }) {
         start: "top bottom+=275",
         end: "top top",
         markers: false,
+        anticipatePin: 1,
      
         onUpdate: (self) => {
       const progress = self.progress; // Valeur entre 0 et 1
@@ -414,13 +398,11 @@ export default function Web2({ sectionID, isActive, ...props }) {
         },
 
         onLeaveBack: () => {
-          console.log(`${sectionID} onLeaveBack`);
           const web1Trigger = ScrollTrigger.getById('web1');
           if (web1Trigger) web1Trigger.disable();
         },
 
         onEnterBack: () => {
-          console.log(`${sectionID} onEnterBack`);
           const web2Trigger = ScrollTrigger.getById('web2');
           if (web2Trigger) web2Trigger.enable();
         },
@@ -428,14 +410,6 @@ export default function Web2({ sectionID, isActive, ...props }) {
         onLeave: ({ isActive, getVelocity }) => {
           const currentVelocity = getVelocity();
           const isFastScroll = detectFastScroll(currentVelocity, velocityD);
-
-          console.log("onLeave:", {
-            scrollDirection,
-            velocityD,
-            currentVelocity,
-            isFastScroll,
-            isActive
-          });
 
           // Conditions pour activer web3
           const shouldActivateWeb3 = isFastScroll || Math.abs(currentVelocity) > 2000 || velocityD > 10000;
@@ -454,7 +428,6 @@ export default function Web2({ sectionID, isActive, ...props }) {
             }
           } else {
             // Scroll normal
-            console.log("🚀 Scroll normal - gestion standard");
             const web3Trigger = ScrollTrigger.getById('web3');
             if (web3Trigger) web3Trigger.disable();
 

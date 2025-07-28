@@ -223,7 +223,7 @@ export const Overlay = () => {
       opacity: 1,
       mobile: true
     }, {
-      href: "https://play.google.com/store/apps/details?id=com.tp.moneybank&hl=en&pli=1",
+      href: "",
       title: "Play Store",
       imgSrc: "../assets/logos/bottlefactory.webp",
       alt: "Logo of Play Store",

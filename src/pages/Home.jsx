@@ -30,12 +30,12 @@ export default function Home() {
           <div className="fixed top-0 left-0 w-full h-full z-20 pointer-events-none">
              {currentModel=="web2"&&<Confetti/>} 
       
-      </div>*/}
+      </div>
       {currentModel=="web2"&&(
        <div className="fixed top-0 left-0 w-full h-full z-20 pointer-events-none">
           <FireworksDisplay />
         </div> 
-      )}
+      )}*/}
        
 
       {/* Overlay au-dessus de tout */}

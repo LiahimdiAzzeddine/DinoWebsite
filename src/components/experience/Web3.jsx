@@ -358,14 +358,11 @@ export default function Web3({ sectionID, isActive, ...props }) {
         start: "center+=220 top",
         endTrigger: "#section5",
         end: "center bottom",
+        fastScrollEnd:true,
         anticipatePin: 1,
-        // Réduire la fréquence de mise à jour pour les performances
         refreshPriority: -1,
-        // Désactiver le smooth scrolling sur mobile pour éviter les conflits
         normalizeScroll: false,
-        // Optimiser pour le touch
         touchAction: "pan-y",
-        //preventClicks: true,
         markers: false,
         onToggle: ({ isActive }) => {
           if (isActive) {
@@ -417,12 +414,10 @@ export default function Web3({ sectionID, isActive, ...props }) {
         start: "center bottom",
         end: "bottom+=30% top",
         anticipatePin: 1,
-        // Réduire la fréquence de mise à jour pour les performances
         refreshPriority: -1,
-        // Désactiver le smooth scrolling sur mobile pour éviter les conflits
         normalizeScroll: false,
-        // Optimiser pour le touch
         touchAction: "pan-y",
+          fastScrollEnd: true,
         onEnter: (self) => {
           setActiveSmoke(true)
           const currentVelocity = self.getVelocity();
@@ -529,14 +524,13 @@ export default function Web3({ sectionID, isActive, ...props }) {
         start: "top top",
         endTrigger: "#section5",
         end: "top center",
+        fastScrollEnd: true,
         markers: false,
         anticipatePin: 1,
-        // Réduire la fréquence de mise à jour pour les performances
         refreshPriority: -1,
-        // Désactiver le smooth scrolling sur mobile pour éviter les conflits
         normalizeScroll: false,
-        // Optimiser pour le touch
         touchAction: "pan-y",
+
         onToggle: ({ isActive }) => {
 
           if (isActive) {
@@ -552,9 +546,6 @@ export default function Web3({ sectionID, isActive, ...props }) {
             } else {
             }
 
-          } else {
-            if (actionName == "Down") {
-            }
           }
           const onFinishCallback = () => {
 
@@ -603,14 +594,13 @@ export default function Web3({ sectionID, isActive, ...props }) {
         start: "top center",
         endTrigger: "#section6",
         end: "top bottom",
+        fastScrollEnd: true,
         markers: false,
         anticipatePin: 1,
-        // Réduire la fréquence de mise à jour pour les performances
         refreshPriority: -1,
-        // Désactiver le smooth scrolling sur mobile pour éviter les conflits
         normalizeScroll: false,
-        // Optimiser pour le touch
         touchAction: "pan-y",
+
         onEnter: (self) => {
           setActiveSmoke(true)
           setCurrentModel(sectionID);
@@ -621,12 +611,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
             }, 50);
           } else {
             handleScrollAnimations();
-
           }
-          if (sceneContainerGroup.current) {
-
-          }
-
         },
         onLeaveBack: (self) => {
           setActiveSmoke(false)

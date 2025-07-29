@@ -13,6 +13,12 @@ import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin, Observer);
 
 export default function Web1({ sectionID, isActive, ...props }) {
+  const isMobile = () => {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+    (navigator.maxTouchPoints && navigator.maxTouchPoints > 2);
+};
+const mobile = isMobile();
+
   const group = useRef();
   const glowMeshRef = useRef();
   const directionalLightRef = useRef();
@@ -38,35 +44,18 @@ export default function Web1({ sectionID, isActive, ...props }) {
   const { actions, mixer } = useAnimations(animations, group)
   const [transitionState, setTransitionState] = useState('idle');
   const { setCurrentModel } = useContext(AnimationContext);
+  const lastDirectionRef = useRef(null);
+  const isAnimatingRef = useRef(false);
 
   const { viewport } = useThree()
 
   let scrollDirection = 'Down';
   let velocityD = 0;
-  let isTransitioning = false;
 
   // track scrolling status
   let nextScrollTrigger = null;
 
-  let scrollPauseTimeout;
-  let lastPlayedAction = null;
 
-
-  const waitUntilScrollStops = (callback, trigger, actionName, delay = 1000) => {
-    clearTimeout(scrollPauseTimeout);
-    scrollPauseTimeout = setTimeout(() => {
-      // Vérifier si le trigger est actif
-      if (trigger?.isActive && actionName !== lastPlayedAction) {
-        lastPlayedAction = actionName;
-        callback(); // Lancer l'animation
-      } else if (actionName !== lastPlayedAction && actionName == "UP") {
-        lastPlayedAction = actionName;
-        callback(); // Lancer l'animation
-      } else {
-        console.log("⛔ Animation ignored (already played or trigger inactive)");
-      }
-    }, delay);
-  };
 
 
 
@@ -94,7 +83,16 @@ export default function Web1({ sectionID, isActive, ...props }) {
     });
     return () => observer.kill();
   }, []);
+// Fonction d'easing optimisée pour mobile
+function mobileScrollEase(t) {
+  // Combinaison de smoothstep et d'une courbe plus douce
+  const smooth1 = t * t * (3 - 2 * t); // smoothstep
+  const smooth2 = smooth1 * smooth1 * (3 - 2 * smooth1); // double smoothstep
+  return smooth2;
+}
 
+// Ou utiliser un easing GSAP très doux
+const mobileEase = gsap.parseEase("power1.inOut");
   useLayoutEffect(() => {
     WEB1_CONFIGS.ANIMATIONS_TO_PLAY.forEach(name => actions[name]?.reset().play());
     const camAct = actions["CameraIn"];
@@ -106,9 +104,6 @@ export default function Web1({ sectionID, isActive, ...props }) {
     camAct.reset().play().paused = true;
     const clipDur = camAct.getClip().duration;
 
-    const minY = 3;
-    const maxY = 6;
-
     const killTween = () => {
       if (currentTween.current) {
         currentTween.current.kill();
@@ -117,7 +112,6 @@ export default function Web1({ sectionID, isActive, ...props }) {
     };
     const mm = gsap.matchMedia();
     const playActionOnce = (actionName, scrollSpeed = 1, onFinishCallback = () => { }) => {
-      if (isTransitioning) return;
 
       const action = actions[actionName];
       if (!action) return;
@@ -126,16 +120,14 @@ export default function Web1({ sectionID, isActive, ...props }) {
       const oppositeAction = actions[oppositeName];
       if (oppositeAction) oppositeAction.stop();
 
-      isTransitioning = true;
 
       action.reset().setLoop(THREE.LoopOnce, 1);
       action.clampWhenFinished = true;
       action.time = 0;
 
-      const minSpeed = 2;
+      const minSpeed = 3;
       const maxSpeed = 100;
       const scale = Math.min(Math.max(Math.abs(scrollSpeed / 1000), minSpeed), maxSpeed);
-      console.log("🚀 ~ playActionOnce ~ scale:", scale)
 
       // Démarrage doux
       action.timeScale = 0.5;
@@ -153,7 +145,6 @@ export default function Web1({ sectionID, isActive, ...props }) {
       const onMixerFinished = (e) => {
         if (e.action === action) {
           mixer.removeEventListener('finished', onMixerFinished);
-          isTransitioning = false;
           onFinishCallback();
         }
       };
@@ -170,80 +161,100 @@ export default function Web1({ sectionID, isActive, ...props }) {
       const oppositeAction = actions[oppositeName];
       if (oppositeAction) oppositeAction.stop();
 
-      isTransitioning = false; // On ne bloque pas
+
 
       action.reset().setLoop(THREE.LoopOnce, 1);
       action.clampWhenFinished = true;
       action.time = action.getClip().duration; // Direct to end
-      action.timeScale = 1000; // Optional for fallback
+      action.timeScale = 1000000; // Optional for fallback
       action.play();
-
       onFinishCallback(); // Appelé immédiatement
     };
 
-const handleSectionToggle = ({
-  isActive,
-  sectionID,
-  scrollDirection,
-  velocityD,
-  pacmanRef,
-  ball1Ref,
-  ball2Ref,
-  ball3Ref,
-  ball4Ref,
-  handRef,
-  nextScrollTrigger
-}) => {
-  const actionName = scrollDirection;
-  console.log("🚀 ~ handleSectionToggle ~ actionName:", actionName, isActive, velocityD);
-
-  if (isActive) {
-    setCurrentModel(sectionID);
-    disableOtherSections();
-  }
-
-  // 🔻 Masquer les éléments (Pacman + balls + hand)
-  [pacmanRef, ball1Ref, ball2Ref, ball3Ref, ball4Ref, handRef].forEach(ref => {
-    if (ref?.current) ref.current.visible = false;
-  });
-
-  const onFinishCallback = () => {
-    // 🔼 Réafficher les éléments après une courte pause
-    setTimeout(() => {
-      [pacmanRef, ball1Ref, ball2Ref, ball3Ref, ball4Ref, handRef].forEach(ref => {
-        if (ref?.current) ref.current.visible = true;
-      });
-    }, 100);
-
-    if (actionName === "UP") {
-      const web2Trigger = ScrollTrigger.getById('web2');
-      if (web2Trigger) web2Trigger.enable();
-      setCurrentModel("web2");
-      if (nextScrollTrigger) {
-        nextScrollTrigger.enable();
+    const handleSectionToggle = ({
+      isActive,
+      sectionID,
+      scrollDirection,
+      velocityD,
+      pacmanRef,
+      ball1Ref,
+      ball2Ref,
+      ball3Ref,
+      ball4Ref,
+      handRef,
+      nextScrollTrigger
+    }) => {
+      let actionName = scrollDirection;
+      if (lastDirectionRef.current === actionName) {
+        actionName = 'Down'
+      };
+      if (isAnimatingRef.current) {
+        //console.log("⛔ Animation en cours, ignorée");
+        // return;
       }
-    }
-  };
 
-  // Si on scroll vers le haut, on désactive temporairement web2
-  if (actionName === "UP") {
-    const web2Trigger = ScrollTrigger.getById('web2');
-    if (web2Trigger) web2Trigger.disable();
-  }
+      //console.log("🚀 ~ web1 ~ actionName:", actionName, isActive, velocityD);
+      lastDirectionRef.current = scrollDirection;
+      isAnimatingRef.current = true;
 
-  // Choix de la méthode d’animation selon la vitesse
-  if (velocityD === 0 || Math.abs(velocityD) > 20000) {
-    playActionImmediately(actionName, onFinishCallback);
-  } else {
-    playActionOnce(actionName, velocityD, onFinishCallback);
-  }
-};
+      if (isActive) {
+        setCurrentModel(sectionID);
+        disableOtherSections();
+      }
+
+      // 🔻 Masquer les éléments (Pacman + balls + hand)
+      if (!mobile){
+        [pacmanRef, ball1Ref, ball2Ref, ball3Ref, ball4Ref, handRef].forEach(ref => {
+        if (ref?.current) ref.current.visible = false;
+      });
+      }
+      
+
+      const onFinishCallback = () => {
+        // 🔼 Réafficher les éléments après une courte pause
+        if (!mobile){
+        setTimeout(() => {
+          [pacmanRef, ball1Ref, ball2Ref, ball3Ref, ball4Ref, handRef].forEach(ref => {
+            if (ref?.current) ref.current.visible = true;
+          });
+        }, 100);
+      }
+        isAnimatingRef.current = false;
+        if (actionName === "UP") {
+          const web2Trigger = ScrollTrigger.getById('web2');
+          if (web2Trigger) web2Trigger.enable();
+          setCurrentModel("web2");
+          if (nextScrollTrigger) {
+            nextScrollTrigger.enable();
+          }
+        }
+      };
+
+      // Si on scroll vers le haut, on désactive temporairement web2
+      if (actionName === "UP") {
+        const web2Trigger = ScrollTrigger.getById('web2');
+        if (web2Trigger) web2Trigger.disable();
+      }
+
+      // Choix de la méthode d’animation selon la vitesse
+      if (Math.abs(velocityD) > 10000) {
+        // waitUntilScrollStops(() => {
+        //   console.log("✅ Scroll arrêté !");},300);
+        playActionImmediately(actionName, onFinishCallback);
+      } else if (velocityD === 0 && actionName === "UP") {
+        isAnimatingRef.current = false;
+        return
+      } else if (velocityD === 0 && actionName != "UP") {
+        playActionOnce(actionName, velocityD, onFinishCallback);
+      } else {
+        playActionOnce(actionName, velocityD, onFinishCallback);
+      }
+    };
 
 
 
     // MOBILE
     mm.add("(max-width: 767px)", () => {
-      const sceneDefaultPos = sceneGroup.position.y;
       const startZ = sceneGroup.position.z;
       const endZ = startZ - 0.5;
       const startX = sceneGroup.position.x;
@@ -252,44 +263,42 @@ const handleSectionToggle = ({
       const trigger1 = ScrollTrigger.create({
         trigger: "#section2",
         start: "top center+=230",
-        end: "top top",
-        scrub: true,
-        markers: false,
-        anticipatePin: 1,
+        end: "center top",
+        scrub: mobile ? 1.5 : true, 
+  anticipatePin: mobile ? 1 : 2,
+        invalidateOnRefresh: true,
         onUpdate: ({ progress }) => {
-          killTween();
-          const newY = THREE.MathUtils.lerp(minY, maxY, progress);
+          const easedProgress = isMobile 
+      ? mobileScrollEase(progress)
+      : gsap.parseEase("power2.inOut")(progress);
+          const newY = THREE.MathUtils.lerp(2.85, 6, progress);
           const newZ = THREE.MathUtils.lerp(startZ, endZ, progress);
           const newX = THREE.MathUtils.lerp(startX, endX, progress);
           const rotY = THREE.MathUtils.lerp(0, 1, progress);
           const rotX = THREE.MathUtils.lerp(0, 1, progress);
-          currentTween.current = gsap.to(sceneGroup, {
-            duration: 0.3,
-            ease: "sine.out",
-            overwrite: true,
-            onUpdate: () => {
-              sceneGroup.position.set(newX, newY, newZ);
-              sceneGroup.rotation.set(rotX, rotY, sceneGroup.rotation.z);
-            },
-          });
-        },
+          gsap.set(sceneGroup.position, { x: newX, y: newY, z: newZ });
+          gsap.set(sceneGroup.rotation, { x: rotX, y: rotY });
+        }
       });
+
       const trigger2 = ScrollTrigger.create({
         trigger: "#section1",
-        start: "top center+=50",
+        start: "top center+=100",
         endTrigger: "#section2",
         end: "top center+=230",
-        scrub: true,
-        markers: false,
-        anticipatePin: 1,
+       scrub: mobile ? 1.5 : true, 
+  anticipatePin: mobile ? 1 : 2,
+        invalidateOnRefresh: true,
+        markers:false,
         onUpdate: ({ progress }) => {
-          const rotY = THREE.MathUtils.lerp(0, Math.PI * 2, progress); // 0 → 360
+          const easedProgress = isMobile 
+      ? mobileScrollEase(progress)
+      : gsap.parseEase("power2.inOut")(progress);
+          const rotY = THREE.MathUtils.lerp(0, Math.PI * 2, progress);
           sceneGroup.rotation.y = -rotY;
-        },
+        }
       });
 
-
-      //Mobile
       const trigger = ScrollTrigger.create({
         id: sectionID,
         trigger: "#section1",
@@ -303,53 +312,21 @@ const handleSectionToggle = ({
         touchAction: "pan-y",
 
         onToggle: ({ isActive }) => {
-          const actionName = scrollDirection;
-          if (isActive) {
-            setCurrentModel(sectionID);
-            disableOtherSections();
-          }
-          // Cacher Pacman avant transition
-          pacmanRef.current && (pacmanRef.current.visible = false);
-          ball1Ref.current && (ball1Ref.current.visible = false);
-          ball2Ref.current && (ball2Ref.current.visible = false);
-          ball3Ref.current && (ball3Ref.current.visible = false);
-          ball4Ref.current && (ball4Ref.current.visible = false);
-          handRef.current && (handRef.current.visible = false);
-
-          const onFinishCallback = () => {
-
-            // Réactiver Pacman une fois l'action terminée
-            setTimeout(() => {
-              pacmanRef.current && (pacmanRef.current.visible = true);
-              ball1Ref.current && (ball1Ref.current.visible = true);
-              ball2Ref.current && (ball2Ref.current.visible = true);
-              ball3Ref.current && (ball3Ref.current.visible = true);
-              ball4Ref.current && (ball4Ref.current.visible = true);
-              handRef.current && (handRef.current.visible = true);
-            }, 200);
-
-
-
-            if (actionName === "UP") {
-              //const web2Trigger = ScrollTrigger.getById('web2');
-              //if (web2Trigger) web2Trigger.enable();
-              // setCurrentModel("web2");
-              // if (nextScrollTrigger) {
-              //   nextScrollTrigger?.enable();
-              // }
-            }
-
-          };
-          if (actionName == "UP") {
-            //const web2Trigger = ScrollTrigger.getById('web2');
-            //if (web2Trigger) web2Trigger.disable();
-          }
-
-          playActionOnce("Down", velocityD, onFinishCallback);
-
+          handleSectionToggle({
+            isActive,
+            sectionID,
+            scrollDirection,
+            velocityD,
+            pacmanRef,
+            ball1Ref,
+            ball2Ref,
+            ball3Ref,
+            ball4Ref,
+            handRef,
+            nextScrollTrigger
+          });
         },
         onLeave: () => {
-
           const web2Trigger = ScrollTrigger.getById('web2');
           if (web2Trigger) web2Trigger.enable();
         },
@@ -360,7 +337,7 @@ const handleSectionToggle = ({
         }
 
       });
-      return () => { trigger.kill(); trigger1.kill() };
+      return () => { trigger.kill(); trigger1.kill(); trigger2.kill() };
     });
 
     // DESKTOP
@@ -374,7 +351,6 @@ const handleSectionToggle = ({
         scrub: 0.25,
         anticipatePin: 1,
         markers: false,
-
         onUpdate: ({ progress }) => {
           killTween();
           currentTween.current = gsap.to(camAct, {
@@ -385,48 +361,31 @@ const handleSectionToggle = ({
           });
         },
       });
-
       const trigger = ScrollTrigger.create({
         id: sectionID,
         trigger: "#section1",
-        start: "top bottom",            // quand la base de section1 atteint le bas du viewport
-        endTrigger: "#section3",           // noued de fin placé sur section2
-        end: "center+=95 bottom",           // quand le centre de section2 atteint 100px sous le haut du viewport
+        start: "top bottom",
+        endTrigger: "#section3",
+        end: "center+=95 bottom",
         anticipatePin: 1,
         scrub: true,
-        onLeave:()=>{
+        onToggle: () => {
           handleSectionToggle({
-    isActive,
-    sectionID,
-    scrollDirection,
-    velocityD,
-    pacmanRef,
-    ball1Ref,
-    ball2Ref,
-    ball3Ref,
-    ball4Ref,
-    handRef,
-    nextScrollTrigger
-  });
-        },
-        onEnterBack: () => {
-   handleSectionToggle({
-    isActive,
-    sectionID,
-    scrollDirection,
-    velocityD,
-    pacmanRef,
-    ball1Ref,
-    ball2Ref,
-    ball3Ref,
-    ball4Ref,
-    handRef,
-    nextScrollTrigger
-  });
-}
+            isActive,
+            sectionID,
+            scrollDirection,
+            velocityD,
+            pacmanRef,
+            ball1Ref,
+            ball2Ref,
+            ball3Ref,
+            ball4Ref,
+            handRef,
+            nextScrollTrigger
+          });
+        }
 
       });
-
       return () => { trigger.kill(); trigger1.kill() };
     });
 
@@ -721,7 +680,9 @@ const handleSectionToggle = ({
     0xff6b6b, 0x4ecdc4, 0x45b7d1,
     0xf9ca24, 0xf0932b, 0xeb4d4b, 0x6c5ce7
   ], []);
+
   useFrame((state, clock) => {
+    if (mobile) return;
     const mesh = glowMeshRef.current;
     const light = directionalLightRef.current;
     if (!mesh || !mesh.material) return;
@@ -778,11 +739,12 @@ const handleSectionToggle = ({
           }}
           scale={viewport.width < 5 ? 0.5 : 1}
           position-x={viewport.width < 5 ? 2.72 : 0}
-          position-y={viewport.width < 5 ? 3 : 0}
+          position-y={viewport.width < 5 ? 2.85 : 0}
           position-z={viewport.width < 5 ? -0.5 : 0}
         >
-
-          <group ref={ball4Ref} visible={true} name="Empty" position={[1.106, 1.058, -0.662]} scale={0.256}>
+{viewport.width > 5 &&(
+  <>
+<group ref={ball4Ref} visible={true} name="Empty" position={[1.106, 1.058, -0.662]} scale={0.256}>
             <mesh
               name="Sphere"
               castShadow
@@ -872,7 +834,10 @@ const handleSectionToggle = ({
                 material={materials.Material}
               />
             </group>
-          </group>
+          </group></>
+) }
+          
+
           <group name="All" position={[0.273, 1.626, -0.266]} scale={4.808}>
             <group
               onPointerEnter={() => {
@@ -1147,7 +1112,8 @@ const handleSectionToggle = ({
                 />
               </group>
             </mesh>
-            <mesh
+            {viewport.width> 5 &&(
+             <mesh
               name="Cylinder002"
               castShadow
               receiveShadow
@@ -1156,7 +1122,9 @@ const handleSectionToggle = ({
               position={[-0.103, 0.208, -0.083]}
               rotation={[Math.PI, -0.93, Math.PI]}
               scale={0.01}
-            />
+            />  
+            )}
+           
             <group name="Empty002" position={[-0.103, 0.108, 0.162]} scale={0.208}>
               <group name="Retopo_Cube001" rotation={[0, 1.005, 0]} scale={0.29} ref={dinoRef} onClick={handleDinoClick}
                 onPointerEnter={() => {
@@ -1228,7 +1196,7 @@ const handleSectionToggle = ({
                 />
               ))}
             </group>
-            <mesh
+             <mesh
               name="GroundCubeQuad003"
               castShadow
               receiveShadow
@@ -1236,7 +1204,9 @@ const handleSectionToggle = ({
               material={materials.Ground_FileSize_Mat}
               position={[-0.05, -0.539, 0.017]}
               scale={[0.254, 0.207, 0.216]}
-            />
+            /> 
+            
+            
             <mesh
               name="LAPTOP001"
               castShadow

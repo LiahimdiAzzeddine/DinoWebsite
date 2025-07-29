@@ -437,11 +437,11 @@ div[data-v-7479a2c4] {
 
 @media screen and (max-aspect-ratio: 1/1) {
   div.block {
-    margin-bottom: 60dvh;
+    margin-bottom: 85dvh;
     margin-left: auto;
     max-width: min(600px, calc(100vw - 45px));
     padding: 0;
-    top: 46dvh;
+    top: 55dvh;
   }
       div.block::before {
         border-radius: 0;

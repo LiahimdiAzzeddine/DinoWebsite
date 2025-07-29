@@ -261,7 +261,7 @@ export default function Web2({ sectionID, isActive, ...props }) {
         markers: false,
         anticipatePin: 1,
         onToggle: ({ isActive }) => {
-
+//console.log("🚀 ~ Web2 ~ scrollDirection:", scrollDirection, isActive, velocityD);
           if (isActive) {
             disableOtherSections();
             playStaticAnimations();
@@ -295,8 +295,8 @@ export default function Web2({ sectionID, isActive, ...props }) {
         },
 
         onLeaveBack: () => {
-          const web1Trigger = ScrollTrigger.getById('web1');
-          if (web1Trigger) web1Trigger.disable();
+          //const web1Trigger = ScrollTrigger.getById('web1');
+          //if (web1Trigger) web1Trigger.disable();
         },
 
         onEnterBack: () => {
@@ -346,37 +346,41 @@ export default function Web2({ sectionID, isActive, ...props }) {
 
     // ✅ Mobile only (tu peux mettre autre comportement ici si besoin)
     mm.add("(max-width: 767px)", () => {
-      let sceneDefaultPos = -0.465;
+      let sceneDefaultPos = -0.3;
       let minY = sceneDefaultPos;
-      let maxY = sceneDefaultPos + 1.2; // ajuste selon la distance souhaitée
+      let maxY = sceneDefaultPos + 2; // ajuste selon la distance souhaitée
       let initialProgress = 0;
-      const trigger = ScrollTrigger.create({
-        id: sectionID,
-        trigger: "#section3",
-        start: "top bottom+=260",
-        end: "top top",
-        markers: false,
-        anticipatePin: 1,
-// Réduire la fréquence de mise à jour pour les performances
+      
+  // Animation liée au scroll
+  const tween = gsap.to(sceneContainerGroup.current.position, {
+    y: maxY,
+    ease: "none",
+    paused: true
+  });
+
+  ScrollTrigger.create({
+    id: sectionID,
+    trigger: "#section3",
+    start: "top bottom+=260",
+    end: "top top",
+    scrub: true, // lie le scroll à l’animation
+    markers: true,
+    anticipatePin: 1,
     refreshPriority: -1,
-    // Désactiver le smooth scrolling sur mobile pour éviter les conflits
     normalizeScroll: false,
-    // Optimiser pour le touch
     touchAction: "pan-y",
+    onUpdate: (self) => {
+      const progress = self.progress;
+      const targetY = minY + (maxY - minY) * progress;
 
-        onUpdate: (self) => {
-          const progress = self.progress; // Valeur entre 0 et 1
-          const targetY = minY + (maxY - minY) * progress;
-
-          if (sceneContainerGroup.current) {
-            gsap.to(sceneContainerGroup.current.position, {
-              y: targetY,
-              duration: 0.3, // Durée d'interpolation (plus grande = plus fluide)
-              ease: "power2.out",
-              overwrite: "auto"
-            });
-          }
-        },
+      // Mouvements fluides et contrôlés
+      gsap.to(sceneContainerGroup.current.position, {
+        y: targetY,
+        duration: 0.3,
+        ease: "power2.out",
+        overwrite: "auto"
+      });
+    },
         onToggle: ({ isActive }) => {
 
           if (isActive) {
@@ -423,8 +427,6 @@ export default function Web2({ sectionID, isActive, ...props }) {
           const web3TriggerAfter = ScrollTrigger.getById('web3');
           if (web3TriggerAfter) web3TriggerAfter.enable();
         }
-
-
       });
 
       return () => trigger.kill();
@@ -479,7 +481,7 @@ export default function Web2({ sectionID, isActive, ...props }) {
             scale={viewport.width < 5 ? 0.7 : 1}
             // position-x={viewport.width < 5 ? 2.5 : 0}
             position-z={viewport.width < 5 ? 0.19 : 0}
-            position-y={viewport.width < 5 ? -0.17 : 0}
+            position-y={viewport.width < 5 ? -0.3 : 0}
           >
 
             <group

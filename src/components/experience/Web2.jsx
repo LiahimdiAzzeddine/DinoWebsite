@@ -364,15 +364,11 @@ export default function Web2({ sectionID, isActive, ...props }) {
     start: "top bottom+=260",
     end: "top top",
     scrub: true, // lie le scroll à l’animation
-    markers: true,
-    anticipatePin: 1,
-    refreshPriority: -1,
-    normalizeScroll: false,
+    markers: false,
     touchAction: "pan-y",
     onUpdate: (self) => {
       const progress = self.progress;
-      const targetY = minY + (maxY - minY) * progress;
-
+      const targetY = minY + progress*1.2;
       // Mouvements fluides et contrôlés
       gsap.to(sceneContainerGroup.current.position, {
         y: targetY,

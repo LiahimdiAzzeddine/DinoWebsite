@@ -7,7 +7,7 @@ import {
   useCallback,
   useState,
 } from "react";
-import { useFrame, useGraph, useThree } from "@react-three/fiber";
+import {useGraph, useThree } from "@react-three/fiber";
 import { useGLTF, PerspectiveCamera, useAnimations, Trail, useTrail, Box } from "@react-three/drei";
 import { SkeletonUtils } from "three-stdlib";
 import gsap from "gsap";
@@ -359,9 +359,6 @@ export default function Web3({ sectionID, isActive, ...props }) {
         endTrigger: "#section5",
         end: "center bottom",
         fastScrollEnd:true,
-        anticipatePin: 1,
-        refreshPriority: -1,
-        normalizeScroll: false,
         touchAction: "pan-y",
         markers: false,
         onToggle: ({ isActive }) => {
@@ -414,8 +411,6 @@ export default function Web3({ sectionID, isActive, ...props }) {
         start: "center bottom",
         end: "bottom+=30% top",
         anticipatePin: 1,
-        refreshPriority: -1,
-        normalizeScroll: false,
         touchAction: "pan-y",
           fastScrollEnd: true,
         onEnter: (self) => {
@@ -468,10 +463,6 @@ export default function Web3({ sectionID, isActive, ...props }) {
         start: "top-=40% center",
         end: "top top",
         anticipatePin: 1,
-        // Réduire la fréquence de mise à jour pour les performances
-        refreshPriority: -1,
-        // Désactiver le smooth scrolling sur mobile pour éviter les conflits
-        normalizeScroll: false,
         // Optimiser pour le touch
         touchAction: "pan-y",
 
@@ -515,9 +506,9 @@ export default function Web3({ sectionID, isActive, ...props }) {
 
     //Mobile
     mm.add("(max-width: 767px)", () => {
-      const startY = armatureRef.current.position.y;
-      const adjustedStartY = startY - 0.58;
-      const endY = adjustedStartY + 3.6;
+      //const startY = armatureRef.current.position.y;
+     // const adjustedStartY = startY - 0.58;
+      //const endY = adjustedStartY + 3.6;
       mainTrigger = ScrollTrigger.create({
         id: sectionID,
         trigger: "#section3",
@@ -525,10 +516,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
         endTrigger: "#section5",
         end: "top center",
         fastScrollEnd: true,
-        markers: false,
-        anticipatePin: 1,
-        refreshPriority: -1,
-        normalizeScroll: false,
+        markers: true,
         touchAction: "pan-y",
 
         onToggle: ({ isActive }) => {
@@ -596,9 +584,6 @@ export default function Web3({ sectionID, isActive, ...props }) {
         end: "top bottom",
         fastScrollEnd: true,
         markers: false,
-        anticipatePin: 1,
-        refreshPriority: -1,
-        normalizeScroll: false,
         touchAction: "pan-y",
 
         onEnter: (self) => {
@@ -608,7 +593,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
           if (Math.abs(self.getVelocity()) > 1000) {
             setTimeout(() => {
               handleScrollAnimations();
-            }, 50);
+            }, 30);
           } else {
             handleScrollAnimations();
           }
@@ -625,7 +610,6 @@ export default function Web3({ sectionID, isActive, ...props }) {
             sceneContainerGroup.current.position.y = THREE.MathUtils.lerp(minsY, maxsY, self.progress);
           }
           handleProgressUpdate(self.progress);
-
         },
         onLeave: () => {
           const web33Trigger = ScrollTrigger.getById('web3_armatureMove');
@@ -634,46 +618,46 @@ export default function Web3({ sectionID, isActive, ...props }) {
 
       });
 
-      armatureTrigger = ScrollTrigger.create({
-        id: sectionID + "_armatureMove",
-        trigger: "#section6",
-        start: "top bottom",
-        anticipatePin: 1,
-        end: () => document.body.scrollHeight + "px",
-        onEnter: () => {
-          setCurrentModel(sectionID);
-          disableOtherSections();
+      // armatureTrigger = ScrollTrigger.create({
+      //   id: sectionID + "_armatureMove",
+      //   trigger: "#section6",
+      //   start: "top bottom",
+      //   anticipatePin: 1,
+      //   end: () => document.body.scrollHeight + "px",
+      //   onEnter: () => {
+      //     setCurrentModel(sectionID);
+      //     disableOtherSections();
 
-          if (armatureRef.current) {
-            armatureRef.current.position.y = adjustedStartY;
-            gsap.to(armatureRef.current.scale, {
-              x: 0.035,
-              y: 0.035,
-              z: 0.035,
-              duration: 1,
-              ease: "back.out",
-            });
-          }
-        },
+      //     if (armatureRef.current) {
+      //       armatureRef.current.position.y = adjustedStartY;
+      //       gsap.to(armatureRef.current.scale, {
+      //         x: 0.035,
+      //         y: 0.035,
+      //         z: 0.035,
+      //         duration: 1,
+      //         ease: "back.out",
+      //       });
+      //     }
+      //   },
 
-        onUpdate: (self) => {
-          if (armatureRef.current) {
-            armatureRef.current.position.y = gsap.utils.interpolate(adjustedStartY, endY, self.progress);
+      //   onUpdate: (self) => {
+      //     if (armatureRef.current) {
+      //       armatureRef.current.position.y = gsap.utils.interpolate(adjustedStartY, endY, self.progress);
 
-          }
-        },
-        onLeaveBack: () => {
-          if (armatureRef.current) {
-            gsap.to(armatureRef.current.scale, {
-              x: 0,
-              y: 0,
-              z: 0,
-              duration: 0.1,
-              ease: "power2.inOut",
-            });
-          }
-        },
-      });
+      //     }
+      //   },
+      //   onLeaveBack: () => {
+      //     if (armatureRef.current) {
+      //       gsap.to(armatureRef.current.scale, {
+      //         x: 0,
+      //         y: 0,
+      //         z: 0,
+      //         duration: 0.1,
+      //         ease: "power2.inOut",
+      //       });
+      //     }
+      //   },
+      // });
 
       return () => { secondaryTrigger.kill(), mainTrigger.kill(), armatureTrigger.kill() };
     });
@@ -700,7 +684,6 @@ export default function Web3({ sectionID, isActive, ...props }) {
     <group ref={group} {...props} dispose={null} visible={isActive}>
       <group
         name="Scene"
-
       >
         <group name="Empty" position={[4.089, 2.103, -0.346]}>
           <PerspectiveCamera
@@ -715,8 +698,8 @@ export default function Web3({ sectionID, isActive, ...props }) {
           />
         </group>
 
-        <group name="All" position={[3, -2.534, -0.002]} scale={1.78}>
-          <group position-z={viewport.width > 1 ? 0 : -0.195} ref={sceneContainerGroup}>
+        <group name="All" position={[3, -2.534, -0.002]} scale={viewport.width > 1 ?1.78:1.55}>
+          <group position-z={viewport.width > 1 ? 0 : -0.22} ref={sceneContainerGroup}>
             <group
               name="Armature001"
               ref={ManRef}
@@ -749,6 +732,8 @@ export default function Web3({ sectionID, isActive, ...props }) {
               <primitive object={nodes.Bone007} />
               <primitive object={nodes.Bone008} />
             </group>
+            {viewport.width < 1 &&(
+              <>
             <group
               name="Armature002"
               ref={armatureRef}
@@ -781,6 +766,8 @@ export default function Web3({ sectionID, isActive, ...props }) {
               <primitive object={nodes.Bone007_1} />
               <primitive object={nodes.Bone008_1} />
             </group>
+          </>
+          )}
             <mesh
               name="Cube"
               castShadow

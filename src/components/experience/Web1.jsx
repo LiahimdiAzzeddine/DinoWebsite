@@ -268,9 +268,7 @@ const mobileEase = gsap.parseEase("power1.inOut");
   anticipatePin: mobile ? 1 : 2,
         invalidateOnRefresh: true,
         onUpdate: ({ progress }) => {
-          const easedProgress = isMobile 
-      ? mobileScrollEase(progress)
-      : gsap.parseEase("power2.inOut")(progress);
+          
           const newY = THREE.MathUtils.lerp(2.85, 6, progress);
           const newZ = THREE.MathUtils.lerp(startZ, endZ, progress);
           const newX = THREE.MathUtils.lerp(startX, endX, progress);
@@ -291,9 +289,7 @@ const mobileEase = gsap.parseEase("power1.inOut");
         invalidateOnRefresh: true,
         markers:false,
         onUpdate: ({ progress }) => {
-          const easedProgress = isMobile 
-      ? mobileScrollEase(progress)
-      : gsap.parseEase("power2.inOut")(progress);
+        
           const rotY = THREE.MathUtils.lerp(0, Math.PI * 2, progress);
           sceneGroup.rotation.y = -rotY;
         }
@@ -306,9 +302,6 @@ const mobileEase = gsap.parseEase("power1.inOut");
         endTrigger: "#section3",
         end: "top bottom+=260",
         markers: false,
-        anticipatePin: 1,
-        refreshPriority: -1,
-        normalizeScroll: false,
         touchAction: "pan-y",
 
         onToggle: ({ isActive }) => {

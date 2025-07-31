@@ -310,8 +310,8 @@ export default function Web3({ sectionID, isActive, ...props }) {
     action.clampWhenFinished = true;
     action.time = 0;
 
-    const minSpeed = 2;
-    const maxSpeed = 5;
+    const minSpeed = 3;
+    const maxSpeed = 100;
     const scale = Math.min(Math.max(Math.abs(scrollSpeed / 1000), minSpeed), maxSpeed);
     //action.timeScale = scale;
 
@@ -340,13 +340,41 @@ export default function Web3({ sectionID, isActive, ...props }) {
 
     action.play();
   };
+const playActionOnce2Instant = (actionName, sectionID, onFinishCallback = () => {}) => {
+  if (isTransitioning) return;
+
+  const action = actions[actionName];
+  if (!action) return;
+
+  const oppositeName = actionName === "Up" ? "Down" : "Up";
+  const oppositeAction = actions[oppositeName];
+  if (oppositeAction) oppositeAction.stop();
+
+  isTransitioning = true;
+
+  // Jouer l'animation instantanément
+  action.reset().setLoop(THREE.LoopOnce, 1);
+  action.clampWhenFinished = true;
+  action.time = action.getClip().duration;
+  action.timeScale = 1000000;
+  action.play();
+
+  // Nettoyage défensif
+  if (mixer && mixer._listeners && mixer._listeners.finished) {
+    mixer._listeners.finished = [];
+  }
+
+  // Fin immédiate
+  isTransitioning = false;
+  onFinishCallback();
+};
 
   // Main scroll trigger setup
   useLayoutEffect(() => {
     resetAllActions();
     const mm = gsap.matchMedia();
     const minY = 0;
-    const maxY = 1;
+    const maxY = 0.55;
     let mainTrigger = null;
     let secondaryTrigger = null;
     let armatureTrigger = null;
@@ -506,21 +534,21 @@ export default function Web3({ sectionID, isActive, ...props }) {
 
     //Mobile
     mm.add("(max-width: 767px)", () => {
-      //const startY = armatureRef.current.position.y;
-     // const adjustedStartY = startY - 0.58;
-      //const endY = adjustedStartY + 3.6;
+      const startY = armatureRef.current.position.y;
+     const adjustedStartY = startY - 0.85;
+      const endY = adjustedStartY + 2;
       mainTrigger = ScrollTrigger.create({
         id: sectionID,
         trigger: "#section3",
         start: "top top",
         endTrigger: "#section5",
-        end: "top center",
+        end: "top bottom",
         fastScrollEnd: true,
-        markers: true,
+        markers: false,
         touchAction: "pan-y",
+        ignoreMobileResize: true,
 
         onToggle: ({ isActive }) => {
-
           if (isActive) {
             setCurrentModel(sectionID);
             disableOtherSections();
@@ -541,12 +569,11 @@ export default function Web3({ sectionID, isActive, ...props }) {
               if (prevScrollTrigger.current) {
                 prevScrollTrigger.current.enable();
               }
-
             }
           };
 
           if (!(scrollDirection == "Down" && isActive) && !(scrollDirection == "Up" && !isActive)) {
-            playActionOnce('Up', sectionID, velocityD, onFinishCallback);
+            playActionOnce2Instant('Up', sectionID, onFinishCallback);
           }
         },
         onLeave: () => {
@@ -558,9 +585,10 @@ export default function Web3({ sectionID, isActive, ...props }) {
 
           }
         },
+        
         onUpdate: ({ progress }) => {
           if (sceneContainerGroup.current) {
-            sceneContainerGroup.current.position.y = THREE.MathUtils.lerp(-0.6, maxY, progress);
+            sceneContainerGroup.current.position.y = THREE.MathUtils.lerp(-0.75, maxY, progress);
           }
         },
 
@@ -570,22 +598,24 @@ export default function Web3({ sectionID, isActive, ...props }) {
         },
 
         onEnterBack: () => {
+              console.log("🚀 ~ Web3 ~ scrollDirection:", scrollDirection, isActive, velocityD);
+
           const web3Trigger = ScrollTrigger.getById('web3');
           if (web3Trigger) web3Trigger.enable();
         },
       });
-      const minsY = 0;
-      const maxsY = 0.4;
+      const minsY = -0.4;
+      const maxsY = 0.8;
       secondaryTrigger = ScrollTrigger.create({
         id: sectionID + "_secondary",
         trigger: "#section5",
-        start: "top center",
+        start: "top bottom",
         endTrigger: "#section6",
         end: "top bottom",
         fastScrollEnd: true,
         markers: false,
         touchAction: "pan-y",
-
+ ignoreMobileResize: true,
         onEnter: (self) => {
           setActiveSmoke(true)
           setCurrentModel(sectionID);
@@ -618,46 +648,47 @@ export default function Web3({ sectionID, isActive, ...props }) {
 
       });
 
-      // armatureTrigger = ScrollTrigger.create({
-      //   id: sectionID + "_armatureMove",
-      //   trigger: "#section6",
-      //   start: "top bottom",
-      //   anticipatePin: 1,
-      //   end: () => document.body.scrollHeight + "px",
-      //   onEnter: () => {
-      //     setCurrentModel(sectionID);
-      //     disableOtherSections();
+      armatureTrigger = ScrollTrigger.create({
+        id: sectionID + "_armatureMove",
+        trigger: "#section6",
+        start: "top bottom",
+         ignoreMobileResize: true,
+         markers: false,
+        end: () => document.body.scrollHeight + "px",
+        onEnter: () => {
+          setCurrentModel(sectionID);
+          disableOtherSections();
 
-      //     if (armatureRef.current) {
-      //       armatureRef.current.position.y = adjustedStartY;
-      //       gsap.to(armatureRef.current.scale, {
-      //         x: 0.035,
-      //         y: 0.035,
-      //         z: 0.035,
-      //         duration: 1,
-      //         ease: "back.out",
-      //       });
-      //     }
-      //   },
+          if (armatureRef.current) {
+            armatureRef.current.position.y = adjustedStartY;
+            gsap.to(armatureRef.current.scale, {
+              x: 0.035,
+              y: 0.035,
+              z: 0.035,
+              duration: 1,
+              ease: "back.out",
+            });
+          }
+        },
 
-      //   onUpdate: (self) => {
-      //     if (armatureRef.current) {
-      //       armatureRef.current.position.y = gsap.utils.interpolate(adjustedStartY, endY, self.progress);
+        onUpdate: (self) => {
+          if (armatureRef.current) {
+            armatureRef.current.position.y = gsap.utils.interpolate(adjustedStartY, endY, self.progress);
 
-      //     }
-      //   },
-      //   onLeaveBack: () => {
-      //     if (armatureRef.current) {
-      //       gsap.to(armatureRef.current.scale, {
-      //         x: 0,
-      //         y: 0,
-      //         z: 0,
-      //         duration: 0.1,
-      //         ease: "power2.inOut",
-      //       });
-      //     }
-      //   },
-      // });
+          }
+        },
+        onLeaveBack: () => {
+          if (armatureRef.current) {
+            gsap.to(armatureRef.current.scale, {
+              x: 0,
+              y: 0,
+              z: 0,
+              duration: 0.1,
+              ease: "power2.inOut",
+            });
+          }
+        },
+      });
 
       return () => { secondaryTrigger.kill(), mainTrigger.kill(), armatureTrigger.kill() };
     });
@@ -698,8 +729,8 @@ export default function Web3({ sectionID, isActive, ...props }) {
           />
         </group>
 
-        <group name="All" position={[3, -2.534, -0.002]} scale={viewport.width > 1 ?1.78:1.55}>
-          <group position-z={viewport.width > 1 ? 0 : -0.22} ref={sceneContainerGroup}>
+        <group name="All" position={[3, -2.534, -0.002]} scale={viewport.width > 1 ?1.78:1.8}>
+          <group position-z={viewport.width > 1 ? 0 : -0.19} ref={sceneContainerGroup}>
             <group
               name="Armature001"
               ref={ManRef}
@@ -732,8 +763,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
               <primitive object={nodes.Bone007} />
               <primitive object={nodes.Bone008} />
             </group>
-            {viewport.width < 1 &&(
-              <>
+
             <group
               name="Armature002"
               ref={armatureRef}
@@ -766,8 +796,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
               <primitive object={nodes.Bone007_1} />
               <primitive object={nodes.Bone008_1} />
             </group>
-          </>
-          )}
+       
             <mesh
               name="Cube"
               castShadow

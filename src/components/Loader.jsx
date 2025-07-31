@@ -22,6 +22,37 @@ const Loader = () => {
   const effectiveLoaded = isHomePage ? loaded : 100;
   const effectiveTotal = isHomePage ? total : 100;
 
+  // Prevent scroll when loader is active
+  useEffect(() => {
+    if (!fadeOut) {
+      // Disable scroll
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.top = '0';
+      document.body.style.left = '0';
+      document.body.style.width = '100%';
+      document.body.style.height = '100%';
+    } else {
+      // Re-enable scroll
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.width = '';
+      document.body.style.height = '';
+    }
+
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.width = '';
+      document.body.style.height = '';
+    };
+  }, [fadeOut]);
+
   // Artificial progress phase
   useEffect(() => {
     if (fakeProgress < 80) {
@@ -34,7 +65,7 @@ const Loader = () => {
       }, 400);
       return () => clearInterval(id);
     }
-  }, [fakeProgress,fadeOut]);
+  }, [fakeProgress, fadeOut]);
 
   // Progress calculation
   useEffect(() => {
@@ -47,7 +78,7 @@ const Loader = () => {
       const real = 80 + (effectiveGltfProgress / 100) * 20;
       setProgress(Math.min(real, 100));
     }
-  }, [fakeProgress, effectiveGltfProgress, setProgress,fadeOut]);
+  }, [fakeProgress, effectiveGltfProgress, setProgress, fadeOut]);
 
   // Loading completion
   useEffect(() => {
@@ -61,7 +92,7 @@ const Loader = () => {
         setFadeOut(true);
       }, 800);
     }
-  }, [effectiveGltfProgress, effectiveLoaded, effectiveTotal, fakeProgress,fadeOut]);
+  }, [effectiveGltfProgress, effectiveLoaded, effectiveTotal, fakeProgress, fadeOut]);
 
   if (fadeOut) return null;
 
@@ -75,7 +106,25 @@ const Loader = () => {
   };
 
   return (
-    <div className={`fixed inset-0 bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 flex items-center justify-center z-[5000] transition-opacity duration-800 ${fadeOut ? 'opacity-0' : 'opacity-100'}`}>
+    <div 
+      className={`fixed inset-0 bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 flex items-center justify-center transition-opacity duration-800 ${fadeOut ? 'opacity-0' : 'opacity-100'}`}
+      style={{
+        zIndex: 9999, // Z-index plus élevé
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        width: '100vw',
+        height: '100vh'
+      }}
+    >
+      {/* Overlay supplémentaire pour garantir la couverture */}
+      <div 
+        className="absolute inset-0 bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50"
+        style={{ zIndex: -1 }}
+      />
+
       {/* Cardboard texture overlay */}
       <div
         className="absolute inset-0 opacity-20"
@@ -240,8 +289,6 @@ const Loader = () => {
           )}
         </div>
       </div>
-
-      
     </div>
   );
 };

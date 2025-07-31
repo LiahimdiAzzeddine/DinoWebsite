@@ -131,15 +131,9 @@ export default function Web2({ sectionID, isActive, ...props }) {
     smoothAnimations.forEach((name) => {
       actions[name]?.stop();
     });
-
     const action = actions[actionName];
     if (!action) return;
 
-    // Animation des nuages liée
-    // const cloudActionName = `Clouds_${actionName}`;
-    // const cloudAction = actions[cloudActionName];
-
-    // Liste des animations concernées
     const animationNames = ["UP", "UP_2", "DOWN", "DOWN_2"];
 
     // Stopper uniquement les animations opposées
@@ -147,10 +141,6 @@ export default function Web2({ sectionID, isActive, ...props }) {
       if (name !== actionName && actions[name]) {
         actions[name].stop();
       }
-      // const cloudName = `Clouds_${name}`;
-      // if (cloudName !== cloudActionName && actions[cloudName]) {
-      //   actions[cloudName].stop();
-      // }
     });
 
     isTransitioning = true;
@@ -160,15 +150,9 @@ export default function Web2({ sectionID, isActive, ...props }) {
     action.clampWhenFinished = true;
     action.time = 0;
 
-    // Préparation de l'action de nuages si elle existe
-    // if (cloudAction) {
-    //   cloudAction.reset().setLoop(THREE.LoopOnce, 1);
-    //   cloudAction.clampWhenFinished = true;
-    //   cloudAction.time = 0;
-    // }
 
-    const minSpeed = 2;
-    const maxSpeed = 5;
+    const minSpeed = 3;
+    const maxSpeed = 100;
     const scale = Math.min(Math.max(scrollSpeed / 1000, minSpeed), maxSpeed);
 
     // Appliquer easing à l'action principale
@@ -186,17 +170,6 @@ export default function Web2({ sectionID, isActive, ...props }) {
       }
     });
 
-    // Appliquer easing à l'action de nuages si elle existe
-    // if (cloudAction) {
-    //   cloudAction.timeScale =2;
-    //   console.log("🚀 ~ playActionOnce ~ cloudAction:", cloudAction.time)
-    //   gsap.to(cloudAction, {
-    //     timeScale: scale,
-    //     duration: 0.1,
-    //     ease: "slow(0.7,0.7,false)",
-    //   });
-    // }
-
     // Supprimer tous les anciens listeners
     if (mixer && mixer._listeners && mixer._listeners.finished) {
       mixer._listeners.finished = [];
@@ -208,29 +181,52 @@ export default function Web2({ sectionID, isActive, ...props }) {
         isTransitioning = false;
         onFinishCallback();
       }
-      if (actionName == "DOWN_2" || actionName == "UP") {
-        //  smoothAnimations.forEach((name) => {
-        //   actions[name]?.reset().setEffectiveTimeScale(0.2).play();
-        // }); 
-        // actions["Clouds1"]?.reset();
-        // actions["Clouds1"].timeScale=0.7;
-        // actions["Clouds1"].play();
-        //  actions["Clouds2"]?.reset();
-        // actions["Clouds2"].timeScale=0.9;
-        // actions["Clouds2"].play();
-      }
-
     };
 
     mixer.addEventListener('finished', onMixerFinished);
 
     // Lancer les deux actions
     action.play();
-    // if (cloudAction){
-    //   cloudAction.play()
-
-    // };
   };
+  const playActionOnceInstant = (actionName, sectionID, onFinishCallback = () => {}) => {
+  if (isTransitioning) return;
+
+  // Stop smooth animations
+  smoothAnimations.forEach((name) => {
+    actions[name]?.stop();
+  });
+
+  const action = actions[actionName];
+  if (!action) return;
+
+  const animationNames = ["UP", "UP_2", "DOWN", "DOWN_2"];
+  animationNames.forEach((name) => {
+    if (name !== actionName && actions[name]) {
+      actions[name].stop();
+    }
+  });
+
+  isTransitioning = true;
+
+  // Forcer l'animation à sa dernière image immédiatement
+  action.reset().setLoop(THREE.LoopOnce, 1);
+  action.clampWhenFinished = true;
+  action.time = action.getClip().duration;
+  action.timeScale = 1000000;
+  action.play();
+
+  // Relancer les animations douces si nécessaire
+  if (actionName === "DOWN_2" || actionName === "UP") {
+    smoothAnimations.forEach((name) => {
+      actions[name]?.reset().setEffectiveTimeScale(0.2).play();
+    });
+  }
+
+  // Fin immédiate
+  isTransitioning = false;
+  onFinishCallback();
+};
+
 
   const detectFastScroll = useCallback((velocity, observerVelocity) => {
     const currentTime = Date.now();
@@ -346,7 +342,7 @@ export default function Web2({ sectionID, isActive, ...props }) {
 
     // ✅ Mobile only (tu peux mettre autre comportement ici si besoin)
     mm.add("(max-width: 767px)", () => {
-      let sceneDefaultPos = -0.3;
+      let sceneDefaultPos = -0.4;
       let minY = sceneDefaultPos;
       let maxY = sceneDefaultPos + 2; // ajuste selon la distance souhaitée
       let initialProgress = 0;
@@ -358,72 +354,84 @@ export default function Web2({ sectionID, isActive, ...props }) {
     paused: true
   });
 
-  ScrollTrigger.create({
-    id: sectionID,
-    trigger: "#section3",
-    start: "top bottom+=260",
-    end: "top top",
-    scrub: true, // lie le scroll à l’animation
-    markers: false,
-    touchAction: "pan-y",
-    onUpdate: (self) => {
-      const progress = self.progress;
-      const targetY = minY + progress*1.2;
-      // Mouvements fluides et contrôlés
-      gsap.to(sceneContainerGroup.current.position, {
-        y: targetY,
-        duration: 0.3,
-        ease: "power2.out",
-        overwrite: "auto"
-      });
-    },
-        onToggle: ({ isActive }) => {
+ScrollTrigger.create({
+  id: sectionID,
+  trigger: "#section2",
+  start: "top top+=100",
+  endTrigger: '#section3',
+  end: "top top",
+  scrub: true,
+  markers: false,
+  touchAction: "pan-y",
+ignoreMobileResize: true,
+  onUpdate: (self) => {
+    const progress = self.progress;
+    const targetY = minY + progress * 1.2;
 
-          if (isActive) {
-            disableOtherSections();
-            playStaticAnimations();
-            setCurrentModel(sectionID);
+    gsap.to(sceneContainerGroup.current.position, {
+      y: targetY,
+      duration: 0.3,
+      ease: "power2.out",
+      overwrite: "auto"
+    });
+  },
 
-            if (scrollDirection === 1) {
-              playActionOnce("UP", sectionID, velocityD, () => {
-                enableNextSection();
-              });
-            } else {
-              ScrollTrigger.getById('web2')?.enable();
-              playActionOnce("DOWN_2", sectionID, velocityD, () => {
-                enablePrevSection();
-              });
-            }
-          } else {
-            if (scrollDirection === 1) {
-              // Sortie vers le bas
+  onToggle: ({ isActive }) => {
+    console.log("🚀 ~ Web2 ~ scrollDirection:", scrollDirection, isActive, velocityD);
+    if (isActive) {
+      disableOtherSections();
+      playStaticAnimations();
+      setCurrentModel(sectionID);
 
-            } else {
-              ScrollTrigger.getById('web1')?.disable();
-              // Sortie vers le haut
-              playActionOnce("DOWN", sectionID, velocityD, () => {
-                enablePrevSection();
-              });
+      if (scrollDirection === 1) {
+        playActionOnceInstant("UP", sectionID, () => {
+          enableNextSection();
+        });
+      } else {
+         const web2Trigger = ScrollTrigger.getById('web2');
+    if (web2Trigger){
+if(!web2Trigger.enabled){
+  web2Trigger.enable()
+}
+    } ;
+        ScrollTrigger.getById('web2')?.enable();
+        playActionOnceInstant("DOWN_2", sectionID, () => {
+          enablePrevSection();
+        });
+      }
+    } else {
+      if (scrollDirection === 1) {
+        // Sortie vers le bas
+      } else {
+        // Sortie vers le haut
+      }
+    }
+  },
 
-            }
-          }
-        },
+  onLeaveBack: () => {
+    console.log("🚀 ~ Web2 ~ onLeaveBack:")
+    const web1Trigger = ScrollTrigger.getById('web1');
+    if (web1Trigger) web1Trigger.enable();
+  },
 
-        onLeaveBack: () => {
-          const web1Trigger = ScrollTrigger.getById('web1');
-          if (web1Trigger) web1Trigger.enable();
-        },
+  onEnterBack: () => {
+    console.log("🚀 ~ Web2 ~ onEnterBack:");
+    const web2Trigger = ScrollTrigger.getById('web2');
+    if (web2Trigger) web2Trigger.enable();
+    playActionOnceInstant("DOWN_2", sectionID, () => {
+      //enablePrevSection();
+    });
+  },
 
-        onEnterBack: () => {
-          const web2Trigger = ScrollTrigger.getById('web2');
-          if (web2Trigger) web2Trigger.enable();
-        },
+  onLeave: ({ isActive, getVelocity }) => {
+    console.log("🚀 ~ Web2 ~ scrollDirection:", scrollDirection, isActive, velocityD);
+    playActionOnceInstant("UP_2", sectionID, () => {
+       const web3Trigger = ScrollTrigger.getById('web3');
+    if (web3Trigger) web3Trigger.enable();
+    });
+  }
+});
 
-        onLeave: ({ isActive, getVelocity }) => {
-          const web3TriggerAfter = ScrollTrigger.getById('web3');
-          if (web3TriggerAfter) web3TriggerAfter.enable();
-        }
-      });
 
       return () => trigger.kill();
     });
@@ -477,7 +485,7 @@ export default function Web2({ sectionID, isActive, ...props }) {
             scale={viewport.width < 5 ? 0.7 : 1}
             // position-x={viewport.width < 5 ? 2.5 : 0}
             position-z={viewport.width < 5 ? 0.19 : 0}
-            position-y={viewport.width < 5 ? -0.3 : 0}
+            position-y={viewport.width < 5 ? -0.4 : 0}
           >
 
             <group

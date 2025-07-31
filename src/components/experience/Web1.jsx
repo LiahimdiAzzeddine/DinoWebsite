@@ -9,6 +9,7 @@ import { WEB1_CONFIGS } from "./MODEL_CONFIGS";
 import { ConfettiParticle } from "../web1/ConfettiParticle";
 import { Observer } from "gsap/Observer";
 import { ScrollToPlugin } from "gsap/ScrollToPlugin";
+import { KTX2Loader } from "three/examples/jsm/loaders/KTX2Loader.js";
 
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin, Observer);
 
@@ -18,6 +19,7 @@ export default function Web1({ sectionID, isActive, ...props }) {
     (navigator.maxTouchPoints && navigator.maxTouchPoints > 2);
 };
 const mobile = isMobile();
+  const gl = useThree((state) => state.gl);
 
   const group = useRef();
   const glowMeshRef = useRef();
@@ -40,7 +42,20 @@ const mobile = isMobile();
   const sketch01Ref = useRef();
   const sketch02Ref = useRef();
   const [activeSketch, setActiveSketch] = useState("Sketch01");
-  const { nodes, materials, animations } = useGLTF('./models/model1-opt.glb')
+    const { nodes, materials, animations } = useGLTF(
+    `/models/model-final.glb`,
+    undefined,
+    undefined,
+    (loader) => {
+      const ktx2loader = new KTX2Loader();
+      ktx2loader.setTranscoderPath(
+        "https://cdn.jsdelivr.net/gh/pmndrs/drei-assets/basis/"
+      );
+      ktx2loader.detectSupport(gl);
+      loader.setKTX2Loader(ktx2loader);
+    }
+  );
+
   const { actions, mixer } = useAnimations(animations, group)
   const [transitionState, setTransitionState] = useState('idle');
   const { setCurrentModel } = useContext(AnimationContext);
@@ -265,10 +280,8 @@ const mobileEase = gsap.parseEase("power1.inOut");
         start: "top center+=230",
         end: "center top",
         scrub: mobile ? 1.5 : true, 
-  anticipatePin: mobile ? 1 : 2,
-        invalidateOnRefresh: true,
+        ignoreMobileResize: true,
         onUpdate: ({ progress }) => {
-          
           const newY = THREE.MathUtils.lerp(2.85, 6, progress);
           const newZ = THREE.MathUtils.lerp(startZ, endZ, progress);
           const newX = THREE.MathUtils.lerp(startX, endX, progress);
@@ -284,52 +297,73 @@ const mobileEase = gsap.parseEase("power1.inOut");
         start: "top center+=100",
         endTrigger: "#section2",
         end: "top center+=230",
-       scrub: mobile ? 1.5 : true, 
-  anticipatePin: mobile ? 1 : 2,
-        invalidateOnRefresh: true,
+        scrub: mobile ? 1.5 : true, 
+        pin:false,
         markers:false,
+        ignoreMobileResize: true,
         onUpdate: ({ progress }) => {
-        
           const rotY = THREE.MathUtils.lerp(0, Math.PI * 2, progress);
           sceneGroup.rotation.y = -rotY;
         }
       });
 
+  
       const trigger = ScrollTrigger.create({
         id: sectionID,
         trigger: "#section1",
         start: "top bottom",
-        endTrigger: "#section3",
-        end: "top bottom+=260",
+        endTrigger: "#section2",
+        end: "top top+=100",
         markers: false,
         touchAction: "pan-y",
+        pin:false,
+        ignoreMobileResize: true,
 
         onToggle: ({ isActive }) => {
-          handleSectionToggle({
-            isActive,
-            sectionID,
-            scrollDirection,
-            velocityD,
-            pacmanRef,
-            ball1Ref,
-            ball2Ref,
-            ball3Ref,
-            ball4Ref,
-            handRef,
-            nextScrollTrigger
-          });
-        },
-        onLeave: () => {
-          const web2Trigger = ScrollTrigger.getById('web2');
-          if (web2Trigger) web2Trigger.enable();
-        },
-        onEnterBack: () => {
-          setCurrentModel("web1");
+        
+          if(isActive){
+            setCurrentModel("web1");
           const web1Trigger = ScrollTrigger.getById('web1');
           if (web1Trigger) web1Trigger.enable();
+          }
+          
+          // handleSectionToggle({
+          //   isActive,
+          //   sectionID,
+          //   scrollDirection,
+          //   velocityD,
+          //   pacmanRef,
+          //   ball1Ref,
+          //   ball2Ref,
+          //   ball3Ref,
+          //   ball4Ref,
+          //   handRef,
+          //   nextScrollTrigger
+          // });
+        },
+        onLeave: () => {
+        //   if(velocityD==0 || velocityD<0){
+        //   isAnimatingRef.current = false;
+      
+        //   const web2Trigger = ScrollTrigger.getById('web2');
+        //   if (web2Trigger) web2Trigger.enable();
+        //   setCurrentModel("web2");
+        //   if (nextScrollTrigger) {
+        //     nextScrollTrigger.enable();
+          
+        // } 
+        //   }
+          // const web2Trigger = ScrollTrigger.getById('web2');
+          // if (web2Trigger) web2Trigger.enable();
+        },
+        onEnterBack: () => {
+          // setCurrentModel("web1");
+          // const web1Trigger = ScrollTrigger.getById('web1');
+          // if (web1Trigger) web1Trigger.enable();
         }
 
       });
+        
       return () => { trigger.kill(); trigger1.kill(); trigger2.kill() };
     });
 
@@ -827,7 +861,8 @@ const mobileEase = gsap.parseEase("power1.inOut");
                 material={materials.Material}
               />
             </group>
-          </group></>
+          </group>
+          </>
 ) }
           
 
@@ -1105,7 +1140,7 @@ const mobileEase = gsap.parseEase("power1.inOut");
                 />
               </group>
             </mesh>
-            {viewport.width> 5 &&(
+            {/* {viewport.width> 5 &&( */}
              <mesh
               name="Cylinder002"
               castShadow
@@ -1116,8 +1151,8 @@ const mobileEase = gsap.parseEase("power1.inOut");
               rotation={[Math.PI, -0.93, Math.PI]}
               scale={0.01}
             />  
-            )}
-           
+            {/* )}
+            */}
             <group name="Empty002" position={[-0.103, 0.108, 0.162]} scale={0.208}>
               <group name="Retopo_Cube001" rotation={[0, 1.005, 0]} scale={0.29} ref={dinoRef} onClick={handleDinoClick}
                 onPointerEnter={() => {
@@ -1500,4 +1535,4 @@ const mobileEase = gsap.parseEase("power1.inOut");
   )
 }
 
-useGLTF.preload('./models/model1-opt.glb')
+useGLTF.preload('./models/model-final.glb')

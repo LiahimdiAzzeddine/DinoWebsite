@@ -16,6 +16,7 @@ import BlogSingle from "./pages/BlogDetail";
 import GradientBackground from "./components/experience/GradientBackground";
 
 function App() {
+  
 
   return (
     <Router>

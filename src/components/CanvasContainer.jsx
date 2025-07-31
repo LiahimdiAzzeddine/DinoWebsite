@@ -20,9 +20,6 @@ const detectionStates = {
 };
 
 
-
-
-
 // ModelContainer.jsx
 export function ModelContainer({ lenis }) {
   const { currentModel } = useContext(AnimationContext);
@@ -36,7 +33,7 @@ export function ModelContainer({ lenis }) {
         sectionID={"web2"}
         isActive={currentModel === "web2"}
       />
-      <Web3
+       <Web3
         sectionID={"web3"}
         isActive={currentModel === "web3"}
       />
@@ -101,7 +98,6 @@ export const CanvasContainer = () => {
   useEffect(() => {
     ScrollTrigger.config({
       autoRefreshEvents: "visibilitychange,DOMContentLoaded,load",
-      ignoreMobileResize: true
     });
 
     // if (isMobile()) {
@@ -161,22 +157,22 @@ export const CanvasContainer = () => {
       });
     });
     mm.add("(max-width: 767px)", () => {
-      detect_web1 = ScrollTrigger.create({
-        id: "detect_web1",
-        trigger: "#section1",
-        start: "top bottom",
-        endTrigger: "#section3",
-        end: "top bottom+=260",
-        onUpdate: (self) => (detectionStates.web1 = self.isActive),
-      });
+      // detect_web1 = ScrollTrigger.create({
+      //   id: "detect_web1",
+      //   trigger: "#section1",
+      //   start: "top bottom",
+      //   endTrigger: "#section3",
+      //   end: "top bottom+=260",
+      //   onUpdate: (self) => (detectionStates.web1 = self.isActive),
+      // });
 
-      detect_web2 = ScrollTrigger.create({
-        id: "detect_web2",
-        trigger: "#section3",
-        start: "top bottom+=260",
-        end: "top top",
-        onUpdate: (self) => (detectionStates.web2 = self.isActive),
-      });
+      // detect_web2 = ScrollTrigger.create({
+      //   id: "detect_web2",
+      //   trigger: "#section3",
+      //   start: "top bottom+=260",
+      //   end: "top top",
+      //   onUpdate: (self) => (detectionStates.web2 = self.isActive),
+      // });
 
       detect_web3 = ScrollTrigger.create({
         id: "detect_web3",

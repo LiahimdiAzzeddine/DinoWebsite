@@ -2,8 +2,6 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { Plus, Minus, ChevronDown } from "lucide-react";
 import Block from "../components/ui/Block";
-import { Canvas } from '@react-three/fiber';
-import GradientSkybox from "../components/experience/SceneColor";
 import { AnimationContext } from "../components/experience/AnimationContext";
 import { useNavigate } from "react-router-dom";
 
@@ -54,17 +52,17 @@ export default function Faqs() {
   return (
     <>
       <div className="h-screen w-full fixed top-0 z-10 pointer-events-none">
-        <Canvas
+        {/* <Canvas
           scale={0.5}
           camera={{ position: [0, 0, 1] }}
           style={{ background: 'transparent' }}
         >
           <GradientSkybox />
 
-        </Canvas>
+        </Canvas> */}
       </div>
       <Block
-        title="FAQ"
+        title="FAQs"
         subtitle="Frequently Asked Questions"
         paragraphs={[]}
         links={[]}
@@ -75,7 +73,7 @@ export default function Faqs() {
             <div
               key={i}
               className={`
-                group relative overflow-hidden rounded-[40px]
+                group relative overflow-hidden md:rounded-[40px]
                 bg-gradient-to-r from-white/5 via-cyan-700/5 to-blue-700/5
                 border border-teal-900/5
                 backdrop-blur-xl
@@ -144,7 +142,7 @@ export default function Faqs() {
 
         {/* Section d'appel à l'action */}
         <div className="pt-16 text-center">
-          <div className="bg-gradient-to-r from-emerald-800/5 to-cyan-700/5 backdrop-blur-xl rounded-2xl border border-teal-900/5 p-8 bg-[#00000012]">
+          <div className="bg-gradient-to-r from-emerald-800/5 to-cyan-700/5 backdrop-blur-xl md:rounded-2xl border border-teal-900/5 p-8 bg-[#00000012]">
             <h3 className="text-2xl font-bold text-white mb-4">
               Do you have any other questions?
             </h3>

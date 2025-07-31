@@ -45,7 +45,7 @@ const Block = ({
         {(title || subtitle) && (
            <header>
             {title&&(
-              <h1 className="py-3">{title}</h1>
+              <h1 className="md:py-3">{title}</h1>
             )}
           {subtitle&&(
             <p className="category">{subtitle}</p>

@@ -1,13 +1,11 @@
 // pages/Blogs.jsx
-import { useContext, useEffect, useRef, useState } from "react";
-import { Plus, Minus, ChevronDown, Calendar, Clock, User, ArrowRight, Tag } from "lucide-react";
+import { useContext, useEffect, useState } from "react";
+import { Calendar, Clock, User, ArrowRight, Tag } from "lucide-react";
 import Block from "../components/ui/Block";
-import { Canvas } from '@react-three/fiber';
-import GradientSkybox from "../components/experience/SceneColor";
+
 import { AnimationContext } from "../components/experience/AnimationContext";
 import { useNavigate } from "react-router-dom";
-import image1 from "/src/assets/blogs/Hybrid Casual Games in 2025.png";
-import image2 from "/src/assets/blogs/Hybrid Casual Games in 2025.png";
+
 
 const blogs = [
   {
@@ -112,14 +110,8 @@ export default function Blogs() {
 
   return (
     <>
-      <div className="h-screen w-full fixed top-0 z-10 pointer-events-none">
-        <Canvas
-          scale={0.5}
-          camera={{ position: [0, 0, 1] }}
-          style={{ background: 'transparent' }}
-        >
-          <GradientSkybox />
-        </Canvas>
+      <div className="h-screen w-full fixed top-0 z-10 pointer-events-none" id="section1">
+
       </div>
 
       <Block
@@ -172,91 +164,108 @@ export default function Blogs() {
           ) : (
             filteredBlogs.map((blog) => (
               <article
-                key={blog.id}
-                className={`blog-card relative ${blog.featured ? 'featured' : ''
-                  }`}
-              >
-                <div className="blog-content">
-                  <div className="md:flex">
-                    {/* Blog Image */}
-                    <div className="md:w-1/3 relative flex items-center justify-center">
-                      <div className="w-full h-auto">
-                        <img
-                          src={blog.image}
-                          alt={blog.title}
-                          className="w-full h-auto object-contain rounded-xl"
-                        />
-                      </div>
+  key={blog.id}
+  className={`blog-card relative ${blog.featured ? 'featured' : ''}`}
+>
+  <div className="blog-content">
+    <div className="flex flex-col md:flex-row">
+      {/* Blog Image */}
+      <div className="w-full md:w-1/3 relative flex items-center justify-center">
+        <div className="w-full h-48 sm:h-56 md:h-auto">
+          <img
+            src={blog.image}
+            alt={blog.title}
+            className="w-full h-full object-cover md:object-contain rounded-t-xl md:rounded-l-xl md:rounded-tr-none"
+          />
+        </div>
 
-                      {blog.featured && (
-                        <div className="absolute top-4 left-4 bg-yellow-400/90 text-yellow-900 px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-sm">
-                          Featured
-                        </div>
-                      )}
-                    </div>
+        {blog.featured && (
+          <div className="absolute top-3 left-3 sm:top-4 sm:left-4 bg-yellow-400/90 text-yellow-900 px-2 py-1 sm:px-3 rounded-full text-xs font-semibold backdrop-blur-sm">
+            Featured
+          </div>
+        )}
+      </div>
 
-                    {/* Blog Content */}
-                    <div className="md:w-2/3 p-6">
-                      <div className="flex items-center gap-4 mb-3">
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-white/20 text-white backdrop-blur-sm">
-                          <Tag className="w-3 h-3 mr-1" />
-                          {blog.category}
-                        </span>
-                        <div className="flex items-center text-white/70 text-sm">
-                          <Calendar className="w-4 h-4 mr-1" />
-                          {new Date(blog.date).toLocaleDateString()}
-                        </div>
-                        <div className="flex items-center text-white/70 text-sm">
-                          <Clock className="w-4 h-4 mr-1" />
-                          {blog.readTime}
-                        </div>
-                      </div>
+      {/* Blog Content */}
+      <div className="w-full md:w-2/3 p-4 sm:p-5 md:p-6">
+        {/* Meta information - Responsive layout */}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-3">
+          <span className="inline-flex items-center px-2 py-1 sm:px-3 rounded-full text-xs font-medium bg-white/20 text-white backdrop-blur-sm w-fit">
+            <Tag className="w-3 h-3 mr-1" />
+            {blog.category}
+          </span>
+          
+          <div className="flex items-center gap-3 sm:gap-4 text-xs sm:text-sm">
+            <div className="flex items-center text-white/70">
+              <Calendar className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+              <span className="hidden sm:inline">
+                {new Date(blog.date).toLocaleDateString()}
+              </span>
+              <span className="sm:hidden">
+                {new Date(blog.date).toLocaleDateString('en-US', { 
+                  month: 'short', 
+                  day: 'numeric' 
+                })}
+              </span>
+            </div>
+            <div className="flex items-center text-white/70">
+              <Clock className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+              {blog.readTime}
+            </div>
+          </div>
+        </div>
 
-                      <h3 className="text-xl font-bold text-white mb-3 hover:text-blue-300 transition-colors duration-200">
-                        {blog.title}
-                      </h3>
+        {/* Title */}
+        <h3 className="text-lg sm:text-xl font-bold text-white mb-3 hover:text-blue-300 transition-colors duration-200 leading-tight">
+          {blog.title}
+        </h3>
 
-                      <p className="text-white/80 mb-4 leading-relaxed">
-                        {blog.excerpt}
-                      </p>
+        {/* Excerpt */}
+        <p className="text-white/80 mb-4 leading-relaxed text-sm sm:text-base line-clamp-3 sm:line-clamp-none">
+          {blog.excerpt}
+        </p>
 
+        {/* Author and Read More Button */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
+          <div className="flex items-center">
+            <User className="w-4 h-4 text-white/60 mr-2 flex-shrink-0" />
+            <span className="text-sm text-white/80 font-medium">
+              {blog.author}
+            </span>
+          </div>
 
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center">
-                          <User className="w-4 h-4 text-white/60 mr-2" />
-                          <span className="text-sm text-white/80 font-medium">
-                            {blog.author}
-                          </span>
-                        </div>
+          <div className="flex items-center justify-end sm:justify-start">
+            <button
+              onClick={() => handleReadMore(blog.id)}
+              className="flex items-center px-3 py-2 sm:px-4 bg-white/20 text-white rounded-lg hover:bg-white/30 transition-all duration-200 text-sm font-medium backdrop-blur-sm border border-white/30"
+            >
+              <span className="hidden sm:inline">Read More</span>
+              <span className="sm:hidden">Read</span>
+              <ArrowRight className="w-4 h-4 ml-1" />
+            </button>
+          </div>
+        </div>
 
-                        <div className="flex items-center gap-3">
-
-
-                          <button
-                            onClick={() => handleReadMore(blog.id)}
-                            className="flex items-center px-4 py-2 bg-white/20 text-white rounded-lg hover:bg-white/30 transition-all duration-200 text-sm font-medium backdrop-blur-sm border border-white/30"
-                          >
-                            Read More
-                            <ArrowRight className="w-4 h-4 ml-1" />
-                          </button>
-                        </div>
-                      </div>
-
-                      {/* Tags */}
-                      <div className="flex flex-wrap gap-2 mt-4">
-                        {blog.tags.map(tag => (
-                          <span
-                            key={tag}
-                            className="px-2 py-1 bg-white/15 text-white/80 rounded-md text-xs hover:bg-white/25 transition-colors duration-200 cursor-pointer backdrop-blur-sm"
-                          >
-                            #{tag}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </article>
+        {/* Tags - Responsive layout */}
+        <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-3 sm:mt-4">
+          {blog.tags.slice(0, 4).map(tag => (
+            <span
+              key={tag}
+              className="px-2 py-1 bg-white/15 text-white/80 rounded-md text-xs hover:bg-white/25 transition-colors duration-200 cursor-pointer backdrop-blur-sm"
+            >
+              #{tag}
+            </span>
+          ))}
+          {blog.tags.length > 4 && (
+            <span className="px-2 py-1 bg-white/10 text-white/60 rounded-md text-xs">
+              +{blog.tags.length - 4}
+            </span>
+          )}
+        </div>
+      </div>
+    </div>
+  </div>
+</article>
             ))
           )}
         </div>

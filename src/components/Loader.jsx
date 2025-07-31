@@ -21,10 +21,13 @@ const Loader = () => {
   const effectiveGltfProgress = isHomePage ? gltfProgress : 100;
   const effectiveLoaded = isHomePage ? loaded : 100;
   const effectiveTotal = isHomePage ? total : 100;
-
+  const isMobile = () => {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+      (navigator.maxTouchPoints && navigator.maxTouchPoints > 2);
+  };
   // Prevent scroll when loader is active
   useEffect(() => {
-    if (!fadeOut) {
+    if (!fadeOut && isMobile()) {
       // Disable scroll
       document.body.style.overflow = 'hidden';
       document.body.style.position = 'fixed';

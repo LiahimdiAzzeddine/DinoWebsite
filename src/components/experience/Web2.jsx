@@ -354,7 +354,7 @@ export default function Web2({ sectionID, isActive, ...props }) {
     paused: true
   });
 
-ScrollTrigger.create({
+const trigger=ScrollTrigger.create({
   id: sectionID,
   trigger: "#section2",
   start: "top top+=100",

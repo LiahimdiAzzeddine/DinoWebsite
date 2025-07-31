@@ -186,9 +186,12 @@ const mobile = isMobile();
       // });
     });
     return () => {
-      detect_web1.kill();
+      if(!mobile){
+       detect_web1.kill();
       detect_web2.kill();
-      detect_web3.kill();
+      detect_web3.kill(); 
+      }
+      
     };
   }, []);
 

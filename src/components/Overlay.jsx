@@ -61,7 +61,7 @@ const Card = ({
             </div>
           )}
           <div
-            className={`font-bold RocGroteskBold flex items-center text-4xl leading-9 ${id === "section1" ? "sm:min-h-[2em] min-h-[2.2em]" : ""
+            className={`font-bold RocGroteskBold flex items-center text-3xl md:text-4xl leading-9 ${id === "section1" ? "sm:min-h-[2em] min-h-[2.2em]" : ""
               }`}
           >
             {title}

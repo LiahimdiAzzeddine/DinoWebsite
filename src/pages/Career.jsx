@@ -1,9 +1,7 @@
 // pages/Career.jsx
-import { useContext, useEffect, useRef, useState } from "react";
-import { Plus, Minus, ChevronDown, MapPin, Clock, Users, Gamepad2, Code, Palette, Smile, Lightbulb, TrendingUp } from "lucide-react";
-import Block from "../components/ui/Block";
-import { Canvas } from '@react-three/fiber';
-import GradientSkybox from "../components/experience/SceneColor";
+import { useContext, useEffect, useState } from "react";
+import { Plus, Minus, MapPin, Clock, Users, Smile, Lightbulb, TrendingUp } from "lucide-react";
+
 import { AnimationContext } from "../components/experience/AnimationContext";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -105,13 +103,13 @@ export default function Career() {
   return (
     <>
       <div className="h-screen w-full fixed top-0 z-10 pointer-events-none">
-        <Canvas
+        {/* <Canvas
           scale={0.5}
           camera={{ position: [0, 0, 1] }}
           style={{ background: 'transparent' }}
         >
           <GradientSkybox />
-        </Canvas>
+        </Canvas> */}
       </div>
       
       <motion.div
@@ -176,119 +174,141 @@ export default function Career() {
 
               {/* Open Positions Tab */}
               {selectedTab === 'positions' && (
-                <div className="space-y-6">
-                  {jobOpenings.map((job, i) => (
-                    <div
-                      key={job.id}
-                      className="rounded-2xl overflow-hidden transition-all duration-300"
-                      style={{
-                        backdropFilter: 'blur(30px) saturate(1.3)',
-                        backgroundColor: 'rgba(255, 255, 255, 0.12)',
-                        border: '1px solid rgba(255, 255, 255, 0.2)',
-                        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
-                      }}
-                    >
-                      <div
-                        className="p-8 cursor-pointer"
-                        onClick={() => toggle(i)}
-                      >
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-4 mb-3">
-                              <h3 className="text-xl font-bold text-white">
-                                {job.title}
-                              </h3>
-                              <span 
-                                className="px-3 py-1 text-xs font-semibold rounded-full"
-                                style={{
-                                  background: 'linear-gradient(135deg, #10b981 0%, #14b8a6 100%)',
-                                  color: 'white',
-                                  border: '1px solid rgba(255, 255, 255, 0.2)'
-                                }}
-                              >
-                                {job.department}
-                              </span>
-                            </div>
-                            <div className="flex items-center gap-6 text-sm text-white/80 mb-4">
-                              <div className="flex items-center gap-2">
-                                <MapPin className="h-4 w-4" />
-                                {job.location}
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <Clock className="h-4 w-4" />
-                                {job.type}
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <Users className="h-4 w-4" />
-                                {job.experience}
-                              </div>
-                            </div>
-                            <p className="text-white/90 text-base leading-relaxed">
-                              {job.description}
-                            </p>
-                          </div>
-                          <div className="ml-6 flex-shrink-0">
-                            <div className="p-2 rounded-full transition-colors duration-200 hover:bg-white/10">
-                              {openIndex === i ? (
-                                <Minus className="h-6 w-6 text-white" />
-                              ) : (
-                                <Plus className="h-6 w-6 text-white" />
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      {openIndex === i && (
-                        <div 
-                          className="border-t p-8"
-                          style={{
-                            borderColor: 'rgba(255, 255, 255, 0.2)',
-                            backgroundColor: 'rgba(255, 255, 255, 0.05)'
-                          }}
-                        >
-                          <div className="grid md:grid-cols-2 gap-8">
-                            <div>
-                              <h4 className="font-bold text-white mb-4 text-lg">Requirements</h4>
-                              <ul className="space-y-3">
-                                {job.requirements.map((req, idx) => (
-                                  <li key={idx} className="text-white/90 flex items-start gap-3">
-                                    <span className="text-emerald-400 mt-1 text-lg">•</span>
-                                    <span className="leading-relaxed">{req}</span>
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                            <div>
-                              <h4 className="font-bold text-white mb-4 text-lg">Responsibilities</h4>
-                              <ul className="space-y-3">
-                                {job.responsibilities.map((resp, idx) => (
-                                  <li key={idx} className="text-white/90 flex items-start gap-3">
-                                    <span className="text-teal-400 mt-1 text-lg">•</span>
-                                    <span className="leading-relaxed">{resp}</span>
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                          </div>
-                          <div className="mt-8 pt-6" style={{ borderTop: '1px solid rgba(255, 255, 255, 0.2)' }}>
-                            <button
-                              onClick={() => handleApply(job.id)}
-                              className="px-8 py-3 rounded-xl font-bold text-white transition-all duration-300 hover:from-emerald-400 hover:to-teal-400"
-                              style={{
-                                background: 'linear-gradient(135deg, #10b981 0%, #14b8a6 100%)',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
-                                boxShadow: 'rgba(0,0,0,0.03) 0px 7px 0.5rem, rgba(0,0,0,0.05) 0px 0px 1.3rem inset'
-                              }}
-                            >
-                              Apply Now
-                            </button>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
+                <div className="space-y-4 sm:space-y-6">
+  {jobOpenings.map((job, i) => (
+    <div
+      key={job.id}
+      className="rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-300"
+      style={{
+        backdropFilter: 'blur(30px) saturate(1.3)',
+        backgroundColor: 'rgba(255, 255, 255, 0.12)',
+        border: '1px solid rgba(255, 255, 255, 0.2)',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+      }}
+    >
+      <div
+        className="p-4 sm:p-6 lg:p-8 cursor-pointer"
+        onClick={() => toggle(i)}
+      >
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex-1 min-w-0">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-3">
+              <h3 className="text-lg sm:text-xl font-bold text-white leading-tight">
+                {job.title}
+              </h3>
+              <span 
+                className="px-2 py-1 sm:px-3 text-xs font-semibold rounded-full self-start sm:self-auto"
+                style={{
+                  background: 'linear-gradient(135deg, #10b981 0%, #14b8a6 100%)',
+                  color: 'white',
+                  border: '1px solid rgba(255, 255, 255, 0.2)'
+                }}
+              >
+                {job.department}
+              </span>
+            </div>
+            
+            {/* Informations sur mobile : empilées verticalement */}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 text-sm text-white/80 mb-4">
+              <div className="flex items-center gap-2">
+                <MapPin className="h-4 w-4 flex-shrink-0" />
+                <span className="truncate">{job.location}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Clock className="h-4 w-4 flex-shrink-0" />
+                <span>{job.type}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Users className="h-4 w-4 flex-shrink-0" />
+                <span>{job.experience}</span>
+              </div>
+            </div>
+            
+            <p className="text-white/90 text-sm sm:text-base leading-relaxed line-clamp-3 sm:line-clamp-none">
+              {job.description}
+            </p>
+          </div>
+          
+          <div className="flex-shrink-0 ml-2 sm:ml-6">
+            <div className="p-1.5 sm:p-2 rounded-full transition-colors duration-200 hover:bg-white/10">
+              {openIndex === i ? (
+                <Minus className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+              ) : (
+                <Plus className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {openIndex === i && (
+        <div 
+          className="border-t p-4 sm:p-6 lg:p-8"
+          style={{
+            borderColor: 'rgba(255, 255, 255, 0.2)',
+            backgroundColor: 'rgba(255, 255, 255, 0.05)'
+          }}
+        >
+          {/* Layout empilé sur mobile, grille sur desktop */}
+          <div className="flex flex-col lg:grid lg:grid-cols-2 gap-6 lg:gap-8">
+            <div>
+              <h4 className="font-bold text-white mb-3 sm:mb-4 text-base sm:text-lg">
+                Requirements
+              </h4>
+              <ul className="space-y-2 sm:space-y-3">
+                {job.requirements.map((req, idx) => (
+                  <li key={idx} className="text-white/90 flex items-start gap-2 sm:gap-3">
+                    <span className="text-emerald-400 mt-0.5 sm:mt-1 text-base sm:text-lg flex-shrink-0">
+                      •
+                    </span>
+                    <span className="text-sm sm:text-base leading-relaxed">
+                      {req}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            
+            <div>
+              <h4 className="font-bold text-white mb-3 sm:mb-4 text-base sm:text-lg">
+                Responsibilities
+              </h4>
+              <ul className="space-y-2 sm:space-y-3">
+                {job.responsibilities.map((resp, idx) => (
+                  <li key={idx} className="text-white/90 flex items-start gap-2 sm:gap-3">
+                    <span className="text-teal-400 mt-0.5 sm:mt-1 text-base sm:text-lg flex-shrink-0">
+                      •
+                    </span>
+                    <span className="text-sm sm:text-base leading-relaxed">
+                      {resp}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+          
+          <div 
+            className="mt-6 sm:mt-8 pt-4 sm:pt-6" 
+            style={{ borderTop: '1px solid rgba(255, 255, 255, 0.2)' }}
+          >
+            <button
+              onClick={() => handleApply(job.id)}
+              className="w-full sm:w-auto px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg sm:rounded-xl font-bold text-white text-sm sm:text-base transition-all duration-300 hover:from-emerald-400 hover:to-teal-400"
+              style={{
+                background: 'linear-gradient(135deg, #10b981 0%, #14b8a6 100%)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                boxShadow: 'rgba(0,0,0,0.03) 0px 7px 0.5rem, rgba(0,0,0,0.05) 0px 0px 1.3rem inset'
+              }}
+            >
+              Apply Now
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  ))}
+</div>
               )}
 
               {/* Benefits & Culture Tab */}

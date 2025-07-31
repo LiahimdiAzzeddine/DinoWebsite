@@ -15,10 +15,10 @@ gsap.registerPlugin(ScrollTrigger, ScrollToPlugin, Observer);
 
 export default function Web1({ sectionID, isActive, ...props }) {
   const isMobile = () => {
-  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
-    (navigator.maxTouchPoints && navigator.maxTouchPoints > 2);
-};
-const mobile = isMobile();
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+      (navigator.maxTouchPoints && navigator.maxTouchPoints > 2);
+  };
+  const mobile = isMobile();
   const gl = useThree((state) => state.gl);
 
   const group = useRef();
@@ -42,7 +42,7 @@ const mobile = isMobile();
   const sketch01Ref = useRef();
   const sketch02Ref = useRef();
   const [activeSketch, setActiveSketch] = useState("Sketch01");
-    const { nodes, materials, animations } = useGLTF(
+  const { nodes, materials, animations } = useGLTF(
     `/models/model-final.glb`,
     undefined,
     undefined,
@@ -98,16 +98,7 @@ const mobile = isMobile();
     });
     return () => observer.kill();
   }, []);
-// Fonction d'easing optimisée pour mobile
-function mobileScrollEase(t) {
-  // Combinaison de smoothstep et d'une courbe plus douce
-  const smooth1 = t * t * (3 - 2 * t); // smoothstep
-  const smooth2 = smooth1 * smooth1 * (3 - 2 * smooth1); // double smoothstep
-  return smooth2;
-}
 
-// Ou utiliser un easing GSAP très doux
-const mobileEase = gsap.parseEase("power1.inOut");
   useLayoutEffect(() => {
     WEB1_CONFIGS.ANIMATIONS_TO_PLAY.forEach(name => actions[name]?.reset().play());
     const camAct = actions["CameraIn"];
@@ -218,22 +209,22 @@ const mobileEase = gsap.parseEase("power1.inOut");
       }
 
       // 🔻 Masquer les éléments (Pacman + balls + hand)
-      if (!mobile){
+      if (!mobile) {
         [pacmanRef, ball1Ref, ball2Ref, ball3Ref, ball4Ref, handRef].forEach(ref => {
-        if (ref?.current) ref.current.visible = false;
-      });
+          if (ref?.current) ref.current.visible = false;
+        });
       }
-      
+
 
       const onFinishCallback = () => {
         // 🔼 Réafficher les éléments après une courte pause
-        if (!mobile){
-        setTimeout(() => {
-          [pacmanRef, ball1Ref, ball2Ref, ball3Ref, ball4Ref, handRef].forEach(ref => {
-            if (ref?.current) ref.current.visible = true;
-          });
-        }, 100);
-      }
+        if (!mobile) {
+          setTimeout(() => {
+            [pacmanRef, ball1Ref, ball2Ref, ball3Ref, ball4Ref, handRef].forEach(ref => {
+              if (ref?.current) ref.current.visible = true;
+            });
+          }, 100);
+        }
         isAnimatingRef.current = false;
         if (actionName === "UP") {
           const web2Trigger = ScrollTrigger.getById('web2');
@@ -279,7 +270,7 @@ const mobileEase = gsap.parseEase("power1.inOut");
         trigger: "#section2",
         start: "top center+=230",
         end: "center top",
-        scrub: mobile ? 1.5 : true, 
+        scrub: mobile ? 1.5 : true,
         ignoreMobileResize: true,
         onUpdate: ({ progress }) => {
           const newY = THREE.MathUtils.lerp(2.85, 6, progress);
@@ -297,9 +288,9 @@ const mobileEase = gsap.parseEase("power1.inOut");
         start: "top center+=100",
         endTrigger: "#section2",
         end: "top center+=230",
-        scrub: mobile ? 1.5 : true, 
-        pin:false,
-        markers:false,
+        scrub: mobile ? 1.5 : true,
+        pin: false,
+        markers: false,
         ignoreMobileResize: true,
         onUpdate: ({ progress }) => {
           const rotY = THREE.MathUtils.lerp(0, Math.PI * 2, progress);
@@ -307,7 +298,7 @@ const mobileEase = gsap.parseEase("power1.inOut");
         }
       });
 
-  
+
       const trigger = ScrollTrigger.create({
         id: sectionID,
         trigger: "#section1",
@@ -316,17 +307,17 @@ const mobileEase = gsap.parseEase("power1.inOut");
         end: "top top+=100",
         markers: false,
         touchAction: "pan-y",
-        pin:false,
+        pin: false,
         ignoreMobileResize: true,
 
         onToggle: ({ isActive }) => {
-        
-          if(isActive){
+
+          if (isActive) {
             setCurrentModel("web1");
-          const web1Trigger = ScrollTrigger.getById('web1');
-          if (web1Trigger) web1Trigger.enable();
+            const web1Trigger = ScrollTrigger.getById('web1');
+            if (web1Trigger) web1Trigger.enable();
           }
-          
+
           // handleSectionToggle({
           //   isActive,
           //   sectionID,
@@ -342,17 +333,17 @@ const mobileEase = gsap.parseEase("power1.inOut");
           // });
         },
         onLeave: () => {
-        //   if(velocityD==0 || velocityD<0){
-        //   isAnimatingRef.current = false;
-      
-        //   const web2Trigger = ScrollTrigger.getById('web2');
-        //   if (web2Trigger) web2Trigger.enable();
-        //   setCurrentModel("web2");
-        //   if (nextScrollTrigger) {
-        //     nextScrollTrigger.enable();
-          
-        // } 
-        //   }
+          //   if(velocityD==0 || velocityD<0){
+          //   isAnimatingRef.current = false;
+
+          //   const web2Trigger = ScrollTrigger.getById('web2');
+          //   if (web2Trigger) web2Trigger.enable();
+          //   setCurrentModel("web2");
+          //   if (nextScrollTrigger) {
+          //     nextScrollTrigger.enable();
+
+          // } 
+          //   }
           // const web2Trigger = ScrollTrigger.getById('web2');
           // if (web2Trigger) web2Trigger.enable();
         },
@@ -363,7 +354,7 @@ const mobileEase = gsap.parseEase("power1.inOut");
         }
 
       });
-        
+
       return () => { trigger.kill(); trigger1.kill(); trigger2.kill() };
     });
 
@@ -769,102 +760,102 @@ const mobileEase = gsap.parseEase("power1.inOut");
           position-y={viewport.width < 5 ? 2.85 : 0}
           position-z={viewport.width < 5 ? -0.5 : 0}
         >
-{viewport.width > 5 &&(
-  <>
-<group ref={ball4Ref} visible={true} name="Empty" position={[1.106, 1.058, -0.662]} scale={0.256}>
-            <mesh
-              name="Sphere"
-              castShadow
-              receiveShadow
-              geometry={nodes.Sphere.geometry}
-              material={materials['Material.003']}
-              position={[0.003, -0.01, 0]}
-              scale={[0.385, 0.379, 0.379]}
-            />
-          </group>
-          <group ref={ball1Ref} visible={true} name="Empty007" position={[1.114, 1.058, -0.982]} scale={0.256}>
-            <mesh
-              name="Sphere004"
-              castShadow
-              receiveShadow
-              geometry={nodes.Sphere004.geometry}
-              material={materials['Material.003']}
-              position={[0.003, -0.01, 0]}
-              scale={[0.385, 0.379, 0.379]}
-            />
-          </group>
-          <group ref={ball2Ref} visible={true} name="Empty008" position={[1.098, 1.058, -0.333]} scale={0.256}>
-            <mesh
-              name="Sphere008"
-              castShadow
-              receiveShadow
-              geometry={nodes.Sphere008.geometry}
-              material={materials['Material.003']}
-              position={[0.003, -0.01, 0]}
-              scale={[0.385, 0.379, 0.379]}
-            />
-          </group>
-          <group ref={ball3Ref} visible={true} name="Empty009" position={[1.089, 1.058, 0.046]} scale={0.256}>
-            <mesh
-              name="Sphere009"
-              castShadow
-              receiveShadow
-              geometry={nodes.Sphere009.geometry}
-              material={materials['Material.003']}
-              position={[0.003, -0.01, 0]}
-              scale={[0.385, 0.379, 0.379]}
-            />
-          </group>
-          <group
-            name="Empty010"
-            ref={pacmanRef} visible={true}
-            position={[1.123, 1.058, -1.336]}
-            rotation={[-0.052, 0.055, -0.004]}
-            scale={0.256}>
-            <group
-              name="Sphere010"
-              position={[0.003, 0.291, 0]}
-              rotation={[-0.595, 0, 0]}
-              scale={[0.503, 0.494, 0.494]}>
-              <mesh
-                name="Sphere008_1"
-                castShadow
-                receiveShadow
-                geometry={nodes.Sphere008_1.geometry}
-                material={materials['Material.003']}
-              />
-              <mesh
-                name="Sphere008_2"
-                castShadow
-                receiveShadow
-                geometry={nodes.Sphere008_2.geometry}
-                material={materials.Material}
-              />
-            </group>
-            <group
-              name="Sphere011"
-              position={[0.003, 0.291, 0]}
-              rotation={[0.524, 0, Math.PI]}
-              scale={[0.503, 0.494, 0.494]}>
-              <mesh
-                name="Sphere016"
-                castShadow
-                receiveShadow
-                geometry={nodes.Sphere016.geometry}
-                material={materials['Material.003']}
-              />
-              <mesh
-                name="Sphere016_1"
-                castShadow
-                receiveShadow
-                geometry={nodes.Sphere016_1.geometry}
-                material={materials.Material}
-              />
-            </group>
-          </group>
-          </>
-) }
-          
+          {viewport.width > 5 && (
+            <>
+              <group ref={ball4Ref} visible={true} name="Empty" position={[1.106, 1.058, -0.662]} scale={0.256}>
+                <mesh
+                  name="Sphere"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Sphere.geometry}
+                  material={materials['Material.003']}
+                  position={[0.003, -0.01, 0]}
+                  scale={[0.385, 0.379, 0.379]}
+                />
+              </group>
+              <group ref={ball1Ref} visible={true} name="Empty007" position={[1.114, 1.058, -0.982]} scale={0.256}>
+                <mesh
+                  name="Sphere004"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Sphere004.geometry}
+                  material={materials['Material.003']}
+                  position={[0.003, -0.01, 0]}
+                  scale={[0.385, 0.379, 0.379]}
+                />
+              </group>
+              <group ref={ball2Ref} visible={true} name="Empty008" position={[1.098, 1.058, -0.333]} scale={0.256}>
+                <mesh
+                  name="Sphere008"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Sphere008.geometry}
+                  material={materials['Material.003']}
+                  position={[0.003, -0.01, 0]}
+                  scale={[0.385, 0.379, 0.379]}
+                />
+              </group>
+              <group ref={ball3Ref} visible={true} name="Empty009" position={[1.089, 1.058, 0.046]} scale={0.256}>
+                <mesh
+                  name="Sphere009"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Sphere009.geometry}
+                  material={materials['Material.003']}
+                  position={[0.003, -0.01, 0]}
+                  scale={[0.385, 0.379, 0.379]}
+                />
+              </group>
+              <group
+                name="Empty010"
+                ref={pacmanRef} visible={true}
+                position={[1.123, 1.058, -1.336]}
+                rotation={[-0.052, 0.055, -0.004]}
+                scale={0.256}>
+                <group
+                  name="Sphere010"
+                  position={[0.003, 0.291, 0]}
+                  rotation={[-0.595, 0, 0]}
+                  scale={[0.503, 0.494, 0.494]}>
+                  <mesh
+                    name="Sphere008_1"
+                    castShadow
+                    receiveShadow
+                    geometry={nodes.Sphere008_1.geometry}
+                    material={materials['Material.003']}
+                  />
+                  <mesh
+                    name="Sphere008_2"
+                    castShadow
+                    receiveShadow
+                    geometry={nodes.Sphere008_2.geometry}
+                    material={materials.Material}
+                  />
+                </group>
+                <group
+                  name="Sphere011"
+                  position={[0.003, 0.291, 0]}
+                  rotation={[0.524, 0, Math.PI]}
+                  scale={[0.503, 0.494, 0.494]}>
+                  <mesh
+                    name="Sphere016"
+                    castShadow
+                    receiveShadow
+                    geometry={nodes.Sphere016.geometry}
+                    material={materials['Material.003']}
+                  />
+                  <mesh
+                    name="Sphere016_1"
+                    castShadow
+                    receiveShadow
+                    geometry={nodes.Sphere016_1.geometry}
+                    material={materials.Material}
+                  />
+                </group>
+              </group>
+            </>
+          )}
+
 
           <group name="All" position={[0.273, 1.626, -0.266]} scale={4.808}>
             <group
@@ -1141,7 +1132,7 @@ const mobileEase = gsap.parseEase("power1.inOut");
               </group>
             </mesh>
             {/* {viewport.width> 5 &&( */}
-             <mesh
+            <mesh
               name="Cylinder002"
               castShadow
               receiveShadow
@@ -1150,7 +1141,7 @@ const mobileEase = gsap.parseEase("power1.inOut");
               position={[-0.103, 0.208, -0.083]}
               rotation={[Math.PI, -0.93, Math.PI]}
               scale={0.01}
-            />  
+            />
             {/* )}
             */}
             <group name="Empty002" position={[-0.103, 0.108, 0.162]} scale={0.208}>
@@ -1224,7 +1215,7 @@ const mobileEase = gsap.parseEase("power1.inOut");
                 />
               ))}
             </group>
-             <mesh
+            <mesh
               name="GroundCubeQuad003"
               castShadow
               receiveShadow
@@ -1232,9 +1223,9 @@ const mobileEase = gsap.parseEase("power1.inOut");
               material={materials.Ground_FileSize_Mat}
               position={[-0.05, -0.539, 0.017]}
               scale={[0.254, 0.207, 0.216]}
-            /> 
-            
-            
+            />
+
+
             <mesh
               name="LAPTOP001"
               castShadow

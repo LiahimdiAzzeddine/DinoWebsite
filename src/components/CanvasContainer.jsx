@@ -61,7 +61,7 @@ export const CanvasContainer = () => {
     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
       (navigator.maxTouchPoints && navigator.maxTouchPoints > 2);
   };
-
+const mobile = isMobile();
   const waitUntilScrollStops = (callback, delay = 1000) => {
     clearTimeout(scrollPauseTimeout);
     scrollPauseTimeout = setTimeout(() => {
@@ -119,7 +119,9 @@ export const CanvasContainer = () => {
       }, 300);
     };
 
-    window.addEventListener("scroll", onScroll);
+    if(!mobile){
+  window.addEventListener("scroll", onScroll);
+}
 
     return () => {
       window.removeEventListener("scroll", onScroll);
@@ -174,14 +176,14 @@ export const CanvasContainer = () => {
       //   onUpdate: (self) => (detectionStates.web2 = self.isActive),
       // });
 
-      detect_web3 = ScrollTrigger.create({
-        id: "detect_web3",
-        trigger: "#section3",
-        start: "top top",
-        endTrigger: "#section6",
-        end: "bottom bottom",
-        onUpdate: (self) => (detectionStates.web3 = self.isActive),
-      });
+      // detect_web3 = ScrollTrigger.create({
+      //   id: "detect_web3",
+      //   trigger: "#section3",
+      //   start: "top top",
+      //   endTrigger: "#section6",
+      //   end: "bottom bottom",
+      //   onUpdate: (self) => (detectionStates.web3 = self.isActive),
+      // });
     });
     return () => {
       detect_web1.kill();

@@ -82,7 +82,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
 
 
   // GLTF loading and setup
-  const { scene, animations } = useGLTF("./models/model3-opt.glb");
+  const { scene, animations } = useGLTF("./models/model3-opt-v1.glb");
   const clone = useMemo(() => SkeletonUtils.clone(scene), [scene]);
   const { nodes, materials } = useGraph(clone);
   const { actions, mixer } = useAnimations(animations, group);
@@ -549,6 +549,7 @@ const playActionOnce2Instant = (actionName, sectionID, onFinishCallback = () => 
         ignoreMobileResize: true,
 
         onToggle: ({ isActive }) => {
+          console.log("🚀 ~ Web3 ~ scrollDirection:", scrollDirection, isActive, velocityD);
           if (isActive) {
             setCurrentModel(sectionID);
             disableOtherSections();
@@ -572,7 +573,7 @@ const playActionOnce2Instant = (actionName, sectionID, onFinishCallback = () => 
             }
           };
 
-          if (!(scrollDirection == "Down" && isActive) && !(scrollDirection == "Up" && !isActive)) {
+          if ( !(scrollDirection == "Up" && !isActive)) {
             playActionOnce2Instant('Up', sectionID, onFinishCallback);
           }
         },
@@ -598,7 +599,7 @@ const playActionOnce2Instant = (actionName, sectionID, onFinishCallback = () => 
         },
 
         onEnterBack: () => {
-              console.log("🚀 ~ Web3 ~ scrollDirection:", scrollDirection, isActive, velocityD);
+             // console.log("🚀 ~ Web3 ~ scrollDirection:", scrollDirection, isActive, velocityD);
 
           const web3Trigger = ScrollTrigger.getById('web3');
           if (web3Trigger) web3Trigger.enable();
@@ -1265,4 +1266,4 @@ const playActionOnce2Instant = (actionName, sectionID, onFinishCallback = () => 
   );
 }
 
-useGLTF.preload("./models/model3-opt.glb");
+useGLTF.preload("./models/model3-opt-v1.glb");

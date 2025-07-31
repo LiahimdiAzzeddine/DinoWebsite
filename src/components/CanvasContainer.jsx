@@ -193,30 +193,35 @@ const mobile = isMobile();
   }, []);
 
   useEffect(() => {
-    const lenis = new Lenis({
-      duration: 1,
-      smoothWheel: true,
-      wheelMultiplier: 0.75,
-      infinite: false,
-      easing: t => 1 - Math.pow(1 - t, 1.8),
-      direction: "vertical",
-      gestureOrientation: "vertical",
-    });
+  const isMobile = window.matchMedia("(max-width: 767px)").matches;
 
-    lenisRef.current = lenis;
+  const lenis = new Lenis({
+    duration: isMobile ? 1.2 : 1, // un peu plus long pour lisser le scroll sur mobile
+    smoothWheel: !isMobile,      // désactiver wheel sur mobile (pas utile)
+    smoothTouch: true,           // activer le smooth touch
+    touchMultiplier: isMobile ? 1.5 : 1, // plus sensible au doigt sur mobile
+    wheelMultiplier: 0.75,
+    infinite: false,
+    easing: t => 1 - Math.pow(1 - t, 1.8),
+    direction: "vertical",
+    gestureOrientation: "vertical",
+  });
 
-    function raf(time) {
-      lenis.raf(time);
-      ScrollTrigger.update();
-      requestAnimationFrame(raf);
-    }
+  lenisRef.current = lenis;
 
+  function raf(time) {
+    lenis.raf(time);
+    ScrollTrigger.update();
     requestAnimationFrame(raf);
+  }
 
-    return () => {
-      lenis.destroy();
-    };
-  }, []);
+  requestAnimationFrame(raf);
+
+  return () => {
+    lenis.destroy();
+  };
+}, []);
+
 
   return (
     <div className="absolute top-0 left-0 w-full h-full z-10">

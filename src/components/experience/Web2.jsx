@@ -19,7 +19,7 @@ gsap.registerPlugin(ScrollTrigger, ScrollToPlugin, Observer);
 
 export default function Web2({ sectionID, isActive, ...props }) {
   const group = useRef()
-  const { nodes, materials, animations } = useGLTF('./models/model2-opt.glb')
+  const { nodes, materials, animations } = useGLTF('./models/model2-opt-v2.glb')
   const { actions, mixer } = useAnimations(animations, group)
   const { setCurrentModel } = useContext(AnimationContext);
   const currentTween = useRef(null);
@@ -280,7 +280,7 @@ export default function Web2({ sectionID, isActive, ...props }) {
             } else {
 
 
-              ScrollTrigger.getById('web1')?.disable();
+             // ScrollTrigger.getById('web1')?.disable();
               // Sortie vers le haut
               playActionOnce("DOWN", sectionID, velocityD, () => {
                 enablePrevSection();
@@ -377,7 +377,7 @@ ignoreMobileResize: true,
   },
 
   onToggle: ({ isActive }) => {
-    console.log("🚀 ~ Web2 ~ scrollDirection:", scrollDirection, isActive, velocityD);
+    //console.log("🚀 ~ Web2 ~ scrollDirection:", scrollDirection, isActive, velocityD);
     if (isActive) {
       disableOtherSections();
       playStaticAnimations();
@@ -409,13 +409,13 @@ if(!web2Trigger.enabled){
   },
 
   onLeaveBack: () => {
-    console.log("🚀 ~ Web2 ~ onLeaveBack:")
+    //console.log("🚀 ~ Web2 ~ onLeaveBack:")
     const web1Trigger = ScrollTrigger.getById('web1');
     if (web1Trigger) web1Trigger.enable();
   },
 
   onEnterBack: () => {
-    console.log("🚀 ~ Web2 ~ onEnterBack:");
+    //console.log("🚀 ~ Web2 ~ onEnterBack:");
     const web2Trigger = ScrollTrigger.getById('web2');
     if (web2Trigger) web2Trigger.enable();
     playActionOnceInstant("DOWN_2", sectionID, () => {
@@ -726,4 +726,4 @@ if(!web2Trigger.enabled){
   )
 }
 
-useGLTF.preload('./models/model2-opt.glb')
+useGLTF.preload('./models/model2-opt-v2.glb')

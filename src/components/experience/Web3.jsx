@@ -42,7 +42,7 @@ const ANIMATION_GROUPS = {
     "7.Door2ndScroll",
     "9.Rocket2ndScroll",
   ],
-  SECOND_SCROLL: ["ActionEnter", "8.Rocket3rdScroll"],
+  SECOND_SCROLL: ["ActionEnter", "8.RocketPhone"],
 };
 
 const SCALE_CONFIG = {
@@ -64,6 +64,7 @@ export default function Web3({ sectionID, isActive, ...props }) {
   const group = useRef();
   const ManRef = useRef();
   const rocketRef = useRef();
+  const testRef = useRef();
   const emitterRef = useRef();
   const currentTween = useRef(null);
   const sceneContainerGroup = useRef();
@@ -82,10 +83,11 @@ export default function Web3({ sectionID, isActive, ...props }) {
 
 
   // GLTF loading and setup
-  const { scene, animations } = useGLTF("./models/model3-opt-v1.glb");
+  const { scene, animations } = useGLTF("./models/Rocket.glb");
   const clone = useMemo(() => SkeletonUtils.clone(scene), [scene]);
   const { nodes, materials } = useGraph(clone);
   const { actions, mixer } = useAnimations(animations, group);
+  console.log("🚀 ~ Web3 ~ actions:", actions)
   // Responsive positioning
   useEffect(() => {
     viewportRef.current = viewport;
@@ -377,6 +379,7 @@ const playActionOnce2Instant = (actionName, sectionID, onFinishCallback = () => 
     const maxY = 0.55;
     let mainTrigger = null;
     let secondaryTrigger = null;
+    let secondaryTrigger2 = null;
     let armatureTrigger = null;
 
     mm.add("(min-width: 768px)", () => {
@@ -616,7 +619,7 @@ const playActionOnce2Instant = (actionName, sectionID, onFinishCallback = () => 
         fastScrollEnd: true,
         markers: false,
         touchAction: "pan-y",
- ignoreMobileResize: true,
+        ignoreMobileResize: true,
         onEnter: (self) => {
           setActiveSmoke(true)
           setCurrentModel(sectionID);
@@ -643,18 +646,60 @@ const playActionOnce2Instant = (actionName, sectionID, onFinishCallback = () => 
           handleProgressUpdate(self.progress);
         },
         onLeave: () => {
-          const web33Trigger = ScrollTrigger.getById('web3_armatureMove');
-          if (web33Trigger) web33Trigger.enable();
+          // const web33Trigger = ScrollTrigger.getById('web3_armatureMove');
+          // if (web33Trigger) web33Trigger.enable();
+        },
+        onEnterBack:()=>{
+//            if(scrollDirection == "Down"){
+//  testRef.current.position.y =-0.531;
+//   testRef.current.position.z =-0.22;
+// const scaleValues = [0.562,0.562,0.562];
+// testRef.current.scale.set(...scaleValues);
+// }
         }
 
       });
+//       secondaryTrigger2 = ScrollTrigger.create({
+//   id: sectionID + "_secondary2",
+//   trigger: "#section5",
+//   start: "bottom bottom",
+//   endTrigger: "#section6",
+//   end: "top bottom",
+//   fastScrollEnd: true,
+//          markers: true,
+
+//   touchAction: "pan-y",
+//   ignoreMobileResize: true,
+
+// onEnter:()=>{
+//   console.log("🚀 ~ Web3 ~ onEnter:", scrollDirection,testRef.current.position)
+//   if(scrollDirection == "Up"){
+//  testRef.current.position.y -=0.18;
+//   testRef.current.position.z +=0.10;
+//  const scaleValues = [0.3,0.3, 0.3];
+//  testRef.current.scale.set(...scaleValues); 
+// }
+// },
+// onLeaveBack:()=>{
+//    console.log("🚀 ~ Web3 ~ onLeave:", scrollDirection)
+//    if(scrollDirection == "Down"){
+//  testRef.current.position.y =-0.531;
+//   testRef.current.position.z =-0.22;
+// const scaleValues = [0.562,0.562,0.562];
+// testRef.current.scale.set(...scaleValues);
+// }
+// }
+
+
+// });
+
+
 
       armatureTrigger = ScrollTrigger.create({
         id: sectionID + "_armatureMove",
         trigger: "#section6",
-        start: "top bottom",
+        start: "top-=250 bottom",
          ignoreMobileResize: true,
-         markers: false,
         end: () => document.body.scrollHeight + "px",
         onEnter: () => {
           setCurrentModel(sectionID);
@@ -663,9 +708,9 @@ const playActionOnce2Instant = (actionName, sectionID, onFinishCallback = () => 
           if (armatureRef.current) {
             armatureRef.current.position.y = adjustedStartY;
             gsap.to(armatureRef.current.scale, {
-              x: 0.035,
-              y: 0.035,
-              z: 0.035,
+              x: 0.027,
+              y: 0.027,
+              z: 0.027,
               duration: 1,
               ease: "back.out",
             });
@@ -717,17 +762,28 @@ const playActionOnce2Instant = (actionName, sectionID, onFinishCallback = () => 
       <group
         name="Scene"
       >
+          <group
+          name="BézierCurve"
+          position={[0.003, -0.116, -0.002]}
+          rotation={[Math.PI / 2, -Math.PI / 2, 0]}
+        />
+        <group
+          name="BézierCurve001"
+          position={[0.003, -0.118, -0.002]}
+          rotation={[Math.PI / 2, -Math.PI / 2, 0]}
+        />
         <group name="Empty" position={[4.089, 2.103, -0.346]}>
           <PerspectiveCamera
             name="Camera"
             makeDefault={isActive}
             far={1000}
             near={0.1}
-            fov={19.157}
+          fov={19.157}
             position={[0.531, -1.404, 0]}
             rotation={[-Math.PI / 2, 1.519, Math.PI / 2]}
             scale={0.217}
           />
+          
         </group>
 
         <group name="All" position={[3, -2.534, -0.002]} scale={viewport.width > 1 ?1.78:1.8}>
@@ -968,6 +1024,60 @@ const playActionOnce2Instant = (actionName, sectionID, onFinishCallback = () => 
               rotation={[-3.046, -0.631, -3.103]}
               scale={0.005}
             />
+             <group name="Cylinder019" position={[-0.002, 0.233, 0.007]} scale={0}>
+            <mesh
+              name="Cylinder007"
+              castShadow
+              receiveShadow
+              geometry={nodes.Cylinder007.geometry}
+              material={materials['Material.003']}
+            />
+            <mesh
+              name="Cylinder007_1"
+              castShadow
+              receiveShadow
+              geometry={nodes.Cylinder007_1.geometry}
+              material={materials['Material.005']}
+            />
+            <mesh
+              name="Cylinder007_2"
+              castShadow
+              receiveShadow
+              geometry={nodes.Cylinder007_2.geometry}
+              material={materials['Material.006']}
+            />
+            <mesh
+              name="Cylinder007_3"
+              castShadow
+              receiveShadow
+              geometry={nodes.Cylinder007_3.geometry}
+              material={materials['Material.010']}
+            />
+            <mesh
+              name="Cylinder007_4"
+              castShadow
+              receiveShadow
+              geometry={nodes.Cylinder007_4.geometry}
+              material={materials['Material.011']}
+            />
+            <mesh
+              name="Cylinder007_5"
+              castShadow
+              receiveShadow
+              geometry={nodes.Cylinder007_5.geometry}
+              material={materials['Material.012']}
+            />
+            <group position-y={-3}>
+                  <mesh ref={rocketRef} visible={false}>
+                    <boxGeometry args={[0.1, 0.1, 0.1]} />
+                  </mesh>
+                </group>
+                <group position-y={-0.3} ref={emitterRef}>
+                  {/* <FireParticles /> */}
+                  <SmokeParticles rocketRef={rocketRef} isActive={isActiveSmoke} />
+                  <FlameBlob />
+                </group>
+          </group>
             <mesh
               name="Cylinder090"
               castShadow
@@ -1183,73 +1293,8 @@ const playActionOnce2Instant = (actionName, sectionID, onFinishCallback = () => 
               position={[0, -0.293, 0]}
               scale={[0.575, 0.562, 0.575]}
             />
-            <group name="Plant" position={[1.962, -0.531, -0.22]} scale={0.562}>
-              <group name="Cylinder019" position={[-3.488, 1.291, 0.785]} scale={0}>
-                <mesh
-                  name="Cylinder007"
-                  castShadow
-                  receiveShadow
-                  geometry={nodes.Cylinder007.geometry}
-                  material={materials['Material.003']}
-                />
-
-                <mesh
-                  name="Cylinder007_1"
-                  castShadow
-                  receiveShadow
-                  geometry={nodes.Cylinder007_1.geometry}
-                  material={materials['Material.005']}
-                />
-                <mesh
-                  name="Cylinder007_2"
-                  castShadow
-                  receiveShadow
-                  geometry={nodes.Cylinder007_2.geometry}
-                  material={materials['Material.006']}
-                />
-                <mesh
-                  name="Cylinder007_3"
-                  castShadow
-                  receiveShadow
-                  geometry={nodes.Cylinder007_3.geometry}
-                  material={materials['Material.010']}
-                />
-                <mesh
-                  name="Cylinder007_4"
-                  castShadow
-                  receiveShadow
-                  geometry={nodes.Cylinder007_4.geometry}
-                  material={materials['Material.011']}
-                />
-                <mesh
-                  name="Cylinder007_5"
-                  castShadow
-                  receiveShadow
-                  geometry={nodes.Cylinder007_5.geometry}
-                  material={materials['Material.012']}
-                />
-                <group position-y={-3}>
-                  <mesh ref={rocketRef} visible={false}>
-                    <boxGeometry args={[0.1, 0.1, 0.1]} />
-                  </mesh>
-                </group>
-                <group position-y={-0.3} ref={emitterRef}>
-                  {/* <FireParticles /> */}
-                  <SmokeParticles rocketRef={rocketRef} isActive={isActiveSmoke} />
-                  <FlameBlob />
-                </group>
-
-              </group>
-            </group>
-            <mesh
-              name="Retopo_Icosphere016"
-              castShadow
-              receiveShadow
-              geometry={nodes.Retopo_Icosphere016.geometry}
-              material={nodes.Retopo_Icosphere016.material}
-              position={[-0.475, 0.731, -3.109]}
-              scale={0.044}
-            />
+      
+  
             <mesh
               name="Sphere001"
               castShadow
@@ -1260,10 +1305,11 @@ const playActionOnce2Instant = (actionName, sectionID, onFinishCallback = () => 
               scale={0}
             />
           </group>
+          <group name="Plant" position={[3.494, -0.971, -0.394]} />
         </group>
       </group>
     </group>
   );
 }
 
-useGLTF.preload("./models/model3-opt-v1.glb");
+useGLTF.preload("./models/Rocket.glb");

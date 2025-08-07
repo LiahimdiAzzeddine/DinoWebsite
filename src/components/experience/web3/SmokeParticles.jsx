@@ -7,18 +7,18 @@ import { Observer } from "gsap/Observer";
 export const SmokeParticles = ({ rocketRef, isActive }) => {
   const groupRef = useRef()
   const maxParticles = 300
-  let scrollVelocity = 0;
-  Observer.create({
-    type: "wheel,touch,scroll",
-    target: window,
-    onChangeY: (self) => {
-      scrollVelocity = self.velocityY;
-    },
-    // Optional: reset to 0 after a delay to avoid stale velocity
-    onStop: () => {
-      scrollVelocity = 0;
-    }
-  });
+const scrollVelocityRef = useRef(0);
+Observer.create({
+  type: "wheel,touch,scroll",
+  target: window,
+  onChangeY: (self) => {
+    scrollVelocityRef.current = self.velocityY;
+  },
+  onStop: () => {
+    scrollVelocityRef.current = 0;
+  }
+});
+
 
   const particles = useMemo(() => {
     return new Array(maxParticles).fill().map(() => {
@@ -37,8 +37,8 @@ export const SmokeParticles = ({ rocketRef, isActive }) => {
       mesh.visible = false
       mesh.userData = {
         life: 0,
-        maxLife: 60 + Math.random() * 40,
-        expansion: 1 + Math.random() * 0.5,
+        maxLife: 30 + Math.random() * 40,
+        expansion: 1 + Math.random() * 0.3,
         fixedWorldPosition: new THREE.Vector3(),
         initialScale: 0.8 + Math.random() * 0.4,
         // Ajout d'un flag pour savoir si la particule est active
@@ -53,11 +53,12 @@ export const SmokeParticles = ({ rocketRef, isActive }) => {
   }, [particles])
 
   useFrame(() => {
+const scrollVelocity = scrollVelocityRef.current;
 
     if (!groupRef.current || !rocketRef.current) return
 
-    const particlesToSpawn = scrollVelocity == 0 ? 1 : Math.floor(Math.random() * 3) + 4;
-    if (scrollVelocity >= 0 &&isActive) {
+    const particlesToSpawn = scrollVelocity == 0 ? 1 : Math.floor(Math.random() * 10) + 10;
+    if (scrollVelocity >= -500 &&isActive) {
       for (let i = 0; i < particlesToSpawn; i++) {
         if (Math.random() < 0.8) {
           // Trouver une particule inactive au lieu d'utiliser un index fixe
@@ -85,6 +86,7 @@ export const SmokeParticles = ({ rocketRef, isActive }) => {
           }
         }
       }
+      
     }
 
     // Update active particles
@@ -102,7 +104,7 @@ export const SmokeParticles = ({ rocketRef, isActive }) => {
       p.position.copy(localPos);
 
       // Scale expansion (fumée qui s'étale)
-      const scaleMultiplier = (scrollVelocity == 0 ? 0 : 0.8) + (lifeRatio * p.userData.expansion)
+      const scaleMultiplier = (scrollVelocity == 0 ? 0.45 : 0.45) + (lifeRatio * p.userData.expansion)
       p.scale.setScalar(p.userData.initialScale * scaleMultiplier)
 
       // Opacity fade

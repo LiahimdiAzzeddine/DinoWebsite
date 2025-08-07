@@ -41,8 +41,8 @@ const ANIMATION_GROUPS = {
     "6.WaterTower2ndScroll",
     "7.Door2ndScroll",
     "9.Rocket2ndScroll",
-  ],
-  SECOND_SCROLL: ["ActionEnter", "8.RocketPhone"],
+  ],                             
+  SECOND_SCROLL: ["ActionEnter","8.Rocket3rdScroll"],
 };
 
 const SCALE_CONFIG = {
@@ -142,15 +142,21 @@ export default function Web3({ sectionID, isActive, ...props }) {
   }, []);
 
 
+const playIntroAnimations = useCallback((reversed = false) => {
+  scaleManToOriginalSize();
 
-  const playIntroAnimations = useCallback((reversed = false) => {
-    scaleManToOriginalSize();
+  const isMobile = window.matchMedia("(max-width: 767px)").matches;
 
-    if (!reversed) {
-      ANIMATION_GROUPS.FIRST.forEach((name) => actions[name]?.reset().play());
-      actions["Armature.001Action"]?.reset().play();
-    }
-  }, []);
+  const firstAnimations = ANIMATION_GROUPS.FIRST.map(name =>
+    name === "DownMan" && isMobile ? "DownManmobile" : name
+  );
+
+  if (!reversed) {
+    firstAnimations.forEach((name) => actions[name]?.reset().play());
+    actions["Armature.001Action"]?.reset().play();
+  }
+}, []);
+
 
   const detectFastScroll = useCallback((velocity, observerVelocity) => {
     const currentTime = Date.now();
@@ -275,19 +281,28 @@ export default function Web3({ sectionID, isActive, ...props }) {
     }
   }, []);
 
-  const handleProgressUpdate = useCallback((progress) => {
+const getSecondScrollAnimations = () => {
+  const isMobile = window.matchMedia("(max-width: 767px)").matches;
 
-    ANIMATION_GROUPS.SECOND_SCROLL.forEach((name) => {
-      const action = actions[name];
-      if (action) {
-        const duration = action.getClip().duration;
-        action.paused = true;
-        action.time = duration * progress;
-        action.getMixer().update(0);
-        action.play();
-      }
-    });
-  }, []);
+  return ANIMATION_GROUPS.SECOND_SCROLL.map(name =>
+    name === "8.Rocket3rdScroll" && isMobile ? "8.RocketPhone" : name
+  );
+};
+
+const handleProgressUpdate = useCallback((progress) => {
+  const updatedSecondScroll = getSecondScrollAnimations();
+
+  updatedSecondScroll.forEach((name) => {
+    const action = actions[name];
+    if (action) {
+      const duration = action.getClip().duration;
+      action.paused = true;
+      action.time = duration * progress;
+      action.getMixer().update(0);
+      action.play();
+    }
+  });
+}, []);
 
   // Initialize armature position
   useEffect(() => {
@@ -513,6 +528,7 @@ const playActionOnce2Instant = (actionName, sectionID, onFinishCallback = () => 
         },
 
         onUpdate: (self) => {
+          
           if (armatureRef.current) {
             // Interpolation selon le scroll progress
             armatureRef.current.position.y = gsap.utils.interpolate(adjustedStartY, endY, self.progress);
@@ -1024,7 +1040,7 @@ const playActionOnce2Instant = (actionName, sectionID, onFinishCallback = () => 
               rotation={[-3.046, -0.631, -3.103]}
               scale={0.005}
             />
-             <group name="Cylinder019" position={[-0.002, 0.233, 0.007]} scale={0}>
+             <group name="Cylinder019" position={[-0.006, 0.254, 0.008]} scale={0}>
             <mesh
               name="Cylinder007"
               castShadow
@@ -1074,7 +1090,7 @@ const playActionOnce2Instant = (actionName, sectionID, onFinishCallback = () => 
                 </group>
                 <group position-y={-0.3} ref={emitterRef}>
                   {/* <FireParticles /> */}
-                  <SmokeParticles rocketRef={rocketRef} isActive={isActiveSmoke} />
+                  <SmokeParticles rocketRef={rocketRef} isActive={true} />
                   <FlameBlob />
                 </group>
           </group>
@@ -1137,32 +1153,32 @@ const playActionOnce2Instant = (actionName, sectionID, onFinishCallback = () => 
                 />
               </group>
               <group
-                name="Cylinder096"
-                position={[-0.008, -1.548, -1.192]}
-                rotation={[0, 1.571, 0]}
-                scale={0.489}>
-                <mesh
-                  name="Cylinder102_1"
-                  castShadow
-                  receiveShadow
-                  geometry={nodes.Cylinder102_1.geometry}
-                  material={materials['Material.007']}
-                />
-                <mesh
-                  name="Cylinder102_2"
-                  castShadow
-                  receiveShadow
-                  geometry={nodes.Cylinder102_2.geometry}
-                  material={materials['Material.008']}
-                />
-                <mesh
-                  name="Cylinder102_3"
-                  castShadow
-                  receiveShadow
-                  geometry={nodes.Cylinder102_3.geometry}
-                  material={materials['Material.009']}
-                />
-              </group>
+              name="Cylinder096"
+              position={[-0.008, -1.548, -1.192]}
+              rotation={[0, 1.571, 0]}
+              scale={0.489}>
+              <mesh
+                name="Cylinder102_1"
+                castShadow
+                receiveShadow
+                geometry={nodes.Cylinder102_1.geometry}
+                material={materials['Material.007']}
+              />
+              <mesh
+                name="Cylinder102_2"
+                castShadow
+                receiveShadow
+                geometry={nodes.Cylinder102_2.geometry}
+                material={materials['Material.008']}
+              />
+              <mesh
+                name="Cylinder102_3"
+                castShadow
+                receiveShadow
+                geometry={nodes.Cylinder102_3.geometry}
+                material={materials['Material.009']}
+              />
+            </group>
               <group name="Cylinder097" position={[1.256, -1.548, 0.055]} scale={0.489}>
                 <mesh
                   name="Cylinder103_1"
@@ -1186,6 +1202,7 @@ const playActionOnce2Instant = (actionName, sectionID, onFinishCallback = () => 
                   material={materials['Material.009']}
                 />
               </group>
+              
               <group
                 name="Cylinder098"
                 position={[1.103, 0.633, 0.065]}

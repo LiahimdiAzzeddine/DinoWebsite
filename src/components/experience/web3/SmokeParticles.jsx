@@ -37,7 +37,7 @@ Observer.create({
       mesh.visible = false
       mesh.userData = {
         life: 0,
-        maxLife: 30 + Math.random() * 40,
+        maxLife: 10 + Math.random() * 40,
         expansion: 1 + Math.random() * 0.3,
         fixedWorldPosition: new THREE.Vector3(),
         initialScale: 0.8 + Math.random() * 0.4,
@@ -60,7 +60,7 @@ const scrollVelocity = scrollVelocityRef.current;
     const particlesToSpawn = scrollVelocity == 0 ? 1 : Math.floor(Math.random() * 10) + 10;
     if (scrollVelocity >= -500 &&isActive) {
       for (let i = 0; i < particlesToSpawn; i++) {
-        if (Math.random() < 0.8) {
+        if (Math.random() < 0.9) {
           // Trouver une particule inactive au lieu d'utiliser un index fixe
           const availableParticle = particles.find(p => !p.userData.isActive)
 

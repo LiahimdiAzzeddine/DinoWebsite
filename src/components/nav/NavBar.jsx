@@ -27,10 +27,10 @@ export default function NavBar() {
               aria-current="page"
               onClick={() => {
                 navigate("/");
-                 setTimeout(() => {
-                        window.scrollTo({ top: 0, behavior: "smooth" });
+                setTimeout(() => {
+                  window.scrollTo({ top: 0, behavior: "smooth" });
 
-                      }, 100);
+                }, 100);
               }}
               className="rounded-[1em] no-underline text-inherit font-[Nunito_Sans,sans-serif]"
             >
@@ -52,10 +52,12 @@ export default function NavBar() {
                   <button
                     aria-label="contact us"
                     className="border-none cursor-pointer pointer-events-auto bg-none rounded-[1em] p-0 whitespace-nowrap text-teal-900 hover:text-teal-500 outline-offset-[4px] relative shadow-none "
-                     onClick={()=>{navigate("/");setTimeout(() => {
+                    onClick={() => {
+                      navigate("/"); setTimeout(() => {
                         const el = document.getElementById("section6");
                         if (el) el.scrollIntoView({ behavior: "smooth" });
-                      }, 500)}}
+                      }, 500)
+                    }}
                   >
                     contact us
                   </button>
@@ -80,8 +82,8 @@ export default function NavBar() {
                     to={"/blogs"}
                     aria-label="Blogs"
                     className={`border-none cursor-pointer pointer-events-auto bg-none rounded-[1em] p-0 whitespace-nowrap outline-offset-[4px] relative shadow-none  ${location.pathname === "/blogs"
-                        ? "text-teal-500"
-                        : "text-teal-900 hover:text-teal-500"
+                      ? "text-teal-500"
+                      : "text-teal-900 hover:text-teal-500"
                       }`}
                   >
                     Blogs
@@ -121,8 +123,8 @@ export default function NavBar() {
                     to="/faqs"
                     aria-label="Blogs"
                     className={`border-none cursor-pointer pointer-events-auto bg-none rounded-[1em] p-0 whitespace-nowrap outline-offset-[4px] relative shadow-none  ${isActive
-                        ? "text-teal-500"
-                        : "text-teal-900 hover:text-teal-500"
+                      ? "text-teal-500"
+                      : "text-teal-900 hover:text-teal-500"
                       }`}
                   >
                     FAQs
@@ -136,22 +138,22 @@ export default function NavBar() {
                   >
                     career
                   </Link>
-<a
-  role="button"
-  aria-label="Log in"
-  onClick={(e) => {
-    e.preventDefault();
-    alert("This feature is currently unavailable. Please contact us for assistance.");
-    navigate("/");
-    setTimeout(() => {
-      const el = document.getElementById("section6");
-      if (el) el.scrollIntoView({ behavior: "smooth" });
-    }, 500);
-  }}
-  className="no-underline nunito bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 border border-[rgba(255,255,255,0.1)] rounded-xl p-2 whitespace-nowrap shadow-[rgba(0,0,0,0.03)_0px_7px_0.5rem,_rgba(0,0,0,0.05)_0px_0px_1.3rem_inset] text-white mr-[-12px]"
->
-  Book a Call
-</a>
+                  <a
+                    role="button"
+                    aria-label="Log in"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      alert("This feature is currently unavailable. Please contact us for assistance.");
+                      navigate("/");
+                      setTimeout(() => {
+                        const el = document.getElementById("section6");
+                        if (el) el.scrollIntoView({ behavior: "smooth" });
+                      }, 500);
+                    }}
+                    className="no-underline nunito bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 border border-[rgba(255,255,255,0.1)] rounded-xl p-2 whitespace-nowrap shadow-[rgba(0,0,0,0.03)_0px_7px_0.5rem,_rgba(0,0,0,0.05)_0px_0px_1.3rem_inset] text-white mr-[-12px]"
+                  >
+                    Book a Call
+                  </a>
 
 
                 </li>

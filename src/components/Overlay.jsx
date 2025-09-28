@@ -223,7 +223,7 @@ export const Overlay = () => {
       opacity: 1,
       mobile: true
     }, {
-      href: "",
+      href: "https://apps.apple.com/us/app/balls-factory/id6503159875",
       title: "Play Store",
       imgSrc: "../assets/logos/bottlefactory.webp",
       alt: "Logo of Play Store",
@@ -240,15 +240,23 @@ export const Overlay = () => {
       opacity: 1,
       mobile: true
     },
-
+     {
+      href: "https://play.google.com/store/apps/details?id=com.tastypill.bottlefactory",
+      title: "Play Store",
+      imgSrc: "../assets/logos/bottlefactoryold.webp",
+      alt: "Logo of Play Store",
+      subtitle: "Bottle Factory",
+      opacity: 1,
+      mobile: true
+    },
 
     {
-      href: "",
+
       title: "Play Store",
-      imgSrc: "../assets/logos/comingsoon.webp",
+      imgSrc: "../assets/logos/28.jpg",
       alt: "Logo of Play Store",
-      subtitle: "Coming soon",
-      opacity: 0,
+      subtitle: "Cookie Sort",
+      opacity: 1,
       mobile: true
     },
     {

@@ -600,8 +600,8 @@ export default function Web1({ sectionID, isActive, ...props }) {
     const dino = dinoRef.current;
 
     // 🔊 Roar synchronisé
-    const audio = new Audio('/sounds/dinosaur-roar-with-screams-and-growls-193210.mp3');
-    audio.play();
+    //const audio = new Audio('/sounds/dinosaur-roar-with-screams-and-growls-193210.mp3');
+    //audio.play();
 
     // 🧠 Initial values
     const initialScale = { ...dino.scale };

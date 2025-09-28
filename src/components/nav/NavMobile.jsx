@@ -91,7 +91,7 @@ export default function NavMobile() {
               role="button"
                     onClick={(e) => {
                       e.preventDefault();
-                      alert("This feature is currently unavailable. Please contact us to schedule a meeting.");
+                      alert("This feature is currently unavailable. Please contact us to book a call.");
                       navigate("/");
                       setTimeout(() => {
                         const el = document.getElementById("section6");

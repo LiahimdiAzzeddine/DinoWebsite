@@ -139,16 +139,8 @@ export default function NavBar() {
                     career
                   </Link>
                   <a
-                    role="button"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      alert("This feature is currently unavailable. Please contact us to book a call.");
-                      navigate("/");
-                      setTimeout(() => {
-                        const el = document.getElementById("section6");
-                        if (el) el.scrollIntoView({ behavior: "smooth" });
-                      }, 500);
-                    }}
+                    href="https://calendar.app.google/EfrYWkBJmL9PdhzP6"
+              target="_blank"
                     className="no-underline nunito bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 border border-[rgba(255,255,255,0.1)] rounded-xl p-2 whitespace-nowrap shadow-[rgba(0,0,0,0.03)_0px_7px_0.5rem,_rgba(0,0,0,0.05)_0px_0px_1.3rem_inset] text-white mr-[-12px]"
                   >
                     Book a Call

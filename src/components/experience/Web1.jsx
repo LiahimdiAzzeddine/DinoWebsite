@@ -1206,14 +1206,14 @@ export default function Web1({ sectionID, isActive, ...props }) {
                 />
               </group>
               {/* Rendu des confettis */}
-              {confettis.map((confetti) => (
+              {/* {confettis.map((confetti) => (
                 <ConfettiParticle
                   key={confetti.id}
                   position={confetti.position}
                   color={confetti.color}
                   velocity={confetti.velocity}
                 />
-              ))}
+              ))} */}
             </group>
             <mesh
               name="GroundCubeQuad003"

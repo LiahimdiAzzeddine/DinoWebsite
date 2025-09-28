@@ -140,10 +140,9 @@ export default function NavBar() {
                   </Link>
                   <a
                     role="button"
-                    aria-label="Log in"
                     onClick={(e) => {
                       e.preventDefault();
-                      alert("This feature is currently unavailable. Please contact us for assistance.");
+                      alert("This feature is currently unavailable. Please contact us to schedule a meeting.");
                       navigate("/");
                       setTimeout(() => {
                         const el = document.getElementById("section6");

@@ -227,7 +227,7 @@ export const Overlay = () => {
       title: "Play Store",
       imgSrc: "../assets/logos/bottlefactory.webp",
       alt: "Logo of Play Store",
-      subtitle: "Bottle Factory",
+      subtitle: "Balls Factory",
       opacity: 1,
       mobile: true
     },
@@ -259,15 +259,7 @@ export const Overlay = () => {
       opacity: 1,
       mobile: true
     },
-    {
-      href: "",
-      title: "Play Store",
-      imgSrc: "../assets/logos/tyjtrhth.webp",
-      alt: "Logo of Play Store",
-      subtitle: "Coming soon",
-      opacity: 0,
-      mobile: false
-    },
+
   ]
 
 
